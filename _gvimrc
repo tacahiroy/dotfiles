@@ -1,0 +1,73 @@
+" $HOME/.gvimrc
+" Last Change: 22-Feb-2010.
+" Maintainer:TaCahiro Yoshihara
+
+set columns=90
+set lines=40
+set cmdheight=2
+set guioptions=e
+
+set guitablabel=%N)\ %f
+
+nmap <C-LeftMouse> <C-]>zz
+nmap <C-RightMouse> <C-t>zz
+
+" hilight
+" for completion
+"au! ColorScheme *
+" \ hi! Pmenu       guibg=LightGrey guifg=DarkBlue |
+" \ hi! PmenuSel    guibg=SeaGreen guifg=White |
+" \ hi! PmenuSbar   guibg=Orange |
+" \ hi! Pmenuthumb  guifg=White  |
+" \ hi! SignColor   guibg=Grey60 |
+" \ hi! SignColumn  guibg=LightGrey guifg=LightGrey
+
+set background=light
+colorscheme seashell
+let g:colorscheme = colors_name
+let g:bg = &background
+
+" plug: vimshell
+"autocmd BufEnter * if &buftype == '' | execute 'colorscheme ' . g:colorscheme | let &background=g:bg | else | colorscheme lucius | syntax on | endif
+
+"augroup InsertHook
+"  autocmd!
+"  hi! Cursor gui=NONE guibg=Violet
+"  hi! CursorIM gui=NONE guibg=#ff9900
+
+"  autocmd InsertEnter * hi Cursor gui=NONE guibg=#3399ff
+"  autocmd InsertLeave * hi CursorIM gui=NONE guibg=#ff9900
+"                     \| hi Cursor gui=NONE guibg=Violet
+"augroup END
+  
+" font
+if has('win32')
+  " for Windows
+  set guifont=M+1VM+IPAG_circle:h10:cDEFAULT
+  set linespace=1
+elseif has('mac')
+  set guifont=OsakaÅ|ìôïù:h14
+elseif has('xfontset')
+  " unix
+  set guifontset=a14,r14,k14
+endif
+
+if has('multi_byte_ime') || has('xim')
+  set iminsert=0 imsearch=0
+endif
+
+set mouse=a
+set nomousefocus
+set mousehide
+"
+if &guioptions =~# 'M'
+  let &guioptions = substitute(&guioptions, '[mT]', '', 'g')
+endif
+
+" printing font
+if has('printer')
+  if has('win32')
+    set printfont=M+1VM+IPAG_circle:h10:cDEFAULT
+  endif
+endif
+
