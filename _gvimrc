@@ -1,6 +1,6 @@
 " $HOME/.gvimrc
-" Last Change: 22-Feb-2010.
-" Maintainer:TaCahiro Yoshihara
+" Last Change: 26-Feb-2010.
+" Maintainer: TaCahiroy <tacahiroy<*DELETE-ME*>@gmail.com>
 
 set columns=90
 set lines=40
