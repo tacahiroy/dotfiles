@@ -1,6 +1,6 @@
 " Description: vim configuration file
 " Maintainer: tacahiroy <tacahiroy<*DELETE-ME*>@gmail.com>
-" Last Change: 26-Feb-2010.
+" Last Change: 10-Mar-2010.
 
 if exists('g:loaded_vimrc')
   finish
@@ -22,8 +22,13 @@ set verbose=0
 syntax enable
 filetype plugin indent on
 
-set encoding=cp932
-set termencoding=cp932
+if has('unix')
+    set encoding=utf-8
+    set termencoding=utf-8
+else
+    set encoding=cp932
+    set termencoding=cp932
+endif
 
 set ambiwidth=double
 set autoindent
@@ -39,7 +44,7 @@ set expandtab smarttab
 set fileencodings=ucs-bom,utf-8,unicode,utf-16,default,ujis,cp932
 set fileformats=dos,unix,mac
 set hidden
-set history=5000
+set history=3000
 set hlsearch
 set ignorecase
 set incsearch
@@ -90,11 +95,6 @@ set matchpairs+=<:>
 "let g:loaded_matchparen = 0
 hi MatchParen term=reverse ctermbg=11 gui=NONE guifg=fg guibg=LightCyan
 
-" * command {{{
-command! -nargs=1 -complete=buffer NTab :999tab sbuffer <args>
-command! Big wincmd _ | wincmd |
-" }}}
-
 
 " * map "{{{
 cnoremap <C-p> <Up>
@@ -110,12 +110,17 @@ nnoremap k gk
 nnoremap vv <C-v>
 nnoremap <C-]> <C-]>zz
 nnoremap <C-t> <C-t>zz
-nnoremap <silent> <Space>bn :bnext<Cr>
-nnoremap <silent> <Space>bp :bprevious<Cr>
+nnoremap <silent> <Space>n :bnext<Cr>
+nnoremap <silent> <Space>N :bprevious<Cr>
 nnoremap <silent> sn :tabnext<Cr>
 nnoremap <silent> sp :tabprevious<Cr>
 
 nnoremap <silent> <Space>o :copen<Cr>
+
+if has('win32') || has('win64')
+  nnoremap <silent> <Space>e :<C-u>silent execute ":!start explorer \"" . g:convPathSep(expand("%:p:h"), "dos") . "\""<Cr>
+  nnoremap <silent> <Space>E :<C-u>silent execute ":!start cmd /k cd \"" . g:convPathSep(expand("%:p:h"), "dos") . "\""<Cr>
+endif
 
 " inspired by vimrc.ujihisa
 nnoremap <Space>w :w<Cr>
@@ -273,8 +278,8 @@ let g:NeoComplCache_MinKeywordLength = 2
 let g:NeoComplCache_MinSyntaxLength = 2 
 let g:NeoComplCache_DictionaryFileTypeLists = {
     \ 'default':  $DOTVIM.'/dict/gene.txt',
-    \ 'sql':      $DOTVIM.'/dict/nefoap.dict',
-    \ 'vbnet':    $DOTVIM.'/dict/nefoap.dict',
+    \ 'sql':      $DOTVIM.'/dict/n.dict',
+    \ 'vbnet':    $DOTVIM.'/dict/n.dict',
     \ }
 let g:NeoComplCache_PluginCompletionLength = { 
   \ 'snipMate_complete':  1,
@@ -313,6 +318,9 @@ let g:fuf_keyOpenSplit = '<S-Return>'
 let g:fuf_keyOpenVsplit = '<C-Return>'
 let g:fuf_abbrevMap = {}
 let g:fuf_mrufile_maxItem = 100
+let g:fuf_file_exclude = '\v\~$|\.(o|exe|bak|swp|sln|suo|scc|bak)$' .
+                       \ '|(^|[/\\])(\.hg|\.git|\.bzr|bin|build)($|[/\\])' .
+                       \ '|(^AssemblyInfo.vb$)'
 
 nnoremap <silent> <Space>fd :FufDir<Cr>
 nnoremap <silent> <Space>ff :FufFile<Cr>
@@ -400,7 +408,7 @@ function! g:convPathSep(path, style)
   return substitute(a:path, styles[a:style][0], styles[a:style][1], 'g')
 endfunction
 
-function! s:previewTagCasual(w)
+function! s:previewTagLight(w)
   let t = taglist('^'.a:w.'$')
   let current = expand('%:t')
 
@@ -414,7 +422,7 @@ function! s:previewTagCasual(w)
     echohl Function | echomsg substitute(substitute(item.cmd,"/^[\t ]*",'',''),"[\t ]*$/",'','') | echohl None
   endfor
 endfunction
-nnoremap <silent> ,ta :call <SID>previewTagCasual(expand('<cword>'))<Cr>
+nnoremap <silent> ,ta :call <SID>previewTagLight(expand('<cword>'))<Cr>
 
 if executable('ruby') "{{{
   " RubyInstantExec
@@ -464,13 +472,19 @@ if has('multi_byte_ime') || has('xim')
   imap <silent> <Esc> <Esc>:<C-u>set iminsert=0<Cr>
 endif
 
+
+" * command {{{
+command! -nargs=1 -complete=buffer NTab :999tab sbuffer <args>
+command! Big wincmd _ | wincmd |
+
 if ! exists(':DiffOrig')
   command! DiffOrig
         \ vnew | setlocal buftype=nofile | read# | 0d_ | diffthis | wincmd p | diffthis
 endif
 
-command! Dioff  :windo diffoff
-command! Dithis :windo diffthis
+command! -nargs=0 Dioff  :windo diffoff
+command! -nargs=0 Dithis :windo diffthis
+" }}}
 
 if filereadable(expand('~/.vimrc.mine'))
   source ~/.vimrc.mine
