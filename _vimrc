@@ -1,6 +1,6 @@
 " Description: vim configuration file
 " Maintainer: tacahiroy <tacahiroy<*DELETE-ME*>@gmail.com>
-" Last Change: 10-Mar-2010.
+" Last Change: 16-Mar-2010.
 
 if exists('g:loaded_vimrc')
   finish
@@ -318,9 +318,9 @@ let g:fuf_keyOpenSplit = '<S-Return>'
 let g:fuf_keyOpenVsplit = '<C-Return>'
 let g:fuf_abbrevMap = {}
 let g:fuf_mrufile_maxItem = 100
-let g:fuf_file_exclude = '\v\~$|\.(o|exe|bak|swp|sln|suo|scc|bak)$' .
+let g:fuf_file_exclude = '\v\~$|\.(o|exe|bak|swp|sln|suo|scc|bak|resx|vspscc)$' .
                        \ '|(^|[/\\])(\.hg|\.git|\.bzr|bin|build)($|[/\\])' .
-                       \ '|(^AssemblyInfo.vb$)'
+                       \ '|^((AssemblyInfo\.vb)|(Global\.asax.*)|(tags))$'
 
 nnoremap <silent> <Space>fd :FufDir<Cr>
 nnoremap <silent> <Space>ff :FufFile<Cr>
