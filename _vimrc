@@ -1,6 +1,6 @@
 " Description: vim configuration file
-" Maintainer: tacahiroy <tacahiroy<*DELETE-ME*>@gmail.com>
-" Last Change: 16-Mar-2010.
+" Maintainer: TaCahiroy <tacahiroy<*DELETE-ME*>@gmail.com>
+" Last Change: 23-Mar-2010.
 
 if exists('g:loaded_vimrc')
   finish
@@ -23,11 +23,11 @@ syntax enable
 filetype plugin indent on
 
 if has('unix')
-    set encoding=utf-8
-    set termencoding=utf-8
+  set encoding=utf-8
+  set termencoding=utf-8
 else
-    set encoding=cp932
-    set termencoding=cp932
+  set encoding=cp932
+  set termencoding=cp932
 endif
 
 set ambiwidth=double
@@ -84,9 +84,11 @@ let &formatoptions .= 'mM'
 let &formatoptions = substitute(&formatoptions, '[or]', '', 'g')
 
 " [#bufnr]filename [modified?][enc:ff][filetype]
+" Monster Method Information
 let g:lside = "[#%n]%<%f %m%r%h%w"
 let g:lside .= "%#FileTypeOnStatusLine#%y%*"
-let g:lside .= "%{'['.(&l:fileencoding !='' ? &l:fileencoding : &encoding).':'.&fileformat.']'}"
+let g:lside .= "%{'['.(&l:fileencoding != '' ? &l:fileencoding : &encoding).':'.&fileformat.']'}"
+let g:lside .= "%{exists('b:mmi.name') && 0<len(b:mmi.name) ? ' -- '.b:mmi.name.'('.b:mmi.lines.'L)' : ''}"
 let g:rside = "%=%-16(\ %l/%LL,%vC\ %)%P"
 
 let &statusline = g:lside . g:rside
@@ -200,7 +202,6 @@ augroup MySomething
 augroup END
 
 autocmd FileType qf,help nnoremap <buffer> <silent> q :quit<Cr>
-autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
 autocmd FileType javascript* setlocal omnifunc=javascriptcomplete#CompleteJS
 autocmd FileType ruby,rspec let &path .= "," . g:convPathSep($RUBYLIB, 'unix')
 " MS Excel
@@ -274,14 +275,16 @@ let g:NeoComplCache_EnableCamelCaseCompletion = 1
 let g:NeoComplCache_EnableUnderbarCompletion = 1
 let g:NeoComplCache_CachingDisablePattern = '\(\.vimprojects\|\.aspx\)'
 let g:NeoComplCache_EnableQuickMatch = 0
-let g:NeoComplCache_MinKeywordLength = 2 
-let g:NeoComplCache_MinSyntaxLength = 2 
+let g:NeoComplCache_MinKeywordLength = 2
+let g:NeoComplCache_MinSyntaxLength = 2
 let g:NeoComplCache_DictionaryFileTypeLists = {
     \ 'default':  $DOTVIM.'/dict/gene.txt',
+    \ 'rb':       $DOTVIM.'/dict/n.dict',
     \ 'sql':      $DOTVIM.'/dict/n.dict',
     \ 'vbnet':    $DOTVIM.'/dict/n.dict',
+    \ 'vb':       $DOTVIM.'/dict/n.dict',
     \ }
-let g:NeoComplCache_PluginCompletionLength = { 
+let g:NeoComplCache_PluginCompletionLength = {
   \ 'snipMate_complete':  1,
   \ 'buffer_complete':    1,
   \ 'include_complete':   2,
@@ -390,7 +393,8 @@ augroup END
 let g:prd_fontList  = 'M+1VM+IPAG_circle:h10:cDEFAULT'
 let g:prd_fontList .= ',M+2VM+IPAG_circle:h10:cDEFAULT'
 let g:prd_fontList .= ',VL_ƒSƒVƒbƒN:h10:cDEFAULT'
-let g:prd_fontList .= ',UmePlus_Gothic:h10:cDEFAULT'
+let g:prd_fontList .= ',TakaoƒSƒVƒbƒN:h10:cDEFAULT'
+let g:prd_fontList .= ',Takao–¾’©:h10:cDEFAULT'
 let g:prd_fontList .= ',‚l‚r_–¾’©:h10:cDEFAULT'
 "}}} plugins
 
