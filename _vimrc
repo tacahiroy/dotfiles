@@ -1,19 +1,21 @@
 " Description: vim configuration file
 " Maintainer: TaCahiroy <tacahiroy<*DELETE-ME*>@gmail.com>
-" Last Change: 23-Mar-2010.
+" Last Change: 16-Apr-2010.
+
+scriptencoding utf-8
 
 if exists('g:loaded_vimrc')
   finish
 endif
 let g:loaded_vimrc = 1
 
-if isdirectory($HOME.'/vimfiles')
-  let $DOTVIM = $HOME.'/vimfiles'
+if isdirectory($HOME . '/vimfiles')
+  let $DOTVIM = $HOME . '/vimfiles'
 else
-  let $DOTVIM = $HOME.'/.vim'
+  let $DOTVIM = $HOME . '/.vim'
 endif
 
-" remove all autocommands for the current group
+" remove all auto commands for the current group
 autocmd!
 
 set nocompatible
@@ -22,13 +24,9 @@ set verbose=0
 syntax enable
 filetype plugin indent on
 
-if has('unix')
-  set encoding=utf-8
-  set termencoding=utf-8
-else
-  set encoding=cp932
-  set termencoding=cp932
-endif
+language en
+set encoding=utf-8
+set termencoding=utf-8
 
 set ambiwidth=double
 set autoindent
@@ -41,8 +39,9 @@ set backupskip+=*.bac,COMMIT_EDITMSG,hg-editor-*.txt,svn-commit.tmp,svn-commit.[
 set cmdheight=2
 set completefunc=
 set expandtab smarttab
-set fileencodings=ucs-bom,utf-8,unicode,utf-16,default,ujis,cp932
+set fileencodings=ucs-bom,iso-2022-jp,euc-jp,cp932
 set fileformats=dos,unix,mac
+set helplang=ja,en
 set hidden
 set history=3000
 set hlsearch
@@ -52,7 +51,7 @@ set lazyredraw
 set laststatus=2
 set linespace=1 linebreak
 set listchars=tab:>-,trail:-,extends:>,precedes:<,eol:<
-set nolist
+set modeline
 set number ruler
 set previewheight=8
 set shellslash
@@ -60,6 +59,7 @@ set shiftround
 set showbreak=\ \ \ \ \ 
 set showmatch matchtime=1
 set showtabline=1
+set splitright
 set nosmartcase
 set smartindent
 set swapfile
@@ -75,19 +75,24 @@ set viminfo='64,<100,s10,n~/.viminfo
 set virtualedit=block
 set wildmenu
 set wildmode=list:longest
+
+set t_Co=256
+set nocindent
+set noequalalways
+set nolist
+set nosplitbelow
 set nowrapscan
 
 set guioptions+=M
 
-" formatoptions
 let &formatoptions .= 'mM'
 let &formatoptions = substitute(&formatoptions, '[or]', '', 'g')
 
 " [#bufnr]filename [modified?][enc:ff][filetype]
-" Monster Method Information
 let g:lside = "[#%n]%<%f %m%r%h%w"
 let g:lside .= "%#FileTypeOnStatusLine#%y%*"
 let g:lside .= "%{'['.(&l:fileencoding != '' ? &l:fileencoding : &encoding).':'.&fileformat.']'}"
+" monstermethod.vim support
 let g:lside .= "%{exists('b:mmi.name') && 0<len(b:mmi.name) ? ' -- '.b:mmi.name.'('.b:mmi.lines.'L)' : ''}"
 let g:rside = "%=%-16(\ %l/%LL,%vC\ %)%P"
 
@@ -95,7 +100,7 @@ let &statusline = g:lside . g:rside
 
 set matchpairs+=<:>
 "let g:loaded_matchparen = 0
-hi MatchParen term=reverse ctermbg=11 gui=NONE guifg=fg guibg=LightCyan
+hi MatchParen term=reverse gui=NONE guifg=fg guibg=LightRed
 
 
 " * map "{{{
@@ -173,8 +178,8 @@ endif
 vmap ,s <Plug>Vsurround
 vmap ,S <Plug>VSurround
 
-let g:surround_{char2nr("k")} = "u\rv"
-let g:surround_{char2nr("K")} = "w\rx"
+let g:surround_{char2nr('k')} = "ã€Œ\rã€"
+let g:surround_{char2nr('K')} = "ã€\rã€"
 let g:surround_indent = 0
 let g:xml_tag_completion_map = ''
 "}}}
@@ -191,12 +196,12 @@ augroup MySomething
   " vimball
   autocmd BufRead *.vba source $DOTVIM/plugin/dotvi/vimballPlugin.vi
 
-  autocmd BufEnter * execute ':lcd '.escape(expand('%:p:h'), ' ')
+  autocmd BufEnter * execute ':lcd ' . escape(expand('%:p:h'), ' ')
 
   autocmd BufReadPre * let g:updtime = &l:updatetime
   autocmd BufLeave,BufWinLeave * if exists('g:updtime') | let &l:updatetime = g:updtime | endif
 
-  autocmd BufReadPost * if ! search("\\S", 'cnw') | let &l:fileencoding = &encoding | endif
+  autocmd BufReadPost * if ! search('\S', 'cnw') | let &l:fileencoding = &encoding | endif
   " restore cursor position
   autocmd BufReadPost * if line("'\"") | execute "normal '\"" | endif
 augroup END
@@ -205,7 +210,9 @@ autocmd FileType qf,help nnoremap <buffer> <silent> q :quit<Cr>
 autocmd FileType javascript* setlocal omnifunc=javascriptcomplete#CompleteJS
 autocmd FileType ruby,rspec let &path .= "," . g:convPathSep($RUBYLIB, 'unix')
 " MS Excel
-autocmd FileType excel setlocal tabstop=10 list
+autocmd FileType excel
+  \  setlocal noexpandtab tabstop=10 shiftwidth=10 softtabstop=10 list
+  \| let &listchars = substitute(&listchars, 'tab:\zs>\ze-', '\|', '')
 
 " inspired by vimrc.ujihisa
 augroup MyIRB
@@ -246,7 +253,7 @@ augroup SQL
 
   let g:sqlutil_align_comma = 1
   let g:sqlutil_align_where = 1
-  let g:sqlutil_keyword_case = "\\U"
+  let g:sqlutil_keyword_case = '\U'
   let g:dbext_default_type = 'ORA'
 augroup END
 
@@ -263,17 +270,17 @@ augroup END
 " plug: tacahiroy
 let g:tacahiroy_maintainer = 'Yoshihara'
 
-" plug: Syntastic
-" http://github.com/scrooloose/syntastic/
-let g:syntastic_enable_signs = 1
-let g:syntastic_auto_loc_list = 1
+"" plug: Syntastic
+"" http://github.com/scrooloose/syntastic/
+"let g:syntastic_enable_signs = 1
+"let g:syntastic_auto_loc_list = 1
 
 " plug: NeocomplCache {{{
 let g:NeoComplCache_EnableAtStartup = 1
 let g:NeoComplCache_TagsAutoUpdate = 1
-let g:NeoComplCache_EnableCamelCaseCompletion = 1
+"let g:NeoComplCache_EnableCamelCaseCompletion = 1
 let g:NeoComplCache_EnableUnderbarCompletion = 1
-let g:NeoComplCache_CachingDisablePattern = '\(\.vimprojects\|\.aspx\)'
+let g:NeoComplCache_CachingDisablePattern = '\(\.vimprojects\|\[Scratch\]\|\.vba$\|\.aspx$\)'
 let g:NeoComplCache_EnableQuickMatch = 0
 let g:NeoComplCache_MinKeywordLength = 2
 let g:NeoComplCache_MinSyntaxLength = 2
@@ -295,6 +302,7 @@ let g:NeoComplCache_PluginCompletionLength = {
   \ }
 let g:NeoComplCache_IncludePath = {
   \ 'ruby': '.,D:/usr/ruby2',
+  \ 'vbnet': '.',
   \ }
 let g:NeoComplCache_IncludeExpr = {
   \ 'ruby': 'substitute(v:fname,''\\.'',''/'',''g'')',
@@ -303,11 +311,10 @@ let g:NeoComplCache_IncludePattern = {
   \ 'ruby': '^require',
   \ }
 
-"imap <silent> <C-l> <Plug>(neocomplcache_snippets_expand)
-"smap <silent> <C-l> <Plug>(neocomplcache_snippets_expand)
 inoremap <expr> <C-h> pumvisible() ? "\<C-y>\<C-h>" : "\<C-h>"
-inoremap <expr> <silent> <C-g> neocomplcache#undo_completion()
+"inoremap <expr> <silent> <C-g> neocomplcache#undo_completion()
 inoremap <expr> <C-l> &filetype == 'vim' ? "\<C-x><C-v><C-p>" : neocomplcache#manual_omni_complete()
+"inoremap <expr> <C-n> pumvisible() ? "\<C-n>" : neocomplcache#manual_keyword_complete()
 " }}}
 
 " plug: NERD Commenter
@@ -340,15 +347,15 @@ let g:Align_xstrlen = 0
 " plug: QFixHowm {{{
 augroup QFixHowm
   autocmd!
-  "HowmƒRƒ}ƒ“ƒhƒL[ƒ}ƒbƒv
-  let QFixHowm_Key = '<Space>'
-  "HowmƒRƒ}ƒ“ƒh‚Ì2ƒXƒgƒ[ƒN–ÚƒL[ƒ}ƒbƒv
-  let QFixHowm_KeyB = ''
-  "MRU‚ÌƒTƒ}ƒŠ[•\¦
+  "Howmã‚³ãƒãƒ³ãƒ‰ã‚­ãƒ¼ãƒãƒƒãƒ—
+  let QFixHowm_Key = ','
+  "Howmã‚³ãƒãƒ³ãƒ‰ã®2ã‚¹ãƒˆãƒ­ãƒ¼ã‚¯ç›®ã‚­ãƒ¼ãƒãƒƒãƒ—
+  let QFixHowm_KeyB = ','
+  "MRUã®ã‚µãƒãƒªãƒ¼è¡¨ç¤º
   let QFixHowm_MRU_SummaryMode = 0
-  " Ü‚è‚½‚½‚İ
+  " æŠ˜ã‚ŠãŸãŸã¿
   let QFixHowm_Folding = 0
-  " Ü‚è‚½‚½‚İƒpƒ^[ƒ“
+  " æŠ˜ã‚ŠãŸãŸã¿ãƒ‘ã‚¿ãƒ¼ãƒ³
   "let QFixHowm_FoldingPattern = '^\\s\\s[=.*[]'
   let QFixHowm_FoldingPattern = ''
 
@@ -358,10 +365,10 @@ augroup QFixHowm
   " close preview window after howm_memo opened
   let g:QFix_CloseOnJump = 1
 
-  "howm_dir‚Íƒtƒ@ƒCƒ‹‚ğ•Û‘¶‚µ‚½‚¢ƒfƒBƒŒƒNƒgƒŠ‚ğİ’èB
+  "howm_dirã¯ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ä¿å­˜ã—ãŸã„ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‚’è¨­å®šã€‚
   let howm_dir = 'D:/home/Administrator/howm'
   "let howm_filename = '%Y/%m/%Y-%m-%d-%H%M%S.howm'
-  "ˆê“úˆêƒtƒ@ƒCƒ‹‚Åg—p‚·‚é
+  "ä¸€æ—¥ä¸€ãƒ•ã‚¡ã‚¤ãƒ«ã§ä½¿ç”¨ã™ã‚‹
   let howm_filename = '%Y/%m/%Y-%m-%d-000000.howm'
   let howm_fileencoding = 'cp932'
   let howm_fileformat = 'dos'
@@ -377,7 +384,7 @@ augroup QFixHowm
 
   let MyGrep_ShellEncoding = 'cp932'
 
-  "ƒuƒ‰ƒEƒU‚Ìw’è
+  "ãƒ–ãƒ©ã‚¦ã‚¶ã®æŒ‡å®š
   if has('win32')
     " Internet explorer
     "let MyOpenURI_cmd = '!start "C:/Program Files/Internet Explorer/iexplore.exe" %s'
@@ -392,18 +399,18 @@ augroup END
 " plug: prtdialog
 let g:prd_fontList  = 'M+1VM+IPAG_circle:h10:cDEFAULT'
 let g:prd_fontList .= ',M+2VM+IPAG_circle:h10:cDEFAULT'
-let g:prd_fontList .= ',VL_ƒSƒVƒbƒN:h10:cDEFAULT'
-let g:prd_fontList .= ',TakaoƒSƒVƒbƒN:h10:cDEFAULT'
-let g:prd_fontList .= ',Takao–¾’©:h10:cDEFAULT'
-let g:prd_fontList .= ',‚l‚r_–¾’©:h10:cDEFAULT'
+let g:prd_fontList .= ',VL_ã‚´ã‚·ãƒƒã‚¯:h10:cDEFAULT'
+let g:prd_fontList .= ',Takaoã‚´ã‚·ãƒƒã‚¯:h10:cDEFAULT'
+let g:prd_fontList .= ',Takaoæ˜æœ:h10:cDEFAULT'
+let g:prd_fontList .= ',ï¼­ï¼³_æ˜æœ:h10:cDEFAULT'
 "}}} plugins
 
 
 " * functions "{{{
 " tag information show in command window
 function! g:convPathSep(path, style)
-  let styles = {'dos': ['/', "\\"],
-    \           'unix': ["\\", '/']}
+  let styles = {'dos': ['/', '\'],
+    \           'unix': ['\', '/']}
 
   if ! has_key(styles, a:style)
     return a:path
@@ -419,28 +426,32 @@ function! s:previewTagLight(w)
   for item in t
     " [filename] tag definition
     if -1 < stridx(item.filename, current)
-      echohl Search | echomsg printf('%-36s', '['.substitute(item.filename, "\\", '/', 'g').']') | echohl None
+      echohl Search | echomsg printf('%-36s', '[' . substitute(item.filename, '\', '/', 'g') . ']') | echohl None
     else
-      echomsg printf('%-36s', '['.substitute(item.filename, "\\", '/', 'g').']')
+      echomsg printf('%-36s', '[' . substitute(substitute(item.filename, '\', '/', 'g'), '\s\s*$', '', '') . ']')
     endif
-    echohl Function | echomsg substitute(substitute(item.cmd,"/^[\t ]*",'',''),"[\t ]*$/",'','') | echohl None
+    echohl Function | echomsg substitute(substitute(item.cmd, "/^[\t ]*", '', ''), "[\t ]*$/", '', '') | echohl None
   endfor
 endfunction
 nnoremap <silent> ,ta :call <SID>previewTagLight(expand('<cword>'))<Cr>
 
-if executable('ruby') "{{{
+if executable('ruby') "{{{ RubyInstantExec
   " RubyInstantExec
-  " preview interpreter's output(Tip #1244) improbed
+  " preview interpreter's output(Tip #1244) improved
   function! s:RubyInstantExec() range
     if &filetype !=# 'ruby'
-      echomsg 'please execute command, ":setfiletype ruby<Cr>".'
+      echomsg 'filetype is not "ruby".'
       return
     endif
 
-    " recycle buffer
-    if !exists('g:src')
+    if ! exists('g:src')
       let g:src = 'vimrie.tmp'
     endif
+
+    if bufexists(g:src)
+      bdelete! g:src
+    endif
+
     let buf_name = 'RubyInstantExec Result'
 
     " put current buffer's content in a temp file
@@ -457,15 +468,15 @@ if executable('ruby') "{{{
     setlocal bufhidden=delete
 
     " replace current buffer with ruby's output
-    silent execute printf(':%%!ruby %s %s %s 2>&1', g:rie.ruby_opts, g:src, g:rie.args)
+    silent execute printf(':%%!ruby %s 2>&1', g:src)
     " change back to the source buffer
     wincmd p
 
     call delete(g:src)
   endfunction
 
+  nmap <silent> <Space>r :1,$call <SID>RubyInstantExec()<Cr>
   vmap <silent> <Space>r :call <SID>RubyInstantExec()<Cr>
-  nmap <silent> <Space>r mzggVG<Space>r`z:delm z<Cr>
 endif
 "}}}
 "}}}
@@ -477,7 +488,7 @@ if has('multi_byte_ime') || has('xim')
 endif
 
 
-" * command {{{
+" * commands {{{
 command! -nargs=1 -complete=buffer NTab :999tab sbuffer <args>
 command! Big wincmd _ | wincmd |
 
@@ -494,7 +505,7 @@ if filereadable(expand('~/.vimrc.mine'))
   source ~/.vimrc.mine
 endif
 
-if filereadable($DOTVIM.'/ftplugin/tacahiroy/tacahiroy.vim')
+if filereadable($DOTVIM . '/ftplugin/tacahiroy/tacahiroy.vim')
   source $DOTVIM/ftplugin/tacahiroy/tacahiroy.vim
 endif
 
