@@ -1,6 +1,6 @@
 " Description: vim configuration file
 " Maintainer: TaCahiroy <tacahiroy<*DELETE-ME*>@gmail.com>
-" Last Change: 16-Apr-2010.
+" Last Change: 19-Apr-2010.
 
 scriptencoding utf-8
 
@@ -24,9 +24,13 @@ set verbose=0
 syntax enable
 filetype plugin indent on
 
-language en
-set encoding=utf-8
-set termencoding=utf-8
+if has('unix')
+  set encoding=utf-8
+  set termencoding=utf-8
+else
+  set encoding=cp932
+  set termencoding=cp932
+endif
 
 set ambiwidth=double
 set autoindent
@@ -39,7 +43,7 @@ set backupskip+=*.bac,COMMIT_EDITMSG,hg-editor-*.txt,svn-commit.tmp,svn-commit.[
 set cmdheight=2
 set completefunc=
 set expandtab smarttab
-set fileencodings=ucs-bom,iso-2022-jp,euc-jp,cp932
+set fileencodings=ucs-bom,utf-8,iso-2022-jp,euc-jp,cp932
 set fileformats=dos,unix,mac
 set helplang=ja,en
 set hidden
