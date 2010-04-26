@@ -1,22 +1,15 @@
 " Description: vim configuration file
 " Maintainer: TaCahiroy <tacahiroy<*DELETE-ME*>@gmail.com>
-" Last Change: 19-Apr-2010.
+" Last Change: 26-Apr-2010.
 
 scriptencoding utf-8
-
-if exists('g:loaded_vimrc')
-  finish
-endif
-let g:loaded_vimrc = 1
+set cpo&vim
 
 if isdirectory($HOME . '/vimfiles')
   let $DOTVIM = $HOME . '/vimfiles'
 else
   let $DOTVIM = $HOME . '/.vim'
 endif
-
-" remove all auto commands for the current group
-autocmd!
 
 set nocompatible
 set verbose=0
@@ -32,8 +25,14 @@ else
   set termencoding=cp932
 endif
 
+
+" * options {{{
+set all&
+
 set ambiwidth=double
 set autoindent
+set nocindent
+set nosmartindent
 set autoread
 set backspace=indent,eol,start
 set backup
@@ -51,21 +50,23 @@ set history=3000
 set hlsearch
 set ignorecase
 set incsearch
-set lazyredraw
-set laststatus=2
-set linespace=1 linebreak
+set linebreak
+set linespace=1
 set listchars=tab:>-,trail:-,extends:>,precedes:<,eol:<
+set laststatus=2
+set lazyredraw
 set modeline
-set number ruler
+set number
 set previewheight=8
+set pumheight=24
 set shellslash
 set shiftround
 set showbreak=\ \ \ \ \ 
+set showfulltag
 set showmatch matchtime=1
 set showtabline=1
 set splitright
 set nosmartcase
-set smartindent
 set swapfile
 set directory=$DOTVIM/swaps
 set switchbuf=useopen,usetab
@@ -77,11 +78,11 @@ set titlelen=255
 set tabstop=2 shiftwidth=2 softtabstop=2
 set viminfo='64,<100,s10,n~/.viminfo
 set virtualedit=block
+set wildignore=*.exe
 set wildmenu
 set wildmode=list:longest
 
 set t_Co=256
-set nocindent
 set noequalalways
 set nolist
 set nosplitbelow
@@ -92,19 +93,23 @@ set guioptions+=M
 let &formatoptions .= 'mM'
 let &formatoptions = substitute(&formatoptions, '[or]', '', 'g')
 
+" statusline {{{
 " [#bufnr]filename [modified?][enc:ff][filetype]
-let g:lside = "[#%n]%<%f %m%r%h%w"
-let g:lside .= "%#FileTypeOnStatusLine#%y%*"
-let g:lside .= "%{'['.(&l:fileencoding != '' ? &l:fileencoding : &encoding).':'.&fileformat.']'}"
+let g:lside = "[#%n]%<%f %m%r%h%w%y"
+let g:lside .= "["
+let g:lside .= "%{(&l:fileencoding != '' ? &l:fileencoding : &encoding).':'.&fileformat}"
+let g:lside .= "]"
 " monstermethod.vim support
 let g:lside .= "%{exists('b:mmi.name') && 0<len(b:mmi.name) ? ' -- '.b:mmi.name.'('.b:mmi.lines.'L)' : ''}"
-let g:rside = "%=%-16(\ %l/%LL,%vC\ %)%P"
+let g:rside = "%=%-16(\ %l/%LL,%c\ %)%P"
 
 let &statusline = g:lside . g:rside
+" }}}
 
 set matchpairs+=<:>
 "let g:loaded_matchparen = 0
-hi MatchParen term=reverse gui=NONE guifg=fg guibg=LightRed
+highlight MatchParen term=reverse ctermbg=LightRed gui=NONE guifg=fg guibg=LightRed
+" }}}
 
 
 " * map "{{{
@@ -210,6 +215,13 @@ augroup MySomething
   autocmd BufReadPost * if line("'\"") | execute "normal '\"" | endif
 augroup END
 
+" http://vim-users.jp/2009/11/hack96/ {{{
+autocmd FileType *
+\   if &l:omnifunc == ''
+\ |   setlocal omnifunc=syntaxcomplete#Complete
+\ | endif
+" }}}
+
 autocmd FileType qf,help nnoremap <buffer> <silent> q :quit<Cr>
 autocmd FileType javascript* setlocal omnifunc=javascriptcomplete#CompleteJS
 autocmd FileType ruby,rspec let &path .= "," . g:convPathSep($RUBYLIB, 'unix')
@@ -228,9 +240,9 @@ augroup END
 augroup Rspec
   autocmd!
   autocmd FileType rspec
-    \  compiler rspec
-    \| setlocal syntax=ruby
-    \| setlocal omnifunc=rubycomplete#Complete
+  \   compiler rspec
+  \ | setlocal syntax=ruby
+  \ | setlocal omnifunc=rubycomplete#Complete
 augroup END
 
 autocmd FileType vim,snippet setlocal tabstop=2 shiftwidth=2 softtabstop=2
@@ -284,7 +296,7 @@ let g:NeoComplCache_EnableAtStartup = 1
 let g:NeoComplCache_TagsAutoUpdate = 1
 "let g:NeoComplCache_EnableCamelCaseCompletion = 1
 let g:NeoComplCache_EnableUnderbarCompletion = 1
-let g:NeoComplCache_CachingDisablePattern = '\(\.vimprojects\|\[Scratch\]\|\.vba$\|\.aspx$\)'
+let g:NeoComplCache_CachingDisablePattern = '\(\.vimprojects\|\[Scratch\]\|\.vba\|\.aspx\)'
 let g:NeoComplCache_EnableQuickMatch = 0
 let g:NeoComplCache_MinKeywordLength = 2
 let g:NeoComplCache_MinSyntaxLength = 2
@@ -324,7 +336,7 @@ inoremap <expr> <C-l> &filetype == 'vim' ? "\<C-x><C-v><C-p>" : neocomplcache#ma
 " plug: NERD Commenter
 let g:NERDMenuMode = 0
 
-" plug: ns9's fuf "{{{
+" plug: ns9's fuzzyfinder "{{{
 let g:fuf_modesDisable = ['mrucmd']
 let g:fuf_ignoreCase = 1
 let g:fuf_keyOpen = '<Return>'
@@ -333,15 +345,13 @@ let g:fuf_keyOpenVsplit = '<C-Return>'
 let g:fuf_abbrevMap = {}
 let g:fuf_mrufile_maxItem = 100
 let g:fuf_file_exclude = '\v\~$|\.(o|exe|bak|swp|sln|suo|scc|bak|resx|vspscc)$' .
-                       \ '|(^|[/\\])(\.hg|\.git|\.bzr|bin|build)($|[/\\])' .
+                       \ '|(^|[/\\])(\.hg|\.git|\.bzr|[\.|_]svn|bin|build)($|[/\\])' .
                        \ '|^((AssemblyInfo\.vb)|(Global\.asax.*)|(tags))$'
 
-nnoremap <silent> <Space>fd :FufDir<Cr>
 nnoremap <silent> <Space>ff :FufFile<Cr>
 nnoremap <silent> <Space>fb :FufBuffer<Cr>
 nnoremap <silent> <Space>fa :FufBookmark<Cr>
 nnoremap <silent> <Space>fm :FufMruFile<Cr>
-nnoremap <silent> <Space><C-]> :FufTagWithCursorWord!<Cr>
 "}}}
 
 " plug: Align
@@ -515,6 +525,6 @@ endif
 
 set runtimepath+=$HOME/vimfiles/sandbox
 
+" __END__ {{{
 " vim: ts=2 sts=2 sw=2 fdm=marker
-" __END__
 
