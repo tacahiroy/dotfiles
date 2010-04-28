@@ -213,6 +213,9 @@ nnoremap <Space>q :q<Cr>
 nnoremap <Space>W :w!<Cr>
 nnoremap <Space>Q :q!<Cr>
 
+nnoremap <Space>j <C-d>
+nnoremap <Space>k <C-u>
+
 nnoremap <silent> <Space>_ :<C-u>edit ~/.vimrc<Cr>
 
 nnoremap <silent> <Esc> <Esc>:<C-u>silent nohlsearch<Cr>
@@ -223,12 +226,12 @@ nnoremap <silent> sj <C-w>j
 nnoremap <MiddleMouse> <Nop>
 nnoremap <2-MiddleMouse> <Nop>
 
-" tag preview
+nnoremap <Space>utf8 :<C-u>e ++enc=utf-8<Cr>
+nnoremap <Space>cp932 :<C-u>e ++enc=cp932<Cr>
+
+" preview tag
 nnoremap <silent> <Space>x <C-w>}
 nnoremap <silent> <Space>X :pclose<Cr>
-
-" plug: filtering.vim
-"nnoremap <Space>f :call Gather(expand('<cword>'), 0)<CR>:echo<CR>
 
 " cancel completion
 imap <expr> <silent> <S-Esc> pumvisible() ? "\<C-e>" : "\<Esc>:<C-u>setlocal iminsert=0\<Cr>"
@@ -238,10 +241,7 @@ inoremap <silent> ,dd <C-R>=exists('b:dd') ? b:dd : ''<Cr>
 inoremap <silent> ,dt <C-R>=strftime('%Y.%m.%d')<Cr>
 inoremap <silent> ,ti <C-R>=strftime('%H:%M')<Cr>
 inoremap <silent> ,fn <C-R>=expand('%')<Cr>
-inoremap <M-f> <Right>
-inoremap <M-b> <Left>
-inoremap <M-a> <Home>
-inoremap <M-e> <End>
+inoremap jj <Esc>
 
 " selected text search
 vnoremap * y/<C-R>"<Cr>
