@@ -1,14 +1,14 @@
-" Description: vim configuration file
-" Maintainer: TaCahiroy <tacahiroy<*DELETE-ME*>@gmail.com>
-" Last Change: 26-Apr-2010.
+" $HOME/.vimrc
+" Maintainer: TaCahiroy <tacahiroy*DELETE-ME*@gmail.com>
+" Last Change: 28-Apr-2010.
 
 scriptencoding utf-8
 set cpo&vim
 
-if isdirectory($HOME . '/vimfiles')
-  let $DOTVIM = $HOME . '/vimfiles'
-else
+if isdirectory($HOME . '/.vim')
   let $DOTVIM = $HOME . '/.vim'
+else
+  let $DOTVIM = $HOME . '/vimfiles'
 endif
 
 set nocompatible
@@ -27,8 +27,6 @@ endif
 
 
 " * options {{{
-set all&
-
 set ambiwidth=double
 set autoindent
 set nocindent
@@ -59,6 +57,7 @@ set modeline
 set number
 set previewheight=8
 set pumheight=24
+set scroll=0
 set shellslash
 set shiftround
 set showbreak=\ \ \ \ \ 
@@ -67,8 +66,7 @@ set showmatch matchtime=1
 set showtabline=1
 set splitright
 set nosmartcase
-set swapfile
-set directory=$DOTVIM/swaps
+set swapfile directory=$DOTVIM/swaps
 set switchbuf=useopen,usetab
 set synmaxcol=300
 set tags=./tags,tags;
