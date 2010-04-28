@@ -112,6 +112,77 @@ highlight MatchParen term=reverse ctermbg=LightRed gui=NONE guifg=fg guibg=Light
 " }}}
 
 
+" * functions "{{{
+" convert path separator
+" unix <-> dos
+function! s:cps(path, style)
+  let styles = {'dos':  ['/', '\'],
+    \           'unix': ['\', '/']}
+
+  if ! has_key(styles, a:style)
+    return a:path
+  endif
+
+  return substitute(a:path, styles[a:style][0], styles[a:style][1], 'g')
+endfunction
+
+" tag information show in command window
+function! s:previewTagLight(w)
+  let t = taglist('^'.a:w.'$')
+  let current = expand('%:t')
+
+  for item in t
+    " [filename] tag definition
+    if -1 < stridx(item.filename, current)
+      echohl Search | echomsg printf('%-36s', '[' . s:cps(item.filename, 'unix') . ']') | echohl None
+    else
+      echomsg printf('%-36s', '[' . substitute(s:cps(item.filename, 'unix'), '\s\s*$', '', '') . ']')
+    endif
+endfunction
+nnoremap <silent> ,ta :call <SID>previewTagLight(expand('<cword>'))<Cr>
+
+if executable('ruby') "{{{ RubyInstantExec
+  " RubyInstantExec
+  " preview interpreter's output(Tip #1244) improved
+  function! s:RubyInstantExec() range
+    if &filetype !=# 'ruby'
+      echomsg 'filetype is not "ruby".'
+      return
+    endif
+
+    if ! exists('g:src')
+      let g:src = 'vimrie.tmp'
+    endif
+    let buf_name = 'RubyInstantExec Result'
+
+    " put current buffer's content in a temp file
+    silent execute printf(':%d,%dw! >> %s', a:firstline, a:lastline, g:src)
+
+    " open the preview window
+    silent execute ':pedit! ' . escape(buf_name, '\ ')
+    " change to preview window
+    wincmd P
+
+    setlocal buftype=nofile
+    setlocal noswapfile
+    setlocal syntax=none
+    setlocal bufhidden=delete
+
+    " replace current buffer with ruby's output
+    silent execute printf(':%%!ruby %s 2>&1', g:src)
+    " change back to the source buffer
+    wincmd p
+
+    call delete(g:src)
+  endfunction
+
+  nmap <silent> <Space>r :call <SID>RubyInstantExec()<Cr>
+  vmap <silent> <Space>r :call <SID>RubyInstantExec()<Cr>
+endif
+"}}}
+"}}}
+
+
 " * map "{{{
 cnoremap <C-p> <Up>
 cnoremap <C-n> <Down>
@@ -133,9 +204,9 @@ nnoremap <silent> sp :tabprevious<Cr>
 
 nnoremap <silent> <Space>o :copen<Cr>
 
-if has('win32') || has('win64')
-  nnoremap <silent> <Space>e :<C-u>silent execute ":!start explorer \"" . g:convPathSep(expand("%:p:h"), "dos") . "\""<Cr>
-  nnoremap <silent> <Space>E :<C-u>silent execute ":!start cmd /k cd \"" . g:convPathSep(expand("%:p:h"), "dos") . "\""<Cr>
+if has('win32')
+  nnoremap <silent> <Space>e :<C-u>silent execute ":!start explorer \"" . s:cps(expand("%:p:h"), "dos") . "\""<Cr>
+  nnoremap <silent> <Space>E :<C-u>silent execute ":!start cmd /k cd \"" . s:cps(expand("%:p:h"), "dos") . "\""<Cr>
 endif
 
 " inspired by vimrc.ujihisa
@@ -224,7 +295,7 @@ autocmd FileType *
 
 autocmd FileType qf,help nnoremap <buffer> <silent> q :quit<Cr>
 autocmd FileType javascript* setlocal omnifunc=javascriptcomplete#CompleteJS
-autocmd FileType ruby,rspec let &path .= "," . g:convPathSep($RUBYLIB, 'unix')
+autocmd FileType ruby,rspec let &path .= "," . s:cps($RUBYLIB, 'unix')
 " MS Excel
 autocmd FileType excel
   \  setlocal noexpandtab tabstop=10 shiftwidth=10 softtabstop=10 list
@@ -417,82 +488,6 @@ let g:prd_fontList .= ',VL_ゴシック:h10:cDEFAULT'
 let g:prd_fontList .= ',Takaoゴシック:h10:cDEFAULT'
 let g:prd_fontList .= ',Takao明朝:h10:cDEFAULT'
 let g:prd_fontList .= ',ＭＳ_明朝:h10:cDEFAULT'
-"}}} plugins
-
-
-" * functions "{{{
-" tag information show in command window
-function! g:convPathSep(path, style)
-  let styles = {'dos': ['/', '\'],
-    \           'unix': ['\', '/']}
-
-  if ! has_key(styles, a:style)
-    return a:path
-  endif
-
-  return substitute(a:path, styles[a:style][0], styles[a:style][1], 'g')
-endfunction
-
-function! s:previewTagLight(w)
-  let t = taglist('^'.a:w.'$')
-  let current = expand('%:t')
-
-  for item in t
-    " [filename] tag definition
-    if -1 < stridx(item.filename, current)
-      echohl Search | echomsg printf('%-36s', '[' . substitute(item.filename, '\', '/', 'g') . ']') | echohl None
-    else
-      echomsg printf('%-36s', '[' . substitute(substitute(item.filename, '\', '/', 'g'), '\s\s*$', '', '') . ']')
-    endif
-    echohl Function | echomsg substitute(substitute(item.cmd, "/^[\t ]*", '', ''), "[\t ]*$/", '', '') | echohl None
-  endfor
-endfunction
-nnoremap <silent> ,ta :call <SID>previewTagLight(expand('<cword>'))<Cr>
-
-if executable('ruby') "{{{ RubyInstantExec
-  " RubyInstantExec
-  " preview interpreter's output(Tip #1244) improved
-  function! s:RubyInstantExec() range
-    if &filetype !=# 'ruby'
-      echomsg 'filetype is not "ruby".'
-      return
-    endif
-
-    if ! exists('g:src')
-      let g:src = 'vimrie.tmp'
-    endif
-
-    if bufexists(g:src)
-      bdelete! g:src
-    endif
-
-    let buf_name = 'RubyInstantExec Result'
-
-    " put current buffer's content in a temp file
-    silent execute printf(': %d,%dw! >> %s', a:firstline, a:lastline, g:src)
-
-    " open the preview window
-    silent execute ':pedit! ' . escape(buf_name, "\\ ")
-    " change to preview window
-    wincmd P
-
-    setlocal buftype=nofile
-    setlocal noswapfile
-    setlocal syntax=none
-    setlocal bufhidden=delete
-
-    " replace current buffer with ruby's output
-    silent execute printf(':%%!ruby %s 2>&1', g:src)
-    " change back to the source buffer
-    wincmd p
-
-    call delete(g:src)
-  endfunction
-
-  nmap <silent> <Space>r :1,$call <SID>RubyInstantExec()<Cr>
-  vmap <silent> <Space>r :call <SID>RubyInstantExec()<Cr>
-endif
-"}}}
 "}}}
 
 
