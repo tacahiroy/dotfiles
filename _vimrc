@@ -297,7 +297,6 @@ autocmd FileType ruby,rspec let &path .= "," . s:cps($RUBYLIB, 'unix')
 " MS Excel
 autocmd FileType excel
   \  setlocal noexpandtab tabstop=10 shiftwidth=10 softtabstop=10 list
-  \| let &listchars = substitute(&listchars, 'tab:\zs>\ze-', '\|', '')
 
 " inspired by vimrc.ujihisa
 augroup MyIRB
