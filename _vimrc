@@ -468,8 +468,6 @@ augroup QFixHowm
 
   "ブラウザの指定
   if has('win32')
-    " Internet explorer
-    "let MyOpenURI_cmd = '!start "C:/Program Files/Internet Explorer/iexplore.exe" %s'
     " Firefox
     let MyOpenURI_cmd  = '!start "D:/usr/Mozilla Firefox/firefox.exe" -new-tab %s'
   elseif has('unix')
@@ -495,6 +493,7 @@ endif
 
 
 " * commands {{{
+" open loaded buffer with new tab.
 command! -nargs=1 -complete=buffer NTab :999tab sbuffer <args>
 command! Big wincmd _ | wincmd |
 
@@ -515,7 +514,7 @@ if filereadable($DOTVIM . '/ftplugin/tacahiroy/tacahiroy.vim')
   source $DOTVIM/ftplugin/tacahiroy/tacahiroy.vim
 endif
 
-set runtimepath+=$HOME/vimfiles/sandbox
+set runtimepath+=$DOTVIM/sandbox
 
 " __END__ {{{
 " vim: ts=2 sts=2 sw=2 fdm=marker
