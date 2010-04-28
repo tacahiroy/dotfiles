@@ -1,8 +1,10 @@
 " $HOME/.gvimrc
-" Last Change: 26-Feb-2010.
-" Maintainer: TaCahiroy <tacahiroy<*DELETE-ME*>@gmail.com>
+" Maintainer:   TaCahiroy <tacahiroy*DELETE-ME*@gmail.com>
+" Last Change:  28-Apr-2010.
 
-set columns=90
+scriptencoding utf-8
+
+set columns=100
 set lines=40
 set cmdheight=2
 set guioptions=e
@@ -25,7 +27,6 @@ nmap <C-RightMouse> <C-t>zz
 set background=light
 colorscheme seashell
 let g:colorscheme = colors_name
-let g:bg = &background
 
 " plug: vimshell
 "autocmd BufEnter * if &buftype == '' | execute 'colorscheme ' . g:colorscheme | let &background=g:bg | else | colorscheme lucius | syntax on | endif
@@ -39,17 +40,17 @@ let g:bg = &background
 "  autocmd InsertLeave * hi CursorIM gui=NONE guibg=#ff9900
 "                     \| hi Cursor gui=NONE guibg=Violet
 "augroup END
-  
+
 " font
-if has('win32')
+if has('win32') || has('win64')
   " for Windows
   set guifont=M+1VM+IPAG_circle:h10:cDEFAULT
   set linespace=1
 elseif has('mac')
-  set guifont=OsakaÅ|ìôïù:h14
+  set guifont=OsakaÔºçÁ≠âÂπÖ:h14
 elseif has('xfontset')
   " unix
-  set guifontset=a14,r14,k14
+  set guifont=M+1VM+IPAG\ circle\ h10\ cDEFAULT
 endif
 
 if has('multi_byte_ime') || has('xim')
@@ -66,8 +67,11 @@ endif
 
 " printing font
 if has('printer')
-  if has('win32')
+  if has('win32') || has('win64')
     set printfont=M+1VM+IPAG_circle:h10:cDEFAULT
   endif
 endif
+
+" __END__ {{{
+" vim: ts=2 sts=2 sw=2 fdm=marker
 
