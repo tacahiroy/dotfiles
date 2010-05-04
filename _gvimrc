@@ -42,15 +42,12 @@ let g:colorscheme = colors_name
 "augroup END
 
 " font
-if has('win32') || has('win64')
-  " for Windows
-  set guifont=M+1VM+IPAG_circle:h10:cDEFAULT
-  set linespace=1
+if has('unix')
+  set guifont=M+1VM+IPAG\ circle\ 10
 elseif has('mac')
-  set guifont=Osaka－等幅:h14
-elseif has('xfontset')
-  " unix
-  set guifont=M+1VM+IPAG\ circle\ h10\ cDEFAULT
+else
+  " Windows or others
+  set guifont=M+1VM+IPAG_circle:h10:cDEFAULT
 endif
 
 if has('multi_byte_ime') || has('xim')
