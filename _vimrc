@@ -16,6 +16,135 @@ endif
 set nocompatible
 set verbose=0
 
+
+" * functions "{{{1
+" convert path separator
+" unix <-> dos
+function! s:cps(path, style)
+  let styles = {'dos':  ['/', '\'],
+    \           'unix': ['\', '/']}
+
+  if ! has_key(styles, a:style)
+    return a:path
+  endif
+
+  return substitute(a:path, styles[a:style][0], styles[a:style][1], 'g')
+endfunction
+
+" tag information show in command window
+function! s:previewTagLight(w)
+  let t = taglist('^'.a:w.'$')
+  let current = expand('%:t')
+
+  for item in t
+    " [filename] tag definition
+    if -1 < stridx(item.filename, current)
+      echohl Search | echomsg printf('%-36s', '[' . s:cps(item.filename, 'unix') . ']') | echohl None
+    else
+      echomsg printf('%-36s', '[' . substitute(s:cps(item.filename, 'unix'), '\s\s*$', '', '') . ']')
+    endif
+endfunction
+nnoremap <silent> ,ta :call <SID>previewTagLight(expand('<cword>'))<Cr>
+
+" from kana's: get SID_PREFIX
+function! s:SID_PREFIX()
+  return matchstr(expand('<sfile>'), '<SNR>\d\+_')
+endfunction
+
+function! s:first_line(file)
+  let lines = readfile(a:file, '', 1)
+  return 1 <= len(lines) ? lines[0] : ''
+endfunction
+
+" VCS branch name  "{{{2
+" from kana's
+" Returns the name of the current branch of the given directory.
+" BUGS: git is only supported.
+let s:_vcs_branch_name_cache = {}  " dir_path = [branch_name, key_file_mtime]
+
+function! s:vcs_branch_name(dir)
+  let cache_entry = get(s:_vcs_branch_name_cache, a:dir, 0)
+  if cache_entry is 0
+        \ || cache_entry[1] < getftime(s:_vcs_branch_name_key_file(a:dir))
+    unlet cache_entry
+    let cache_entry = s:_vcs_branch_name(a:dir)
+    let s:_vcs_branch_name_cache[a:dir] = cache_entry
+  endif
+
+  return cache_entry[0]
+endfunction
+
+function! s:_vcs_branch_name_key_file(dir)
+  return a:dir . '/.git/HEAD'
+endfunction
+
+function! s:_vcs_branch_name(dir)
+  let head_file = s:_vcs_branch_name_key_file(a:dir)
+  let branch_name = ''
+
+  if filereadable(head_file)
+    let ref_info = s:first_line(head_file)
+    if ref_info =~ '^\x\{40}$'
+      let remote_refs_dir = a:dir . '/.git/refs/remotes/'
+      let remote_branches = split(glob(remote_refs_dir . '**'), "\n")
+      call filter(remote_branches, 's:first_line(v:val) ==# ref_info')
+      if 1 <= len(remote_branches)
+        let branch_name = 'remote: '. remote_branches[0][len(remote_refs_dir):]
+      endif
+    else
+      let branch_name = matchlist(ref_info, '^ref: refs/heads/\(\S\+\)$')[1]
+      if branch_name == ''
+        let branch_name = ref_info
+      endif
+    endif
+  endif
+
+  return [branch_name, getftime(head_file)]
+endfunction
+" }}}
+
+if executable('ruby') "{{{2 RubyInstantExec
+  " RubyInstantExec
+  " preview interpreter's output(Tip #1244) improved
+  function! s:RubyInstantExec() range
+    if &filetype !=# 'ruby'
+      echomsg 'filetype is not "ruby".'
+      return
+    endif
+
+    if ! exists('g:src')
+      let g:src = 'vimrie.tmp'
+    endif
+    let buf_name = 'RubyInstantExec Result'
+
+    " put current buffer's content in a temp file
+    silent execute printf(':%d,%dw! >> %s', a:firstline, a:lastline, g:src)
+
+    " open the preview window
+    silent execute ':pedit! ' . escape(buf_name, '\ ')
+    " change to preview window
+    wincmd P
+
+    setlocal buftype=nofile
+    setlocal noswapfile
+    setlocal syntax=none
+    setlocal bufhidden=delete
+
+    " replace current buffer with ruby's output
+    silent execute printf(':%%!ruby %s 2>&1', g:src)
+    " change back to the source buffer
+    wincmd p
+
+    call delete(g:src)
+  endfunction
+
+  nmap <silent> <Space>r :call <SID>RubyInstantExec()<Cr>
+  vmap <silent> <Space>r :call <SID>RubyInstantExec()<Cr>
+endif
+"}}}
+"}}}
+
+
 syntax enable
 filetype plugin indent on
 
@@ -84,106 +213,32 @@ set virtualedit=block
 set wildignore=*.exe
 set wildmenu
 set wildmode=list:longest
-
-set t_Co=256
-set noequalalways
-set nolist
-set nosplitbelow
 set nowrapscan
 
-set guioptions+=M
+set t_Co=256
 
+set guioptions& guioptions=ciM
+
+set formatoptions&
 let &formatoptions .= 'mM'
 let &formatoptions = substitute(&formatoptions, '[or]', '', 'g')
 
 " statusline {{{
 " [#bufnr]filename [modified?][enc:ff][filetype]
-let g:lside = "[#%n]%<%f %m%r%h%w%y"
-let g:lside .= "["
-let g:lside .= "%{(&l:fileencoding != '' ? &l:fileencoding : &encoding).':'.&fileformat}"
-let g:lside .= "]"
+let &statusline = "[#%n]%<%f %m%r%h%w%y"
+let &statusline .= "["
+let &statusline .= "%{(&l:fileencoding != '' ? &l:fileencoding : &encoding).':'.&fileformat}"
+let &statusline .= "]"
+let &statusline .= "(%#Function#%{" . s:SID_PREFIX() .  "vcs_branch_name(getcwd())}%*)"
 " monstermethod.vim support
-let g:lside .= "%{exists('b:mmi.name') && 0<len(b:mmi.name) ? ' -- '.b:mmi.name.'('.b:mmi.lines.'L)' : ''}"
-let g:rside = "%=%-16(\ %l/%LL,%c\ %)%P"
-
-let &statusline = g:lside . g:rside
+let &statusline .= "%{exists('b:mmi.name') && 0<len(b:mmi.name) ? ' -- '.b:mmi.name.'('.b:mmi.lines.'L)' : ''}"
+let &statusline .= "%=%-16(\ %l/%LL,%c\ %)%P"
 " }}}
 
 set matchpairs+=<:>
 "let g:loaded_matchparen = 0
 highlight MatchParen term=reverse ctermbg=LightRed gui=NONE guifg=fg guibg=LightRed
 " }}}
-
-
-" * functions "{{{
-" convert path separator
-" unix <-> dos
-function! s:cps(path, style)
-  let styles = {'dos':  ['/', '\'],
-    \           'unix': ['\', '/']}
-
-  if ! has_key(styles, a:style)
-    return a:path
-  endif
-
-  return substitute(a:path, styles[a:style][0], styles[a:style][1], 'g')
-endfunction
-
-" tag information show in command window
-function! s:previewTagLight(w)
-  let t = taglist('^'.a:w.'$')
-  let current = expand('%:t')
-
-  for item in t
-    " [filename] tag definition
-    if -1 < stridx(item.filename, current)
-      echohl Search | echomsg printf('%-36s', '[' . s:cps(item.filename, 'unix') . ']') | echohl None
-    else
-      echomsg printf('%-36s', '[' . substitute(s:cps(item.filename, 'unix'), '\s\s*$', '', '') . ']')
-    endif
-endfunction
-nnoremap <silent> ,ta :call <SID>previewTagLight(expand('<cword>'))<Cr>
-
-if executable('ruby') "{{{ RubyInstantExec
-  " RubyInstantExec
-  " preview interpreter's output(Tip #1244) improved
-  function! s:RubyInstantExec() range
-    if &filetype !=# 'ruby'
-      echomsg 'filetype is not "ruby".'
-      return
-    endif
-
-    if ! exists('g:src')
-      let g:src = 'vimrie.tmp'
-    endif
-    let buf_name = 'RubyInstantExec Result'
-
-    " put current buffer's content in a temp file
-    silent execute printf(':%d,%dw! >> %s', a:firstline, a:lastline, g:src)
-
-    " open the preview window
-    silent execute ':pedit! ' . escape(buf_name, '\ ')
-    " change to preview window
-    wincmd P
-
-    setlocal buftype=nofile
-    setlocal noswapfile
-    setlocal syntax=none
-    setlocal bufhidden=delete
-
-    " replace current buffer with ruby's output
-    silent execute printf(':%%!ruby %s 2>&1', g:src)
-    " change back to the source buffer
-    wincmd p
-
-    call delete(g:src)
-  endfunction
-
-  nmap <silent> <Space>r :call <SID>RubyInstantExec()<Cr>
-  vmap <silent> <Space>r :call <SID>RubyInstantExec()<Cr>
-endif
-"}}}
-"}}}
 
 
 " * map "{{{
