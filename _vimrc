@@ -1,6 +1,5 @@
 " $HOME/.vimrc
 " Maintainer: TaCahiroy <tacahiroy*DELETE-ME*@gmail.com>
-" Last Change: 28-Apr-2010.
 
 scriptencoding utf-8
 set cpo&vim
@@ -268,10 +267,10 @@ if has('win32')
 endif
 
 " inspired by vimrc.ujihisa
-nnoremap <Space>w :w<Cr>
-nnoremap <Space>q :q<Cr>
-nnoremap <Space>W :w!<Cr>
-nnoremap <Space>Q :q!<Cr>
+nnoremap <Space>w :<C-u>write<Cr>
+nnoremap <Space>q :<C-u>quit<Cr>
+nnoremap <Space>W :<C-u>write!<Cr>
+nnoremap <Space>Q :<C-u>quit!<Cr>
 
 nnoremap <Space>j <C-d>
 nnoremap <Space>k <C-u>
@@ -352,7 +351,11 @@ autocmd FileType *
 \ | endif
 " }}}
 
-autocmd FileType qf,help nnoremap <buffer> <silent> q :<C-u><C-w>c
+augroup MyAutoCmd
+  autocmd!
+augroup END
+
+autocmd MyAutoCmd FileType qf,help nnoremap <buffer> <silent> q <C-w>c
 autocmd FileType javascript* setlocal omnifunc=javascriptcomplete#CompleteJS
 autocmd FileType ruby,rspec let &path .= "," . s:cps($RUBYLIB, 'unix')
 " MS Excel
