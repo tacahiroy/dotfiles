@@ -5,6 +5,8 @@
 scriptencoding utf-8
 set cpo&vim
 
+autocmd!
+
 if isdirectory($HOME . '/.vim')
   let $DOTVIM = $HOME . '/.vim'
 else
@@ -36,13 +38,14 @@ set backspace=indent,eol,start
 set backup
 set backupext=.bac
 set backupdir=$DOTVIM/backups
-set backupskip+=*.bac,COMMIT_EDITMSG,hg-editor-*.txt,svn-commit.tmp,svn-commit.[0-9]*.tmp
+set backupskip& backupskip+=*.bac,COMMIT_EDITMSG,hg-editor-*.txt,svn-commit.tmp,svn-commit.[0-9]*.tmp
 set cmdheight=2
 set completefunc=
+set noequalalways
 set expandtab smarttab
 set fileencodings=ucs-bom,utf-8,iso-2022-jp,euc-jp,cp932
 set fileformats=dos,unix,mac
-set helplang=ja,en
+set helplang=en,ja
 set hidden
 set history=3000
 set hlsearch
@@ -50,6 +53,7 @@ set ignorecase
 set incsearch
 set linebreak
 set linespace=1
+set nolist
 set listchars=tab:>-,trail:-,extends:>,precedes:<,eol:<
 set laststatus=2
 set lazyredraw
@@ -64,6 +68,7 @@ set showbreak=\ \ \ \ \
 set showfulltag
 set showmatch matchtime=1
 set showtabline=1
+set nosplitbelow
 set splitright
 set nosmartcase
 set swapfile directory=$DOTVIM/swaps
@@ -216,7 +221,8 @@ nnoremap <Space>Q :q!<Cr>
 nnoremap <Space>j <C-d>
 nnoremap <Space>k <C-u>
 
-nnoremap <silent> <Space>_ :<C-u>edit ~/.vimrc<Cr>
+nnoremap <silent> <Space>_ :<C-u>edit $MYVIMRC<Cr>
+nnoremap <silent> <Space>s_ :<C-u>source $MYVIMRC<Cr>
 
 nnoremap <silent> <Esc> <Esc>:<C-u>silent nohlsearch<Cr>
 nnoremap <silent> sh <C-w>h
@@ -291,7 +297,7 @@ autocmd FileType *
 \ | endif
 " }}}
 
-autocmd FileType qf,help nnoremap <buffer> <silent> q :quit<Cr>
+autocmd FileType qf,help nnoremap <buffer> <silent> q :<C-u><C-w>c
 autocmd FileType javascript* setlocal omnifunc=javascriptcomplete#CompleteJS
 autocmd FileType ruby,rspec let &path .= "," . s:cps($RUBYLIB, 'unix')
 " MS Excel
@@ -299,54 +305,46 @@ autocmd FileType excel
   \  setlocal noexpandtab tabstop=10 shiftwidth=10 softtabstop=10 list
 
 " inspired by vimrc.ujihisa
-augroup MyIRB
-  autocmd!
-  autocmd FileType irb inoremap <buffer> <silent> <Cr> <Esc>:<C-u>ruby v=VIM::Buffer.current;v.append(v.line_number, '#=> ' + eval(v[v.line_number]).inspect)<Cr>jo
-  nnoremap <Space>irb :<C-u>new<Cr>:setfiletype irb<Cr>
-augroup END
+autocmd FileType irb inoremap <buffer> <silent> <Cr> <Esc>:<C-u>ruby v=VIM::Buffer.current;v.append(v.line_number, '#=> ' + eval(v[v.line_number]).inspect)<Cr>jo
+nnoremap <Space>irb :<C-u>new<Cr>:setfiletype irb<Cr>
 
-augroup Rspec
-  autocmd!
-  autocmd FileType rspec
-  \   compiler rspec
-  \ | setlocal syntax=ruby
-  \ | setlocal omnifunc=rubycomplete#Complete
-augroup END
+autocmd FileType rspec
+\   compiler rspec
+\| setlocal syntax=ruby
+\| setlocal omnifunc=rubycomplete#Complete
 
 autocmd FileType vim,snippet setlocal tabstop=2 shiftwidth=2 softtabstop=2
 
-augroup MarkUp
-  autocmd!
-  autocmd FileType html,xhtml,xml,xslt,mathml,svg
-    \| setlocal tabstop=2 shiftwidth=2 softtabstop=2
+autocmd FileType html,xhtml,xml,xslt,mathml,svg
+\| setlocal tabstop=2 shiftwidth=2 softtabstop=2
 
-  let g:xml_no_auto_nesting = 1
-  let g:xml_use_xhtml = 1
-  let g:xml_tag_completion_map = ''
-augroup END
+let g:xml_no_auto_nesting = 1
+let g:xml_use_xhtml = 1
+let g:xml_tag_completion_map = ''
 
 autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS tabstop=2 shiftwidth=2 softtabstop=2
 
 let g:loaded_sql_completion = 1
-augroup SQL
-  autocmd!
-  autocmd FileType sql,plsql
-    \  setlocal tabstop=4 shiftwidth=4 softtabstop=4
-    \| nnoremap <buffer> <silent> <C-Return> :DBExecSQLUnderCursor<Cr>
-    \| vnoremap <buffer> <silent> <C-Return> :DBExecVisualSQL<Cr>
+autocmd FileType sql,plsql
+\  setlocal tabstop=4 shiftwidth=4 softtabstop=4
+\| nnoremap <buffer> <silent> <C-Return> :DBExecSQLUnderCursor<Cr>
+\| vnoremap <buffer> <silent> <C-Return> :DBExecVisualSQL<Cr>
 
-  let g:sqlutil_align_comma = 1
-  let g:sqlutil_align_where = 1
-  let g:sqlutil_keyword_case = '\U'
-  let g:dbext_default_type = 'ORA'
-augroup END
+let g:sqlutil_align_comma = 1
+let g:sqlutil_align_where = 1
+let g:sqlutil_keyword_case = '\U'
+let g:dbext_default_type = 'ORA'
 
-augroup JS
-  autocmd!
-  autocmd FileType javascript,javascript.jquery,html,xhtml
-    \  setlocal makeprg=jsl\ -conf\ D:/usr/bin/jsl.default.conf\ -nologo\ -nofilelisting\ -nosummary\ -nocontext\ -process\ %
-    \| setlocal errorformat=%f(%l):\ %m
-augroup END
+autocmd FileType javascript,javascript.jquery,html,xhtml
+\  setlocal makeprg=jsl\ -conf\ D:/usr/bin/jsl.default.conf\ -nologo\ -nofilelisting\ -nosummary\ -nocontext\ -process\ %
+\| setlocal errorformat=%f(%l):\ %m
+
+autocmd Filetype c compiler gcc
+autocmd Filetype cpp compiler gcc
+autocmd Filetype c setl makeprg=gcc\ -Wall\ %\ -o\ %:r.o
+autocmd Filetype cpp setl makeprg=g++\ -Wall\ %\ -o\ %:r.o
+autocmd Filetype c nmap <buffer> <Space>m :<C-u>w<Cr>:make<Cr>
+autocmd Filetype cpp nmap <buffer> <Space>m :<C-u>w<Cr>:make<Cr>
 "}}}
 
 
