@@ -112,13 +112,11 @@ if executable('ruby') "{{{2 RubyInstantExec
       return
     endif
 
-    if ! exists('g:src')
-      let g:src = 'vimrie.tmp'
-    endif
     let buf_name = 'RubyInstantExec Result'
+    let tmp = 'vimrie.tmp'
 
     " put current buffer's content in a temp file
-    silent execute printf(':%d,%dw! >> %s', a:firstline, a:lastline, g:src)
+    silent execute printf(':%d,%dw! >> %s', a:firstline, a:lastline, tmp)
 
     " open the preview window
     silent execute ':pedit! ' . escape(buf_name, '\ ')
@@ -131,13 +129,14 @@ if executable('ruby') "{{{2 RubyInstantExec
     setlocal bufhidden=delete
 
     " replace current buffer with ruby's output
-    silent execute printf(':%%!ruby %s 2>&1', g:src)
+    silent execute printf(':%%!ruby %s 2>&1', tmp)
     " change back to the source buffer
     wincmd p
 
-    call delete(g:src)
+    call delete(tmp)
   endfunction
 
+  nmap <silent> <Space>R mzggVG:call <SID>RubyInstantExec()<Cr>'z:delm z<Cr>
   nmap <silent> <Space>r :call <SID>RubyInstantExec()<Cr>
   vmap <silent> <Space>r :call <SID>RubyInstantExec()<Cr>
 endif
