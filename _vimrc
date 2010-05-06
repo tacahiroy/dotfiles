@@ -216,7 +216,7 @@ set nowrapscan
 
 set t_Co=256
 
-set guioptions& guioptions=ciM
+set guioptions& guioptions=eciM
 
 set formatoptions&
 let &formatoptions .= 'mM'
@@ -259,14 +259,14 @@ nnoremap <silent> <Space>N :bprevious<Cr>
 nnoremap <silent> sn :tabnext<Cr>
 nnoremap <silent> sp :tabprevious<Cr>
 
-nnoremap <silent> <Space>o :copen<Cr>
+nnoremap <silent> <Space>o :cwindow<Cr>
 
 if has('win32')
   nnoremap <silent> <Space>e :<C-u>silent execute ":!start explorer \"" . g:cps(expand("%:p:h"), "dos") . "\""<Cr>
   nnoremap <silent> <Space>E :<C-u>silent execute ":!start cmd /k cd \"" . g:cps(expand("%:p:h"), "dos") . "\""<Cr>
 endif
 
-" inspired by vimrc.ujihisa
+" inspired by ujihisa's. cooool!!
 nnoremap <Space>w :<C-u>write<Cr>
 nnoremap <Space>q :<C-u>quit<Cr>
 nnoremap <Space>W :<C-u>write!<Cr>
@@ -357,12 +357,12 @@ augroup END
 
 autocmd MyAutoCmd FileType qf,help nnoremap <buffer> <silent> q <C-w>c
 autocmd FileType javascript* setlocal omnifunc=javascriptcomplete#CompleteJS
-autocmd FileType ruby,rspec let &path .= "," . s:cps($RUBYLIB, 'unix')
+autocmd FileType ruby,rspec let &path .= "," . g:cps($RUBYLIB, 'unix')
 " MS Excel
 autocmd FileType excel
   \  setlocal noexpandtab tabstop=10 shiftwidth=10 softtabstop=10 list
 
-" inspired by vimrc.ujihisa
+" inspired by ujihisa's
 autocmd FileType irb inoremap <buffer> <silent> <Cr> <Esc>:<C-u>ruby v=VIM::Buffer.current;v.append(v.line_number, '#=> ' + eval(v[v.line_number]).inspect)<Cr>jo
 nnoremap <Space>irb :<C-u>new<Cr>:setfiletype irb<Cr>
 
@@ -399,8 +399,8 @@ autocmd FileType javascript,javascript.jquery,html,xhtml
 
 autocmd Filetype c compiler gcc
 autocmd Filetype cpp compiler gcc
-autocmd Filetype c setl makeprg=gcc\ -Wall\ %\ -o\ %:r.o
-autocmd Filetype cpp setl makeprg=g++\ -Wall\ %\ -o\ %:r.o
+autocmd Filetype c setlocal makeprg=gcc\ -Wall\ %\ -o\ %:r.o
+autocmd Filetype cpp setlocal makeprg=g++\ -Wall\ %\ -o\ %:r.o
 autocmd Filetype c nmap <buffer> <Space>m :<C-u>w<Cr>:make<Cr>
 autocmd Filetype cpp nmap <buffer> <Space>m :<C-u>w<Cr>:make<Cr>
 "}}}
