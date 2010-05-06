@@ -46,8 +46,8 @@ function! s:previewTagLight(word)
 endfunction
 nnoremap <silent> ,ta :call <SID>previewTagLight(expand('<cword>'))<Cr>
 
-" from kana's: get SID_PREFIX
-function! s:SID_PREFIX()
+" from kana's: get SID
+function! s:SID()
   return matchstr(expand('<sfile>'), '<SNR>\d\+_')
 endfunction
 
@@ -229,7 +229,7 @@ let &statusline = "[#%n]%<%f %m%r%h%w%y"
 let &statusline .= "["
 let &statusline .= "%{(&l:fileencoding != '' ? &l:fileencoding : &encoding).':'.&fileformat}"
 let &statusline .= "]"
-let &statusline .= "(%#Function#%{" . s:SID_PREFIX() .  "vcs_branch_name(getcwd())}%*)"
+let &statusline .= "(%#Function#%{" . s:SID() .  "vcs_branch_name(getcwd())}%*)"
 " monstermethod.vim support
 let &statusline .= "%{exists('b:mmi.name') && 0<len(b:mmi.name) ? ' -- '.b:mmi.name.'('.b:mmi.lines.'L)' : ''}"
 let &statusline .= "%=%-16(\ %l/%LL,%c\ %)%P"
