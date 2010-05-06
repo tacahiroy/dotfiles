@@ -19,7 +19,7 @@ set verbose=0
 " * functions "{{{1
 " convert path separator
 " unix <-> dos
-function! s:cps(path, style)
+function! g:cps(path, style)
   let styles = {'dos':  ['/', '\'],
     \           'unix': ['\', '/']}
 
@@ -31,17 +31,18 @@ function! s:cps(path, style)
 endfunction
 
 " tag information show in command window
-function! s:previewTagLight(w)
-  let t = taglist('^'.a:w.'$')
+function! s:previewTagLight(word)
+  let t = taglist('^' . a:word . '$')
   let current = expand('%:t')
 
   for item in t
     " [filename] tag definition
     if -1 < stridx(item.filename, current)
-      echohl Search | echomsg printf('%-36s', '[' . s:cps(item.filename, 'unix') . ']') | echohl None
+      echohl Search | echomsg printf('%-36s %s', '[' . g:cps(item.filename, 'unix') . ']', item.cmd) | echohl None
     else
-      echomsg printf('%-36s', '[' . substitute(s:cps(item.filename, 'unix'), '\s\s*$', '', '') . ']')
+      echomsg printf('%-36s %s', '[' . substitute(g:cps(item.filename, 'unix'), '\s\s*$', '', '') . ']', item.cmd)
     endif
+  endfor
 endfunction
 nnoremap <silent> ,ta :call <SID>previewTagLight(expand('<cword>'))<Cr>
 
@@ -262,8 +263,8 @@ nnoremap <silent> sp :tabprevious<Cr>
 nnoremap <silent> <Space>o :copen<Cr>
 
 if has('win32')
-  nnoremap <silent> <Space>e :<C-u>silent execute ":!start explorer \"" . s:cps(expand("%:p:h"), "dos") . "\""<Cr>
-  nnoremap <silent> <Space>E :<C-u>silent execute ":!start cmd /k cd \"" . s:cps(expand("%:p:h"), "dos") . "\""<Cr>
+  nnoremap <silent> <Space>e :<C-u>silent execute ":!start explorer \"" . g:cps(expand("%:p:h"), "dos") . "\""<Cr>
+  nnoremap <silent> <Space>E :<C-u>silent execute ":!start cmd /k cd \"" . g:cps(expand("%:p:h"), "dos") . "\""<Cr>
 endif
 
 " inspired by vimrc.ujihisa
