@@ -1,14 +1,13 @@
 " $HOME/.gvimrc
 " Maintainer:   TaCahiroy <tacahiroy*DELETE-ME*@gmail.com>
-" Last Change:  28-Apr-2010.
 
 scriptencoding utf-8
 
 set columns=100
 set lines=40
 set cmdheight=2
-set guioptions=e
 
+set guioptions& guioptions=eciM
 set guitablabel=%N)\ %f
 
 nmap <C-LeftMouse> <C-]>zz

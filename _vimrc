@@ -216,8 +216,6 @@ set nowrapscan
 
 set t_Co=256
 
-set guioptions& guioptions=eciM
-
 set formatoptions&
 let &formatoptions .= 'mM'
 let &formatoptions = substitute(&formatoptions, '[or]', '', 'g')
