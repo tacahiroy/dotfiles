@@ -168,7 +168,6 @@ set backupext=.bac
 set backupdir=$DOTVIM/backups
 set backupskip& backupskip+=*.bac,COMMIT_EDITMSG,hg-editor-*.txt,svn-commit.tmp,svn-commit.[0-9]*.tmp
 set cmdheight=2
-set completefunc=
 set noequalalways
 set expandtab smarttab
 set fileencodings=ucs-bom,utf-8,iso-2022-jp,euc-jp,cp932
@@ -220,13 +219,12 @@ set formatoptions&
 let &formatoptions .= 'mM'
 let &formatoptions = substitute(&formatoptions, '[or]', '', 'g')
 
-" statusline {{{
+" statusline {{{2
 " [#bufnr]filename [modified?][enc:ff][filetype]
 let &statusline = "[#%n]%<%f %m%r%h%w%y"
-let &statusline .= "["
-let &statusline .= "%{(&l:fileencoding != '' ? &l:fileencoding : &encoding).':'.&fileformat}"
-let &statusline .= "]"
-let &statusline .= "(%#Function#%{" . s:SID() .  "vcs_branch_name(getcwd())}%*)"
+let &statusline .= "[%{(&l:fileencoding != '' ? &l:fileencoding : &encoding).':'.&fileformat}]"
+let &statusline .= "%{&expandtab ? '' : '>'}"
+let &statusline .= "(%#Function#%{".s:SID()."vcs_branch_name(getcwd())}%*)"
 " monstermethod.vim support
 let &statusline .= "%{exists('b:mmi.name') && 0<len(b:mmi.name) ? ' -- '.b:mmi.name.'('.b:mmi.lines.'L)' : ''}"
 let &statusline .= "%=%-16(\ %l/%LL,%c\ %)%P"
@@ -351,60 +349,59 @@ autocmd FileType *
 
 augroup MyAutoCmd
   autocmd!
+  autocmd FileType qf,help nnoremap <buffer> <silent> q <C-w>c
+  autocmd FileType javascript* setlocal omnifunc=javascriptcomplete#CompleteJS
+  autocmd FileType ruby,rspec let &path .= "," . g:cps($RUBYLIB, 'unix')
+  if has('win32')
+    autocmd FileType ruby,rspec let g:RefeCommand = 'D:/ruby18/bin/refe18'
+  endif
+
+  " MS Excel
+  autocmd MyAutoCmd FileType excel
+    \  setlocal noexpandtab tabstop=10 shiftwidth=10 softtabstop=10 list
+
+  " inspired by ujihisa's
+  autocmd FileType irb inoremap <buffer> <silent> <Cr> <Esc>:<C-u>ruby v=VIM::Buffer.current;v.append(v.line_number, '#=> ' + eval(v[v.line_number]).inspect)<Cr>jo
+  nnoremap <Space>irb :<C-u>new<Cr>:setfiletype irb<Cr>
+
+  autocmd FileType rspec
+  \  compiler rspec
+  \| setlocal syntax=ruby
+  \| setlocal omnifunc=rubycomplete#Complete
+
+  autocmd FileType vim,snippet setlocal tabstop=2 shiftwidth=2 softtabstop=2
+
+  autocmd FileType html,xhtml,xml,xslt,mathml,svg
+  \| setlocal tabstop=2 shiftwidth=2 softtabstop=2
+
+  let g:xml_no_auto_nesting = 1
+  let g:xml_use_xhtml = 1
+  let g:xml_tag_completion_map = ''
+
+  autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS tabstop=2 shiftwidth=2 softtabstop=2
+
+  let g:loaded_sql_completion = 1
+  autocmd FileType sql,plsql
+  \  setlocal tabstop=4 shiftwidth=4 softtabstop=4
+  \| nnoremap <buffer> <silent> <C-Return> :DBExecSQLUnderCursor<Cr>
+  \| vnoremap <buffer> <silent> <C-Return> :DBExecVisualSQL<Cr>
+
+  let g:sqlutil_align_comma = 1
+  let g:sqlutil_align_where = 1
+  let g:sqlutil_keyword_case = '\U'
+  let g:dbext_default_type = 'ORA'
+
+  autocmd FileType javascript,javascript.jquery,html,xhtml
+  \  setlocal makeprg=jsl\ -conf\ $HOME/jsl.conf\ -nologo\ -nofilelisting\ -nosummary\ -nocontext\ -process\ %
+  \| setlocal errorformat=%f(%l):\ %m
+
+  autocmd Filetype c compiler gcc
+  autocmd Filetype cpp compiler gcc
+  autocmd Filetype c setlocal makeprg=gcc\ -Wall\ %\ -o\ %:r.o
+  autocmd Filetype cpp setlocal makeprg=g++\ -Wall\ %\ -o\ %:r.o
+  autocmd Filetype c nmap <buffer> <Space>m :<C-u>write<Cr>:make<Cr>
+  autocmd Filetype cpp nmap <buffer> <Space>m :<C-u>write<Cr>:make<Cr>
 augroup END
-
-autocmd MyAutoCmd FileType qf,help nnoremap <buffer> <silent> q <C-w>c
-autocmd FileType javascript* setlocal omnifunc=javascriptcomplete#CompleteJS
-autocmd FileType ruby,rspec let &path .= "," . g:cps($RUBYLIB, 'unix')
-if has('win32')
-  autocmd FileType ruby,rspec let g:RefeCommand = 'D:/ruby18/bin/refe18'
-endif
-
-" MS Excel
-autocmd FileType excel
-  \  setlocal noexpandtab tabstop=10 shiftwidth=10 softtabstop=10 list
-
-" inspired by ujihisa's
-autocmd FileType irb inoremap <buffer> <silent> <Cr> <Esc>:<C-u>ruby v=VIM::Buffer.current;v.append(v.line_number, '#=> ' + eval(v[v.line_number]).inspect)<Cr>jo
-nnoremap <Space>irb :<C-u>new<Cr>:setfiletype irb<Cr>
-
-autocmd FileType rspec
-\  compiler rspec
-\| setlocal syntax=ruby
-\| setlocal omnifunc=rubycomplete#Complete
-
-autocmd FileType vim,snippet setlocal tabstop=2 shiftwidth=2 softtabstop=2
-
-autocmd FileType html,xhtml,xml,xslt,mathml,svg
-\| setlocal tabstop=2 shiftwidth=2 softtabstop=2
-
-let g:xml_no_auto_nesting = 1
-let g:xml_use_xhtml = 1
-let g:xml_tag_completion_map = ''
-
-autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS tabstop=2 shiftwidth=2 softtabstop=2
-
-let g:loaded_sql_completion = 1
-autocmd FileType sql,plsql
-\  setlocal tabstop=4 shiftwidth=4 softtabstop=4
-\| nnoremap <buffer> <silent> <C-Return> :DBExecSQLUnderCursor<Cr>
-\| vnoremap <buffer> <silent> <C-Return> :DBExecVisualSQL<Cr>
-
-let g:sqlutil_align_comma = 1
-let g:sqlutil_align_where = 1
-let g:sqlutil_keyword_case = '\U'
-let g:dbext_default_type = 'ORA'
-
-autocmd FileType javascript,javascript.jquery,html,xhtml
-\  setlocal makeprg=jsl\ -conf\ $HOME/jsl.conf\ -nologo\ -nofilelisting\ -nosummary\ -nocontext\ -process\ %
-\| setlocal errorformat=%f(%l):\ %m
-
-autocmd Filetype c compiler gcc
-autocmd Filetype cpp compiler gcc
-autocmd Filetype c setlocal makeprg=gcc\ -Wall\ %\ -o\ %:r.o
-autocmd Filetype cpp setlocal makeprg=g++\ -Wall\ %\ -o\ %:r.o
-autocmd Filetype c nmap <buffer> <Space>m :<C-u>write<Cr>:make<Cr>
-autocmd Filetype cpp nmap <buffer> <Space>m :<C-u>write<Cr>:make<Cr>
 "}}}
 
 
