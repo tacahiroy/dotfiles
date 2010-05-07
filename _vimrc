@@ -356,6 +356,10 @@ augroup END
 autocmd MyAutoCmd FileType qf,help nnoremap <buffer> <silent> q <C-w>c
 autocmd FileType javascript* setlocal omnifunc=javascriptcomplete#CompleteJS
 autocmd FileType ruby,rspec let &path .= "," . g:cps($RUBYLIB, 'unix')
+if has('win32')
+  autocmd FileType ruby,rspec let g:RefeCommand = 'D:/ruby18/bin/refe18'
+endif
+
 " MS Excel
 autocmd FileType excel
   \  setlocal noexpandtab tabstop=10 shiftwidth=10 softtabstop=10 list
