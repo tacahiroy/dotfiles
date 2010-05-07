@@ -369,7 +369,7 @@ autocmd FileType irb inoremap <buffer> <silent> <Cr> <Esc>:<C-u>ruby v=VIM::Buff
 nnoremap <Space>irb :<C-u>new<Cr>:setfiletype irb<Cr>
 
 autocmd FileType rspec
-\   compiler rspec
+\  compiler rspec
 \| setlocal syntax=ruby
 \| setlocal omnifunc=rubycomplete#Complete
 
@@ -396,15 +396,15 @@ let g:sqlutil_keyword_case = '\U'
 let g:dbext_default_type = 'ORA'
 
 autocmd FileType javascript,javascript.jquery,html,xhtml
-\  setlocal makeprg=jsl\ -conf\ D:/usr/bin/jsl.default.conf\ -nologo\ -nofilelisting\ -nosummary\ -nocontext\ -process\ %
+\  setlocal makeprg=jsl\ -conf\ $HOME/jsl.conf\ -nologo\ -nofilelisting\ -nosummary\ -nocontext\ -process\ %
 \| setlocal errorformat=%f(%l):\ %m
 
 autocmd Filetype c compiler gcc
 autocmd Filetype cpp compiler gcc
 autocmd Filetype c setlocal makeprg=gcc\ -Wall\ %\ -o\ %:r.o
 autocmd Filetype cpp setlocal makeprg=g++\ -Wall\ %\ -o\ %:r.o
-autocmd Filetype c nmap <buffer> <Space>m :<C-u>w<Cr>:make<Cr>
-autocmd Filetype cpp nmap <buffer> <Space>m :<C-u>w<Cr>:make<Cr>
+autocmd Filetype c nmap <buffer> <Space>m :<C-u>write<Cr>:make<Cr>
+autocmd Filetype cpp nmap <buffer> <Space>m :<C-u>write<Cr>:make<Cr>
 "}}}
 
 
@@ -422,17 +422,21 @@ let g:NeoComplCache_EnableAtStartup = 1
 let g:NeoComplCache_TagsAutoUpdate = 1
 "let g:NeoComplCache_EnableCamelCaseCompletion = 1
 let g:NeoComplCache_EnableUnderbarCompletion = 1
-let g:NeoComplCache_CachingDisablePattern = '\(\.vimprojects\|\[Scratch\]\|\.vba\|\.aspx\)'
+let g:NeoComplCache_CachingDisablePattern = '\(\.vimprojects\|\[fuf\]\|\[Scratch\]\|\.vba\|\.aspx\)'
 let g:NeoComplCache_EnableQuickMatch = 0
 let g:NeoComplCache_MinKeywordLength = 2
 let g:NeoComplCache_MinSyntaxLength = 2
-let g:NeoComplCache_DictionaryFileTypeLists = {
-    \ 'default':  $DOTVIM.'/dict/gene.txt',
-    \ 'rb':       $DOTVIM.'/dict/n.dict',
-    \ 'sql':      $DOTVIM.'/dict/n.dict',
-    \ 'vbnet':    $DOTVIM.'/dict/n.dict',
-    \ 'vb':       $DOTVIM.'/dict/n.dict',
-    \ }
+
+if has('win32')
+  let g:NeoComplCache_DictionaryFileTypeLists = {
+      \ 'default':  $DOTVIM.'/dict/gene.txt',
+      \ 'rb':       $DOTVIM.'/dict/n.dict',
+      \ 'sql':      $DOTVIM.'/dict/n.dict',
+      \ 'vbnet':    $DOTVIM.'/dict/n.dict',
+      \ 'vb':       $DOTVIM.'/dict/n.dict',
+      \ }
+endif
+
 let g:NeoComplCache_PluginCompletionLength = {
   \ 'snipMate_complete':  1,
   \ 'buffer_complete':    1,
@@ -442,13 +446,16 @@ let g:NeoComplCache_PluginCompletionLength = {
   \ 'keyword_complete':   2,
   \ 'omni_complete':      1,
   \ }
+
 let g:NeoComplCache_IncludePath = {
   \ 'ruby': '.,D:/usr/ruby2',
   \ 'vbnet': '.',
   \ }
+
 let g:NeoComplCache_IncludeExpr = {
   \ 'ruby': 'substitute(v:fname,''\\.'',''/'',''g'')',
   \ }
+
 let g:NeoComplCache_IncludePattern = {
   \ 'ruby': '^require',
   \ }
