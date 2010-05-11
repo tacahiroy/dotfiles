@@ -3,42 +3,25 @@
 
 scriptencoding utf-8
 
-set columns=100
-set lines=40
 set cmdheight=2
-
-set guioptions& guioptions=eciM
+set columns=100
+set guioptions=eciM
 set guitablabel=%N)\ %f
+set lines=40
+set t_vb=
 
-nmap <C-LeftMouse> <C-]>zz
-nmap <C-RightMouse> <C-t>zz
+set mouse=a
+set nomousefocus
+set mousehide
 
-" hilight
-" for completion
-"au! ColorScheme *
-" \ hi! Pmenu       guibg=LightGrey guifg=DarkBlue |
-" \ hi! PmenuSel    guibg=SeaGreen guifg=White |
-" \ hi! PmenuSbar   guibg=Orange |
-" \ hi! Pmenuthumb  guifg=White  |
-" \ hi! SignColor   guibg=Grey60 |
-" \ hi! SignColumn  guibg=LightGrey guifg=LightGrey
+if &guioptions =~# 'M'
+  let &guioptions = substitute(&guioptions, '[mT]', '', 'g')
+endif
+
 
 set background=light
 colorscheme seashell
 let g:colorscheme = colors_name
-
-" plug: vimshell
-"autocmd BufEnter * if &buftype == '' | execute 'colorscheme ' . g:colorscheme | let &background=g:bg | else | colorscheme lucius | syntax on | endif
-
-"augroup InsertHook
-"  autocmd!
-"  hi! Cursor gui=NONE guibg=Violet
-"  hi! CursorIM gui=NONE guibg=#ff9900
-
-"  autocmd InsertEnter * hi Cursor gui=NONE guibg=#3399ff
-"  autocmd InsertLeave * hi CursorIM gui=NONE guibg=#ff9900
-"                     \| hi Cursor gui=NONE guibg=Violet
-"augroup END
 
 " font
 if has('unix')
@@ -53,13 +36,6 @@ if has('multi_byte_ime') || has('xim')
   set iminsert=0 imsearch=0
 endif
 
-set mouse=a
-set nomousefocus
-set mousehide
-"
-if &guioptions =~# 'M'
-  let &guioptions = substitute(&guioptions, '[mT]', '', 'g')
-endif
 
 " printing font
 if has('printer')
@@ -67,6 +43,9 @@ if has('printer')
     set printfont=M+1VM+IPAG_circle:h10:cDEFAULT
   endif
 endif
+
+nmap <C-LeftMouse> <C-]>zz
+nmap <C-RightMouse> <C-t>zz
 
 " __END__ {{{
 " vim: ts=2 sts=2 sw=2 fdm=marker
