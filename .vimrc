@@ -21,7 +21,7 @@ set verbose=0
 " unix <-> dos
 function! g:cps(path, style)
   let styles = {'dos':  ['/', '\'],
-    \           'unix': ['\', '/']}
+        \       'unix': ['\', '/']}
 
   if ! has_key(styles, a:style)
     return a:path
@@ -44,7 +44,6 @@ function! s:previewTagLight(word)
     endif
   endfor
 endfunction
-nnoremap <silent> ,ta :call <SID>previewTagLight(expand('<cword>'))<Cr>
 
 " from kana's: get SID
 function! s:SID()
@@ -208,6 +207,7 @@ set titlelen=255
 set tabstop=2 shiftwidth=2 softtabstop=2
 set viminfo='64,<100,s10,n~/.viminfo
 set virtualedit=block
+set novisualbell
 set wildignore=*.exe
 set wildmenu
 set wildmode=list:longest
@@ -232,7 +232,7 @@ let &statusline .= "%=%-16(\ %l/%LL,%c\ %)%P"
 
 set matchpairs+=<:>
 "let g:loaded_matchparen = 0
-highlight MatchParen term=reverse ctermbg=LightRed gui=NONE guifg=fg guibg=LightRed
+highlight! MatchParen term=reverse ctermbg=LightRed gui=NONE guifg=fg guibg=LightRed
 " }}}
 
 
@@ -242,7 +242,6 @@ cnoremap <C-n> <Down>
 
 " like C or D
 nnoremap Y y$
-nnoremap s <Nop>
 nnoremap <silent>cn :cnext<Cr>
 nnoremap <silent>cp :cprevious<Cr>
 nnoremap j gj
@@ -252,13 +251,18 @@ nnoremap <C-]> <C-]>zz
 nnoremap <C-t> <C-t>zz
 nnoremap <silent> <Space>n :bnext<Cr>
 nnoremap <silent> <Space>N :bprevious<Cr>
+
+nnoremap s <Nop>
 nnoremap <silent> sn :tabnext<Cr>
 nnoremap <silent> sp :tabprevious<Cr>
 
 nnoremap <silent> <Space>o :cwindow<Cr>
+nnoremap <silent> <Space>ta :call <SID>previewTagLight(expand('<cword>'))<Cr>
 
 if has('win32')
+  " open current directory into explorer
   nnoremap <silent> <Space>e :<C-u>silent execute ":!start explorer \"" . g:cps(expand("%:p:h"), "dos") . "\""<Cr>
+  " open current directory into Command Prompt
   nnoremap <silent> <Space>E :<C-u>silent execute ":!start cmd /k cd \"" . g:cps(expand("%:p:h"), "dos") . "\""<Cr>
 endif
 
@@ -275,6 +279,7 @@ nnoremap <silent> <Space>_ :<C-u>edit $MYVIMRC<Cr>
 nnoremap <silent> <Space>s_ :<C-u>source $MYVIMRC<Cr>
 
 nnoremap <silent> <Esc> <Esc>:<C-u>silent nohlsearch<Cr>
+
 nnoremap <silent> sh <C-w>h
 nnoremap <silent> sk <C-w>k
 nnoremap <silent> sl <C-w>l
@@ -326,39 +331,40 @@ let g:vimsyntax_noerror = 1
 " * something "{{{
 augroup MySomething
   autocmd!
-  autocmd BufRead,BufNewFile *.js set filetype=javascript.jquery
-  " vimball
-  autocmd BufRead *.vba source $DOTVIM/plugin/dotvi/vimballPlugin.vi
-
-  autocmd BufEnter * execute ':lcd ' . escape(expand('%:p:h'), ' ')
 
   autocmd BufReadPre * let g:updtime = &l:updatetime
-  autocmd BufLeave,BufWinLeave * if exists('g:updtime') | let &l:updatetime = g:updtime | endif
-
   autocmd BufReadPost * if ! search('\S', 'cnw') | let &l:fileencoding = &encoding | endif
   " restore cursor position
   autocmd BufReadPost * if line("'\"") | execute "normal '\"" | endif
+  " autochdir emulation
+  autocmd BufEnter * execute ':lcd ' . escape(expand('%:p:h'), ' ')
+  autocmd BufRead,BufNewFile *.js set filetype=javascript.jquery
+  autocmd BufRead *.vba source $DOTVIM/plugin/dotvi/vimballPlugin.vi
+  autocmd BufLeave,BufWinLeave * if exists('g:updtime') | let &l:updatetime = g:updtime | endif
 augroup END
 
-" http://vim-users.jp/2009/11/hack96/ {{{
-autocmd FileType *
-\   if &l:omnifunc == ''
-\ |   setlocal omnifunc=syntaxcomplete#Complete
-\ | endif
-" }}}
 
 augroup MyAutoCmd
   autocmd!
+
+  " http://vim-users.jp/2009/11/hack96/ {{{
+  autocmd FileType *
+  \   if &l:omnifunc == ''
+  \ |   setlocal omnifunc=syntaxcomplete#Complete
+  \ | endif
+  " }}}
   autocmd FileType qf,help nnoremap <buffer> <silent> q <C-w>c
   autocmd FileType javascript* setlocal omnifunc=javascriptcomplete#CompleteJS
   autocmd FileType ruby,rspec let &path .= "," . g:cps($RUBYLIB, 'unix')
-  if has('win32')
-    autocmd FileType ruby,rspec let g:RefeCommand = 'D:/ruby18/bin/refe18'
+  if has('unix')
+    let g:RefeCommand = 'refe'
+  else
+    let g:RefeCommand = 'refe18'
   endif
 
   " MS Excel
-  autocmd MyAutoCmd FileType excel
-    \  setlocal noexpandtab tabstop=10 shiftwidth=10 softtabstop=10 list
+  autocmd FileType excel
+  \  setlocal noexpandtab tabstop=10 shiftwidth=10 softtabstop=10 list
 
   " inspired by ujihisa's
   autocmd FileType irb inoremap <buffer> <silent> <Cr> <Esc>:<C-u>ruby v=VIM::Buffer.current;v.append(v.line_number, '#=> ' + eval(v[v.line_number]).inspect)<Cr>jo
@@ -372,7 +378,7 @@ augroup MyAutoCmd
   autocmd FileType vim,snippet setlocal tabstop=2 shiftwidth=2 softtabstop=2
 
   autocmd FileType html,xhtml,xml,xslt,mathml,svg
-  \| setlocal tabstop=2 shiftwidth=2 softtabstop=2
+  \  setlocal tabstop=2 shiftwidth=2 softtabstop=2
 
   let g:xml_no_auto_nesting = 1
   let g:xml_use_xhtml = 1
@@ -391,16 +397,15 @@ augroup MyAutoCmd
   let g:sqlutil_keyword_case = '\U'
   let g:dbext_default_type = 'ORA'
 
-  autocmd FileType javascript,javascript.jquery,html,xhtml
-  \  setlocal makeprg=jsl\ -conf\ $HOME/jsl.conf\ -nologo\ -nofilelisting\ -nosummary\ -nocontext\ -process\ %
-  \| setlocal errorformat=%f(%l):\ %m
+  if executable("jsl")
+    autocmd FileType javascript,javascript.jquery,html,xhtml
+    \  setlocal makeprg=jsl\ -conf\ $HOME/jsl.conf\ -nologo\ -nofilelisting\ -nosummary\ -nocontext\ -process\ %
+    \| setlocal errorformat=%f(%l):\ %m
+  endif
 
-  autocmd Filetype c compiler gcc
-  autocmd Filetype cpp compiler gcc
-  autocmd Filetype c setlocal makeprg=gcc\ -Wall\ %\ -o\ %:r.o
-  autocmd Filetype cpp setlocal makeprg=g++\ -Wall\ %\ -o\ %:r.o
-  autocmd Filetype c nmap <buffer> <Space>m :<C-u>write<Cr>:make<Cr>
-  autocmd Filetype cpp nmap <buffer> <Space>m :<C-u>write<Cr>:make<Cr>
+  autocmd Filetype c,cpp compiler gcc
+  autocmd Filetype c,cpp setlocal makeprg=gcc\ -Wall\ %\ -o\ %:r.o
+  autocmd Filetype c,cpp nmap <buffer> <Space>m :<C-u>write<Cr>:make<Cr>
 augroup END
 "}}}
 
