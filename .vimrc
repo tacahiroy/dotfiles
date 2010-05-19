@@ -30,14 +30,15 @@ function! g:cps(path, style)
   return substitute(a:path, styles[a:style][0], styles[a:style][1], 'g')
 endfunction
 
+
 " tag information show in command window
 function! s:previewTagLight(word)
   let t = taglist('^' . a:word . '$')
   let current = expand('%:t')
 
   for item in t
-    " [filename] tag definition
     if -1 < stridx(item.filename, current)
+      " [filename] tag definition
       echohl Search | echomsg printf('%-36s %s', '[' . g:cps(item.filename, 'unix') . ']', item.cmd) | echohl None
     else
       echomsg printf('%-36s %s', '[' . substitute(g:cps(item.filename, 'unix'), '\s\s*$', '', '') . ']', item.cmd)
@@ -50,11 +51,6 @@ if executable('ruby') "{{{2 RubyInstantExec
   " RubyInstantExec
   " preview interpreter's output(Tip #1244) improved
   function! s:RubyInstantExec() range
-    if &filetype !=# 'ruby'
-      echomsg 'filetype is not "ruby".'
-      return
-    endif
-
     let buf_name = 'RubyInstantExec Result'
     let tmp = 'vimrie.tmp'
 
@@ -157,11 +153,11 @@ set wildmenu
 set wildmode=list:longest
 set nowrapscan
 
-set t_Co=256
+if ! has("gui_running")
+  set t_Co=256
+endif
 
-set formatoptions&
-let &formatoptions .= 'mM'
-let &formatoptions = substitute(&formatoptions, '[or]', '', 'g')
+set formatoptions& formatoptions+=mM
 
 " statusline {{{2
 " [#bufnr]filename [modified?][enc:ff][filetype]
@@ -174,7 +170,7 @@ let &statusline .= "%{exists('b:mmi.name') && 0<len(b:mmi.name) ? ' -- '.b:mmi.n
 let &statusline .= "%=%-16(\ %l/%LL,%c\ %)%P"
 " }}}
 
-set matchpairs+=<:>
+set matchpairs& matchpairs+=<:>
 "let g:loaded_matchparen = 0
 highlight! MatchParen term=reverse ctermbg=LightRed gui=NONE guifg=fg guibg=LightRed
 " }}}
@@ -283,7 +279,6 @@ augroup MySomething
   " autochdir emulation
   autocmd BufEnter * execute ':lcd ' . escape(expand('%:p:h'), ' ')
   autocmd BufRead,BufNewFile *.js set filetype=javascript.jquery
-  autocmd BufRead *.vba source $DOTVIM/plugin/dotvi/vimballPlugin.vi
   autocmd BufLeave,BufWinLeave * if exists('g:updtime') | let &l:updatetime = g:updtime | endif
 augroup END
 
