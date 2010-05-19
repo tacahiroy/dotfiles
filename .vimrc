@@ -45,62 +45,6 @@ function! s:previewTagLight(word)
   endfor
 endfunction
 
-" from kana's: get SID
-function! s:SID()
-  return matchstr(expand('<sfile>'), '<SNR>\d\+_')
-endfunction
-
-function! s:first_line(file)
-  let lines = readfile(a:file, '', 1)
-  return 1 <= len(lines) ? lines[0] : ''
-endfunction
-
-" VCS branch name  "{{{2
-" from kana's
-" Returns the name of the current branch of the given directory.
-" BUGS: git is only supported.
-let s:_vcs_branch_name_cache = {}  " dir_path = [branch_name, key_file_mtime]
-
-function! s:vcs_branch_name(dir)
-  let cache_entry = get(s:_vcs_branch_name_cache, a:dir, 0)
-  if cache_entry is 0
-        \ || cache_entry[1] < getftime(s:_vcs_branch_name_key_file(a:dir))
-    unlet cache_entry
-    let cache_entry = s:_vcs_branch_name(a:dir)
-    let s:_vcs_branch_name_cache[a:dir] = cache_entry
-  endif
-
-  return cache_entry[0]
-endfunction
-
-function! s:_vcs_branch_name_key_file(dir)
-  return a:dir . '/.git/HEAD'
-endfunction
-
-function! s:_vcs_branch_name(dir)
-  let head_file = s:_vcs_branch_name_key_file(a:dir)
-  let branch_name = ''
-
-  if filereadable(head_file)
-    let ref_info = s:first_line(head_file)
-    if ref_info =~ '^\x\{40}$'
-      let remote_refs_dir = a:dir . '/.git/refs/remotes/'
-      let remote_branches = split(glob(remote_refs_dir . '**'), "\n")
-      call filter(remote_branches, 's:first_line(v:val) ==# ref_info')
-      if 1 <= len(remote_branches)
-        let branch_name = 'remote: '. remote_branches[0][len(remote_refs_dir):]
-      endif
-    else
-      let branch_name = matchlist(ref_info, '^ref: refs/heads/\(\S\+\)$')[1]
-      if branch_name == ''
-        let branch_name = ref_info
-      endif
-    endif
-  endif
-
-  return [branch_name, getftime(head_file)]
-endfunction
-" }}}
 
 if executable('ruby') "{{{2 RubyInstantExec
   " RubyInstantExec
@@ -224,9 +168,9 @@ let &formatoptions = substitute(&formatoptions, '[or]', '', 'g')
 let &statusline = "[#%n]%<%f %m%r%h%w%y"
 let &statusline .= "[%{(&l:fileencoding != '' ? &l:fileencoding : &encoding).':'.&fileformat}]"
 let &statusline .= "%{&expandtab ? '' : '>'}"
-let &statusline .= "(%#Function#%{".s:SID()."vcs_branch_name(getcwd())}%*)"
+let &statusline .= "%#Underlined#%{fugitive#statusline()}%*"
 " monstermethod.vim support
-let &statusline .= "%{exists('b:mmi.name') && 0<len(b:mmi.name) ? ' -- '.b:mmi.name.'('.b:mmi.lines.'L)' : ''}"
+let &statusline .= "%{exists('b:mmi.name') && 0<len(b:mmi.name) ? ' -- '.b:mmi.name.'('.b:mmi.lines.')' : ''}"
 let &statusline .= "%=%-16(\ %l/%LL,%c\ %)%P"
 " }}}
 
