@@ -1,7 +1,7 @@
 " Language: Visual Basic
 " Description: visual basic filetype plugin
 " Maintainer: TaCahiroy
-" Last Change: 07-May-2010.
+" Last Change: 13-May-2010.
 
 if exists('b:did_vb_tacahiroy_ftplugin')
   finish
@@ -56,6 +56,7 @@ if ! exists("no_plugin_maps") && ! exists("no_vb_maps")
   vmap <buffer> <silent> <Space>D :TyossCDel<Cr><Down>
 endif
 
+setlocal commentstring='%s
 let b:cms = "'"
 
 setlocal expandtab tabstop=4 shiftwidth=4 softtabstop=4
