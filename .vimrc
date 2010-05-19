@@ -499,7 +499,7 @@ augroup QFixHowm
   "Howmコマンドキーマップ
   let QFixHowm_Key = ','
   "Howmコマンドの2ストローク目キーマップ
-  let QFixHowm_KeyB = ','
+  let QFixHowm_KeyB = '<Space>'
   "MRUのサマリー表示
   let QFixHowm_MRU_SummaryMode = 0
   " 折りたたみ
