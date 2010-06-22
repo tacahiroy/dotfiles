@@ -190,11 +190,14 @@ nnoremap <silent>cp :cprevious<Cr>
 nnoremap j gj
 nnoremap k gk
 nnoremap vv <C-v>
+nmap [visual-row-without-eol] 0v$h
+nmap vV [visual-row-without-eol]
 nnoremap <C-]> <C-]>zz
 nnoremap <C-t> <C-t>zz
 nnoremap <silent> <Space>n :bnext<Cr>
 nnoremap <silent> <Space>N :bprevious<Cr>
 
+nnoremap Q <Nop>
 nnoremap s <Nop>
 nnoremap <silent> sn :tabnext<Cr>
 nnoremap <silent> sp :tabprevious<Cr>
@@ -443,6 +446,9 @@ let g:prd_fontList .= ',VL_ゴシック:h10:cDEFAULT'
 let g:prd_fontList .= ',Takaoゴシック:h10:cDEFAULT'
 let g:prd_fontList .= ',Takao明朝:h10:cDEFAULT'
 let g:prd_fontList .= ',ＭＳ_明朝:h10:cDEFAULT'
+
+" plug: project.vim
+let g:proj_flags = "St"
 "}}}
 
 
