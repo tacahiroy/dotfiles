@@ -341,7 +341,7 @@ augroup MyAutoCmd
 
   if executable("jsl")
     autocmd FileType javascript,javascript.jquery,html,xhtml
-    \  setlocal makeprg=jsl\ -conf\ $HOME/jsl.conf\ -nologo\ -nofilelisting\ -nosummary\ -nocontext\ -process\ %
+    \  setlocal makeprg=jsl\ -conf\ \"$HOME/jsl.conf\"\ -nologo\ -nofilelisting\ -nosummary\ -nocontext\ -process\ %
     \| setlocal errorformat=%f(%l):\ %m
   endif
 
