@@ -23,11 +23,11 @@ function! g:cps(path, style)
   let styles = {'dos':  ['/', '\'],
         \       'unix': ['\', '/']}
 
-  if ! has_key(styles, a:style)
+  if has_key(styles, a:style)
+    return substitute(a:path, styles[a:style][0], styles[a:style][1], 'g')
+  else
     return a:path
   endif
-
-  return substitute(a:path, styles[a:style][0], styles[a:style][1], 'g')
 endfunction
 
 
@@ -206,9 +206,9 @@ nnoremap <silent> <Space>o :cwindow<Cr>
 nnoremap <silent> <Space>ta :call <SID>previewTagLight(expand('<cword>'))<Cr>
 
 if has('win32')
-  " open current directory into explorer
+  " open current directory with explorer
   nnoremap <silent> <Space>e :<C-u>silent execute ":!start explorer \"" . g:cps(expand("%:p:h"), "dos") . "\""<Cr>
-  " open current directory into Command Prompt
+  " open current directory with Command Prompt
   nnoremap <silent> <Space>E :<C-u>silent execute ":!start cmd /k cd \"" . g:cps(expand("%:p:h"), "dos") . "\""<Cr>
 endif
 
