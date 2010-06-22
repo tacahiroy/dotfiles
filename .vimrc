@@ -436,56 +436,6 @@ nnoremap <silent> <Space>fm :FufMruFile<Cr>
 let g:DrChipTopLvlMenu = ''
 let g:Align_xstrlen = 0
 
-" plug: QFixHowm {{{
-augroup QFixHowm
-  autocmd!
-  "Howmコマンドキーマップ
-  let QFixHowm_Key = ','
-  "Howmコマンドの2ストローク目キーマップ
-  let QFixHowm_KeyB = '<Space>'
-  "MRUのサマリー表示
-  let QFixHowm_MRU_SummaryMode = 0
-  " 折りたたみ
-  let QFixHowm_Folding = 0
-  " 折りたたみパターン
-  "let QFixHowm_FoldingPattern = '^\\s\\s[=.*[]'
-  let QFixHowm_FoldingPattern = ''
-
-  " preview off
-  let g:QFix_PreviewEnable = 0
-  let g:QFixHowm_SchedulePreview = 0
-  " close preview window after howm_memo opened
-  let g:QFix_CloseOnJump = 1
-
-  "howm_dirはファイルを保存したいディレクトリを設定。
-  let howm_dir = 'D:/home/Administrator/howm'
-  "let howm_filename = '%Y/%m/%Y-%m-%d-%H%M%S.howm'
-  "一日一ファイルで使用する
-  let howm_filename = '%Y/%m/%Y-%m-%d-000000.howm'
-  let howm_fileencoding = 'cp932'
-  let howm_fileformat = 'dos'
-
-  "let g:MyGrepcmd = '"#prg#" #defopt# #recopt# #opt# #useropt# /g:#searchWordFile# #searchPath#'
-  "let mygrepprg = 'findstr'
-  "let g:MyGrepcmd_fix = '/s /n '
-  "let g:MyGrepcmd_fix_ignore = '/s /n /i'
-  let g:MyGrepcmd = '"#prg#" #defopt# #recopt# #opt# #useropt# --file=#searchWordFile# #searchPath#'
-  let mygrepprg = 'egrep'
-  let g:MyGrepcmd_fix = '-nHr'
-  let g:MyGrepcmd_fix_ignore = '-inHr'
-
-  let MyGrep_ShellEncoding = 'cp932'
-
-  "ブラウザの指定
-  if has('win32')
-    " Firefox
-    let MyOpenURI_cmd  = '!start "D:/usr/Mozilla Firefox/firefox.exe" -new-tab %s'
-  elseif has('unix')
-    let MyOpenURI_cmd = 'call system("firefox %s &")'
-  endif
-augroup END
-" }}}
-
 " plug: prtdialog
 let g:prd_fontList  = 'M+1VM+IPAG_circle:h10:cDEFAULT'
 let g:prd_fontList .= ',M+2VM+IPAG_circle:h10:cDEFAULT'
