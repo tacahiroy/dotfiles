@@ -175,8 +175,8 @@ let &statusline .= "%=%-16(\ %l/%LL,%c\ %)%P"
 " }}}
 
 set matchpairs& matchpairs+=<:>
-"let g:loaded_matchparen = 0
-highlight! MatchParen term=reverse ctermbg=LightRed gui=NONE guifg=fg guibg=LightRed
+let g:loaded_matchparen = 0
+"highlight! MatchParen term=reverse ctermbg=LightRed gui=NONE guifg=fg guibg=LightRed
 " }}}
 
 
@@ -184,7 +184,6 @@ highlight! MatchParen term=reverse ctermbg=LightRed gui=NONE guifg=fg guibg=Ligh
 cnoremap <C-p> <Up>
 cnoremap <C-n> <Down>
 
-" like C or D
 nnoremap Y y$
 nnoremap <silent>cn :cnext<Cr>
 nnoremap <silent>cp :cprevious<Cr>
@@ -363,17 +362,18 @@ let g:tacahiroy_maintainer = 'Yoshihara'
 "let g:syntastic_auto_loc_list = 1
 
 " plug: NeocomplCache {{{
-let g:NeoComplCache_EnableAtStartup = 1
-let g:NeoComplCache_TagsAutoUpdate = 1
-"let g:NeoComplCache_EnableCamelCaseCompletion = 1
-let g:NeoComplCache_EnableUnderbarCompletion = 1
-let g:NeoComplCache_CachingDisablePattern = '\(\.vimprojects\|\[fuf\]\|\[Scratch\]\|\.vba\|\.aspx\)'
-let g:NeoComplCache_EnableQuickMatch = 0
-let g:NeoComplCache_MinKeywordLength = 2
-let g:NeoComplCache_MinSyntaxLength = 2
+let g:neocomplcache_enable_at_startup = 1
+let g:neocomplcache_enable_auto_select = 0
+let g:neocomplcache_enable_display_parameter = 1
+let g:neocomplcache_enable_underbar_completion = 1
+let g:neocomplcache_disable_caching_buffer_name_pattern = '\(\.vimprojects\|\[fuf\]\|\[Scratch\]\|\[BufExplorer\]\|\.vba\|\.aspx\)'
+let g:neocomplcache_enable_quick_match = 0
+let g:neocomplcache_min_keyword_length = 2
+let g:neocomplcache_min_syntax_length = 2
 
+let g:neocomplcache_snippets_dir = "~/vimfiles/snippets"
 if has('win32')
-  let g:NeoComplCache_DictionaryFileTypeLists = {
+  let g:neocomplcache_dictionary_filetype_lists = {
       \ 'default':  $DOTVIM.'/dict/gene.txt',
       \ 'rb':       $DOTVIM.'/dict/n.dict',
       \ 'sql':      $DOTVIM.'/dict/n.dict',
@@ -382,7 +382,7 @@ if has('win32')
       \ }
 endif
 
-let g:NeoComplCache_PluginCompletionLength = {
+let g:neocomplcache_plugin_completion_length_list = {
   \ 'snipMate_complete':  1,
   \ 'buffer_complete':    1,
   \ 'include_complete':   2,
@@ -392,16 +392,16 @@ let g:NeoComplCache_PluginCompletionLength = {
   \ 'omni_complete':      1,
   \ }
 
-let g:NeoComplCache_IncludePath = {
+let g:neocomplcache_include_paths = {
   \ 'ruby': '.,D:/usr/ruby2',
   \ 'vbnet': '.',
   \ }
 
-let g:NeoComplCache_IncludeExpr = {
+let g:neocomplcache_include_exprs = {
   \ 'ruby': 'substitute(v:fname,''\\.'',''/'',''g'')',
   \ }
 
-let g:NeoComplCache_IncludePattern = {
+let g:neocomplcache_include_patterns = {
   \ 'ruby': '^require',
   \ }
 
