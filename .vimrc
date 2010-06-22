@@ -83,7 +83,7 @@ endif
 "}}}
 
 
-" I don't need GUI menu! "{{{
+" GUI menu is not necessary. "{{{
 let did_install_default_menus = 1
 let did_install_syntax_menu = 1 "}}}
 
@@ -101,7 +101,7 @@ endif
 
 " * options {{{
 set ambiwidth=double
-set autoindent
+set noautoindent
 set nocindent
 set nosmartindent
 set autoread
