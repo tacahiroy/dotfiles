@@ -5,9 +5,14 @@ scriptencoding utf-8
 
 set cmdheight=2
 set columns=100
-set guioptions=eciM
+set guioptions=aeciM
 set guitablabel=%N)\ %f
 set lines=40
+
+if 702 < v:version
+  set relativenumber
+endif
+
 set t_vb=
 
 set mouse=a
@@ -28,11 +33,15 @@ set background=light
 colorscheme seashell
 let g:colorscheme = colors_name
 
-" font
-if has('unix')
+if has('mac')
+  set guifont=Monaco:h12
+  set antialias
+
+  set fuoptions+=maxhorz
+elseif has('unix')
   set guifont=M+1VM+IPAG\ circle\ 10
 else
-  " Windows or others
+  " Windows
   set guifont=M+1VM+IPAG_circle:h10:cDEFAULT
 endif
 

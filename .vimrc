@@ -2,6 +2,31 @@
 " Maintainer: TaCahiroy <tacahiroy*DELETE-ME*@gmail.com>
 
 scriptencoding utf-8
+
+" vundle plugin management "{{{
+filetype off
+set runtimepath+=~/.vim/bundle/vundle
+call vundle#rc()
+
+Bundle 'Shougo/neocomplcache'
+Bundle 'Shougo/unite.vim'
+Bundle 'scrooloose/nerdcommenter'
+Bundle 'tpope/vim-surround'
+Bundle 'tpope/vim-fugitive'
+Bundle 'tpope/vim-rails'
+Bundle 'msanders/snipmate.vim'
+Bundle 'mattn/zencoding-vim'
+Bundle 'L9'
+Bundle 'matchit.zip'
+Bundle 'increment.vim'
+Bundle 'IndentAnything'
+Bundle 'Align.vim'
+Bundle 'project.tar.gz'
+Bundle 'errormarker.vim'
+
+filetype plugin indent on
+"}}}
+
 set cpo&vim
 
 autocmd!
@@ -110,11 +135,12 @@ set backup
 set backupext=.bac
 set backupdir=$DOTVIM/backups
 set backupskip& backupskip+=*.bac,COMMIT_EDITMSG,hg-editor-*.txt,svn-commit.tmp,svn-commit.[0-9]*.tmp
+set cedit=
 set cmdheight=2
 set noequalalways
 set expandtab smarttab
 set fileencodings=ucs-bom,utf-8,iso-2022-jp,euc-jp,cp932
-set fileformats=dos,unix,mac
+let &fileformats = has('unix') ? 'unix,dos,mac' : 'dos,unix,mac'
 set helplang=en,ja
 set hidden
 set history=3000
@@ -122,7 +148,7 @@ set hlsearch
 set ignorecase
 set incsearch
 set linebreak
-set linespace=1
+set linespace=0
 set nolist
 set listchars=tab:>-,trail:-,extends:>,precedes:<,eol:<
 set laststatus=2
@@ -157,8 +183,9 @@ set wildmenu
 set wildmode=list:longest
 set nowrapscan
 
-if ! has("gui_running")
+if !has("gui_running")
   set t_Co=256
+  colorscheme summerfruit256
 endif
 
 set formatoptions& formatoptions+=mM
@@ -181,8 +208,16 @@ let g:loaded_matchparen = 0
 
 
 " * map "{{{
+" ummmmm like Emacs
 cnoremap <C-p> <Up>
 cnoremap <C-n> <Down>
+cnoremap <C-a> <Home>
+cnoremap <C-e> <End>
+cnoremap <C-f> <Right>
+cnoremap <C-b> <Left>
+cnoremap <M-f> <C-Right>
+cnoremap <M-b> <C-Left>
+cnoremap <C-d> <Del>
 
 nnoremap Y y$
 nnoremap <silent>cn :cnext<Cr>
@@ -190,10 +225,11 @@ nnoremap <silent>cp :cprevious<Cr>
 nnoremap j gj
 nnoremap k gk
 nnoremap vv <C-v>
-nmap [visual-row-without-eol] 0v$h
+nmap [visual-row-without-eol] 0v$ho
 nmap vV [visual-row-without-eol]
 nnoremap <C-]> <C-]>zz
 nnoremap <C-t> <C-t>zz
+
 nnoremap <silent> <Space>n :bnext<Cr>
 nnoremap <silent> <Space>N :bprevious<Cr>
 
@@ -204,6 +240,11 @@ nnoremap <silent> sp :tabprevious<Cr>
 
 nnoremap <silent> <Space>o :cwindow<Cr>
 nnoremap <silent> <Space>ta :call <SID>previewTagLight(expand('<cword>'))<Cr>
+
+" NERDCommenter
+map ,ci <plug>NERDCommenterInvert
+map ,cc <plug>NERDCommenterComment
+map ,cl <plug>NERDCommenterAlignLeft
 
 if has('win32')
   " open current directory with explorer
@@ -224,7 +265,7 @@ nnoremap <Space>k <C-u>
 nnoremap <silent> <Space>_ :<C-u>edit $MYVIMRC<Cr>
 nnoremap <silent> <Space>s_ :<C-u>source $MYVIMRC<Cr>
 
-nnoremap <silent> <Esc> <Esc>:<C-u>silent nohlsearch<Cr>
+nnoremap <silent> <Esc><Esc> <Esc>:<C-u>nohlsearch<Cr>
 
 nnoremap <silent> sh <C-w>h
 nnoremap <silent> sk <C-w>k
@@ -279,7 +320,7 @@ augroup MySomething
   autocmd!
 
   autocmd BufReadPre * let g:updtime = &l:updatetime
-  autocmd BufReadPost * if ! search('\S', 'cnw') | let &l:fileencoding = &encoding | endif
+  autocmd BufReadPost * if !search('\S', 'cnw') | let &l:fileencoding = &encoding | endif
   " restore cursor position
   autocmd BufReadPost * if line("'\"") | execute "normal '\"" | endif
   " autochdir emulation
@@ -295,8 +336,8 @@ augroup MyAutoCmd
   " http://vim-users.jp/2009/11/hack96/ {{{
   autocmd FileType *
   \   if &l:omnifunc == ''
-  \ |   setlocal omnifunc=syntaxcomplete#Complete
-  \ | endif
+  \|   setlocal omnifunc=syntaxcomplete#Complete
+  \| endif
   " }}}
   autocmd FileType qf,help nnoremap <buffer> <silent> q <C-w>c
   autocmd FileType javascript* setlocal omnifunc=javascriptcomplete#CompleteJS
@@ -306,10 +347,6 @@ augroup MyAutoCmd
   else
     let g:RefeCommand = 'refe18'
   endif
-
-  " MS Excel
-  autocmd FileType excel
-  \  setlocal noexpandtab tabstop=10 shiftwidth=10 softtabstop=10 list
 
   " inspired by ujihisa's
   autocmd FileType irb inoremap <buffer> <silent> <Cr> <Esc>:<C-u>ruby v=VIM::Buffer.current;v.append(v.line_number, '#=> ' + eval(v[v.line_number]).inspect)<Cr>jo
@@ -369,7 +406,7 @@ let g:neocomplcache_enable_at_startup = 1
 let g:neocomplcache_enable_auto_select = 0
 let g:neocomplcache_enable_display_parameter = 1
 let g:neocomplcache_enable_underbar_completion = 1
-let g:neocomplcache_disable_caching_buffer_name_pattern = '\(\.vimprojects\|\[fuf\]\|\[Scratch\]\|\[BufExplorer\]\|\.vba\|\.aspx\)'
+let g:neocomplcache_disable_caching_file_path_pattern = '\(\.vimprojects\|\*unite\*\|\[Scratch\]\|\[BufExplorer\]\|\.vba\|\.aspx\)'
 let g:neocomplcache_enable_quick_match = 0
 let g:neocomplcache_min_keyword_length = 2
 let g:neocomplcache_min_syntax_length = 2
@@ -417,22 +454,24 @@ inoremap <expr> <C-l> &filetype == 'vim' ? "\<C-x><C-v><C-p>" : neocomplcache#ma
 " plug: NERD Commenter
 let g:NERDMenuMode = 0
 
-" plug: ns9's fuzzyfinder "{{{
-let g:fuf_modesDisable = ['mrucmd']
-let g:fuf_ignoreCase = 1
-let g:fuf_keyOpen = '<Return>'
-let g:fuf_keyOpenSplit = '<S-Return>'
-let g:fuf_keyOpenVsplit = '<C-Return>'
-let g:fuf_abbrevMap = {}
-let g:fuf_mrufile_maxItem = 100
-let g:fuf_file_exclude = '\v\~$|\.(o|exe|bak|swp|sln|suo|scc|bak|resx|vspscc)$' .
-                       \ '|(^|[/\\])(\.hg|\.git|\.bzr|[\.|_]svn|bin|build)($|[/\\])' .
-                       \ '|^((AssemblyInfo\.vb)|(Global\.asax.*)|(tags))$'
+" plug: Shougo's unite.vim "{{{
+" insert mode at start up
+let g:unite_enable_start_insert = 1
+noremap <Space>ub :Unite buffer<Cr>
+noremap <Space>uf :Unite -buffer-name=file file<Cr>
+noremap <Space>um :Unite file_mru<Cr>
 
-nnoremap <silent> <Space>ff :FufFile<Cr>
-nnoremap <silent> <Space>fb :FufBuffer<Cr>
-nnoremap <silent> <Space>fa :FufBookmark<Cr>
-nnoremap <silent> <Space>fm :FufMruFile<Cr>
+" split
+autocmd FileType unite nnoremap <silent> <buffer> <expr> <S-Enter> unite#do_action('split')
+autocmd FileType unite inoremap <silent> <buffer> <expr> <S-Enter> unite#do_action('split')
+" vsplit
+autocmd FileType unite nnoremap <silent> <buffer> <Esc><Esc> :q<Cr>
+autocmd FileType unite inoremap <silent> <buffer> <Esc><Esc> <Esc>:q<Cr>
+
+autocmd FileType unite call s:unite_my_settings()
+function! s:unite_my_settings()
+  " Overwrite settings.
+endfunction
 "}}}
 
 " plug: Align
@@ -463,7 +502,7 @@ endif
 command! -nargs=1 -complete=buffer NTab :999tab sbuffer <args>
 command! Big wincmd _ | wincmd |
 
-if ! exists(':DiffOrig')
+if !exists(':DiffOrig')
   command! DiffOrig
         \ vnew | setlocal buftype=nofile | read# | 0d_ | diffthis | wincmd p | diffthis
 endif
@@ -475,6 +514,9 @@ command! -nargs=0 Dithis :windo diffthis
 if filereadable(expand('~/.vimrc.mine'))
   source ~/.vimrc.mine
 endif
+if has('gui_running') && filereadable(expand('~/.gvimrc'))
+  source ~/.gvimrc
+end
 
 if filereadable($DOTVIM . '/ftplugin/tacahiroy/tacahiroy.vim')
   source $DOTVIM/ftplugin/tacahiroy/tacahiroy.vim
