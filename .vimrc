@@ -8,6 +8,8 @@ filetype off
 set runtimepath+=~/.vim/bundle/vundle
 call vundle#rc()
 
+Bundle 'gmarik/vundle'
+
 Bundle 'Shougo/neocomplcache'
 Bundle 'Shougo/unite.vim'
 Bundle 'scrooloose/nerdcommenter'
@@ -18,11 +20,13 @@ Bundle 'msanders/snipmate.vim'
 Bundle 'mattn/zencoding-vim'
 Bundle 'L9'
 Bundle 'matchit.zip'
-Bundle 'increment.vim'
 Bundle 'IndentAnything'
 Bundle 'Align.vim'
 Bundle 'project.tar.gz'
 Bundle 'errormarker.vim'
+Bundle 'camelcasemotion'
+
+Bundle 'TwitVim'
 
 filetype plugin indent on
 "}}}
@@ -241,10 +245,22 @@ nnoremap <silent> sp :tabprevious<Cr>
 nnoremap <silent> <Space>o :cwindow<Cr>
 nnoremap <silent> <Space>ta :call <SID>previewTagLight(expand('<cword>'))<Cr>
 
+if has('mac')
+  nnoremap <silent> <D-f> :set fullscreen!<Cr>
+endif
+
 " NERDCommenter
 map ,ci <plug>NERDCommenterInvert
 map ,cc <plug>NERDCommenterComment
 map ,cl <plug>NERDCommenterAlignLeft
+
+" camelcasemotion
+map <silent> w <plug>CamelCaseMotion_w
+map <silent> b <plug>CamelCaseMotion_b
+map <silent> e <plug>CamelCaseMotion_e
+sunmap w
+sunmap b
+sunmap e
 
 if has('win32')
   " open current directory with explorer
@@ -400,6 +416,14 @@ let g:tacahiroy_maintainer = 'Yoshihara'
 "" http://github.com/scrooloose/syntastic/
 "let g:syntastic_enable_signs = 1
 "let g:syntastic_auto_loc_list = 1
+
+" TwitVim
+let twitvim_count = 40
+nnoremap <Space>tp :<C-u>PosttoTwitter<Cr>
+nnoremap <Space>tf :<C-u>FriendsTwitter<Cr>
+nnoremap <Space>tu :<C-u>UserTwitter<Cr>
+nnoremap <Space>tr :<C-u>RepliesTwitter<Cr>
+nnoremap <Space>tn :<C-u>NextTwitter<Cr>
 
 " plug: NeocomplCache {{{
 let g:neocomplcache_enable_at_startup = 1
