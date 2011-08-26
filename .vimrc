@@ -21,12 +21,12 @@ Bundle 'mattn/zencoding-vim'
 Bundle 'L9'
 Bundle 'matchit.zip'
 Bundle 'IndentAnything'
-Bundle 'Align.vim'
+Bundle 'Align'
 Bundle 'project.tar.gz'
 Bundle 'errormarker.vim'
 Bundle 'camelcasemotion'
 
-Bundle 'TwitVim'
+Bundle 'increment_new.vim'
 
 filetype plugin indent on
 "}}}
@@ -35,9 +35,10 @@ set cpo&vim
 
 autocmd!
 
-if isdirectory($HOME . '/.vim')
+if has('mac') || has('unix')
   let $DOTVIM = $HOME . '/.vim'
 else
+  " MS Windows etc...
   let $DOTVIM = $HOME . '/vimfiles'
 endif
 
@@ -119,7 +120,7 @@ let did_install_syntax_menu = 1 "}}}
 syntax enable
 filetype plugin indent on
 
-if has('unix')
+if has('unix') || has('mac')
   set encoding=utf-8
   set termencoding=utf-8
 else
@@ -246,7 +247,7 @@ nnoremap <silent> <Space>o :cwindow<Cr>
 nnoremap <silent> <Space>ta :call <SID>previewTagLight(expand('<cword>'))<Cr>
 
 if has('mac')
-  nnoremap <silent> <D-f> :set fullscreen!<Cr>
+  nnoremap <silent> <D-S-f> :set fullscreen!<Cr>
 endif
 
 " NERDCommenter
@@ -417,13 +418,6 @@ let g:tacahiroy_maintainer = 'Yoshihara'
 "let g:syntastic_enable_signs = 1
 "let g:syntastic_auto_loc_list = 1
 
-" TwitVim
-let twitvim_count = 40
-nnoremap <Space>tp :<C-u>PosttoTwitter<Cr>
-nnoremap <Space>tf :<C-u>FriendsTwitter<Cr>
-nnoremap <Space>tu :<C-u>UserTwitter<Cr>
-nnoremap <Space>tr :<C-u>RepliesTwitter<Cr>
-nnoremap <Space>tn :<C-u>NextTwitter<Cr>
 
 " plug: NeocomplCache {{{
 let g:neocomplcache_enable_at_startup = 1
@@ -435,7 +429,7 @@ let g:neocomplcache_enable_quick_match = 0
 let g:neocomplcache_min_keyword_length = 2
 let g:neocomplcache_min_syntax_length = 2
 
-let g:neocomplcache_snippets_dir = "~/vimfiles/snippets"
+let g:neocomplcache_snippets_dir = expand("$DOTVIM/snippets")
 if has('win32')
   let g:neocomplcache_dictionary_filetype_lists = {
       \ 'default':  $DOTVIM.'/dict/gene.txt',
@@ -457,7 +451,6 @@ let g:neocomplcache_plugin_completion_length_list = {
   \ }
 
 let g:neocomplcache_include_paths = {
-  \ 'ruby': '.,D:/usr/ruby2',
   \ 'vbnet': '.',
   \ }
 
@@ -467,13 +460,21 @@ let g:neocomplcache_include_exprs = {
 
 let g:neocomplcache_include_patterns = {
   \ 'ruby': '^require',
+  \ 'perl': '^use',
   \ }
+
+if !exists('g:neocomplcache_omni_patterns')
+  let g:neocomplcache_omni_patterns = {}
+endif
+let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
+let g:neocomplcache_omni_patterns.perl = '[^. *\t]\.\w*\|\h\w*::'
 
 inoremap <expr> <C-h> pumvisible() ? "\<C-y>\<C-h>" : "\<C-h>"
 "inoremap <expr> <silent> <C-g> neocomplcache#undo_completion()
 inoremap <expr> <C-l> &filetype == 'vim' ? "\<C-x><C-v><C-p>" : neocomplcache#manual_omni_complete()
 "inoremap <expr> <C-n> pumvisible() ? "\<C-n>" : neocomplcache#manual_keyword_complete()
 " }}}
+
 
 " plug: NERD Commenter
 let g:NERDMenuMode = 0
@@ -484,17 +485,22 @@ let g:unite_enable_start_insert = 1
 noremap <Space>ub :Unite buffer<Cr>
 noremap <Space>uf :Unite -buffer-name=file file<Cr>
 noremap <Space>um :Unite file_mru<Cr>
+noremap <Space>uu :Unite -buffer-name=file file file_mru buffer<Cr>
 
 " split
 autocmd FileType unite nnoremap <silent> <buffer> <expr> <S-Enter> unite#do_action('split')
 autocmd FileType unite inoremap <silent> <buffer> <expr> <S-Enter> unite#do_action('split')
-" vsplit
+
+autocmd FileType unite nnoremap <silent> <buffer> <expr> <C-Return> unite#do_action('tabopen')
+autocmd FileType unite inoremap <silent> <buffer> <expr> <C-Return> unite#do_action('tabopen')
+
 autocmd FileType unite nnoremap <silent> <buffer> <Esc><Esc> :q<Cr>
 autocmd FileType unite inoremap <silent> <buffer> <Esc><Esc> <Esc>:q<Cr>
 
-autocmd FileType unite call s:unite_my_settings()
-function! s:unite_my_settings()
-  " Overwrite settings.
+autocmd FileType unite call s:configure_unite()
+
+function! s:configure_unite()
+  call unite#set_substitute_pattern('file', '^\~', escape($HOME, '\'), -2)
 endfunction
 "}}}
 
@@ -538,6 +544,7 @@ command! -nargs=0 Dithis :windo diffthis
 if filereadable(expand('~/.vimrc.mine'))
   source ~/.vimrc.mine
 endif
+
 if has('gui_running') && filereadable(expand('~/.gvimrc'))
   source ~/.gvimrc
 end
