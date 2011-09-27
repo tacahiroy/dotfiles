@@ -1,0 +1,26 @@
+[user]
+	name = TaCahiro Yoshihara
+	email = tacahiroy@g^mail.c^om
+[color]
+  diff = auto
+  branch = auto
+  ui = auto
+  status = auto
+  interactive = auto
+[core]
+	editor = /usr/bin/vim
+	pager = lv
+	excludesfile = ~/.gitmine/.gitignore
+
+[alias]
+	ci   = commit
+	co   = checkout
+	st   = status
+	di   = diff
+	bc   = branch
+	logo = log --pretty=oneline --abbrev-commit
+	logg = log --graph --pretty=oneline --abbrev-commit
+	lc   = log ORIG_HEAD.. --stat --no-merges
+
+; vim: ts=4 noexpandtab
+
