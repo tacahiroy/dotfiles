@@ -12,18 +12,21 @@ Bundle 'gmarik/vundle'
 
 Bundle 'Shougo/neocomplcache'
 Bundle 'Shougo/unite.vim'
-Bundle 'scrooloose/nerdcommenter'
 Bundle 'tpope/vim-surround'
 Bundle 'tpope/vim-fugitive'
 Bundle 'tpope/vim-rails'
+Bundle 'https://github.com/tpope/vim-endwise.git'
+Bundle 'https://github.com/tpope/vim-commentary.git'
 Bundle 'msanders/snipmate.vim'
-Bundle 'mattn/zencoding-vim'
+" Bundle 'mattn/zencoding-vim'
+Bundle 'kchmck/vim-coffee-script'
+
 Bundle 'L9'
 Bundle 'matchit.zip'
 Bundle 'IndentAnything'
 Bundle 'Align'
 Bundle 'project.tar.gz'
-Bundle 'errormarker.vim'
+" Bundle 'errormarker.vim'
 Bundle 'camelcasemotion'
 
 Bundle 'increment_new.vim'
@@ -35,7 +38,7 @@ set cpo&vim
 
 autocmd!
 
-if has('mac') || has('unix')
+if isdirectory($HOME . '/.vim')
   let $DOTVIM = $HOME . '/.vim'
 else
   " MS Windows etc...
@@ -189,7 +192,7 @@ set wildmode=list:longest
 set nowrapscan
 
 if !has("gui_running")
-  set t_Co=256
+  "set t_Co=256
   colorscheme summerfruit256
 endif
 
@@ -250,10 +253,9 @@ if has('mac')
   nnoremap <silent> <D-S-f> :set fullscreen!<Cr>
 endif
 
-" NERDCommenter
-map ,ci <plug>NERDCommenterInvert
-map ,cc <plug>NERDCommenterComment
-map ,cl <plug>NERDCommenterAlignLeft
+" commentary.vim
+nmap ,ci <Plug>CommentaryLine
+xmap ,ci <Plug>Commentary
 
 " camelcasemotion
 map <silent> w <plug>CamelCaseMotion_w
@@ -299,14 +301,18 @@ nnoremap <silent> <Space>x <C-w>}
 nnoremap <silent> <Space>X :pclose<Cr>
 
 " cancel completion
-imap <expr> <silent> <S-Esc> pumvisible() ? "\<C-e>" : "\<Esc>:<C-u>setlocal iminsert=0\<Cr>"
-imap <expr> <Cr> pumvisible() ? "\<C-y>\<Cr>" : "\<Cr>"
+inoremap <silent> <S-Esc> pumvisible() ? "\<C-e>" : "\<Esc>:<C-u>setlocal iminsert=0\<Cr>"<Cr>
+inoremap <expr> <silent> <Cr> <SID>CrInInsertModeBetterWay()
+
+function! s:CrInInsertModeCrBetterWay()
+  return pumvisible() ? neocomplcache#close_popup()."\<Cr>" : "\<Cr>"
+endfunction
+
 
 inoremap <silent> ,dd <C-R>=exists('b:dd') ? b:dd : ''<Cr>
 inoremap <silent> ,dt <C-R>=strftime('%Y.%m.%d')<Cr>
 inoremap <silent> ,ti <C-R>=strftime('%H:%M')<Cr>
 inoremap <silent> ,fn <C-R>=expand('%')<Cr>
-inoremap jj <Esc>
 
 " selected text search
 vnoremap * y/<C-R>"<Cr>
@@ -359,11 +365,7 @@ augroup MyAutoCmd
   autocmd FileType qf,help nnoremap <buffer> <silent> q <C-w>c
   autocmd FileType javascript* setlocal omnifunc=javascriptcomplete#CompleteJS
   autocmd FileType ruby,rspec let &path .= "," . g:cps($RUBYLIB, 'unix')
-  if has('unix')
-    let g:RefeCommand = 'refe'
-  else
-    let g:RefeCommand = 'refe18'
-  endif
+  let g:RefeCommand = 'refe'
 
   " inspired by ujihisa's
   autocmd FileType irb inoremap <buffer> <silent> <Cr> <Esc>:<C-u>ruby v=VIM::Buffer.current;v.append(v.line_number, '#=> ' + eval(v[v.line_number]).inspect)<Cr>jo
@@ -371,7 +373,6 @@ augroup MyAutoCmd
 
   autocmd FileType rspec
   \  compiler rspec
-  \| setlocal syntax=ruby
   \| setlocal omnifunc=rubycomplete#Complete
 
   autocmd FileType vim,snippet setlocal tabstop=2 shiftwidth=2 softtabstop=2
@@ -425,7 +426,6 @@ let g:neocomplcache_enable_auto_select = 0
 let g:neocomplcache_enable_display_parameter = 1
 let g:neocomplcache_enable_underbar_completion = 1
 let g:neocomplcache_disable_caching_file_path_pattern = '\(\.vimprojects\|\*unite\*\|\[Scratch\]\|\[BufExplorer\]\|\.vba\|\.aspx\)'
-let g:neocomplcache_enable_quick_match = 0
 let g:neocomplcache_min_keyword_length = 2
 let g:neocomplcache_min_syntax_length = 2
 
@@ -470,14 +470,9 @@ let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
 let g:neocomplcache_omni_patterns.perl = '[^. *\t]\.\w*\|\h\w*::'
 
 inoremap <expr> <C-h> pumvisible() ? "\<C-y>\<C-h>" : "\<C-h>"
-"inoremap <expr> <silent> <C-g> neocomplcache#undo_completion()
 inoremap <expr> <C-l> &filetype == 'vim' ? "\<C-x><C-v><C-p>" : neocomplcache#manual_omni_complete()
-"inoremap <expr> <C-n> pumvisible() ? "\<C-n>" : neocomplcache#manual_keyword_complete()
 " }}}
 
-
-" plug: NERD Commenter
-let g:NERDMenuMode = 0
 
 " plug: Shougo's unite.vim "{{{
 " insert mode at start up
@@ -485,7 +480,7 @@ let g:unite_enable_start_insert = 1
 noremap <Space>ub :Unite buffer<Cr>
 noremap <Space>uf :Unite -buffer-name=file file<Cr>
 noremap <Space>um :Unite file_mru<Cr>
-noremap <Space>uu :Unite -buffer-name=file file file_mru buffer<Cr>
+noremap <Space>uu :Unite -buffer-name=file file_mru buffer<Cr>
 
 " split
 autocmd FileType unite nnoremap <silent> <buffer> <expr> <S-Enter> unite#do_action('split')
@@ -536,9 +531,6 @@ if !exists(':DiffOrig')
   command! DiffOrig
         \ vnew | setlocal buftype=nofile | read# | 0d_ | diffthis | wincmd p | diffthis
 endif
-
-command! -nargs=0 Dioff  :windo diffoff
-command! -nargs=0 Dithis :windo diffthis
 " }}}
 
 if filereadable(expand('~/.vimrc.mine'))
