@@ -9,9 +9,10 @@
 export PATH=$HOME/bin:/usr/local/bin:/usr/local/sbin:$PATH
 export RUBYOPT=-rubygems
 #export RUBYLIB=$HOME/lib/ruby:$HOME/ruby/gems
+export GEM_HOME=/usr/local/Cellar/gems/1.9
 export TERM=xterm-256color
-
-export GIT_PAGER=less
+# colorize
+export LV='-c'
 
 DEFAULT_PROMPT=$PROMPT
 
@@ -156,10 +157,14 @@ alias ltr="ls -ltr"
 alias du="du -h"
 alias df="df -h"
 alias su="su -l"
-alias XK="xargs kill -9"
 
-alias -g L='| less'
-alias -g G='| grep'
+alias v="vim"
+alias vv="mvim"
+
+alias -g KK="|xargs kill -9"
+
+alias -g L='|lv'
+alias -g G='|grep'
 
 ## terminal configuration
 #
@@ -195,7 +200,5 @@ kterm*|xterm*)
     'di=34' 'ln=35' 'so=32' 'ex=31' 'bd=46;34' 'cd=43;34'
   ;;
 esac
-
-## load user .zshrc configuration file
-[ -f ~/.zshrc.mine ] && source ~/.zshrc.mine
+# __END__
 
