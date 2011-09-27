@@ -65,6 +65,8 @@ else
   hi   SignColor      guibg=Grey60
   hi   SignColumn     guibg=LightGrey guifg=LightGrey
 
+  hi   Visual         guibg=#dddddd guifg=NONE
+
   hi   FileTypeOnStatusLine gui=NONE guifg=DarkGreen guibg=#ffffff
 endif
 
