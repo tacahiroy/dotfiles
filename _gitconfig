@@ -10,7 +10,7 @@
 [core]
 	editor = /usr/bin/vim
 	pager = lv
-	excludesfile = ~/.gitmine/.gitignore
+	excludesfile = ~/.gitmine/gitignore
 
 [alias]
 	ci   = commit
