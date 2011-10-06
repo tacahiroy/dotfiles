@@ -162,6 +162,7 @@ set listchars=tab:>-,trail:-,extends:>,precedes:<,eol:<
 set laststatus=2
 set lazyredraw
 set modeline
+set modelines=5
 set number
 set previewheight=8
 set pumheight=24
@@ -202,7 +203,7 @@ set formatoptions& formatoptions+=mM
 " [#bufnr]filename [modified?][enc:ff][filetype]
 let &statusline = "[#%n]%<%f %m%r%h%w%y"
 let &statusline .= "[%{(&l:fileencoding != '' ? &l:fileencoding : &encoding).':'.&fileformat}]"
-let &statusline .= "%{&expandtab ? '' : '>'}"
+let &statusline .= "(%{&expandtab ? '' : '>'}%{&l:tabstop})"
 let &statusline .= "%#Underlined#%{fugitive#statusline()}%*"
 " monstermethod.vim support
 let &statusline .= "%{exists('b:mmi.name') && 0<len(b:mmi.name) ? ' -- '.b:mmi.name.'('.b:mmi.lines.')' : ''}"
@@ -249,10 +250,6 @@ nnoremap <silent> sp :tabprevious<Cr>
 nnoremap <silent> <Space>o :cwindow<Cr>
 nnoremap <silent> <Space>ta :call <SID>previewTagLight(expand('<cword>'))<Cr>
 
-if has('mac')
-  nnoremap <silent> <D-S-f> :set fullscreen!<Cr>
-endif
-
 " commentary.vim
 nmap ,ci <Plug>CommentaryLine
 xmap ,ci <Plug>Commentary
@@ -293,21 +290,17 @@ nnoremap <silent> sj <C-w>j
 nnoremap <MiddleMouse> <Nop>
 nnoremap <2-MiddleMouse> <Nop>
 
-nnoremap <Space>utf8 :<C-u>e ++enc=utf-8<Cr>
-nnoremap <Space>cp932 :<C-u>e ++enc=cp932<Cr>
-
 " preview tag
 nnoremap <silent> <Space>x <C-w>}
 nnoremap <silent> <Space>X :pclose<Cr>
 
 " cancel completion
 inoremap <silent> <S-Esc> pumvisible() ? "\<C-e>" : "\<Esc>:<C-u>setlocal iminsert=0\<Cr>"<Cr>
-inoremap <expr> <silent> <Cr> <SID>CrInInsertModeBetterWay()
 
-function! s:CrInInsertModeCrBetterWay()
+function! s:CrInInsertModeBetterWay()
   return pumvisible() ? neocomplcache#close_popup()."\<Cr>" : "\<Cr>"
 endfunction
-
+inoremap <expr> <silent> <Cr> <C-R>=<SID>CrInInsertModeBetterWay()<Cr>
 
 inoremap <silent> ,dd <C-R>=exists('b:dd') ? b:dd : ''<Cr>
 inoremap <silent> ,dt <C-R>=strftime('%Y.%m.%d')<Cr>
@@ -480,7 +473,7 @@ let g:unite_enable_start_insert = 1
 noremap <Space>ub :Unite buffer<Cr>
 noremap <Space>uf :Unite -buffer-name=file file<Cr>
 noremap <Space>um :Unite file_mru<Cr>
-noremap <Space>uu :Unite -buffer-name=file file_mru buffer<Cr>
+noremap <Space>uu :Unite -buffer-name=file file file_mru buffer<Cr>
 
 " split
 autocmd FileType unite nnoremap <silent> <buffer> <expr> <S-Enter> unite#do_action('split')
