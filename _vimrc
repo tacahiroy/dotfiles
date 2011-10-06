@@ -294,9 +294,6 @@ nnoremap <2-MiddleMouse> <Nop>
 nnoremap <silent> <Space>x <C-w>}
 nnoremap <silent> <Space>X :pclose<Cr>
 
-" cancel completion
-inoremap <silent> <S-Esc> pumvisible() ? "\<C-e>" : "\<Esc>:<C-u>setlocal iminsert=0\<Cr>"<Cr>
-
 function! s:CrInInsertModeBetterWay()
   return pumvisible() ? neocomplcache#close_popup()."\<Cr>" : "\<Cr>"
 endfunction
