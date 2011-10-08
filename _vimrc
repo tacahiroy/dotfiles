@@ -297,7 +297,7 @@ nnoremap <silent> <Space>X :pclose<Cr>
 function! s:CrInInsertModeBetterWay()
   return pumvisible() ? neocomplcache#close_popup()."\<Cr>" : "\<Cr>"
 endfunction
-inoremap <expr> <silent> <Cr> <C-R>=<SID>CrInInsertModeBetterWay()<Cr>
+inoremap <silent> <Cr> <C-R>=<SID>CrInInsertModeBetterWay()<Cr>
 
 inoremap <silent> ,dd <C-R>=exists('b:dd') ? b:dd : ''<Cr>
 inoremap <silent> ,dt <C-R>=strftime('%Y.%m.%d')<Cr>
