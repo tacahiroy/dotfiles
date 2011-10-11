@@ -1,5 +1,5 @@
 " $HOME/.vimrc
-" Maintainer: TaCahiroy <tacahiroy*DELETE-ME*@gmail.com>
+" Maintainer: TaCahiroy <tacahiroy```AT```gmail.com>
 
 scriptencoding utf-8
 
@@ -294,6 +294,7 @@ nnoremap <2-MiddleMouse> <Nop>
 nnoremap <silent> <Space>x <C-w>}
 nnoremap <silent> <Space>X :pclose<Cr>
 
+" vim-endwise support
 function! s:CrInInsertModeBetterWay()
   return pumvisible() ? neocomplcache#close_popup()."\<Cr>" : "\<Cr>"
 endfunction
@@ -467,10 +468,10 @@ inoremap <expr> <C-l> &filetype == 'vim' ? "\<C-x><C-v><C-p>" : neocomplcache#ma
 " plug: Shougo's unite.vim "{{{
 " insert mode at start up
 let g:unite_enable_start_insert = 1
-noremap <Space>ub :Unite buffer<Cr>
-noremap <Space>uf :Unite -buffer-name=file file<Cr>
-noremap <Space>um :Unite file_mru<Cr>
-noremap <Space>uu :Unite -buffer-name=file file file_mru buffer<Cr>
+noremap <Space>fb :Unite buffer<Cr>
+noremap <Space>ff :Unite -buffer-name=file file<Cr>
+noremap <Space>fm :Unite file_mru<Cr>
+noremap <Space>fu :Unite -buffer-name=file file file_mru buffer<Cr>
 
 " split
 autocmd FileType unite nnoremap <silent> <buffer> <expr> <S-Enter> unite#do_action('split')
@@ -486,6 +487,7 @@ autocmd FileType unite call s:configure_unite()
 
 function! s:configure_unite()
   call unite#set_substitute_pattern('file', '^\~', escape($HOME, '\'), -2)
+  let g:unite_source_file_rec_ignore_pattern = '\.\%(exe\|dll\|bak\|sw[po]\)$\|^\%(\.\%(hg\|svn\|git\)$'
 endfunction
 "}}}
 
