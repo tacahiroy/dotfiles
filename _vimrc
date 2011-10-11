@@ -1,5 +1,5 @@
 " $HOME/.vimrc
-" Maintainer: TaCahiroy <tacahiroy```AT```gmail.com>
+" Maintainer: tacahiroy <tacahiroy```AT```gmail.com>
 
 scriptencoding utf-8
 
@@ -118,7 +118,8 @@ endif
 
 " GUI menu is not necessary. "{{{
 let did_install_default_menus = 1
-let did_install_syntax_menu = 1 "}}}
+let did_install_syntax_menu = 1
+"}}}
 
 syntax enable
 filetype plugin indent on
@@ -163,7 +164,13 @@ set laststatus=2
 set lazyredraw
 set modeline
 set modelines=5
-set number
+
+if 702 < v:version
+  set relativenumber
+else
+  set number
+endif
+
 set previewheight=8
 set pumheight=24
 set scroll=0
@@ -187,7 +194,7 @@ set tabstop=2 shiftwidth=2 softtabstop=2
 set viminfo='64,<100,s10,n~/.viminfo
 set virtualedit=block
 set novisualbell
-set wildignore=*.exe
+set wildignore=*.exe,*.dll,*.class
 set wildmenu
 set wildmode=list:longest
 set nowrapscan
@@ -224,13 +231,9 @@ cnoremap <C-a> <Home>
 cnoremap <C-e> <End>
 cnoremap <C-f> <Right>
 cnoremap <C-b> <Left>
-cnoremap <M-f> <C-Right>
-cnoremap <M-b> <C-Left>
 cnoremap <C-d> <Del>
 
 nnoremap Y y$
-nnoremap <silent>cn :cnext<Cr>
-nnoremap <silent>cp :cprevious<Cr>
 nnoremap j gj
 nnoremap k gk
 nnoremap vv <C-v>
@@ -239,6 +242,8 @@ nmap vV [visual-row-without-eol]
 nnoremap <C-]> <C-]>zz
 nnoremap <C-t> <C-t>zz
 
+nnoremap <silent> <F7> :cnext<Cr>
+nnoremap <silent> <S-F7> :cprevious<Cr>
 nnoremap <silent> <Space>n :bnext<Cr>
 nnoremap <silent> <Space>N :bprevious<Cr>
 
@@ -251,8 +256,13 @@ nnoremap <silent> <Space>o :cwindow<Cr>
 nnoremap <silent> <Space>ta :call <SID>previewTagLight(expand('<cword>'))<Cr>
 
 " commentary.vim
-nmap ,ci <Plug>CommentaryLine
-xmap ,ci <Plug>Commentary
+nmap <Space>c <Plug>CommentaryLine
+xmap <Space>c <Plug>Commentary
+
+" surround.vim
+let g:surround_{char2nr('k')} = "「\r」"
+let g:surround_{char2nr('K')} = "『\r』"
+let g:surround_indent = 0
 
 " camelcasemotion
 map <silent> w <plug>CamelCaseMotion_w
@@ -275,8 +285,8 @@ nnoremap <Space>q :<C-u>quit<Cr>
 nnoremap <Space>W :<C-u>write!<Cr>
 nnoremap <Space>Q :<C-u>quit!<Cr>
 
-nnoremap <Space>j <C-d>
-nnoremap <Space>k <C-u>
+nnoremap <Space>j <C-f>
+nnoremap <Space>k <C-b>
 
 nnoremap <silent> <Space>_ :<C-u>edit $MYVIMRC<Cr>
 nnoremap <silent> <Space>s_ :<C-u>source $MYVIMRC<Cr>
@@ -300,7 +310,6 @@ function! s:CrInInsertModeBetterWay()
 endfunction
 inoremap <silent> <Cr> <C-R>=<SID>CrInInsertModeBetterWay()<Cr>
 
-inoremap <silent> ,dd <C-R>=exists('b:dd') ? b:dd : ''<Cr>
 inoremap <silent> ,dt <C-R>=strftime('%Y.%m.%d')<Cr>
 inoremap <silent> ,ti <C-R>=strftime('%H:%M')<Cr>
 inoremap <silent> ,fn <C-R>=expand('%')<Cr>
@@ -311,23 +320,16 @@ vnoremap < <gv
 vnoremap > >gv
 
 if executable('tidy')
-  vnoremap <leader>ty :!tidy -xml -i -shiftjis -wrap 0 -q -asxml<Cr>
+  vnoremap <leader>ty :<C-u>!tidy -xml -i -shiftjis -wrap 0 -q -asxml<Cr>
   nnoremap <leader>ty :<C-u>1,$!tidy -xml -i -shiftjis -wrap 0 -q -asxml<Cr>
 endif
 
-vmap ,s <Plug>Vsurround
-vmap ,S <Plug>VSurround
-
-let g:surround_{char2nr('k')} = "「\r」"
-let g:surround_{char2nr('K')} = "『\r』"
-let g:surround_indent = 0
 let g:xml_tag_completion_map = ''
 "}}}
 
 
 " syntax: vim.vim
 let g:vimsyntax_noerror = 1
-
 
 " * something "{{{
 augroup MySomething
@@ -336,7 +338,7 @@ augroup MySomething
   autocmd BufReadPre * let g:updtime = &l:updatetime
   autocmd BufReadPost * if !search('\S', 'cnw') | let &l:fileencoding = &encoding | endif
   " restore cursor position
-  autocmd BufReadPost * if line("'\"") | execute "normal '\"" | endif
+  autocmd BufReadPost * if line("'\"") <= line('$') | execute "normal '\"" | endif
   " autochdir emulation
   autocmd BufEnter * execute ':lcd ' . escape(expand('%:p:h'), ' ')
   autocmd BufRead,BufNewFile *.js set filetype=javascript.jquery
@@ -353,7 +355,13 @@ augroup MyAutoCmd
   \|   setlocal omnifunc=syntaxcomplete#Complete
   \| endif
   " }}}
-  autocmd FileType qf,help nnoremap <buffer> <silent> q <C-w>c
+
+  " like less
+  autocmd FileType help
+        \  nnoremap <buffer> <silent> q <C-w>c
+        \| nnoremap <buffer> <silent> f <C-f>
+        \| nnoremap <buffer> <silent> b <C-b>
+  autocmd FileType qf nnoremap <buffer> <silent> q <C-w>c
   autocmd FileType javascript* setlocal omnifunc=javascriptcomplete#CompleteJS
   autocmd FileType ruby,rspec let &path .= "," . g:cps($RUBYLIB, 'unix')
   let g:RefeCommand = 'refe'
@@ -405,11 +413,6 @@ augroup END
 " plug: tacahiroy
 let g:tacahiroy_maintainer = 'Yoshihara'
 
-"" plug: Syntastic
-"" http://github.com/scrooloose/syntastic/
-"let g:syntastic_enable_signs = 1
-"let g:syntastic_auto_loc_list = 1
-
 
 " plug: NeocomplCache {{{
 let g:neocomplcache_enable_at_startup = 1
@@ -420,7 +423,8 @@ let g:neocomplcache_disable_caching_file_path_pattern = '\(\.vimprojects\|\*unit
 let g:neocomplcache_min_keyword_length = 2
 let g:neocomplcache_min_syntax_length = 2
 
-let g:neocomplcache_snippets_dir = expand("$DOTVIM/snippets")
+let g:neocomplcache_snippets_dir = expand("$DOTVIM/bundle/snipmate.vim/snippets")
+
 if has('win32')
   let g:neocomplcache_dictionary_filetype_lists = {
       \ 'default':  $DOTVIM.'/dict/gene.txt',
@@ -464,7 +468,6 @@ inoremap <expr> <C-h> pumvisible() ? "\<C-y>\<C-h>" : "\<C-h>"
 inoremap <expr> <C-l> &filetype == 'vim' ? "\<C-x><C-v><C-p>" : neocomplcache#manual_omni_complete()
 " }}}
 
-
 " plug: Shougo's unite.vim "{{{
 " insert mode at start up
 let g:unite_enable_start_insert = 1
@@ -483,7 +486,7 @@ autocmd FileType unite inoremap <silent> <buffer> <expr> <C-Return> unite#do_act
 autocmd FileType unite nnoremap <silent> <buffer> <Esc><Esc> :q<Cr>
 autocmd FileType unite inoremap <silent> <buffer> <Esc><Esc> <Esc>:q<Cr>
 
-autocmd FileType unite call s:configure_unite()
+autocmd FileType unite call <SID>configure_unite()
 
 function! s:configure_unite()
   call unite#set_substitute_pattern('file', '^\~', escape($HOME, '\'), -2)
@@ -506,7 +509,6 @@ let g:prd_fontList .= ',ＭＳ_明朝:h10:cDEFAULT'
 " plug: project.vim
 let g:proj_flags = "St"
 "}}}
-
 
 if has('multi_byte_ime') || has('xim')
   set iminsert=0 imsearch=0
