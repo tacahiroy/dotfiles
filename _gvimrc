@@ -1,5 +1,5 @@
 " $HOME/.gvimrc
-" Maintainer:   TaCahiroy <tacahiroy```AT```gmail.com>
+" Maintainer: tacahiroy <tacahiroy```AT```gmail.com>
 
 scriptencoding utf-8
 
@@ -8,10 +8,6 @@ set columns=100
 set guioptions=aeciM
 set guitablabel=%N)\ %f
 set lines=40
-
-if 702 < v:version
-  set relativenumber
-endif
 
 set t_vb=
 
