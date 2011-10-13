@@ -23,7 +23,7 @@ function set_prompt_git() {
   if [ $? != '0' ]; then
       PROMPT="${DEFAULT_PROMPT}"
   else
-      PROMPT="${DEFAULT_PROMPT}on [%{${fg[green]}%}${git_branch}(${head})${fg[red]}${dirty}%{${reset_color}%}] "
+      PROMPT="${DEFAULT_PROMPT}[%{${fg[green]}%}${git_branch}(${head})${fg[red]}${dirty}%{${reset_color}%}] "
   fi
 }
 chpwd_functions+=set_prompt_git
