@@ -10,7 +10,6 @@ typeset -U fpath
 #
 # export LANG=ja_JP.UTF-8
 export RUBYOPT=-rubygems
-# export PATH=$HOME/bin:/usr/local/bin:/usr/local/sbin:$PATH
 export GEM_HOME=/usr/local/Cellar/gems/1.9
 export TERM=xterm-256color
 # colorize
