@@ -129,7 +129,7 @@ let did_install_syntax_menu = 1
 syntax enable
 filetype plugin indent on
 
-if has('unix') || has('mac')
+if has('unix') || has('macunix')
   set encoding=utf-8
   set termencoding=utf-8
 else
@@ -247,8 +247,8 @@ nmap vV [visual-row-without-eol]
 nnoremap <C-]> <C-]>zz
 nnoremap <C-t> <C-t>zz
 
-nnoremap <silent> <F7> :cnext<Cr>
-nnoremap <silent> <S-F7> :cprevious<Cr>
+nnoremap <silent> <Space>k :cnext<Cr>
+nnoremap <silent> <Space>K :cprevious<Cr>
 nnoremap <silent> <Space>n :bnext<Cr>
 nnoremap <silent> <Space>N :bprevious<Cr>
 
@@ -364,8 +364,8 @@ augroup MyAutoCmd
   " like less
   autocmd FileType help
         \  nnoremap <buffer> <silent> q <C-w>c
-        \| nnoremap <buffer> <silent> f <C-f>
-        \| nnoremap <buffer> <silent> b <C-b>
+        \| nnoremap <buffer> <silent> d <C-f>
+        \| nnoremap <buffer> <silent> u <C-b>
   autocmd FileType qf nnoremap <buffer> <silent> q <C-w>c
   autocmd FileType javascript* setlocal omnifunc=javascriptcomplete#CompleteJS
   autocmd FileType ruby,rspec let &path .= "," . g:cps($RUBYLIB, 'unix')
