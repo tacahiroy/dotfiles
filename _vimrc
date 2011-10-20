@@ -14,22 +14,27 @@ Bundle 'Shougo/neocomplcache'
 Bundle 'Shougo/unite.vim'
 Bundle 'tpope/vim-surround'
 Bundle 'tpope/vim-fugitive'
-Bundle 'tpope/vim-rails'
-Bundle 'https://github.com/tpope/vim-endwise.git'
-Bundle 'https://github.com/tpope/vim-commentary.git'
+Bundle 'tpope/vim-endwise'
+Bundle 'tpope/vim-commentary'
 Bundle 'msanders/snipmate.vim'
 " Bundle 'mattn/zencoding-vim'
+
+Bundle 'thinca/vim-quickrun'
+Bundle 'tpope/vim-rails'
 Bundle 'kchmck/vim-coffee-script'
+Bundle 'VimClojure'
+Bundle 'jiangmiao/simple-javascript-indenter'
 
 Bundle 'L9'
 Bundle 'matchit.zip'
-Bundle 'IndentAnything'
+" Bundle 'IndentAnything'
 Bundle 'Align'
 Bundle 'project.tar.gz'
 " Bundle 'errormarker.vim'
 Bundle 'camelcasemotion'
 
 Bundle 'increment_new.vim'
+Bundle 'colorsel.vim'
 
 filetype plugin indent on
 "}}}
@@ -413,6 +418,14 @@ augroup END
 " plug: tacahiroy
 let g:tacahiroy_maintainer = 'Yoshihara'
 
+" plug: VimClojure
+let vimclojure#HighlightBuiltins = 1
+let vimclojure#ParenRainbow = 1
+" Nailgun
+let vimclojure#WantNailgun = 1
+let vimclojure#NailgunClient = "ng"
+let vimclojure#NailgunServer = "127.0.0.1"
+let vimclojure#NailgunPort = "2113"
 
 " plug: NeocomplCache {{{
 let g:neocomplcache_enable_at_startup = 1
