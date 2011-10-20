@@ -1,0 +1,13 @@
+#*#
+*.bak
+*.bk
+*.la
+*.lo
+*.o
+*.org
+*.rej
+.*.rej
+.*~
+.DS_Store
+.sw?
+tags
