@@ -1,3 +1,5 @@
+.vim/.vundle
 .vim/bundle
+.vim/colors
 .vim/backups
 .vim/swaps
