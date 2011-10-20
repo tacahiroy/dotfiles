@@ -26,3 +26,11 @@ task :mksymlink do
   end
 end
 
+desc "create symlink"
+task :testmksymlink do
+  FileList['_*'].each do |src|
+    dest = "#{ENV['HOME']}/.#{src[1..-1]}"
+    src, dest = File.expand_path(src), File.expand_path(dest)
+    puts "#{src} => #{dest}"
+  end
+end
