@@ -57,7 +57,7 @@ set verbose=0
 " * functions "{{{1
 " convert path separator
 " unix <-> dos
-function! g:cps(path, style)
+function! g:cps(path, style)"{{{
   let styles = {'dos':  ['/', '\'],
         \       'unix': ['\', '/']}
 
@@ -66,11 +66,11 @@ function! g:cps(path, style)
   else
     return a:path
   endif
-endfunction
+endfunction"}}}
 
 
 " tag information show in command window
-function! s:previewTagLight(word)
+function! s:previewTagLight(word)"{{{
   let t = taglist('^' . a:word . '$')
   let current = expand('%:t')
 
@@ -82,7 +82,7 @@ function! s:previewTagLight(word)
       echomsg printf('%-36s %s', '[' . substitute(g:cps(item.filename, 'unix'), '\s\s*$', '', '') . ']', item.cmd)
     endif
   endfor
-endfunction
+endfunction"}}}
 
 
 if executable('ruby') "{{{2 RubyInstantExec
@@ -204,6 +204,14 @@ set wildmenu
 set wildmode=list:longest
 set nowrapscan
 
+if has("persistent_undo")
+  set undodir=~/.vimundo
+  augroup UndoFile
+    autocmd!
+    autocmd BufReadPre ~/* setlocal undofile
+  augroup END
+endif
+
 if !has("gui_running")
   "set t_Co=256
   colorscheme summerfruit256
@@ -247,18 +255,23 @@ nmap vV [visual-row-without-eol]
 nnoremap <C-]> <C-]>zz
 nnoremap <C-t> <C-t>zz
 
-nnoremap <silent> <Space>k :cnext<Cr>
-nnoremap <silent> <Space>K :cprevious<Cr>
+nnoremap <silent> <Space>[ :cnext<Cr>
+nnoremap <silent> <Space>] :cprevious<Cr>
 nnoremap <silent> <Space>n :bnext<Cr>
 nnoremap <silent> <Space>N :bprevious<Cr>
 
-nnoremap Q <Nop>
 nnoremap s <Nop>
+nnoremap q <Nop>
+nnoremap Q q
+
 nnoremap <silent> sn :tabnext<Cr>
 nnoremap <silent> sp :tabprevious<Cr>
 
 nnoremap <silent> <Space>o :cwindow<Cr>
 nnoremap <silent> <Space>ta :call <SID>previewTagLight(expand('<cword>'))<Cr>
+
+nnoremap <silent> ,<< dT>
+nnoremap <silent> ,>> dt<
 
 " commentary.vim
 nmap <Space>c <Plug>CommentaryLine
@@ -277,7 +290,7 @@ sunmap w
 sunmap b
 sunmap e
 
-if has('win32')
+if has('win32') || has('win64')
   " open current directory with explorer
   nnoremap <silent> <Space>e :<C-u>silent execute ":!start explorer \"" . g:cps(expand("%:p:h"), "dos") . "\""<Cr>
   " open current directory with Command Prompt
@@ -306,8 +319,8 @@ nnoremap <MiddleMouse> <Nop>
 nnoremap <2-MiddleMouse> <Nop>
 
 " preview tag
-nnoremap <silent> <Space>x <C-w>}
-nnoremap <silent> <Space>X :pclose<Cr>
+nnoremap <silent> <Space>p <C-w>}
+nnoremap <silent> <Space>P :pclose<Cr>
 
 " vim-endwise support
 function! s:CrInInsertModeBetterWay()
@@ -421,11 +434,15 @@ let g:tacahiroy_maintainer = 'Yoshihara'
 " plug: VimClojure
 let vimclojure#HighlightBuiltins = 1
 let vimclojure#ParenRainbow = 1
+let vimclojure#FuzzyIndent = 1
+let vimclojure#HighlightContrib = 1
+let vimclojure#DynamicHighlighting = 1
 " Nailgun
 let vimclojure#WantNailgun = 1
-let vimclojure#NailgunClient = "ng"
+let vimclojure#NailgunClient = $HOME . "/Projects/wk/vimclojure.hg/client/ng"
 let vimclojure#NailgunServer = "127.0.0.1"
 let vimclojure#NailgunPort = "2113"
+
 
 " plug: NeocomplCache {{{
 let g:neocomplcache_enable_at_startup = 1
@@ -438,7 +455,7 @@ let g:neocomplcache_min_syntax_length = 2
 
 let g:neocomplcache_snippets_dir = expand("$DOTVIM/bundle/snipmate.vim/snippets")
 
-if has('win32')
+if has('win32') || has('win64')
   let g:neocomplcache_dictionary_filetype_lists = {
       \ 'default':  $DOTVIM.'/dict/gene.txt',
       \ 'rb':       $DOTVIM.'/dict/n.dict',
