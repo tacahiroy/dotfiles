@@ -49,7 +49,8 @@ typeset -U class_path
 class_path=(
   /usr/local/Cellar/clojure/1.3.0/*.jar
   /usr/local/Cellar/clojure-contrib/1.2.0/*.jar
-  $HOME/.vim/bundle/vimclojure.hg/lib/build/*.jar
+  $HOME/Projects/wk/vimclojure.hg/build/libs/*.jar
+  $HOME/Projects/wk/vimclojure.hg/server/build/libs/*.jar
 )
 
 source ~/.zshrc
