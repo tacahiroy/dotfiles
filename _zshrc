@@ -145,7 +145,8 @@ alias df="df -h"
 alias su="su -l"
 
 alias v="vim"
-alias vv="mvim"
+alias gvim='open -a /Applications/MacVim.app '$@""
+alias vv='gvim'
 
 alias -g KK="|xargs kill -9"
 
