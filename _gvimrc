@@ -29,8 +29,9 @@ set background=light
 colorscheme seashell
 let g:colorscheme = colors_name
 
-if has('mac')
-  set guifont=Monaco:h12
+if has('macunix')
+  " set guifont=Monaco:h12
+  set guifont=Menlo\ Regular:h12
   set antialias
 
   set fuoptions+=maxhorz
@@ -48,7 +49,7 @@ endif
 
 " printing font
 if has('printer')
-  if has('win32')
+  if has('win32') || has('win64')
     let &printfont = &guifont
   endif
 endif
