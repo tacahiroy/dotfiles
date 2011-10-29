@@ -46,7 +46,7 @@ else
   hi   DiffAdd        guibg=LightGreen      ctermbg=DarkGreen   ctermfg=White
   hi   DiffChange     guibg=Gray90          ctermbg=DarkCyan    ctermfg=White
   hi   DiffText       gui=NONE              guibg=LightCyan2    ctermbg=DarkCyan   ctermfg=Yellow
-  hi   Comment        guifg=LightBlue       gui=bold
+  hi   Comment        guifg=#88ccaa         gui=bold
   hi   Constant       guifg=DeepPink
   hi   PreProc        guifg=DarkMagenta
   hi   StatusLine     gui=NONE              guibg=Orange    guifg=Black        cterm=NONE       ctermfg=White   ctermbg=DarkGreen
