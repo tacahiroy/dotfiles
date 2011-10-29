@@ -32,7 +32,7 @@ case ${UID} in
     PROMPT="%{${fg[white]}%}${HOST%%.*} ${PROMPT}"
   ;;
 esac
-# for Git prompt setting
+# for Git prompt
 DEFAULT_PROMPT=$PROMPT
 
 # completion as path after =
@@ -195,6 +195,12 @@ setopt promptsubst
 autoload -U promptinit
 promptinit
 # }}}
+
+## tmux
+#
+if [ $SHLVL = 1 ]; then
+  tmux attach || tmux
+fi
 
 # __END__
 # vim: fdm=marker
