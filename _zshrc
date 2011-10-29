@@ -1,37 +1,6 @@
 # Created by newuser for 4.3.4
 # users generic .zshrc file for zsh(1)
 
-DEFAULT_PROMPT=$PROMPT
-
-## git
-typeset -ga chpwd_functions
-typeset -ga preexec_functions
-
-function set_prompt_git() {
-  local git_branch
-  local dirty
-  local head
-
-  head=$(git rev-parse --short HEAD 2> /dev/null)
-  $(git status 2> /dev/null | grep '^nothing to commit' > /dev/null)
-  if [ $? != '0' ]; then
-      dirty='*'
-  fi
-
-  git_branch="${$(git symbolic-ref HEAD 2> /dev/null)#refs/heads/}"
-
-  if [ $? != '0' ]; then
-      PROMPT="${DEFAULT_PROMPT}"
-  else
-      PROMPT="${DEFAULT_PROMPT}[%{${fg[green]}%}${git_branch}(${head})${fg[red]}${dirty}%{${reset_color}%}] "
-  fi
-}
-chpwd_functions+=set_prompt_git
-preexec_functions+=set_prompt_git
-setopt promptsubst
-autoload -U promptinit
-promptinit
-
 ## ignore case for completion
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 zstyle ':completion:*' menu select=1
@@ -63,6 +32,8 @@ case ${UID} in
     PROMPT="%{${fg[white]}%}${HOST%%.*} ${PROMPT}"
   ;;
 esac
+# for Git prompt setting
+DEFAULT_PROMPT=$PROMPT
 
 # completion as path after =
 setopt magic_equal_subst
@@ -126,34 +97,41 @@ setopt interactive_comments # comment after '#'
 autoload -Uz compinit
 compinit
 
-## Alias configuration
+## Alias configuration# {{{
 # expand aliases before completing
 setopt complete_aliases # aliased ls needs if file/dir completions work
 
-alias where="command -v"
-alias j="jobs -l"
+alias where='command -v'
+alias j='jobs -l'
 
-alias ls="ls -F --color"
+alias ls='ls -F --color'
 
-alias la="ls -a"
-alias ll="ls -l"
-alias lla="ls -la"
-alias ltr="ls -ltr"
+alias la='ls -a'
+alias ll='ls -l'
+alias lla='ls -la'
+alias ltr='ls -ltr'
 
-alias du="du -h"
-alias df="df -h"
-alias su="su -l"
+alias du='du -h'
+alias df='df -h'
+alias su='su -l'
+alias lv='lv -c'
 
-alias v="vim"
-alias gvim='open -a /Applications/MacVim.app '$@""
+alias v='vim'
+
+case "${OSTYPE}" in
+  freebsd*|darwin*)
+    alias gvim='open -a /Applications/MacVim.app '$@""
+esac
+
 alias vv='gvim'
 
-alias -g KK="|xargs kill -9"
+alias -g KK='|xargs kill -9'
 
-alias -g L='|lv'
+alias -g L='|$PAGER'
 alias -g G='|grep'
+# }}}
 
-## terminal configuration
+## terminal configuration# {{{
 #
 unset LSCOLORS
 case "${TERM}" in
@@ -172,9 +150,9 @@ cons25)
   zstyle ':completion:*' list-colors \
     'di=;34;1' 'ln=;35;1' 'so=;32;1' 'ex=31;1' 'bd=46;34' 'cd=43;34'
   ;;
-esac
+esac # }}}
 
-# set terminal title including current directory
+# set terminal title including current directory # {{{
 #
 case "${TERM}" in
 kterm*|xterm*)
@@ -186,6 +164,38 @@ kterm*|xterm*)
   zstyle ':completion:*' list-colors \
     'di=34' 'ln=35' 'so=32' 'ex=31' 'bd=46;34' 'cd=43;34'
   ;;
-esac
+esac # }}}
+
+## git prompt # {{{
+typeset -ga chpwd_functions
+typeset -ga preexec_functions
+
+function set_prompt_git() {
+  local git_branch
+  local dirty
+  local head
+
+  head=$(git rev-parse --short HEAD 2> /dev/null)
+  $(git status 2> /dev/null | grep '^nothing to commit' > /dev/null)
+  if [ $? != '0' ]; then
+      dirty='*'
+  fi
+
+  git_branch="${$(git symbolic-ref HEAD 2> /dev/null)#refs/heads/}"
+
+  if [ $? != '0' ]; then
+      PROMPT="${DEFAULT_PROMPT}"
+  else
+      PROMPT="${DEFAULT_PROMPT}[%{${fg[green]}%}${git_branch}(${head})${fg[red]}${dirty}%{${reset_color}%}] "
+  fi
+}
+chpwd_functions+=set_prompt_git
+preexec_functions+=set_prompt_git
+setopt promptsubst
+autoload -U promptinit
+promptinit
+# }}}
+
 # __END__
+# vim: fdm=marker
 
