@@ -53,5 +53,3 @@ class_path=(
   $HOME/Projects/wk/vimclojure.hg/server/build/libs/*.jar
 )
 
-source ~/.zshrc
-
