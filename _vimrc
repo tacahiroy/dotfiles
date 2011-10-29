@@ -358,7 +358,7 @@ augroup MySomething
   " restore cursor position
   autocmd BufReadPost * if line("'\"") <= line('$') | execute "normal '\"" | endif
   " autochdir emulation
-  autocmd BufEnter * execute ':lcd ' . escape(expand('%:p:h'), ' ')
+  autocmd BufEnter * if expand('%') !~# '^fugitive://' | execute ':lcd ' . escape(expand('%:p:h'), ' ') | endif
   autocmd BufRead,BufNewFile *.js set filetype=javascript.jquery
   autocmd BufLeave,BufWinLeave * if exists('g:updtime') | let &l:updatetime = g:updtime | endif
 augroup END
