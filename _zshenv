@@ -14,6 +14,7 @@ export GEM_HOME=/usr/local/Cellar/gems/1.9
 export TERM=xterm-256color
 # colorize
 export LV='-c'
+export PAGER='lv'
 
 ## path
 typeset -U path
