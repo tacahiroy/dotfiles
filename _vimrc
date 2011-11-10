@@ -24,17 +24,18 @@ Bundle 'tpope/vim-rails'
 Bundle 'kchmck/vim-coffee-script'
 Bundle 'VimClojure'
 Bundle 'jiangmiao/simple-javascript-indenter'
+Bundle 'avakhov/vim-yaml'
 
 Bundle 'L9'
 Bundle 'matchit.zip'
 " Bundle 'IndentAnything'
 Bundle 'Align'
-Bundle 'project.tar.gz'
+" Bundle 'project.tar.gz'
 " Bundle 'errormarker.vim'
 Bundle 'camelcasemotion'
 
-Bundle 'increment_new.vim'
-Bundle 'colorsel.vim'
+" Bundle 'increment_new.vim'
+" Bundle 'colorsel.vim'
 
 filetype plugin indent on
 "}}}
@@ -255,17 +256,14 @@ nmap vV [visual-row-without-eol]
 nnoremap <C-]> <C-]>zz
 nnoremap <C-t> <C-t>zz
 
-nnoremap <silent> <Space>[ :cnext<Cr>
-nnoremap <silent> <Space>] :cprevious<Cr>
+nnoremap <silent> <Space>] :cnext<Cr>
+nnoremap <silent> <Space>[ :cprevious<Cr>
 nnoremap <silent> <Space>n :bnext<Cr>
 nnoremap <silent> <Space>N :bprevious<Cr>
 
 nnoremap s <Nop>
 nnoremap q <Nop>
 nnoremap Q q
-
-nnoremap <silent> sn :tabnext<Cr>
-nnoremap <silent> sp :tabprevious<Cr>
 
 nnoremap <silent> <Space>o :cwindow<Cr>
 nnoremap <silent> <Space>ta :call <SID>previewTagLight(expand('<cword>'))<Cr>
@@ -315,6 +313,10 @@ nnoremap <silent> sh <C-w>h
 nnoremap <silent> sk <C-w>k
 nnoremap <silent> sl <C-w>l
 nnoremap <silent> sj <C-w>j
+
+nnoremap <silent> sn :tabnext<Cr>
+nnoremap <silent> sp :tabprevious<Cr>
+
 nnoremap <MiddleMouse> <Nop>
 nnoremap <2-MiddleMouse> <Nop>
 
