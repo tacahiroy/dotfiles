@@ -54,3 +54,6 @@ class_path=(
   $HOME/Projects/wk/vimclojure.hg/server/build/libs/*.jar
 )
 
+export LEIN_JAR=$HOME/.lein/self-installs/leiningen-1.6.1.1-standalone.jar
+export CLOJURE_JAR=/usr/local/Cellar/clojure/1.3.0/clojure-1.3.0.jar
+
