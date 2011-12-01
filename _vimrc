@@ -14,12 +14,13 @@ Bundle 'Shougo/neocomplcache'
 Bundle 'Shougo/unite.vim'
 Bundle 'tpope/vim-surround'
 Bundle 'tpope/vim-fugitive'
-Bundle 'tpope/vim-endwise'
+Bundle 'tacahiroy/vim-endwise'
 Bundle 'tpope/vim-commentary'
 Bundle 'msanders/snipmate.vim'
 " Bundle 'mattn/zencoding-vim'
 
 Bundle 'thinca/vim-quickrun'
+Bundle 'thinca/vim-ref'
 Bundle 'tpope/vim-rails'
 Bundle 'kchmck/vim-coffee-script'
 Bundle 'VimClojure'
@@ -430,8 +431,8 @@ augroup END
 
 
 " * plugins "{{{
-" plug: tacahiroy
-let g:tacahiroy_maintainer = 'Yoshihara'
+" plug: vim-ref
+let g:ref_refe_cmd = $HOME . "/rubyrefm/refe-1_9_2"
 
 " plug: VimClojure
 let vimclojure#HighlightBuiltins = 1
