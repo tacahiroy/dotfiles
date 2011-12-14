@@ -219,7 +219,7 @@ if !has("gui_running")
   colorscheme summerfruit256
 endif
 
-set formatoptions& formatoptions+=mM
+set formatoptions& formatoptions+=mM formatoptions-=r
 
 " statusline {{{2
 " [#bufnr]filename [modified?][enc:ff][filetype]
@@ -240,6 +240,8 @@ let g:loaded_matchparen = 0
 
 " * map "{{{
 " ummmmm like Emacs
+" cmdline editing
+cnoremap <C-o> <C-q>
 cnoremap <C-p> <Up>
 cnoremap <C-n> <Down>
 cnoremap <C-a> <Home>
@@ -423,9 +425,10 @@ augroup MyAutoCmd
     \| setlocal errorformat=%f(%l):\ %m
   endif
 
+  autocmd Filetype c,cpp set tabstop=4 softtabstop=4 shiftwidth=4
   autocmd Filetype c,cpp compiler gcc
   autocmd Filetype c,cpp setlocal makeprg=gcc\ -Wall\ %\ -o\ %:r.o
-  autocmd Filetype c,cpp nmap <buffer> <Space>m :<C-u>write<Cr>:make<Cr>
+  autocmd Filetype c,cpp nmap <buffer> <Space>m :<C-u>write<Cr>:make --std=c99<Cr>
 augroup END
 "}}}
 
