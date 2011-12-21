@@ -26,7 +26,7 @@ task :mksymlink do
   end
 end
 
-desc "create symlink"
+desc "create symlink(dry run)"
 task :testmksymlink do
   FileList['_*'].each do |src|
     dest = "#{ENV['HOME']}/.#{src[1..-1]}"
