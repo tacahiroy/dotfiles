@@ -32,7 +32,6 @@ Bundle 'matchit.zip'
 " Bundle 'IndentAnything'
 Bundle 'Align'
 " Bundle 'project.tar.gz'
-" Bundle 'errormarker.vim'
 Bundle 'camelcasemotion'
 
 " Bundle 'increment_new.vim'
@@ -362,6 +361,7 @@ augroup MySomething
   autocmd BufReadPost * if !search('\S', 'cnw') | let &l:fileencoding = &encoding | endif
   " restore cursor position
   autocmd BufReadPost * if line("'\"") <= line('$') | execute "normal '\"" | endif
+  autocmd BufReadPost * setlocal formatoptions-=o
   " autochdir emulation
   autocmd BufEnter * if expand('%') !~# '^fugitive://' | execute ':lcd ' . escape(expand('%:p:h'), ' ') | endif
   autocmd BufRead,BufNewFile *.js set filetype=javascript.jquery
@@ -387,7 +387,6 @@ augroup MyAutoCmd
   autocmd FileType qf nnoremap <buffer> <silent> q <C-w>c
   autocmd FileType javascript* setlocal omnifunc=javascriptcomplete#CompleteJS
   autocmd FileType ruby,rspec let &path .= "," . g:cps($RUBYLIB, 'unix')
-  let g:RefeCommand = 'refe'
 
   " inspired by ujihisa's
   autocmd FileType irb inoremap <buffer> <silent> <Cr> <Esc>:<C-u>ruby v=VIM::Buffer.current;v.append(v.line_number, '#=> ' + eval(v[v.line_number]).inspect)<Cr>jo
@@ -399,7 +398,7 @@ augroup MyAutoCmd
 
   autocmd FileType vim,snippet setlocal tabstop=2 shiftwidth=2 softtabstop=2
 
-  autocmd FileType html,xhtml,xml,xslt,mathml,svg
+  autocmd FileType html*,xhtml,xml,xslt,mathml,svg
   \  setlocal tabstop=2 shiftwidth=2 softtabstop=2
 
   let g:xml_no_auto_nesting = 1
@@ -409,7 +408,7 @@ augroup MyAutoCmd
   autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS tabstop=2 shiftwidth=2 softtabstop=2
 
   let g:loaded_sql_completion = 1
-  autocmd FileType sql,plsql
+  autocmd FileType sql*,plsql
   \  setlocal tabstop=4 shiftwidth=4 softtabstop=4
   \| nnoremap <buffer> <silent> <C-Return> :DBExecSQLUnderCursor<Cr>
   \| vnoremap <buffer> <silent> <C-Return> :DBExecVisualSQL<Cr>
@@ -570,10 +569,6 @@ endif
 if has('gui_running') && filereadable(expand('~/.gvimrc'))
   source ~/.gvimrc
 end
-
-if filereadable($DOTVIM . '/ftplugin/tacahiroy/tacahiroy.vim')
-  source $DOTVIM/ftplugin/tacahiroy/tacahiroy.vim
-endif
 
 set runtimepath+=$DOTVIM/sandbox
 
