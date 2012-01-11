@@ -10,13 +10,13 @@ call vundle#rc()
 
 Bundle 'gmarik/vundle'
 
-Bundle 'Shougo/neocomplcache'
+Bundle 'kien/ctrlp.vim'
 Bundle 'tpope/vim-surround'
 Bundle 'tpope/vim-fugitive'
 Bundle 'tpope/vim-commentary'
 Bundle 'msanders/snipmate.vim'
 " Bundle 'mattn/zencoding-vim'
-Bundle 'kien/ctrlp.vim'
+Bundle 'Shougo/neocomplcache'
 
 Bundle 'tacahiroy/vim-endwise'
 
@@ -152,7 +152,7 @@ set backup
 set backupext=.bac
 set backupdir=$DOTVIM/backups
 set backupskip& backupskip+=*.bac,COMMIT_EDITMSG,hg-editor-*.txt,svn-commit.tmp,svn-commit.[0-9]*.tmp
-set cedit=
+set cedit=
 set cmdheight=2
 set noequalalways
 set expandtab smarttab
@@ -160,7 +160,7 @@ set fileencodings=ucs-bom,utf-8,iso-2022-jp,euc-jp,cp932
 let &fileformats = has('unix') ? 'unix,dos,mac' : 'dos,unix,mac'
 set helplang=en,ja
 set hidden
-set history=3000
+set history=10000
 set hlsearch
 set ignorecase
 set incsearch
@@ -202,7 +202,7 @@ set tabstop=2 shiftwidth=2 softtabstop=2
 set viminfo='64,<100,s10,n~/.viminfo
 set virtualedit=block
 set novisualbell
-set wildignore=*.exe,*.dll,*.class
+set wildignore=*.exe,*.dll,*.class,*.o,*.obj
 set wildmenu
 set wildmode=list:longest
 set nowrapscan
@@ -353,6 +353,13 @@ if executable('tidy')
 endif
 
 let g:xml_tag_completion_map = ''
+"}}}
+
+
+" * abbreviations"{{{
+inoreabbr funciton function
+inoreabbr requrie require
+inoreabbr reuqire require
 "}}}
 
 
