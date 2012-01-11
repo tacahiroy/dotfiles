@@ -14,6 +14,8 @@ zstyle ':completion:*' verbose yes
 WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
 WORDCHARS=${WORDCHARS:s,/,,}
 
+stty intr '^C' 
+
 ## Default shell configuration
 #
 # set prompt
@@ -207,7 +209,6 @@ promptinit
 # }}}
 
 ## tmux
-#
 if [ $SHLVL = 1 ]; then
   tmux attach || tmux
 fi
