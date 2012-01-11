@@ -21,9 +21,9 @@ function! s:vbpChoice(dir)
     return vbps[0]
   endif
 
-  let i = 0
+  let i = 1
   for vbp in vbps
-    let vbps[i] = printf("%2d: %s", i + 1, vbp)
+    let vbps[i] = printf("%2d: %s", i, vbp)
     let i += 1
   endfor
 
@@ -35,7 +35,6 @@ function! s:vbpChoice(dir)
     endif
 
     if ans !~# '^\d\{1,2}$'
-      echo 'a'
       continue
     endif
     let choice = get(vbps, ans - 1, "")
@@ -63,11 +62,11 @@ setlocal expandtab tabstop=4 shiftwidth=4 softtabstop=4
 compiler vb
 
 " monstermethod support
-let g:mm_begin_vb = '^[\t ]*\%(\%(private\|protected\|friend\|public\)[\t ]\+\)\?' .
-                     \ '\%(sub\|function\)[\t ]\+\(\S\+\)('
-let g:mm_end_vb = '^[\t ]*end[\t ]\+\%(sub\|function\)[\t ]*'
+" let g:mm_begin_vb = '^[\t ]*\%(\%(private\|protected\|friend\|public\)[\t ]\+\)\?' .
+"                      \ '\%(sub\|function\)[\t ]\+\(\S\+\)('
+" let g:mm_end_vb = '^[\t ]*end[\t ]\+\%(sub\|function\)[\t ]*'
 
-autocmd! CursorHold <buffer> nested let b:mmi = Tyoss.getMonsterMethodInfo('vb')
+" autocmd! CursorHold <buffer> nested let b:mmi = Tyoss.getMonsterMethodInfo('vb')
 autocmd BufEnter <buffer> setlocal updatetime=500
 
 if ! exists('b:undo_ftplugin')
