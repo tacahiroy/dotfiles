@@ -11,14 +11,16 @@ call vundle#rc()
 Bundle 'gmarik/vundle'
 
 Bundle 'Shougo/neocomplcache'
-Bundle 'Shougo/unite.vim'
 Bundle 'tpope/vim-surround'
 Bundle 'tpope/vim-fugitive'
-Bundle 'tacahiroy/vim-endwise'
 Bundle 'tpope/vim-commentary'
 Bundle 'msanders/snipmate.vim'
 " Bundle 'mattn/zencoding-vim'
+Bundle 'kien/ctrlp.vim'
 
+Bundle 'tacahiroy/vim-endwise'
+
+Bundle 'msanders/cocoa.vim'
 Bundle 'thinca/vim-quickrun'
 Bundle 'thinca/vim-ref'
 Bundle 'tpope/vim-rails'
@@ -306,10 +308,14 @@ nnoremap <Space>Q :<C-u>quit!<Cr>
 nnoremap <Space>j <C-f>
 nnoremap <Space>k <C-b>
 
+nnoremap <Space>h :<C-u>h 
+
 nnoremap <silent> <Space>_ :<C-u>edit $MYVIMRC<Cr>
 nnoremap <silent> <Space>s_ :<C-u>source $MYVIMRC<Cr>
 
 nnoremap <silent> <Esc><Esc> <Esc>:<C-u>nohlsearch<Cr>
+
+nnoremap <silent> g<C-f> :<C-u>echo expand('%:p')<Cr>
 
 nnoremap <silent> sh <C-w>h
 nnoremap <silent> sk <C-w>k
@@ -503,30 +509,33 @@ inoremap <expr> <C-h> pumvisible() ? "\<C-y>\<C-h>" : "\<C-h>"
 inoremap <expr> <C-l> &filetype == 'vim' ? "\<C-x><C-v><C-p>" : neocomplcache#manual_omni_complete()
 " }}}
 
-" plug: Shougo's unite.vim "{{{
-" insert mode at start up
-let g:unite_enable_start_insert = 1
-noremap <Space>fb :Unite buffer<Cr>
-noremap <Space>ff :Unite -buffer-name=file file<Cr>
-noremap <Space>fm :Unite file_mru<Cr>
-noremap <Space>fu :Unite -buffer-name=file file file_mru buffer<Cr>
+" plug: ctrlp.vim "{{{
+let g:ctrlp_map = '<Space>ff'
+let g:ctrlp_jump_to_buffer = 2
+let g:ctrlp_working_path_mode = 2
+let g:ctrlp_match_window_bottom = 0
+let g:ctrlp_clear_cache_on_exit = 0
+let g:ctrlp_follow_symlinks = 1
+let g:ctrlp_highlight_match = [1, 'Constant']
 
-" split
-autocmd FileType unite nnoremap <silent> <buffer> <expr> <S-Enter> unite#do_action('split')
-autocmd FileType unite inoremap <silent> <buffer> <expr> <S-Enter> unite#do_action('split')
+let g:ctrlp_user_command = ['.git/', 'cd %s && git ls-files']
+let g:ctrlp_user_command = ['.hg/', 'hg --cwd %s locate --fullpath -I .']
 
-autocmd FileType unite nnoremap <silent> <buffer> <expr> <C-Return> unite#do_action('tabopen')
-autocmd FileType unite inoremap <silent> <buffer> <expr> <C-Return> unite#do_action('tabopen')
+let g:ctrlp_prompt_mappings = {
+  \ 'PrtSelectMove("j")': ['<C-n>'],
+  \ 'PrtSelectMove("k")': ['<C-p>'],
+  \ 'PrtHistory(-1)':     [''],
+  \ 'PrtHistory(1)':      [''],
+  \ }
 
-autocmd FileType unite nnoremap <silent> <buffer> <Esc><Esc> :q<Cr>
-autocmd FileType unite inoremap <silent> <buffer> <Esc><Esc> <Esc>:q<Cr>
+set wildignore+=*/.git/*,*/.hg/*,*/.svn/*
+set wildignore+=*/.neocon/*,*/.vimundo/*
+set wildignore+=*.mp3,*.aac,*.flac
+set wildignore+=*.mp4,*.flv,*.mpg,*.mkv,*.avi,*.wmv,*.mov,*.iso
 
-autocmd FileType unite call <SID>configure_unite()
-
-function! s:configure_unite()
-  call unite#set_substitute_pattern('file', '^\~', escape($HOME, '\'), -2)
-  let g:unite_source_file_rec_ignore_pattern = '\.\%(exe\|dll\|bak\|sw[po]\)$\|^\%(\.\%(hg\|svn\|git\)$'
-endfunction
+noremap <Space>fb :CtrlPBuffer<Cr>
+noremap <Space>ff :CtrlP<Cr>
+noremap <Space>fm :CtrlPMRU<Cr>
 "}}}
 
 " plug: Align
