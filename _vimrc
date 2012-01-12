@@ -260,8 +260,8 @@ nmap vV [visual-row-without-eol]
 nnoremap <C-]> <C-]>zz
 nnoremap <C-t> <C-t>zz
 
-nnoremap <silent> <Space>] :cnext<Cr>
-nnoremap <silent> <Space>[ :cprevious<Cr>
+nnoremap <silent> qj :cnext<Cr>
+nnoremap <silent> qk :cprevious<Cr>
 nnoremap <silent> <Space>n :bnext<Cr>
 nnoremap <silent> <Space>N :bprevious<Cr>
 
@@ -292,8 +292,10 @@ sunmap w
 sunmap b
 sunmap e
 
-if has('win32') || has('win64')
-  " open current directory with explorer
+" open current directory with filer
+if has('mac')
+  nnoremap <silent> <Space>e :<C-u>silent execute ":!open -a Finder %:p:h"<Cr>
+elseif has('win32') || has('win64')
   nnoremap <silent> <Space>e :<C-u>silent execute ":!start explorer \"" . g:cps(expand("%:p:h"), "dos") . "\""<Cr>
   " open current directory with Command Prompt
   nnoremap <silent> <Space>E :<C-u>silent execute ":!start cmd /k cd \"" . g:cps(expand("%:p:h"), "dos") . "\""<Cr>
