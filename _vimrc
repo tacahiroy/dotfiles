@@ -472,7 +472,7 @@ let g:neocomplcache_enable_at_startup = 1
 let g:neocomplcache_enable_auto_select = 0
 let g:neocomplcache_enable_display_parameter = 1
 let g:neocomplcache_enable_underbar_completion = 1
-let g:neocomplcache_disable_caching_file_path_pattern = '\(\.vimprojects\|\*unite\*\|\[Scratch\]\|\[BufExplorer\]\|\.vba\|\.aspx\)'
+let g:neocomplcache_disable_caching_file_path_pattern = '\(\.vimprojects\|\[Scratch\]\|\.vba\|\.aspx\)'
 let g:neocomplcache_min_keyword_length = 2
 let g:neocomplcache_min_syntax_length = 2
 
