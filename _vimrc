@@ -60,68 +60,27 @@ set verbose=0
 
 
 " * functions "{{{1
-" convert path separator
+" convert path separator "{{{
 " unix <-> dos
-function! g:cps(path, style)"{{{
-  let styles = {'dos':  ['/', '\'],
-        \       'unix': ['\', '/']}
-
-  if has_key(styles, a:style)
-    return substitute(a:path, styles[a:style][0], styles[a:style][1], 'g')
-  else
-    return a:path
-  endif
-endfunction"}}}
+function! g:cps(path, sep)
+  return substitute(a:path, '[/\\]', a:sep, 'g')
+endfunction "}}}
 
 
-" tag information show in command window
-function! s:previewTagLight(word)"{{{
+" tag information show in command window "{{{
+function! s:previewTagLight(word)
   let t = taglist('^' . a:word . '$')
   let current = expand('%:t')
 
   for item in t
     if -1 < stridx(item.filename, current)
       " [filename] tag definition
-      echohl Search | echomsg printf('%-36s %s', '[' . g:cps(item.filename, 'unix') . ']', item.cmd) | echohl None
+      echohl Search | echomsg printf('%-36s %s', '[' . g:cps(item.filename, '/') . ']', item.cmd) | echohl None
     else
-      echomsg printf('%-36s %s', '[' . substitute(g:cps(item.filename, 'unix'), '\s\s*$', '', '') . ']', item.cmd)
+      echomsg printf('%-36s %s', '[' . substitute(g:cps(item.filename, '/'), '\s\s*$', '', '') . ']', item.cmd)
     endif
   endfor
-endfunction"}}}
-
-
-if executable('ruby') "{{{2 RubyInstantExec
-  " RubyInstantExec
-  " preview interpreter's output(Tip #1244) improved
-  function! s:RubyInstantExec() range
-    let buf_name = 'RubyInstantExec Result'
-    let tmp = 'vimrie.tmp'
-
-    " put current buffer's content in a temp file
-    silent execute printf(':%d,%dw! >> %s', a:firstline, a:lastline, tmp)
-
-    " open the preview window
-    silent execute ':pedit! ' . escape(buf_name, '\ ')
-    " change to preview window
-    wincmd P
-
-    setlocal buftype=nofile
-    setlocal noswapfile
-    setlocal syntax=none
-    setlocal bufhidden=delete
-
-    " replace current buffer with ruby's output
-    silent execute printf(':%%!ruby %s 2>&1', tmp)
-    " change back to the source buffer
-    wincmd p
-
-    call delete(tmp)
-  endfunction
-
-  nmap <silent> <Space>R mzggVG:call <SID>RubyInstantExec()<Cr>'z:delm z<Cr>
-  nmap <silent> <Space>r :call <SID>RubyInstantExec()<Cr>
-  vmap <silent> <Space>r :call <SID>RubyInstantExec()<Cr>
-endif
+endfunction "}}}
 "}}}
 "}}}
 
@@ -298,9 +257,9 @@ sunmap e
 if has('mac')
   nnoremap <silent> <Space>e :<C-u>silent execute ":!open -a Finder %:p:h"<Cr>
 elseif has('win32') || has('win64')
-  nnoremap <silent> <Space>e :<C-u>silent execute ":!start explorer \"" . g:cps(expand("%:p:h"), "dos") . "\""<Cr>
+  nnoremap <silent> <Space>e :<C-u>silent execute ":!start explorer \"" . g:cps(expand("%:p:h"), "\\") . "\""<Cr>
   " open current directory with Command Prompt
-  nnoremap <silent> <Space>E :<C-u>silent execute ":!start cmd /k cd \"" . g:cps(expand("%:p:h"), "dos") . "\""<Cr>
+  nnoremap <silent> <Space>E :<C-u>silent execute ":!start cmd /k cd \"" . g:cps(expand("%:p:h"), "\\") . "\""<Cr>
 endif
 
 " inspired by ujihisa's. cooool!!
@@ -404,7 +363,7 @@ augroup MyAutoCmd
         \| nnoremap <buffer> <silent> u <C-b>
   autocmd FileType qf nnoremap <buffer> <silent> q <C-w>c
   autocmd FileType javascript* setlocal omnifunc=javascriptcomplete#CompleteJS
-  " autocmd FileType ruby,rspec let &path .= "," . g:cps($RUBYLIB, 'unix')
+  " autocmd FileType ruby,rspec let &path .= "," . g:cps($RUBYLIB, '/')
 
   " inspired by ujihisa's
   autocmd FileType irb inoremap <buffer> <silent> <Cr> <Esc>:<C-u>ruby v=VIM::Buffer.current;v.append(v.line_number, '#=> ' + eval(v[v.line_number]).inspect)<Cr>jo
@@ -525,25 +484,29 @@ inoremap <expr> <C-l> &filetype == 'vim' ? "\<C-x><C-v><C-p>" : neocomplcache#ma
 let g:ctrlp_map = '<Space>ff'
 let g:ctrlp_jump_to_buffer = 2
 let g:ctrlp_working_path_mode = 2
-let g:ctrlp_match_window_bottom = 0
+let g:ctrlp_match_window_bottom = 1
 let g:ctrlp_clear_cache_on_exit = 0
 let g:ctrlp_follow_symlinks = 1
 let g:ctrlp_highlight_match = [1, 'Constant']
+let g:ctrlp_max_files = 5000
+let g:ctrlp_max_depth = 20
 
 let g:ctrlp_user_command = ['.git/', 'cd %s && git ls-files']
-let g:ctrlp_user_command = ['.hg/', 'hg --cwd %s locate --fullpath -I .']
+let g:ctrlp_user_command += ['.hg/', 'hg --cwd %s locate --fullpath -I .']
 
 let g:ctrlp_prompt_mappings = {
-  \ 'PrtSelectMove("j")': ['<C-n>'],
-  \ 'PrtSelectMove("k")': ['<C-p>'],
-  \ 'PrtHistory(-1)':     [''],
-  \ 'PrtHistory(1)':      [''],
+  \ 'PrtSelectMove("j")':   ['<C-n>'],
+  \ 'PrtSelectMove("k")':   ['<C-p>'],
+  \ 'PrtHistory(-1)':       [''],
+  \ 'PrtHistory(1)':        [''],
   \ }
+let g:ctrlp_extensions = ['tag', 'buffertag', 'quickfix', 'dir', 'rtscript']
 
 set wildignore+=*/.git/*,*/.hg/*,*/.svn/*
 set wildignore+=*/.neocon/*,*/.vimundo/*
 set wildignore+=*.mp3,*.aac,*.flac
 set wildignore+=*.mp4,*.flv,*.mpg,*.mkv,*.avi,*.wmv,*.mov,*.iso
+set wildignore+=.DS_Store
 
 noremap <Space>fb :CtrlPBuffer<Cr>
 noremap <Space>ff :CtrlP<Cr>
