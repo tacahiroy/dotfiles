@@ -15,6 +15,7 @@ export TERM=xterm-256color
 # colorize
 export LV='-c'
 export PAGER='lv'
+export EDITOR='vim'
 
 ## path
 typeset -U path
@@ -23,8 +24,9 @@ path=(
   /usr/local/bin(N-/)
   /usr/local/sbin(N-/)
   /usr/local/bin(N-/)
-  /usr/local/Cellar/android-sdk/r13/tools(N-/)
-  /usr/local/Cellar/android-sdk/r13/platform-tools(N-/)
+  /usr/local/Cellar/android-sdk/r16/tools(N-/)
+  /usr/local/Cellar/android-sdk/r16/platform-tools(N-/)
+  $GEM_HOME/bin(N-/)
   $path
 )
 
