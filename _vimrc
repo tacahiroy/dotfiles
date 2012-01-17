@@ -15,19 +15,21 @@ Bundle 'tpope/vim-surround'
 Bundle 'tpope/vim-fugitive'
 Bundle 'tpope/vim-commentary'
 Bundle 'msanders/snipmate.vim'
-" Bundle 'mattn/zencoding-vim'
 Bundle 'Shougo/neocomplcache'
 
 Bundle 'tacahiroy/vim-endwise'
 
-Bundle 'msanders/cocoa.vim'
 Bundle 'thinca/vim-quickrun'
 Bundle 'thinca/vim-ref'
+
 Bundle 'tpope/vim-rails'
 Bundle 'kchmck/vim-coffee-script'
 Bundle 'VimClojure'
 Bundle 'jiangmiao/simple-javascript-indenter'
+Bundle 'msanders/cocoa.vim'
 Bundle 'avakhov/vim-yaml'
+Bundle 'bbommarito/vim-slim'
+" Bundle 'mattn/zencoding-vim'
 
 Bundle 'L9'
 Bundle 'matchit.zip'
@@ -380,6 +382,7 @@ augroup MySomething
   " autochdir emulation
   autocmd BufEnter * if expand('%') !~# '^fugitive://' | execute ':lcd ' . escape(expand('%:p:h'), ' ') | endif
   autocmd BufRead,BufNewFile *.js set filetype=javascript.jquery
+  autocmd BufRead,BufNewFile *.ru,Gemfile set filetype=ruby
   autocmd BufLeave,BufWinLeave * if exists('g:updtime') | let &l:updatetime = g:updtime | endif
 augroup END
 
@@ -401,7 +404,7 @@ augroup MyAutoCmd
         \| nnoremap <buffer> <silent> u <C-b>
   autocmd FileType qf nnoremap <buffer> <silent> q <C-w>c
   autocmd FileType javascript* setlocal omnifunc=javascriptcomplete#CompleteJS
-  autocmd FileType ruby,rspec let &path .= "," . g:cps($RUBYLIB, 'unix')
+  " autocmd FileType ruby,rspec let &path .= "," . g:cps($RUBYLIB, 'unix')
 
   " inspired by ujihisa's
   autocmd FileType irb inoremap <buffer> <silent> <Cr> <Esc>:<C-u>ruby v=VIM::Buffer.current;v.append(v.line_number, '#=> ' + eval(v[v.line_number]).inspect)<Cr>jo
