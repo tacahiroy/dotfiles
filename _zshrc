@@ -128,15 +128,17 @@ alias df='df -h'
 alias su='su -l'
 alias lv='lv -c'
 
-alias v='vim'
-
 case "${OSTYPE}" in
   freebsd*|darwin*)
     alias gvim='open -a /Applications/MacVim.app '$@""
 esac
 
+alias v='vim'
 alias vv='gvim'
 
+alias bdl='bundle'
+
+# global
 alias -g KK='|xargs kill -9'
 
 alias -g L='|$PAGER'
