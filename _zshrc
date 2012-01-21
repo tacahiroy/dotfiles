@@ -117,6 +117,7 @@ alias where='command -v'
 alias j='jobs -l'
 
 alias ls='ls -F --color'
+alias sl='ls'
 
 alias la='ls -a'
 alias ll='ls -l'
