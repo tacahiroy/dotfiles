@@ -22,6 +22,8 @@ Bundle 'tacahiroy/vim-endwise'
 Bundle 'thinca/vim-quickrun'
 Bundle 'thinca/vim-ref'
 
+Bundle 'scrooloose/nerdtree'
+
 Bundle 'tpope/vim-rails'
 Bundle 'kchmck/vim-coffee-script'
 Bundle 'VimClojure'
@@ -344,7 +346,9 @@ augroup MySomething
   " autochdir emulation
   autocmd BufEnter * if expand('%') !~# '^fugitive://' | execute ':lcd ' . escape(expand('%:p:h'), ' ') | endif
   autocmd BufRead,BufNewFile *.js set filetype=javascript.jquery
-  autocmd BufRead,BufNewFile *.ru,Gemfile set filetype=ruby
+  autocmd BufRead,BufNewFile *.ru,Gemfile,Guardfile set filetype=ruby
+  autocmd User Rails nnoremap <buffer> <Space>r :<C-u>R
+
   autocmd BufLeave,BufWinLeave * if exists('g:updtime') | let &l:updatetime = g:updtime | endif
 augroup END
 
@@ -484,7 +488,7 @@ inoremap <expr> <C-l> &filetype == 'vim' ? "\<C-x><C-v><C-p>" : neocomplcache#ma
 " plug: ctrlp.vim "{{{
 let g:ctrlp_map = '<Space>ff'
 let g:ctrlp_jump_to_buffer = 2
-let g:ctrlp_working_path_mode = 2
+let g:ctrlp_working_path_mode = 0
 let g:ctrlp_match_window_bottom = 1
 let g:ctrlp_clear_cache_on_exit = 0
 let g:ctrlp_follow_symlinks = 1
