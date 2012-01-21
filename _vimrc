@@ -230,8 +230,9 @@ nnoremap s <Nop>
 nnoremap q <Nop>
 nnoremap Q q
 
-nnoremap <silent> <Space>o :cwindow<Cr>
-nnoremap <silent> <Space>ta :call <SID>previewTagLight(expand('<cword>'))<Cr>
+nnoremap <silent> <Space>o :<C-u>cwindow<Cr>
+nnoremap <silent> <Space>O :<C-u>cclose<Cr>
+" nnoremap <silent> <Space>ta :call <SID>previewTagLight(expand('<cword>'))<Cr>
 
 nnoremap <silent> ,<< dT>
 nnoremap <silent> ,>> dt<
@@ -272,13 +273,15 @@ nnoremap <Space>j <C-f>
 nnoremap <Space>k <C-b>
 
 nnoremap <Space>h :<C-u>h 
+nnoremap <Space>t :<C-u>tabe 
 
 nnoremap <silent> <Space>_ :<C-u>edit $MYVIMRC<Cr>
-nnoremap <silent> <Space>s_ :<C-u>source $MYVIMRC<Cr>
+nnoremap <Space>s_ :<C-u>source $MYVIMRC<Cr>
 
 nnoremap <silent> <Esc><Esc> <Esc>:<C-u>nohlsearch<Cr>
 
-nnoremap <silent> g<C-f> :<C-u>echo expand('%:p')<Cr>
+nnoremap <silent> ,f :<C-u>echo expand('%:p')<Cr>
+nnoremap <silent> ,d :<C-u>pwd<Cr>
 
 nnoremap <silent> sh <C-w>h
 nnoremap <silent> sk <C-w>k
@@ -358,10 +361,8 @@ augroup MyAutoCmd
 
   " like less
   autocmd FileType help
-        \  nnoremap <buffer> <silent> q <C-w>c
-        \| nnoremap <buffer> <silent> d <C-f>
-        \| nnoremap <buffer> <silent> u <C-b>
-  autocmd FileType qf nnoremap <buffer> <silent> q <C-w>c
+        \  nnoremap <buffer> <silent> qq <C-w>c
+  autocmd FileType qf nnoremap <buffer> <silent> qq <C-w>c
   autocmd FileType javascript* setlocal omnifunc=javascriptcomplete#CompleteJS
   " autocmd FileType ruby,rspec let &path .= "," . g:cps($RUBYLIB, '/')
 
@@ -500,7 +501,7 @@ let g:ctrlp_prompt_mappings = {
   \ 'PrtHistory(-1)':       [''],
   \ 'PrtHistory(1)':        [''],
   \ }
-let g:ctrlp_extensions = ['tag', 'buffertag', 'quickfix', 'dir', 'rtscript']
+let g:ctrlp_extensions = ['tag', 'buffertag', 'dir']
 
 set wildignore+=*/.git/*,*/.hg/*,*/.svn/*
 set wildignore+=*/.neocon/*,*/.vimundo/*
