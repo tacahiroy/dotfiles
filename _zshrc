@@ -33,10 +33,10 @@ esac # }}}
 # set prompt
 #
 autoload -Uz vcs_info
-zstyle ':vcs_info:*' formats '[%s:%b%c%u]'
-zstyle ':vcs_info:*' actionformats '[%s:%b|%a]%c%u'
 zstyle ':vcs_info:*' enable git svn hg
 zstyle ':vcs_info:*' check-for-changes true
+zstyle ':vcs_info:*' formats '[%s:%b%c%u]'
+zstyle ':vcs_info:*' actionformats '[%s:%b|%a]%c%u'
 zstyle ':vcs_info:*' stagedstr "+"
 zstyle ':vcs_info:*' unstagedstr "*"
 
