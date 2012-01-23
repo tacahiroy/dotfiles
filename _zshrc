@@ -1,6 +1,7 @@
 # Created by newuser for 4.3.4
 # users generic .zshrc file for zsh(1)
 
+autoload -Uz add-zsh-hook
 ## ignore case for completion
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 zstyle ':completion:*:default' menu select=2
@@ -16,10 +17,36 @@ WORDCHARS=${WORDCHARS:s,/,,}
 
 stty intr '^C' 
 
+# set terminal title including current directory # {{{
+#
+case "${TERM}" in
+kterm*|xterm*)
+  export LSCOLORS=exfxcxdxbxegedabagacad
+  export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
+  zstyle ':completion:*' list-colors \
+    'di=34' 'ln=35' 'so=32' 'ex=31' 'bd=46;34' 'cd=43;34'
+  ;;
+esac # }}}
+
 ## Default shell configuration
 #
 # set prompt
 #
+autoload -Uz vcs_info
+zstyle ':vcs_info:*' formats '[%s:%b%c%u]'
+zstyle ':vcs_info:*' actionformats '[%s:%b|%a]%c%u'
+zstyle ':vcs_info:*' enable git svn hg
+zstyle ':vcs_info:*' check-for-changes true
+zstyle ':vcs_info:*' stagedstr "+"
+zstyle ':vcs_info:*' unstagedstr "*"
+
+function _vcs_info() {
+  psvar=()
+  LANG=en_US.UTF-8 vcs_info
+  psvar[1]="$vcs_info_msg_0_"
+}
+add-zsh-hook precmd _vcs_info
+
 autoload colors
 colors
 case ${UID} in
@@ -31,15 +58,18 @@ case ${UID} in
     PROMPT="%{${fg[white]}%}${HOST%%.*} ${PROMPT}"
   ;;
 *)
-  PROMPT="%{${fg[red]}%}%/%{${reset_color}%}%% "
+  PROMPT="%{${fg[red]}%}%/%{${reset_color}%}${fg[green]}%1v${reset_color}
+%% "
   PROMPT2="%{${fg[red]}%}%_%{${reset_color}%}%% "
   SPROMPT="%{${fg[red]}%}%r is correct? [n,y,a,e]:%{${reset_color}%}"
+  # RPROMPT="[%{${fg[red]}%}%/%{${reset_color}%}]"
+  RPROMPT=""
   [ -n "${REMOTEHOST}${SSH_CONNECTION}" ] &&
     PROMPT="%{${fg[white]}%}${HOST%%.*} ${PROMPT}"
   ;;
 esac
-# for Git prompt
-DEFAULT_PROMPT=$PROMPT
+
+setopt promptsubst
 
 # completion as path after =
 setopt magic_equal_subst
@@ -166,50 +196,6 @@ cons25)
     'di=;34;1' 'ln=;35;1' 'so=;32;1' 'ex=31;1' 'bd=46;34' 'cd=43;34'
   ;;
 esac # }}}
-
-# set terminal title including current directory # {{{
-#
-case "${TERM}" in
-kterm*|xterm*)
-  precmd() {
-    echo -ne "\033]0;${USER}@${HOST%%.*}:${PWD}\007"
-  }
-  export LSCOLORS=exfxcxdxbxegedabagacad
-  export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
-  zstyle ':completion:*' list-colors \
-    'di=34' 'ln=35' 'so=32' 'ex=31' 'bd=46;34' 'cd=43;34'
-  ;;
-esac # }}}
-
-## git prompt # {{{
-typeset -ga chpwd_functions
-typeset -ga preexec_functions
-
-function set_prompt_git() {
-  local git_branch
-  local dirty
-  local head
-
-  head=$(git rev-parse --short HEAD 2> /dev/null)
-  $(git status 2> /dev/null | grep '^nothing to commit' > /dev/null)
-  if [ $? != '0' ]; then
-      dirty='*'
-  fi
-
-  git_branch="${$(git symbolic-ref HEAD 2> /dev/null)#refs/heads/}"
-
-  if [ $? != '0' ]; then
-      PROMPT="${DEFAULT_PROMPT}"
-  else
-      PROMPT="${DEFAULT_PROMPT}[%{${fg[green]}%}${git_branch}(${head})${fg[red]}${dirty}%{${reset_color}%}] "
-  fi
-}
-chpwd_functions+=set_prompt_git
-preexec_functions+=set_prompt_git
-setopt promptsubst
-autoload -U promptinit
-promptinit
-# }}}
 
 ## tmux
 if [ $SHLVL = 1 ]; then
