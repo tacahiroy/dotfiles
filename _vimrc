@@ -334,27 +334,22 @@ inoreabbr reuqire require
 " syntax: vim.vim
 let g:vimsyntax_noerror = 1
 
+
 " * something "{{{
-augroup MySomething
+augroup MyAutoCmd
   autocmd!
 
-  autocmd BufReadPre * let g:updtime = &l:updatetime
   autocmd BufReadPost * if !search('\S', 'cnw') | let &l:fileencoding = &encoding | endif
   " restore cursor position
   autocmd BufReadPost * if line("'\"") <= line('$') | execute "normal '\"" | endif
   autocmd BufReadPost * setlocal formatoptions-=o
   " autochdir emulation
   autocmd BufEnter * if expand('%') !~# '^fugitive://' | execute ':lcd ' . escape(expand('%:p:h'), ' ') | endif
-  autocmd BufRead,BufNewFile *.js set filetype=javascript.jquery
   autocmd BufRead,BufNewFile *.ru,Gemfile,Guardfile set filetype=ruby
+
   autocmd User Rails nnoremap <buffer> <Space>r :<C-u>R
 
-  autocmd BufLeave,BufWinLeave * if exists('g:updtime') | let &l:updatetime = g:updtime | endif
-augroup END
-
-
-augroup MyAutoCmd
-  autocmd!
+  autocmd FileType slim setlocal makeprg=slimrb\ -c\ %
 
   " http://vim-users.jp/2009/11/hack96/ {{{
   autocmd FileType *
@@ -363,16 +358,10 @@ augroup MyAutoCmd
   \| endif
   " }}}
 
-  " like less
   autocmd FileType help
         \  nnoremap <buffer> <silent> qq <C-w>c
   autocmd FileType qf nnoremap <buffer> <silent> qq <C-w>c
   autocmd FileType javascript* setlocal omnifunc=javascriptcomplete#CompleteJS
-  " autocmd FileType ruby,rspec let &path .= "," . g:cps($RUBYLIB, '/')
-
-  " inspired by ujihisa's
-  autocmd FileType irb inoremap <buffer> <silent> <Cr> <Esc>:<C-u>ruby v=VIM::Buffer.current;v.append(v.line_number, '#=> ' + eval(v[v.line_number]).inspect)<Cr>jo
-  nnoremap <Space>irb :<C-u>new<Cr>:setfiletype irb<Cr>
 
   autocmd FileType rspec
   \  compiler rspec
@@ -383,11 +372,7 @@ augroup MyAutoCmd
   autocmd FileType html*,xhtml,xml,xslt,mathml,svg
   \  setlocal tabstop=2 shiftwidth=2 softtabstop=2
 
-  let g:xml_no_auto_nesting = 1
-  let g:xml_use_xhtml = 1
-  let g:xml_tag_completion_map = ''
-
-  autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS tabstop=2 shiftwidth=2 softtabstop=2
+  autocmd FileType css,sass,scss,less setlocal omnifunc=csscomplete#CompleteCSS tabstop=2 shiftwidth=2 softtabstop=2
 
   let g:loaded_sql_completion = 1
   autocmd FileType sql*,plsql
@@ -409,7 +394,7 @@ augroup MyAutoCmd
   autocmd Filetype c,cpp set tabstop=4 softtabstop=4 shiftwidth=4
   autocmd Filetype c,cpp compiler gcc
   autocmd Filetype c,cpp setlocal makeprg=gcc\ -Wall\ %\ -o\ %:r.o
-  autocmd Filetype c,cpp nmap <buffer> <Space>m :<C-u>write<Cr>:make --std=c99<Cr>
+  autocmd Filetype c,cpp nnoremap <buffer> <Space>m :<C-u>write<Cr>:make --std=c99<Cr>
 augroup END
 "}}}
 
