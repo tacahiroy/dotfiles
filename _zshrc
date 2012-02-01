@@ -135,10 +135,6 @@ setopt share_history # share command history data
 setopt hist_reduce_blanks # trim space when save history
 setopt interactive_comments # comment after '#'
 
-## Completion configuration
-autoload -Uz compinit
-compinit
-
 ## Alias configuration# {{{
 # expand aliases before completing
 setopt complete_aliases # aliased ls needs if file/dir completions work
@@ -196,6 +192,10 @@ cons25)
     'di=;34;1' 'ln=;35;1' 'so=;32;1' 'ex=31;1' 'bd=46;34' 'cd=43;34'
   ;;
 esac # }}}
+
+## Completion configuration
+autoload -Uz compinit
+compinit
 
 ## tmux
 if [ $SHLVL = 1 ]; then
