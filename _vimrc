@@ -316,6 +316,8 @@ inoremap <silent> <Cr> <C-R>=<SID>CrInInsertModeBetterWay()<Cr>
 inoremap <silent> ,dt <C-R>=strftime('%Y.%m.%d')<Cr>
 inoremap <silent> ,ti <C-R>=strftime('%H:%M')<Cr>
 inoremap <silent> ,fn <C-R>=expand('%')<Cr>
+" ^J is used to toggle IME
+inoremap <silent> <C-j> <Nop>
 
 " selected text search
 vnoremap * y/<C-R>"<Cr>

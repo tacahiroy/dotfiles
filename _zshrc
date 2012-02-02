@@ -119,6 +119,9 @@ bindkey "^n" history-beginning-search-forward-end
 bindkey "\\ep" history-beginning-search-backward-end
 bindkey "\\en" history-beginning-search-forward-end
 
+# ^J is used to toggle IME
+bindkey -s "^J" ""
+
 # available multibyte characters
 setopt print_eight_bit
 setopt no_flow_control
