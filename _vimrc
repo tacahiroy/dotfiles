@@ -57,6 +57,13 @@ else
   let $DOTVIM = $HOME . '/vimfiles'
 endif
 
+if isdirectory(expand("$DOTVIM/sandbox"))
+  let dirs = split(glob($DOTVIM."/sandbox/*"), "\n")
+  for d in dirs
+    execute ":set runtimepath+=" . d
+  endfor
+endif
+
 set nocompatible
 set verbose=0
 
@@ -515,8 +522,6 @@ let g:prd_fontList .= ',Takaoゴシック:h10:cDEFAULT'
 let g:prd_fontList .= ',Takao明朝:h10:cDEFAULT'
 let g:prd_fontList .= ',ＭＳ_明朝:h10:cDEFAULT'
 
-" plug: project.vim
-let g:proj_flags = "St"
 "}}}
 
 if has('multi_byte_ime') || has('xim')
@@ -543,8 +548,6 @@ endif
 if has('gui_running') && filereadable(expand('~/.gvimrc'))
   source ~/.gvimrc
 end
-
-set runtimepath+=$DOTVIM/sandbox
 
 " __END__ {{{
 " vim: ts=2 sts=2 sw=2 fdm=marker
