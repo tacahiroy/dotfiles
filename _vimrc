@@ -225,8 +225,8 @@ nnoremap Y y$
 nnoremap j gj
 nnoremap k gk
 nnoremap vv <C-v>
-nmap [visual-row-without-eol] 0v$ho
-nmap vV [visual-row-without-eol]
+nnoremap [visual-row-without-eol] 0vg_
+nnoremap vV [visual-row-without-eol]
 nnoremap <C-]> <C-]>zz
 nnoremap <C-t> <C-t>zz
 
@@ -247,8 +247,8 @@ nnoremap <silent> ,<< dT>
 nnoremap <silent> ,>> dt<
 
 " commentary.vim
-nmap <Space>c <Plug>CommentaryLine
-xmap <Space>c <Plug>Commentary
+nnoremap <Space>c <Plug>CommentaryLine
+xnoremap <Space>c <Plug>Commentary
 
 " surround.vim
 let g:surround_{char2nr('k')} = "「\r」"
