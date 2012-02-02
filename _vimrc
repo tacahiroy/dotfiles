@@ -347,6 +347,8 @@ let g:xml_tag_completion_map = ''
 inoreabbr funciton function
 inoreabbr requrie require
 inoreabbr reuqire require
+inoreabbr WinMerege WinMerge
+inoreabbr winmerge WinMerge
 "}}}
 
 
@@ -414,7 +416,13 @@ augroup MyAutoCmd
   autocmd Filetype c,cpp compiler gcc
   autocmd Filetype c,cpp setlocal makeprg=gcc\ -Wall\ %\ -o\ %:r.o
   autocmd Filetype c,cpp nnoremap <buffer> <Space>m :<C-u>write<Cr>:make --std=c99<Cr>
+
+  function! s:moveNextSegment()
+    call search('<\(para\|section\)', 'esW')
+  endfunction
+  autocmd FileType xml nnoremap <silent> <buffer> <Tab> :call <SID>moveNextSegment()<Cr>
 augroup END
+
 "}}}
 
 
