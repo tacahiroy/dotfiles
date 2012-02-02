@@ -322,9 +322,21 @@ vnoremap * y/<C-R>"<Cr>
 vnoremap < <gv
 vnoremap > >gv
 
-if executable('tidy')
-  vnoremap <leader>ty :<C-u>!tidy -xml -i -shiftjis -wrap 0 -q -asxml<Cr>
-  nnoremap <leader>ty :<C-u>1,$!tidy -xml -i -shiftjis -wrap 0 -q -asxml<Cr>
+if executable("tidyp")
+  vnoremap <leader>ty :call <SID>runTidy(80)<Cr>
+  nnoremap <leader>ty :call <SID>runTidy(80)<Cr>
+  vnoremap <leader>tiy :call <SID>runTidy(40)<Cr>
+
+  function! s:runTidy(col) range
+    let s = a:firstline
+    let e = a:lastline
+    " this code is not perfect.
+    " tidy's Character encoding option and Vim's fileencoding/encoding is not a pair
+    let enc = &l:fileencoding ? &l:fileencoding : &encoding
+    let enc = substitute(enc, "-", "", "g")
+
+    silent execute printf(": %d,%d!tidyp -xml -i -%s -wrap %d -q -asxml", a:firstline, a:lastline, enc, a:col)
+  endfunction
 endif
 
 let g:xml_tag_completion_map = ''
