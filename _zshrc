@@ -142,10 +142,19 @@ setopt interactive_comments # comment after '#'
 # expand aliases before completing
 setopt complete_aliases # aliased ls needs if file/dir completions work
 
+case "${OSTYPE}" in
+  freebsd*|darwin*)
+    alias gvim='open -a /Applications/MacVim.app '$@""
+    alias ls='gls -F --color'
+    ;;
+  *)
+    alias ls='ls -F --color'
+    ;;
+esac
+
 alias where='command -v'
 alias j='jobs -l'
 
-alias ls='ls -F --color'
 alias sl='ls'
 
 alias la='ls -a'
@@ -157,11 +166,6 @@ alias du='du -h'
 alias df='df -h'
 alias su='su -l'
 alias lv='lv -c'
-
-case "${OSTYPE}" in
-  freebsd*|darwin*)
-    alias gvim='open -a /Applications/MacVim.app '$@""
-esac
 
 alias v='vim'
 alias vv='gvim'
