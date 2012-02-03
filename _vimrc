@@ -247,8 +247,8 @@ nnoremap <silent> ,<< dT>
 nnoremap <silent> ,>> dt<
 
 " commentary.vim
-nnoremap <Space>c <Plug>CommentaryLine
-xnoremap <Space>c <Plug>Commentary
+nmap <Space>c <Plug>CommentaryLine
+xmap <Space>c <Plug>Commentary
 
 " surround.vim
 let g:surround_{char2nr('k')} = "「\r」"
