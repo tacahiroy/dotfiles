@@ -544,6 +544,10 @@ let g:prd_fontList .= ',Takaoゴシック:h10:cDEFAULT'
 let g:prd_fontList .= ',Takao明朝:h10:cDEFAULT'
 let g:prd_fontList .= ',ＭＳ_明朝:h10:cDEFAULT'
 
+" plug: loga.vim
+let g:loga_command_option = {
+      \ "-g": "winmerge",
+      \ }
 "}}}
 
 if has('multi_byte_ime') || has('xim')
