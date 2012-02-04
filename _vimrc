@@ -5,10 +5,8 @@ scriptencoding utf-8
 
 " vundle plugin management "{{{
 filetype off
-set runtimepath+=~/.vim/bundle/vundle
+set runtimepath+=~/.vim/vundle.git
 call vundle#rc()
-
-Bundle 'gmarik/vundle'
 
 Bundle 'kien/ctrlp.vim'
 Bundle 'tpope/vim-surround'
@@ -28,7 +26,7 @@ Bundle 'tpope/vim-rails'
 Bundle 'kchmck/vim-coffee-script'
 Bundle 'VimClojure'
 Bundle 'jiangmiao/simple-javascript-indenter'
-Bundle 'msanders/cocoa.vim'
+" Bundle 'msanders/cocoa.vim'
 Bundle 'avakhov/vim-yaml'
 Bundle 'bbommarito/vim-slim'
 " Bundle 'mattn/zencoding-vim'
@@ -423,6 +421,7 @@ augroup MyAutoCmd
     call search('<\(para\|section\)', 'esW')
   endfunction
   autocmd FileType xml nnoremap <silent> <buffer> <Tab> :call <SID>moveNextSegment()<Cr>
+  autocmd FileType xml set updatetime=500
 augroup END
 
 "}}}
@@ -545,9 +544,7 @@ let g:prd_fontList .= ',Takao明朝:h10:cDEFAULT'
 let g:prd_fontList .= ',ＭＳ_明朝:h10:cDEFAULT'
 
 " plug: loga.vim
-let g:loga_command_option = {
-      \ "-g": "winmerge",
-      \ }
+" let g:loga_enable_auto_lookup = 1
 "}}}
 
 if has('multi_byte_ime') || has('xim')
