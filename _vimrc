@@ -24,9 +24,7 @@ Bundle 'scrooloose/nerdtree'
 
 Bundle 'tpope/vim-rails'
 Bundle 'kchmck/vim-coffee-script'
-Bundle 'VimClojure'
 Bundle 'jiangmiao/simple-javascript-indenter'
-" Bundle 'msanders/cocoa.vim'
 Bundle 'avakhov/vim-yaml'
 Bundle 'bbommarito/vim-slim'
 " Bundle 'mattn/zencoding-vim'
@@ -35,11 +33,9 @@ Bundle 'L9'
 Bundle 'matchit.zip'
 " Bundle 'IndentAnything'
 Bundle 'Align'
-" Bundle 'project.tar.gz'
 Bundle 'camelcasemotion'
 
 " Bundle 'increment_new.vim'
-" Bundle 'colorsel.vim'
 
 filetype plugin indent on
 "}}}
@@ -316,6 +312,7 @@ inoremap <silent> ,ti <C-R>=strftime('%H:%M')<Cr>
 inoremap <silent> ,fn <C-R>=expand('%')<Cr>
 " ^J is used to toggle IME
 inoremap <silent> <C-j> <Nop>
+cnoremap <silent> <C-j> <Nop>
 
 " selected text search
 vnoremap * y/<C-R>"<Cr>
@@ -417,11 +414,15 @@ augroup MyAutoCmd
   autocmd Filetype c,cpp setlocal makeprg=gcc\ -Wall\ %\ -o\ %:r.o
   autocmd Filetype c,cpp nnoremap <buffer> <Space>m :<C-u>write<Cr>:make --std=c99<Cr>
 
-  function! s:moveNextSegment()
-    call search('<\(para\|section\)', 'esW')
+  function! s:moveToSegment(is_next)
+    let flag = (a:is_next ? "" : "b")
+    call search('<\(para\|section\|term\)', "esW".flag)
   endfunction
-  autocmd FileType xml nnoremap <silent> <buffer> <Tab> :call <SID>moveNextSegment()<Cr>
-  autocmd FileType xml set updatetime=500
+  autocmd FileType xml
+        \  nnoremap <silent> <buffer> <Tab> :call <SID>moveToSegment(1)<Cr>
+        \| nnoremap <silent> <buffer> <S-Tab> :call <SID>moveToSegment(0)<Cr>
+  autocmd BufRead,BufEnter *.xml set updatetime=500
+  autocmd BufLeave,BufWinLeave *.xml set updatetime&
 augroup END
 
 "}}}
@@ -499,9 +500,10 @@ inoremap <expr> <C-l> &filetype == 'vim' ? "\<C-x><C-v><C-p>" : neocomplcache#ma
 " }}}
 
 " plug: ctrlp.vim "{{{
-let g:ctrlp_map = '<Space>ff'
+let g:ctrlp_map = "<Space>ff"
+let g:ctrlp_command = "CtrlP"
 let g:ctrlp_jump_to_buffer = 2
-let g:ctrlp_working_path_mode = 0
+let g:ctrlp_working_path_mode = 2
 let g:ctrlp_match_window_bottom = 1
 let g:ctrlp_clear_cache_on_exit = 0
 let g:ctrlp_follow_symlinks = 1
@@ -509,8 +511,13 @@ let g:ctrlp_highlight_match = [1, 'Constant']
 let g:ctrlp_max_files = 5000
 let g:ctrlp_max_depth = 20
 
-let g:ctrlp_user_command = ['.git/', 'cd %s && git ls-files']
-let g:ctrlp_user_command += ['.hg/', 'hg --cwd %s locate --fullpath -I .']
+let g:ctrlp_user_command = {
+      \ "types": {
+        \ 1: [".git/", "cd %s && git ls-files"],
+        \ 2: [".hg/", "hg --cwd %s locate -I ."],
+        \ },
+      \ "fallback": "find %s -type f"
+      \ }
 
 let g:ctrlp_prompt_mappings = {
   \ 'PrtSelectMove("j")':   ['<C-n>'],
@@ -544,7 +551,8 @@ let g:prd_fontList .= ',Takao明朝:h10:cDEFAULT'
 let g:prd_fontList .= ',ＭＳ_明朝:h10:cDEFAULT'
 
 " plug: loga.vim
-" let g:loga_enable_auto_lookup = 1
+let g:loga_enable_auto_lookup = 0
+map <Space>a <Plug>(loga-lookup)
 "}}}
 
 if has('multi_byte_ime') || has('xim')
