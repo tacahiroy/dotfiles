@@ -13,7 +13,6 @@ Bundle 'tpope/vim-surround'
 Bundle 'tpope/vim-fugitive'
 Bundle 'tpope/vim-commentary'
 Bundle 'msanders/snipmate.vim'
-Bundle 'Shougo/neocomplcache'
 
 Bundle 'tacahiroy/vim-endwise'
 
@@ -303,7 +302,8 @@ nnoremap <silent> <Space>P :pclose<Cr>
 
 " vim-endwise support
 function! s:CrInInsertModeBetterWay()
-  return pumvisible() ? neocomplcache#close_popup()."\<Cr>" : "\<Cr>"
+  " return pumvisible() ? neocomplcache#close_popup()."\<Cr>" : "\<Cr>"
+  return pumvisible() ? "\<C-y>\<Cr>" : "\<Cr>"
 endfunction
 inoremap <silent> <Cr> <C-R>=<SID>CrInInsertModeBetterWay()<Cr>
 
@@ -362,7 +362,7 @@ augroup MyAutoCmd
   autocmd BufReadPost * if line("'\"") <= line('$') | execute "normal '\"" | endif
   autocmd BufReadPost * setlocal formatoptions-=o
   " autochdir emulation
-  autocmd BufEnter * if expand('%') !~# '^fugitive://' | execute ':lcd ' . escape(expand('%:p:h'), ' ') | endif
+  autocmd BufEnter * if expand("%") !~# '^fugitive://' | execute ":lcd " . escape(expand("%:p:h"), " ") | endif
   autocmd BufRead,BufNewFile *.ru,Gemfile,Guardfile set filetype=ruby
 
   autocmd User Rails nnoremap <buffer> <Space>r :<C-u>R
@@ -371,7 +371,7 @@ augroup MyAutoCmd
 
   " http://vim-users.jp/2009/11/hack96/ {{{
   autocmd FileType *
-  \   if &l:omnifunc == ''
+  \   if &l:omnifunc == ""
   \|   setlocal omnifunc=syntaxcomplete#Complete
   \| endif
   " }}}
@@ -404,7 +404,7 @@ augroup MyAutoCmd
   let g:dbext_default_type = 'ORA'
 
   if executable("jsl")
-    autocmd FileType javascript,javascript.jquery,html,xhtml
+    autocmd FileType javascript*,*html
     \  setlocal makeprg=jsl\ -conf\ \"$HOME/jsl.conf\"\ -nologo\ -nofilelisting\ -nosummary\ -nocontext\ -process\ %
     \| setlocal errorformat=%f(%l):\ %m
   endif
@@ -414,13 +414,13 @@ augroup MyAutoCmd
   autocmd Filetype c,cpp setlocal makeprg=gcc\ -Wall\ %\ -o\ %:r.o
   autocmd Filetype c,cpp nnoremap <buffer> <Space>m :<C-u>write<Cr>:make --std=c99<Cr>
 
-  function! s:moveToSegment(is_next)
-    let flag = (a:is_next ? "" : "b")
-    call search('<\(para\|section\|term\)', "esW".flag)
+  function! s:moveToSegment(is_prev)
+    let flag = a:is_prev ? "b" : ""
+    call search('<\(para\|section\|term\)[^>]*>', "esW".flag)
   endfunction
   autocmd FileType xml
-        \  nnoremap <silent> <buffer> <Tab> :call <SID>moveToSegment(1)<Cr>
-        \| nnoremap <silent> <buffer> <S-Tab> :call <SID>moveToSegment(0)<Cr>
+        \  nnoremap <silent> <buffer> <Tab> :call <SID>moveToSegment(0)<Cr>
+        \| nnoremap <silent> <buffer> <S-Tab> :call <SID>moveToSegment(1)<Cr>
   autocmd BufRead,BufEnter *.xml set updatetime=500
   autocmd BufLeave,BufWinLeave *.xml set updatetime&
 augroup END
@@ -443,61 +443,6 @@ let vimclojure#WantNailgun = 1
 let vimclojure#NailgunClient = $HOME . "/Projects/wk/vimclojure.hg/client/ng"
 let vimclojure#NailgunServer = "127.0.0.1"
 let vimclojure#NailgunPort = "2113"
-
-
-" plug: NeocomplCache {{{
-let g:neocomplcache_enable_at_startup = 1
-let g:neocomplcache_enable_auto_select = 0
-let g:neocomplcache_enable_display_parameter = 1
-let g:neocomplcache_enable_underbar_completion = 1
-let g:neocomplcache_disable_caching_file_path_pattern = '\(\.vimprojects\|\[Scratch\]\|\.vba\|\.aspx\)'
-let g:neocomplcache_min_keyword_length = 2
-let g:neocomplcache_min_syntax_length = 2
-
-let g:neocomplcache_snippets_dir = expand("$DOTVIM/bundle/snipmate.vim/snippets")
-
-if has('win32') || has('win64')
-  let g:neocomplcache_dictionary_filetype_lists = {
-      \ 'default':  $DOTVIM.'/dict/gene.txt',
-      \ 'rb':       $DOTVIM.'/dict/n.dict',
-      \ 'sql':      $DOTVIM.'/dict/n.dict',
-      \ 'vbnet':    $DOTVIM.'/dict/n.dict',
-      \ 'vb':       $DOTVIM.'/dict/n.dict',
-      \ }
-endif
-
-let g:neocomplcache_plugin_completion_length_list = {
-  \ 'snipMate_complete':  1,
-  \ 'buffer_complete':    1,
-  \ 'include_complete':   2,
-  \ 'syntax_complete':    2,
-  \ 'filename_complete':  2,
-  \ 'keyword_complete':   2,
-  \ 'omni_complete':      1,
-  \ }
-
-let g:neocomplcache_include_paths = {
-  \ 'vbnet': '.',
-  \ }
-
-let g:neocomplcache_include_exprs = {
-  \ 'ruby': 'substitute(v:fname,''\\.'',''/'',''g'')',
-  \ }
-
-let g:neocomplcache_include_patterns = {
-  \ 'ruby': '^require',
-  \ 'perl': '^use',
-  \ }
-
-if !exists('g:neocomplcache_omni_patterns')
-  let g:neocomplcache_omni_patterns = {}
-endif
-let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
-let g:neocomplcache_omni_patterns.perl = '[^. *\t]\.\w*\|\h\w*::'
-
-inoremap <expr> <C-h> pumvisible() ? "\<C-y>\<C-h>" : "\<C-h>"
-inoremap <expr> <C-l> &filetype == 'vim' ? "\<C-x><C-v><C-p>" : neocomplcache#manual_omni_complete()
-" }}}
 
 " plug: ctrlp.vim "{{{
 let g:ctrlp_map = "<Space>ff"
@@ -555,7 +500,7 @@ let g:loga_enable_auto_lookup = 0
 map <Space>a <Plug>(loga-lookup)
 "}}}
 
-if has('multi_byte_ime') || has('xim')
+if has("multi_byte_ime") || has("xim")
   set iminsert=0 imsearch=0
   imap <silent> <Esc> <Esc>:<C-u>set iminsert=0<Cr>
 endif
@@ -572,11 +517,11 @@ if !exists(':DiffOrig')
 endif
 " }}}
 
-if filereadable(expand('~/.vimrc.mine'))
+if filereadable(expand("~/.vimrc.mine"))
   source ~/.vimrc.mine
 endif
 
-if has('gui_running') && filereadable(expand('~/.gvimrc'))
+if has("gui_running") && filereadable(expand("~/.gvimrc"))
   source ~/.gvimrc
 end
 
