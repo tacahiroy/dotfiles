@@ -8,33 +8,33 @@ filetype off
 set runtimepath+=~/.vim/vundle.git
 call vundle#rc()
 
-Bundle 'kien/ctrlp.vim'
-Bundle 'tpope/vim-surround'
-Bundle 'tpope/vim-fugitive'
-Bundle 'tpope/vim-commentary'
-Bundle 'msanders/snipmate.vim'
+Bundle "kien/ctrlp.vim"
+Bundle "tpope/vim-surround"
+Bundle "tpope/vim-fugitive"
+Bundle "tpope/vim-commentary"
+Bundle "msanders/snipmate.vim"
 
-Bundle 'tacahiroy/vim-endwise'
+Bundle "tacahiroy/vim-endwise"
 
-Bundle 'thinca/vim-quickrun'
-Bundle 'thinca/vim-ref'
+Bundle "thinca/vim-quickrun"
+Bundle "thinca/vim-ref"
 
-Bundle 'scrooloose/nerdtree'
+Bundle "scrooloose/nerdtree"
 
-Bundle 'tpope/vim-rails'
-Bundle 'kchmck/vim-coffee-script'
-Bundle 'jiangmiao/simple-javascript-indenter'
-Bundle 'avakhov/vim-yaml'
-Bundle 'bbommarito/vim-slim'
-" Bundle 'mattn/zencoding-vim'
+Bundle "tpope/vim-rails"
+Bundle "kchmck/vim-coffee-script"
+Bundle "jiangmiao/simple-javascript-indenter"
+Bundle "avakhov/vim-yaml"
+Bundle "bbommarito/vim-slim"
+" Bundle "mattn/zencoding-vim"
 
-Bundle 'L9'
-Bundle 'matchit.zip'
-" Bundle 'IndentAnything'
-Bundle 'Align'
-Bundle 'camelcasemotion'
+Bundle "L9"
+Bundle "matchit.zip"
+" Bundle "IndentAnything"
+Bundle "Align"
+Bundle "camelcasemotion"
 
-" Bundle 'increment_new.vim'
+" Bundle "increment_new.vim"
 
 filetype plugin indent on
 "}}}
@@ -43,11 +43,11 @@ set cpo&vim
 
 autocmd!
 
-if isdirectory($HOME . '/.vim')
-  let $DOTVIM = $HOME . '/.vim'
+if isdirectory($HOME . "/.vim")
+  let $DOTVIM = $HOME . "/.vim"
 else
   " MS Windows etc...
-  let $DOTVIM = $HOME . '/vimfiles'
+  let $DOTVIM = $HOME . "/vimfiles"
 endif
 
 if isdirectory(expand("$DOTVIM/sandbox"))
@@ -71,15 +71,15 @@ endfunction "}}}
 
 " tag information show in command window "{{{
 function! s:previewTagLight(word)
-  let t = taglist('^' . a:word . '$')
-  let current = expand('%:t')
+  let t = taglist("^" . a:word . "$")
+  let current = expand("%:t")
 
   for item in t
     if -1 < stridx(item.filename, current)
       " [filename] tag definition
-      echohl Search | echomsg printf('%-36s %s', '[' . g:cps(item.filename, '/') . ']', item.cmd) | echohl None
+      echohl Search | echomsg printf("%-36s %s", "[" . g:cps(item.filename, "/") . "]", item.cmd) | echohl None
     else
-      echomsg printf('%-36s %s', '[' . substitute(g:cps(item.filename, '/'), '\s\s*$', '', '') . ']', item.cmd)
+      echomsg printf("%-36s %s", "[" . substitute(g:cps(item.filename, "/"), '\s\s*$', '', '') . "]", item.cmd)
     endif
   endfor
 endfunction "}}}
@@ -95,7 +95,7 @@ let did_install_syntax_menu = 1
 syntax enable
 filetype plugin indent on
 
-if has('unix') || has('macunix')
+if has("unix") || has("macunix")
   set encoding=utf-8
   set termencoding=utf-8
 else
@@ -120,7 +120,7 @@ set cmdheight=2
 set noequalalways
 set expandtab smarttab
 set fileencodings=ucs-bom,utf-8,iso-2022-jp,euc-jp,cp932
-let &fileformats = has('unix') ? 'unix,dos,mac' : 'dos,unix,mac'
+let &fileformats = has("unix") ? "unix,dos,mac" : "dos,unix,mac"
 set helplang=en,ja
 set hidden
 set history=10000
@@ -234,7 +234,6 @@ nnoremap Q q
 
 nnoremap <silent> <Space>o :<C-u>cwindow<Cr>
 nnoremap <silent> <Space>O :<C-u>cclose<Cr>
-" nnoremap <silent> <Space>ta :call <SID>previewTagLight(expand('<cword>'))<Cr>
 
 nnoremap <silent> ,<< dT>
 nnoremap <silent> ,>> dt<
@@ -244,8 +243,8 @@ nmap <Space>c <Plug>CommentaryLine
 xmap <Space>c <Plug>Commentary
 
 " surround.vim
-let g:surround_{char2nr('k')} = "「\r」"
-let g:surround_{char2nr('K')} = "『\r』"
+let g:surround_{char2nr("k")} = "「\r」"
+let g:surround_{char2nr("K")} = "『\r』"
 let g:surround_indent = 0
 
 " camelcasemotion
@@ -257,16 +256,16 @@ sunmap b
 sunmap e
 
 " open current directory with filer
-if has('mac')
+if has("mac")
   nnoremap <silent> <Space>e :<C-u>silent execute ":!open -a Finder %:p:h"<Cr>
-elseif has('win32') || has('win64')
+elseif has("win32") || has("win64")
   nnoremap <silent> <Space>e :<C-u>silent execute ":!start explorer \"" . g:cps(expand("%:p:h"), "\\") . "\""<Cr>
   " open current directory with Command Prompt
   nnoremap <silent> <Space>E :<C-u>silent execute ":!start cmd /k cd \"" . g:cps(expand("%:p:h"), "\\") . "\""<Cr>
 endif
 
 " inspired by ujihisa's. cooool!!
-nnoremap <Space>w :<C-u>write<Cr>
+nnoremap <Space>w :<C-u>update<Cr>
 nnoremap <Space>q :<C-u>quit<Cr>
 nnoremap <Space>W :<C-u>write!<Cr>
 nnoremap <Space>Q :<C-u>quit!<Cr>
@@ -282,7 +281,7 @@ nnoremap <Space>s_ :<C-u>source $MYVIMRC<Cr>
 
 nnoremap <silent> <Esc><Esc> <Esc>:<C-u>nohlsearch<Cr>
 
-nnoremap <silent> ,f :<C-u>echo expand('%:p')<Cr>
+nnoremap <silent> ,f :<C-u>echo expand("%:p")<Cr>
 nnoremap <silent> ,d :<C-u>pwd<Cr>
 
 nnoremap <silent> sh <C-w>h
@@ -307,9 +306,9 @@ function! s:CrInInsertModeBetterWay()
 endfunction
 inoremap <silent> <Cr> <C-R>=<SID>CrInInsertModeBetterWay()<Cr>
 
-inoremap <silent> ,dt <C-R>=strftime('%Y.%m.%d')<Cr>
-inoremap <silent> ,ti <C-R>=strftime('%H:%M')<Cr>
-inoremap <silent> ,fn <C-R>=expand('%')<Cr>
+inoremap <silent> ,dt <C-R>=strftime("%Y.%m.%d")<Cr>
+inoremap <silent> ,ti <C-R>=strftime("%H:%M")<Cr>
+inoremap <silent> ,fn <C-R>=expand("%")<Cr>
 " ^J is used to toggle IME
 inoremap <silent> <C-j> <Nop>
 cnoremap <silent> <C-j> <Nop>
@@ -320,13 +319,7 @@ vnoremap < <gv
 vnoremap > >gv
 
 if executable("tidyp")
-  vnoremap <leader>ty :call <SID>runTidy(80)<Cr>
-  nnoremap <leader>ty :call <SID>runTidy(80)<Cr>
-  vnoremap <leader>tiy :call <SID>runTidy(40)<Cr>
-
   function! s:runTidy(col) range
-    let s = a:firstline
-    let e = a:lastline
     " this code is not perfect.
     " tidy's Character encoding option and Vim's fileencoding/encoding is not a pair
     let enc = &l:fileencoding ? &l:fileencoding : &encoding
@@ -336,7 +329,7 @@ if executable("tidyp")
   endfunction
 endif
 
-let g:xml_tag_completion_map = ''
+let g:xml_tag_completion_map = ""
 "}}}
 
 
@@ -376,51 +369,45 @@ augroup MyAutoCmd
   \| endif
   " }}}
 
-  autocmd FileType help
-        \  nnoremap <buffer> <silent> qq <C-w>c
-  autocmd FileType qf nnoremap <buffer> <silent> qq <C-w>c
+  autocmd FileType help,qf nnoremap <buffer> <silent> qq <C-w>c
   autocmd FileType javascript* setlocal omnifunc=javascriptcomplete#CompleteJS
 
-  autocmd FileType rspec
-  \  compiler rspec
-  \| setlocal omnifunc=rubycomplete#Complete
+  autocmd FileType rspec compiler rspec
+  autocmd FileType rspec setlocal omnifunc=rubycomplete#Complete
 
   autocmd FileType vim,snippet setlocal tabstop=2 shiftwidth=2 softtabstop=2
 
-  autocmd FileType html*,xhtml,xml,xslt,mathml,svg
-  \  setlocal tabstop=2 shiftwidth=2 softtabstop=2
+  autocmd FileType html,xhtml,xml,xslt,mathml,svg setlocal tabstop=2 shiftwidth=2 softtabstop=2
 
   autocmd FileType css,sass,scss,less setlocal omnifunc=csscomplete#CompleteCSS tabstop=2 shiftwidth=2 softtabstop=2
 
   let g:loaded_sql_completion = 1
-  autocmd FileType sql*,plsql
-  \  setlocal tabstop=4 shiftwidth=4 softtabstop=4
-  \| nnoremap <buffer> <silent> <C-Return> :DBExecSQLUnderCursor<Cr>
-  \| vnoremap <buffer> <silent> <C-Return> :DBExecVisualSQL<Cr>
+  autocmd FileType sql*,plsql setlocal tabstop=4 shiftwidth=4 softtabstop=4
+  autocmd FileType sql*,plsql nnoremap <buffer> <silent> <C-Return> :DBExecSQLUnderCursor<Cr>
+  autocmd FileType sql*,plsql vnoremap <buffer> <silent> <C-Return> :DBExecVisualSQL<Cr>
 
   let g:sqlutil_align_comma = 1
   let g:sqlutil_align_where = 1
   let g:sqlutil_keyword_case = '\U'
-  let g:dbext_default_type = 'ORA'
+  let g:dbext_default_type = "ORA"
 
   if executable("jsl")
-    autocmd FileType javascript*,*html
-    \  setlocal makeprg=jsl\ -conf\ \"$HOME/jsl.conf\"\ -nologo\ -nofilelisting\ -nosummary\ -nocontext\ -process\ %
-    \| setlocal errorformat=%f(%l):\ %m
+    autocmd FileType javascript*,*html setlocal makeprg=jsl\ -conf\ \"$HOME/jsl.conf\"\ -nologo\ -nofilelisting\ -nosummary\ -nocontext\ -process\ %
+    autocmd FileType javascript*,*html setlocal errorformat=%f(%l):\ %m
   endif
 
-  autocmd Filetype c,cpp set tabstop=4 softtabstop=4 shiftwidth=4
-  autocmd Filetype c,cpp compiler gcc
-  autocmd Filetype c,cpp setlocal makeprg=gcc\ -Wall\ %\ -o\ %:r.o
-  autocmd Filetype c,cpp nnoremap <buffer> <Space>m :<C-u>write<Cr>:make --std=c99<Cr>
+  autocmd Filetype c set tabstop=4 softtabstop=4 shiftwidth=4
+  autocmd Filetype c compiler gcc
+  autocmd FileType c setlocal makeprg=gcc\ -Wall\ %\ -o\ %:r.o
+  autocmd FileType c nnoremap <buffer> <Space>m :<C-u>write<Cr>:make --std=c99<Cr>
 
   function! s:moveToSegment(is_prev)
     let flag = a:is_prev ? "b" : ""
     call search('<\(para\|section\|term\)[^>]*>', "esW".flag)
   endfunction
-  autocmd FileType xml
-        \  nnoremap <silent> <buffer> <Tab> :call <SID>moveToSegment(0)<Cr>
-        \| nnoremap <silent> <buffer> <S-Tab> :call <SID>moveToSegment(1)<Cr>
+  autocmd FileType xml nnoremap <silent> <buffer> <Tab> :call <SID>moveToSegment(0)<Cr>
+  autocmd FileType xml nnoremap <silent> <buffer> <S-Tab> :call <SID>moveToSegment(1)<Cr>
+  autocmd FileType xml noremap  <silent> <buffer> <leader>ty :call <SID>runTidy(80)<Cr>
   autocmd BufRead,BufEnter *.xml set updatetime=500
   autocmd BufLeave,BufWinLeave *.xml set updatetime&
 augroup END
@@ -440,7 +427,7 @@ let g:ctrlp_working_path_mode = 2
 let g:ctrlp_match_window_bottom = 1
 let g:ctrlp_clear_cache_on_exit = 0
 let g:ctrlp_follow_symlinks = 1
-let g:ctrlp_highlight_match = [1, 'Constant']
+let g:ctrlp_highlight_match = [1, "Constant"]
 let g:ctrlp_max_files = 5000
 let g:ctrlp_max_depth = 20
 
@@ -453,12 +440,12 @@ let g:ctrlp_user_command = {
       \ }
 
 let g:ctrlp_prompt_mappings = {
-  \ 'PrtSelectMove("j")':   ['<C-n>'],
-  \ 'PrtSelectMove("k")':   ['<C-p>'],
-  \ 'PrtHistory(-1)':       [''],
-  \ 'PrtHistory(1)':        [''],
+  \ "PrtSelectMove('j')":   ["<C-n>"],
+  \ "PrtSelectMove('k')":   ["<C-p>"],
+  \ "PrtHistory(-1)":       [""],
+  \ "PrtHistory(1)":        [""],
   \ }
-let g:ctrlp_extensions = ['tag', 'buffertag', 'dir']
+let g:ctrlp_extensions = ["tag", "buffertag", "dir"]
 
 set wildignore+=*/.git/*,*/.hg/*,*/.svn/*
 set wildignore+=*/.neocon/*,*/.vimundo/*
@@ -472,16 +459,16 @@ noremap <Space>fm :CtrlPMRU<Cr>
 "}}}
 
 " plug: Align
-let g:DrChipTopLvlMenu = ''
+let g:DrChipTopLvlMenu = ""
 let g:Align_xstrlen = 0
 
 " plug: prtdialog
-let g:prd_fontList  = 'M+1VM+IPAG_circle:h10:cDEFAULT'
-let g:prd_fontList .= ',M+2VM+IPAG_circle:h10:cDEFAULT'
-let g:prd_fontList .= ',VL_ゴシック:h10:cDEFAULT'
-let g:prd_fontList .= ',Takaoゴシック:h10:cDEFAULT'
-let g:prd_fontList .= ',Takao明朝:h10:cDEFAULT'
-let g:prd_fontList .= ',ＭＳ_明朝:h10:cDEFAULT'
+let g:prd_fontList  = "M+1VM+IPAG_circle:h10:cDEFAULT"
+let g:prd_fontList .= ",M+2VM+IPAG_circle:h10:cDEFAULT"
+let g:prd_fontList .= ",VL_ゴシック:h10:cDEFAULT"
+let g:prd_fontList .= ",Takaoゴシック:h10:cDEFAULT"
+let g:prd_fontList .= ",Takao明朝:h10:cDEFAULT"
+let g:prd_fontList .= ",ＭＳ_明朝:h10:cDEFAULT"
 
 " plug: loga.vim
 let g:loga_enable_auto_lookup = 0
@@ -499,7 +486,7 @@ endif
 command! -nargs=1 -complete=buffer NTab :999tab sbuffer <args>
 command! Big wincmd _ | wincmd |
 
-if !exists(':DiffOrig')
+if !exists(":DiffOrig")
   command! DiffOrig
         \ vnew | setlocal buftype=nofile | read# | 0d_ | diffthis | wincmd p | diffthis
 endif
