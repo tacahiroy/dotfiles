@@ -432,18 +432,6 @@ augroup END
 " plug: vim-ref
 let g:ref_refe_cmd = $HOME . "/rubyrefm/refe-1_9_2"
 
-" plug: VimClojure
-let vimclojure#HighlightBuiltins = 1
-let vimclojure#ParenRainbow = 1
-let vimclojure#FuzzyIndent = 1
-let vimclojure#HighlightContrib = 1
-let vimclojure#DynamicHighlighting = 1
-" Nailgun
-let vimclojure#WantNailgun = 1
-let vimclojure#NailgunClient = $HOME . "/Projects/wk/vimclojure.hg/client/ng"
-let vimclojure#NailgunServer = "127.0.0.1"
-let vimclojure#NailgunPort = "2113"
-
 " plug: ctrlp.vim "{{{
 let g:ctrlp_map = "<Space>ff"
 let g:ctrlp_command = "CtrlP"
