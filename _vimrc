@@ -43,17 +43,17 @@ set cpo&vim
 
 autocmd!
 
-if isdirectory($HOME . "/.vim")
-  let $DOTVIM = $HOME . "/.vim"
+if isdirectory($HOME . '/.vim')
+  let $DOTVIM = $HOME . '/.vim'
 else
   " MS Windows etc...
-  let $DOTVIM = $HOME . "/vimfiles"
+  let $DOTVIM = $HOME . '/vimfiles'
 endif
 
-if isdirectory(expand("$DOTVIM/sandbox"))
-  let dirs = split(glob($DOTVIM."/sandbox/*"), "\n")
+if isdirectory(expand('$DOTVIM/sandbox'))
+  let dirs = split(glob($DOTVIM.'/sandbox/*'), '\n')
   for d in dirs
-    execute ":set runtimepath+=" . d
+    execute ':set runtimepath+=' . d
   endfor
 endif
 
@@ -70,15 +70,15 @@ endfunction "}}}
 
 " tag information show in command window "{{{
 function! s:previewTagLight(word)
-  let t = taglist("^" . a:word . "$")
-  let current = expand("%:t")
+  let t = taglist('^' . a:word . '$')
+  let current = expand('%:t')
 
   for item in t
     if -1 < stridx(item.filename, current)
       " [filename] tag definition
-      echohl Search | echomsg printf("%-36s %s", "[" . g:cps(item.filename, "/") . "]", item.cmd) | echohl None
+      echohl Search | echomsg printf('%-36s %s', '[' . g:cps(item.filename, '/') . ']', item.cmd) | echohl None
     else
-      echomsg printf("%-36s %s", "[" . substitute(g:cps(item.filename, "/"), '\s\s*$', '', '') . "]", item.cmd)
+      echomsg printf('%-36s %s', '[' . substitute(g:cps(item.filename, '/'), '\s\s*$', '', '') . ']', item.cmd)
     endif
   endfor
 endfunction "}}}
@@ -94,7 +94,7 @@ let did_install_syntax_menu = 1
 syntax enable
 filetype plugin indent on
 
-if has("unix") || has("macunix")
+if has('unix')
   set encoding=utf-8
   set termencoding=utf-8
 else
@@ -119,7 +119,7 @@ set cmdheight=2
 set noequalalways
 set expandtab smarttab
 set fileencodings=ucs-bom,utf-8,iso-2022-jp,euc-jp,cp932
-let &fileformats = has("unix") ? "unix,dos,mac" : "dos,unix,mac"
+let &fileformats = has('unix') ? 'unix,dos,mac' : 'dos,unix,mac'
 set helplang=en,ja
 set hidden
 set history=10000
@@ -169,7 +169,7 @@ set wildmenu
 set wildmode=list:longest
 set nowrapscan
 
-if has("persistent_undo")
+if has('persistent_undo')
   set undodir=~/.vimundo
   augroup UndoFile
     autocmd!
@@ -179,13 +179,13 @@ endif
 
 let g:solarized_termcolors = 256
 let g:solarized_termtrans = 1
-let g:solarized_consrast = "high"
-let g:solarized_visibility = "high"
+let g:solarized_consrast = 'high'
+let g:solarized_visibility = 'high'
 let g:solarized_menu = 0
 set background=light
 colorscheme solarized
 
-" if !has("gui_running")
+" if !has('gui_running')
 "   colorscheme summerfruit256
 " endif
 
@@ -193,13 +193,13 @@ set formatoptions& formatoptions+=mM formatoptions-=r
 
 " statusline {{{2
 " [#bufnr]filename [modified?][enc:ff][filetype]
-let &statusline = "[#%n]%<%f %m%r%h%w%y"
-let &statusline .= "[%{(&l:fileencoding != '' ? &l:fileencoding : &encoding).':'.&fileformat}]"
-let &statusline .= "(%{&expandtab ? '' : '>'}%{&l:tabstop})"
-let &statusline .= "%#Underlined#%{fugitive#statusline()}%*"
+let &statusline = '[#%n]%<%f %m%r%h%w%y'
+let &statusline .= '[%{(&l:fileencoding != "" ? &l:fileencoding : &encoding).":".&fileformat}]'
+let &statusline .= '(%{&expandtab ? "" : ">"}%{&l:tabstop})'
+let &statusline .= '%#Underlined#%{fugitive#statusline()}%*'
 " monstermethod.vim support
-let &statusline .= "%{exists('b:mmi.name') && 0<len(b:mmi.name) ? ' -- '.b:mmi.name.'('.b:mmi.lines.')' : ''}"
-let &statusline .= "%=%-16(\ %l/%LL,%c\ %)%P"
+let &statusline .= '%{exists("b:mmi.name") && 0<len(b:mmi.name) ? " -- ".b:mmi.name."(".b:mmi.lines.")" : ""}'
+let &statusline .= '%=%-16(\ %l/%LL,%c\ %)%P'
 " }}}
 
 set matchpairs& matchpairs+=<:>
@@ -249,8 +249,8 @@ nmap <Space>c <Plug>CommentaryLine
 xmap <Space>c <Plug>Commentary
 
 " surround.vim
-let g:surround_{char2nr("k")} = "「\r」"
-let g:surround_{char2nr("K")} = "『\r』"
+let g:surround_{char2nr('k')} = "「\r」"
+let g:surround_{char2nr('K')} = "『\r』"
 let g:surround_indent = 0
 
 " camelcasemotion
@@ -262,9 +262,9 @@ sunmap b
 sunmap e
 
 " open current directory with filer
-if has("mac")
-  nnoremap <silent> <Space>e :<C-u>silent execute ":!open -a Finder %:p:h"<Cr>
-elseif has("win32") || has("win64")
+if has('mac')
+  nnoremap <silent> <Space>e :<C-u>silent execute ':!open -a Finder %:p:h'<Cr>
+elseif has('win32') || has('win64')
   nnoremap <silent> <Space>e :<C-u>silent execute ":!start explorer \"" . g:cps(expand("%:p:h"), "\\") . "\""<Cr>
   " open current directory with Command Prompt
   nnoremap <silent> <Space>E :<C-u>silent execute ":!start cmd /k cd \"" . g:cps(expand("%:p:h"), "\\") . "\""<Cr>
@@ -287,7 +287,7 @@ nnoremap <Space>s_ :<C-u>source $MYVIMRC<Cr>
 
 nnoremap <silent> <Esc><Esc> <Esc>:<C-u>nohlsearch<Cr>
 
-nnoremap <silent> ,f :<C-u>echo expand("%:p")<Cr>
+nnoremap <silent> ,f :<C-u>echo expand('%:p')<Cr>
 nnoremap <silent> ,d :<C-u>pwd<Cr>
 
 nnoremap <silent> sh <C-w>h
@@ -307,14 +307,13 @@ nnoremap <silent> <Space>P :pclose<Cr>
 
 " vim-endwise support
 function! s:CrInInsertModeBetterWay()
-  " return pumvisible() ? neocomplcache#close_popup()."\<Cr>" : "\<Cr>"
   return pumvisible() ? "\<C-y>\<Cr>" : "\<Cr>"
 endfunction
 inoremap <silent> <Cr> <C-R>=<SID>CrInInsertModeBetterWay()<Cr>
 
-inoremap <silent> ,dt <C-R>=strftime("%Y.%m.%d")<Cr>
-inoremap <silent> ,ti <C-R>=strftime("%H:%M")<Cr>
-inoremap <silent> ,fn <C-R>=expand("%")<Cr>
+inoremap <silent> ,dt <C-R>=strftime('%Y.%m.%d')<Cr>
+inoremap <silent> ,ti <C-R>=strftime('%H:%M')<Cr>
+inoremap <silent> ,fn <C-R>=expand('%')<Cr>
 " ^J is used to toggle IME
 inoremap <silent> <C-j> <Nop>
 cnoremap <silent> <C-j> <Nop>
@@ -324,18 +323,18 @@ vnoremap * y/<C-R>"<Cr>
 vnoremap < <gv
 vnoremap > >gv
 
-if executable("tidyp")
+if executable('tidyp')
   function! s:runTidy(col) range
     " this code is not perfect.
     " tidy's Character encoding option and Vim's fileencoding/encoding is not a pair
     let enc = &l:fileencoding ? &l:fileencoding : &encoding
-    let enc = substitute(enc, "-", "", "g")
+    let enc = substitute(enc, '-', '', 'g')
 
-    silent execute printf(": %d,%d!tidyp -xml -i -%s -wrap %d -q -asxml", a:firstline, a:lastline, enc, a:col)
+    silent execute printf(': %d,%d!tidyp -xml -i -%s -wrap %d -q -asxml', a:firstline, a:lastline, enc, a:col)
   endfunction
 endif
 
-let g:xml_tag_completion_map = ""
+let g:xml_tag_completion_map = ''
 "}}}
 
 
@@ -361,7 +360,7 @@ augroup MyAutoCmd
   autocmd BufReadPost * if line("'\"") <= line('$') | execute "normal '\"" | endif
   autocmd BufReadPost * setlocal formatoptions-=o
   " autochdir emulation
-  autocmd BufEnter * if expand("%") !~# '^fugitive://' | execute ":lcd " . escape(expand("%:p:h"), " ") | endif
+  autocmd BufEnter * if expand('%') !~# '^fugitive://' | execute ':lcd ' . escape(expand('%:p:h'), ' ') | endif
   autocmd BufRead,BufNewFile *.ru,Gemfile,Guardfile set filetype=ruby
 
   autocmd User Rails nnoremap <buffer> <Space>r :<C-u>R
@@ -370,7 +369,7 @@ augroup MyAutoCmd
 
   " http://vim-users.jp/2009/11/hack96/ {{{
   autocmd FileType *
-  \   if &l:omnifunc == ""
+  \   if &l:omnifunc == ''
   \|   setlocal omnifunc=syntaxcomplete#Complete
   \| endif
   " }}}
@@ -395,9 +394,9 @@ augroup MyAutoCmd
   let g:sqlutil_align_comma = 1
   let g:sqlutil_align_where = 1
   let g:sqlutil_keyword_case = '\U'
-  let g:dbext_default_type = "ORA"
+  let g:dbext_default_type = 'ORA'
 
-  if executable("jsl")
+  if executable('jsl')
     autocmd FileType javascript*,*html setlocal makeprg=jsl\ -conf\ \"$HOME/jsl.conf\"\ -nologo\ -nofilelisting\ -nosummary\ -nocontext\ -process\ %
     autocmd FileType javascript*,*html setlocal errorformat=%f(%l):\ %m
   endif
@@ -408,8 +407,8 @@ augroup MyAutoCmd
   autocmd FileType c nnoremap <buffer> <Space>m :<C-u>write<Cr>:make --std=c99<Cr>
 
   function! s:moveToSegment(is_prev)
-    let flag = a:is_prev ? "b" : ""
-    call search('<\(para\|section\|term\)[^>]*>', "esW".flag)
+    let flag = a:is_prev ? 'b' : ''
+    call search('<\(para\|section\|term\)[^>]*>', 'esW'.flag)
   endfunction
   autocmd FileType xml nnoremap <silent> <buffer> <Tab> :call <SID>moveToSegment(0)<Cr>
   autocmd FileType xml nnoremap <silent> <buffer> <S-Tab> :call <SID>moveToSegment(1)<Cr>
@@ -423,37 +422,38 @@ augroup END
 
 " * plugins "{{{
 " plug: vim-ref
-let g:ref_refe_cmd = $HOME . "/rubyrefm/refe-1_9_2"
+let g:ref_refe_cmd = $HOME . '/rubyrefm/refe-1_9_2'
 
 " plug: ctrlp.vim "{{{
-let g:ctrlp_map = "<Space>ff"
-let g:ctrlp_command = "CtrlP"
+let g:ctrlp_map = '<Space>ff'
+let g:ctrlp_command = 'CtrlP'
 let g:ctrlp_jump_to_buffer = 2
 let g:ctrlp_working_path_mode = 2
 let g:ctrlp_match_window_bottom = 1
 let g:ctrlp_clear_cache_on_exit = 0
 let g:ctrlp_follow_symlinks = 1
-let g:ctrlp_highlight_match = [1, "Constant"]
+let g:ctrlp_highlight_match = [1, 'Constant']
 let g:ctrlp_max_files = 5000
 let g:ctrlp_max_depth = 20
 
 let g:ctrlp_user_command = {
-      \ "types": {
-        \ 1: [".git/", "cd %s && git ls-files"],
-        \ 2: [".hg/", "hg --cwd %s locate -I ."],
+      \ 'types': {
+        \ 1: ['.git/', 'cd %s && git ls-files'],
+        \ 2: ['.hg/', 'hg --cwd %s locate -I .'],
         \ },
-      \ "fallback": "find %s -type f"
+      \ 'fallback': 'find %s -type f'
       \ }
 
 let g:ctrlp_prompt_mappings = {
-  \ "PrtSelectMove('j')":   ["<C-n>"],
-  \ "PrtSelectMove('k')":   ["<C-p>"],
-  \ "PrtHistory(-1)":       [""],
-  \ "PrtHistory(1)":        [""],
+  \ 'PrtSelectMove("j")':   ['<C-n>'],
+  \ 'PrtSelectMove("k")':   ['<C-p>'],
+  \ 'PrtHistory(-1)':       [''],
+  \ 'PrtHistory(1)':        [''],
   \ }
 
 let g:ctrlp_extensions = ['tag', 'buffertag', 'dir', 'line']
 command! CtrlPLine call ctrlp#init(ctrlp#line#id())
+command! CtrlPTheFunks call ctrlp#init(ctrlp#thefunks#id())
 
 set wildignore+=*/.git/*,*/.hg/*,*/.svn/*
 set wildignore+=*/.neocon/*,*/.vimundo/*
@@ -464,26 +464,27 @@ set wildignore+=.DS_Store
 noremap <Space>fb :CtrlPBuffer<Cr>
 noremap <Space>ff :CtrlP<Cr>
 noremap <Space>fm :CtrlPMRU<Cr>
+noremap <Space>fo :CtrlPTheFunks<Cr>
 "}}}
 
 " plug: Align
-let g:DrChipTopLvlMenu = ""
+let g:DrChipTopLvlMenu = ''
 let g:Align_xstrlen = 0
 
 " plug: prtdialog
-let g:prd_fontList  = "M+1VM+IPAG_circle:h10:cDEFAULT"
-let g:prd_fontList .= ",M+2VM+IPAG_circle:h10:cDEFAULT"
-let g:prd_fontList .= ",VL_ゴシック:h10:cDEFAULT"
-let g:prd_fontList .= ",Takaoゴシック:h10:cDEFAULT"
-let g:prd_fontList .= ",Takao明朝:h10:cDEFAULT"
-let g:prd_fontList .= ",ＭＳ_明朝:h10:cDEFAULT"
+let g:prd_fontList  = 'M+1VM+IPAG_circle:h10:cDEFAULT'
+let g:prd_fontList .= ',M+2VM+IPAG_circle:h10:cDEFAULT'
+let g:prd_fontList .= ',VL_ゴシック:h10:cDEFAULT'
+let g:prd_fontList .= ',Takaoゴシック:h10:cDEFAULT'
+let g:prd_fontList .= ',Takao明朝:h10:cDEFAULT'
+let g:prd_fontList .= ',ＭＳ_明朝:h10:cDEFAULT'
 
 " plug: loga.vim
 let g:loga_enable_auto_lookup = 0
 map <Space>a <Plug>(loga-lookup)
 "}}}
 
-if has("multi_byte_ime") || has("xim")
+if has('multi_byte_ime') || has('xim')
   set iminsert=0 imsearch=0
   imap <silent> <Esc> <Esc>:<C-u>set iminsert=0<Cr>
 endif
@@ -494,17 +495,17 @@ endif
 command! -nargs=1 -complete=buffer NTab :999tab sbuffer <args>
 command! Big wincmd _ | wincmd |
 
-if !exists(":DiffOrig")
+if !exists(':DiffOrig')
   command! DiffOrig
         \ vnew | setlocal buftype=nofile | read# | 0d_ | diffthis | wincmd p | diffthis
 endif
 " }}}
 
-if filereadable(expand("~/.vimrc.mine"))
+if filereadable(expand('~/.vimrc.mine'))
   source ~/.vimrc.mine
 endif
 
-if has("gui_running") && filereadable(expand("~/.gvimrc"))
+if has('gui_running') && filereadable(expand('~/.gvimrc'))
   source ~/.gvimrc
 end
 
