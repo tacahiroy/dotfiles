@@ -8,33 +8,33 @@ filetype off
 set runtimepath+=~/.vim/vundle.git
 call vundle#rc()
 
-Bundle "kien/ctrlp.vim"
-Bundle "tpope/vim-surround"
-Bundle "tpope/vim-fugitive"
-Bundle "tpope/vim-commentary"
-Bundle "msanders/snipmate.vim"
+Bundle 'kien/ctrlp.vim'
+Bundle 'tpope/vim-surround'
+Bundle 'tpope/vim-fugitive'
+Bundle 'tpope/vim-commentary'
+Bundle 'msanders/snipmate.vim'
 
-Bundle "tacahiroy/vim-endwise"
+Bundle 'tacahiroy/vim-endwise'
 
-Bundle "thinca/vim-quickrun"
-Bundle "thinca/vim-ref"
+Bundle 'thinca/vim-quickrun'
+Bundle 'thinca/vim-ref'
 
-Bundle "scrooloose/nerdtree"
+Bundle 'scrooloose/nerdtree'
 
-Bundle "tpope/vim-rails"
-Bundle "kchmck/vim-coffee-script"
-Bundle "jiangmiao/simple-javascript-indenter"
-Bundle "avakhov/vim-yaml"
-Bundle "bbommarito/vim-slim"
-" Bundle "mattn/zencoding-vim"
+Bundle 'tpope/vim-rails'
+Bundle 'kchmck/vim-coffee-script'
+Bundle 'jiangmiao/simple-javascript-indenter'
+Bundle 'avakhov/vim-yaml'
+Bundle 'bbommarito/vim-slim'
+" Bundle 'mattn/zencoding-vim'
 
-Bundle "L9"
-Bundle "matchit.zip"
-" Bundle "IndentAnything"
-Bundle "Align"
-Bundle "camelcasemotion"
+Bundle 'matchit.zip'
+" Bundle 'IndentAnything'
+Bundle 'Align'
+Bundle 'camelcasemotion'
 
-" Bundle "increment_new.vim"
+" Bundle 'increment_new.vim'
+Bundle 'altercation/vim-colors-solarized'
 
 filetype plugin indent on
 "}}}
@@ -59,7 +59,6 @@ endif
 
 set nocompatible
 set verbose=0
-
 
 " * functions "{{{1
 " convert path separator "{{{
@@ -178,10 +177,17 @@ if has("persistent_undo")
   augroup END
 endif
 
-if !has("gui_running")
-  "set t_Co=256
-  colorscheme summerfruit256
-endif
+let g:solarized_termcolors = 256
+let g:solarized_termtrans = 1
+let g:solarized_consrast = "high"
+let g:solarized_visibility = "high"
+let g:solarized_menu = 0
+set background=light
+colorscheme solarized
+
+" if !has("gui_running")
+"   colorscheme summerfruit256
+" endif
 
 set formatoptions& formatoptions+=mM formatoptions-=r
 
@@ -445,7 +451,9 @@ let g:ctrlp_prompt_mappings = {
   \ "PrtHistory(-1)":       [""],
   \ "PrtHistory(1)":        [""],
   \ }
-let g:ctrlp_extensions = ["tag", "buffertag", "dir"]
+
+let g:ctrlp_extensions = ['tag', 'buffertag', 'dir', 'line']
+command! CtrlPLine call ctrlp#init(ctrlp#line#id())
 
 set wildignore+=*/.git/*,*/.hg/*,*/.svn/*
 set wildignore+=*/.neocon/*,*/.vimundo/*

@@ -25,9 +25,7 @@ if &guioptions =~# 'M'
 endif
 
 
-set background=light
-colorscheme seashell
-let g:colorscheme = colors_name
+colorscheme solarized
 
 if has('macunix')
   " set guifont=Monaco:h12
