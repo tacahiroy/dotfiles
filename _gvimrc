@@ -7,7 +7,7 @@ set cmdheight=2
 set columns=100
 set guioptions=aeciM
 set guitablabel=%N)\ %f
-set lines=40
+set lines=999
 
 set t_vb=
 
