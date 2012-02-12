@@ -116,6 +116,7 @@ set backupdir=$DOTVIM/backups
 set backupskip& backupskip+=*.bac,COMMIT_EDITMSG,hg-editor-*.txt,svn-commit.tmp,svn-commit.[0-9]*.tmp
 set cedit=
 set cmdheight=2
+set colorcolumn=80
 set noequalalways
 set expandtab smarttab
 set fileencodings=ucs-bom,utf-8,iso-2022-jp,euc-jp,cp932
@@ -199,7 +200,7 @@ let &statusline .= '(%{&expandtab ? "" : ">"}%{&l:tabstop})'
 let &statusline .= '%#Underlined#%{fugitive#statusline()}%*'
 " monstermethod.vim support
 let &statusline .= '%{exists("b:mmi.name") && 0<len(b:mmi.name) ? " -- ".b:mmi.name."(".b:mmi.lines.")" : ""}'
-let &statusline .= '%=%-16(\ %l/%LL,%c\ %)%P'
+let &statusline .= '%=%-16( %l/%LL,%c %)%P'
 " }}}
 
 set matchpairs& matchpairs+=<:>
@@ -279,8 +280,8 @@ nnoremap <Space>Q :<C-u>quit!<Cr>
 nnoremap <Space>j <C-f>
 nnoremap <Space>k <C-b>
 
-nnoremap <Space>h :<C-u>h 
-nnoremap <Space>t :<C-u>tabe 
+nnoremap <Space>h :<C-u>h<Space>
+nnoremap <Space>t :<C-u>tabe<Space>
 
 nnoremap <silent> <Space>_ :<C-u>edit $MYVIMRC<Cr>
 nnoremap <Space>s_ :<C-u>source $MYVIMRC<Cr>
@@ -445,14 +446,19 @@ let g:ctrlp_user_command = {
       \ }
 
 let g:ctrlp_prompt_mappings = {
+	\ 'AcceptSelection("e")': ['<Cr>', '<2-LeftMouse>'],
+	\ 'AcceptSelection("h")': ['<C-x>', '<C-Cr>'],
+	\ 'AcceptSelection("t")': ['<C-t>', '<MiddleMouse>'],
+	\ 'AcceptSelection("v")': ['<C-v>', '<RightMouse>'],
   \ 'PrtSelectMove("j")':   ['<C-n>'],
   \ 'PrtSelectMove("k")':   ['<C-p>'],
   \ 'PrtHistory(-1)':       [''],
   \ 'PrtHistory(1)':        [''],
   \ }
 
-let g:ctrlp_extensions = ['tag', 'buffertag', 'dir', 'line']
-command! CtrlPLine call ctrlp#init(ctrlp#line#id())
+let g:ctrlp_extensions = ['tag', 'buffertag', 'dir', 'thefunks']
+
+let g:ctrlp_thefunks_all_buffers = 1
 command! CtrlPTheFunks call ctrlp#init(ctrlp#thefunks#id())
 
 set wildignore+=*/.git/*,*/.hg/*,*/.svn/*
