@@ -21,6 +21,7 @@ Bundle 'thinca/vim-ref'
 
 Bundle 'scrooloose/nerdtree'
 
+Bundle 'vim-ruby/vim-ruby'
 Bundle 'tpope/vim-rails'
 Bundle 'kchmck/vim-coffee-script'
 Bundle 'jiangmiao/simple-javascript-indenter'
@@ -68,7 +69,7 @@ function! g:cps(path, sep)
 endfunction "}}}
 
 
-" tag information show in command window "{{{
+" tag information show in command window
 function! s:previewTagLight(word)
   let t = taglist('^' . a:word . '$')
   let current = expand('%:t')
@@ -81,7 +82,7 @@ function! s:previewTagLight(word)
       echomsg printf('%-36s %s', '[' . substitute(g:cps(item.filename, '/'), '\s\s*$', '', '') . ']', item.cmd)
     endif
   endfor
-endfunction "}}}
+endfunction
 "}}}
 "}}}
 
@@ -164,10 +165,10 @@ set titlelen=255
 set tabstop=2 shiftwidth=2 softtabstop=2
 set viminfo='64,<100,s10,n~/.viminfo
 set virtualedit=block
-set novisualbell
+set visualbell
 set wildignore=*.exe,*.dll,*.class,*.o,*.obj
 set wildmenu
-set wildmode=list:longest
+set wildmode=longest:list,full
 set nowrapscan
 
 if has('persistent_undo')
@@ -195,7 +196,7 @@ set formatoptions& formatoptions+=mM formatoptions-=r
 " statusline {{{2
 " [#bufnr]filename [modified?][enc:ff][filetype]
 let &statusline = '[#%n]%<%f %m%r%h%w%y'
-let &statusline .= '[%{(&l:fileencoding != "" ? &l:fileencoding : &encoding).":".&fileformat}]'
+let &statusline .= '%{(&l:fileencoding != "" ? &l:fileencoding : &encoding).":".&fileformat}'
 let &statusline .= '(%{&expandtab ? "" : ">"}%{&l:tabstop})'
 let &statusline .= '%#Underlined#%{fugitive#statusline()}%*'
 " monstermethod.vim support
@@ -212,7 +213,6 @@ let g:loaded_matchparen = 0
 " * map "{{{
 " ummmmm like Emacs
 " cmdline editing
-cnoremap <C-o> <C-q>
 cnoremap <C-p> <Up>
 cnoremap <C-n> <Down>
 cnoremap <C-a> <Home>
@@ -220,13 +220,14 @@ cnoremap <C-e> <End>
 cnoremap <C-f> <Right>
 cnoremap <C-b> <Left>
 cnoremap <C-d> <Del>
+cnoremap <C-o> <C-d>
 
 nnoremap Y y$
 nnoremap j gj
 nnoremap k gk
 nnoremap vv <C-v>
 nnoremap [visual-row-without-eol] 0vg_
-nnoremap vV [visual-row-without-eol]
+nmap vV [visual-row-without-eol]
 nnoremap <C-]> <C-]>zz
 nnoremap <C-t> <C-t>zz
 
@@ -284,7 +285,7 @@ nnoremap <Space>h :<C-u>h<Space>
 nnoremap <Space>t :<C-u>tabe<Space>
 
 nnoremap <silent> <Space>_ :<C-u>edit $MYVIMRC<Cr>
-nnoremap <Space>s_ :<C-u>source $MYVIMRC<Cr>
+nnoremap <silent> <Space>g_ :<C-u>edit $MYGVIMRC<Cr>
 
 nnoremap <silent> <Esc><Esc> <Esc>:<C-u>nohlsearch<Cr>
 
@@ -458,9 +459,6 @@ let g:ctrlp_prompt_mappings = {
 
 let g:ctrlp_extensions = ['tag', 'buffertag', 'dir', 'thefunks']
 
-let g:ctrlp_thefunks_all_buffers = 1
-command! CtrlPTheFunks call ctrlp#init(ctrlp#thefunks#id())
-
 set wildignore+=*/.git/*,*/.hg/*,*/.svn/*
 set wildignore+=*/.neocon/*,*/.vimundo/*
 set wildignore+=*.mp3,*.aac,*.flac
@@ -470,7 +468,11 @@ set wildignore+=.DS_Store
 noremap <Space>fb :CtrlPBuffer<Cr>
 noremap <Space>ff :CtrlP<Cr>
 noremap <Space>fm :CtrlPMRU<Cr>
-noremap <Space>fo :CtrlPTheFunks<Cr>
+noremap <Space>ft :CtrlPBufTag<Cr>
+noremap <Space>fT :CtrlPBufTagAll<Cr>
+
+command! CtrlPTheFunks call ctrlp#init(ctrlp#thefunks#id())
+noremap <Space>fu :CtrlPTheFunks<Cr>
 "}}}
 
 " plug: Align
@@ -494,7 +496,6 @@ if has('multi_byte_ime') || has('xim')
   set iminsert=0 imsearch=0
   imap <silent> <Esc> <Esc>:<C-u>set iminsert=0<Cr>
 endif
-
 
 " * commands {{{
 " open loaded buffer with new tab.
