@@ -239,12 +239,11 @@ nnoremap <silent> <Space>N :bprevious<Cr>
 nnoremap s <Nop>
 nnoremap q <Nop>
 nnoremap Q q
+nnoremap ; :
+nnoremap : ;
 
 nnoremap <silent> <Space>o :<C-u>cwindow<Cr>
 nnoremap <silent> <Space>O :<C-u>cclose<Cr>
-
-nnoremap <silent> ,<< dT>
-nnoremap <silent> ,>> dt<
 
 " commentary.vim
 nmap <Space>c <Plug>CommentaryLine
