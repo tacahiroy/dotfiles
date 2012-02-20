@@ -494,7 +494,7 @@ map <Space>a <Plug>(loga-lookup)
 
 if has('multi_byte_ime') || has('xim')
   set iminsert=0 imsearch=0
-  imap <silent> <Esc> <Esc>:<C-u>set iminsert=0<Cr>
+  inoremap <silent> <Esc> <Esc>:<C-u>set iminsert=0<Cr>
 endif
 
 " * commands {{{
