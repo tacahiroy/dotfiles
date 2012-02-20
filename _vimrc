@@ -414,7 +414,7 @@ augroup MyAutoCmd
   autocmd FileType xml nnoremap <silent> <buffer> <Tab> :call <SID>moveToSegment(0)<Cr>
   autocmd FileType xml nnoremap <silent> <buffer> <S-Tab> :call <SID>moveToSegment(1)<Cr>
   autocmd FileType xml noremap  <silent> <buffer> <leader>ty :call <SID>runTidy(80)<Cr>
-  autocmd BufRead,BufEnter *.xml set updatetime=500
+  autocmd BufRead,BufEnter *.xml set updatetime=1000
   autocmd BufLeave,BufWinLeave *.xml set updatetime&
 augroup END
 
@@ -488,6 +488,7 @@ let g:prd_fontList .= ',ＭＳ_明朝:h10:cDEFAULT'
 
 " plug: loga.vim
 let g:loga_enable_auto_lookup = 0
+let g:loga_delimiter = '(-)'
 map <Space>a <Plug>(loga-lookup)
 "}}}
 
