@@ -154,7 +154,7 @@ set showmatch matchtime=1
 set showtabline=1
 set nosplitbelow
 set splitright
-set nosmartcase
+set smartcase
 set swapfile directory=$DOTVIM/swaps
 set switchbuf=useopen,usetab
 set synmaxcol=300
@@ -239,8 +239,6 @@ nnoremap <silent> <Space>N :bprevious<Cr>
 nnoremap s <Nop>
 nnoremap q <Nop>
 nnoremap Q q
-nnoremap ; :
-nnoremap : ;
 
 nnoremap <silent> <Space>o :<C-u>cwindow<Cr>
 nnoremap <silent> <Space>O :<C-u>cclose<Cr>
@@ -488,8 +486,9 @@ let g:prd_fontList .= ',ＭＳ_明朝:h10:cDEFAULT'
 
 " plug: loga.vim
 let g:loga_enable_auto_lookup = 0
-let g:loga_delimiter = '(-)'
-map <Space>a <Plug>(loga-lookup)
+let g:loga_delimiter = '=3'
+nmap <Space>a <Plug>(loga-lookup)
+imap <Leader>v <Plug>(loga-insert-delimiter)
 "}}}
 
 if has('multi_byte_ime') || has('xim')
