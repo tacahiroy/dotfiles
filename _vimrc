@@ -36,6 +36,7 @@ Bundle 'camelcasemotion'
 
 " Bundle 'increment_new.vim'
 Bundle 'altercation/vim-colors-solarized'
+Bundle 'majutsushi/tagbar'
 
 filetype plugin indent on
 "}}}
@@ -51,8 +52,9 @@ else
   let $DOTVIM = $HOME . '/vimfiles'
 endif
 
+" self pathogen
 if isdirectory(expand('$DOTVIM/sandbox'))
-  let dirs = split(glob($DOTVIM.'/sandbox/*'), '\n')
+  let dirs = split(glob($DOTVIM.'/sandbox/*'))
   for d in dirs
     execute ':set runtimepath+=' . d
   endfor
@@ -181,8 +183,9 @@ endif
 
 let g:solarized_termcolors = 256
 let g:solarized_termtrans = 1
-let g:solarized_consrast = 'high'
-let g:solarized_visibility = 'high'
+let g:solarized_contrast = 'normal'
+let g:solarized_visibility = 'normal'
+let g:solarized_hitrail = 1
 let g:solarized_menu = 0
 set background=light
 colorscheme solarized
@@ -193,15 +196,26 @@ colorscheme solarized
 
 set formatoptions& formatoptions+=mM formatoptions-=r
 
-" statusline {{{2
-" [#bufnr]filename [modified?][enc:ff][filetype]
-let &statusline = '[#%n]%<%f %m%r%h%w%y'
-let &statusline .= '%{(&l:fileencoding != "" ? &l:fileencoding : &encoding).":".&fileformat}'
+" statusline {{{
+let &statusline = '[#%n]%<%f %m%r%h%w'
+let &statusline .= '%{&filetype.":".(&l:fileencoding != "" ? &l:fileencoding : &encoding).":".&fileformat}'
 let &statusline .= '(%{&expandtab ? "" : ">"}%{&l:tabstop})'
-let &statusline .= '%#Underlined#%{fugitive#statusline()}%*'
+let &statusline .= '%#Constant#%{fugitive#statusline()}%*'
 " monstermethod.vim support
-let &statusline .= '%{exists("b:mmi.name") && 0<len(b:mmi.name) ? " -- ".b:mmi.name."(".b:mmi.lines.")" : ""}'
-let &statusline .= '%=%-16( %l/%LL,%c %)%P'
+" let &statusline .= '%{exists("b:mmi.name") && 0<len(b:mmi.name) ? " -- ".b:mmi.name."(".b:mmi.lines.")" : ""}'
+let &statusline .= ' %=(%{g:idiotPath(expand("%:p:h"), 24)})'
+let &statusline .= '%-12( %l/%LL,%c %)%P'
+
+function! g:idiotPath(path, ratio)
+  let width = (&columns + &numberwidth) * 1.0
+  let plen = len(a:path)
+  if 0.5 < plen / width
+    let slen = float2nr(plen * a:ratio * 0.01)
+    return strpart(a:path, 0, slen) . '...' . strpart(a:path, plen - slen)
+  else
+    return a:path
+  endif
+endfunction
 " }}}
 
 set matchpairs& matchpairs+=<:>
@@ -305,10 +319,10 @@ nnoremap <silent> <Space>p <C-w>}
 nnoremap <silent> <Space>P :pclose<Cr>
 
 " vim-endwise support
-function! s:CrInInsertModeBetterWay()
+function! s:crInInsertModeBetterWay()
   return pumvisible() ? "\<C-y>\<Cr>" : "\<Cr>"
 endfunction
-inoremap <silent> <Cr> <C-R>=<SID>CrInInsertModeBetterWay()<Cr>
+inoremap <silent> <Cr> <C-R>=<SID>crInInsertModeBetterWay()<Cr>
 
 inoremap <silent> ,dt <C-R>=strftime('%Y.%m.%d')<Cr>
 inoremap <silent> ,ti <C-R>=strftime('%H:%M')<Cr>
@@ -444,20 +458,20 @@ let g:ctrlp_user_command = {
       \ }
 
 let g:ctrlp_prompt_mappings = {
-	\ 'AcceptSelection("e")': ['<Cr>', '<2-LeftMouse>'],
+	\ 'AcceptSelection("e")': ['<Cr>'],
 	\ 'AcceptSelection("h")': ['<C-x>', '<C-Cr>'],
-	\ 'AcceptSelection("t")': ['<C-t>', '<MiddleMouse>'],
-	\ 'AcceptSelection("v")': ['<C-v>', '<RightMouse>'],
+	\ 'AcceptSelection("t")': ['<C-t>'],
+	\ 'AcceptSelection("v")': ['<C-v>'],
   \ 'PrtSelectMove("j")':   ['<C-n>'],
   \ 'PrtSelectMove("k")':   ['<C-p>'],
-  \ 'PrtHistory(-1)':       [''],
-  \ 'PrtHistory(1)':        [''],
+  \ 'PrtHistory(-1)':       ['<Up>'],
+  \ 'PrtHistory(1)':        ['<Down>'],
   \ }
 
 let g:ctrlp_extensions = ['tag', 'buffertag', 'dir', 'thefunks']
 
 set wildignore+=*/.git/*,*/.hg/*,*/.svn/*
-set wildignore+=*/.neocon/*,*/.vimundo/*
+set wildignore+=*/.vimundo/*
 set wildignore+=*.mp3,*.aac,*.flac
 set wildignore+=*.mp4,*.flv,*.mpg,*.mkv,*.avi,*.wmv,*.mov,*.iso
 set wildignore+=.DS_Store
@@ -487,7 +501,7 @@ let g:prd_fontList .= ',ＭＳ_明朝:h10:cDEFAULT'
 " plug: loga.vim
 let g:loga_enable_auto_lookup = 0
 let g:loga_delimiter = '=3'
-nmap <Space>a <Plug>(loga-lookup)
+map <Space>a <Plug>(loga-lookup)
 imap <Leader>v <Plug>(loga-insert-delimiter)
 "}}}
 
