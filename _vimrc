@@ -203,18 +203,26 @@ let &statusline .= '(%{&expandtab ? "" : ">"}%{&l:tabstop})'
 let &statusline .= '%#Constant#%{fugitive#statusline()}%*'
 " monstermethod.vim support
 " let &statusline .= '%{exists("b:mmi.name") && 0<len(b:mmi.name) ? " -- ".b:mmi.name."(".b:mmi.lines.")" : ""}'
-let &statusline .= ' %=(%{g:idiotPath(expand("%:p:h"), 24)})'
+let &statusline .= ' %=%{g:idiotPath(expand("%:p:h"), 24)}'
 let &statusline .= '%-12( %l/%LL,%c %)%P'
 
 function! g:idiotPath(path, ratio)
+  if !empty(&buftype)
+    return ''
+  endif
+
   let width = (&columns + &numberwidth) * 1.0
   let plen = len(a:path)
+  let path = ''
+
   if 0.5 < plen / width
     let slen = float2nr(plen * a:ratio * 0.01)
-    return strpart(a:path, 0, slen) . '...' . strpart(a:path, plen - slen)
+    let path = strpart(a:path, 0, slen) . '...' . strpart(a:path, plen - slen)
   else
-    return a:path
+    let path = a:path
   endif
+
+  return '(' . path . ')'
 endfunction
 " }}}
 
