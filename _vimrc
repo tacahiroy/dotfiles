@@ -36,7 +36,6 @@ Bundle 'camelcasemotion'
 
 " Bundle 'increment_new.vim'
 Bundle 'altercation/vim-colors-solarized'
-Bundle 'majutsushi/tagbar'
 
 filetype plugin indent on
 "}}}
@@ -203,7 +202,7 @@ let &statusline .= '(%{&expandtab ? "" : ">"}%{&l:tabstop})'
 let &statusline .= '%#Constant#%{fugitive#statusline()}%*'
 " monstermethod.vim support
 " let &statusline .= '%{exists("b:mmi.name") && 0<len(b:mmi.name) ? " -- ".b:mmi.name."(".b:mmi.lines.")" : ""}'
-let &statusline .= ' %=%{g:idiotPath(expand("%:p:h"), 24)}'
+let &statusline .= ' %=%{g:idiotPath(getcwd(), 24)}'
 let &statusline .= '%-12( %l/%LL,%c %)%P'
 
 function! g:idiotPath(path, ratio)
@@ -284,7 +283,7 @@ sunmap e
 
 " open current directory with filer
 if has('mac')
-  nnoremap <silent> <Space>e :<C-u>silent execute ':!open -a Finder %:p:h'<Cr>
+  nnoremap <silent> <Space>e :<C-u>silent execute ':!open -a Finder %:p:h'<Cr>:redraw!<Cr>
 elseif has('win32') || has('win64')
   nnoremap <silent> <Space>e :<C-u>silent execute ":!start explorer \"" . g:cps(expand("%:p:h"), "\\") . "\""<Cr>
   " open current directory with Command Prompt
@@ -381,7 +380,41 @@ augroup MyAutoCmd
   autocmd BufReadPost * if line("'\"") <= line('$') | execute "normal '\"" | endif
   autocmd BufReadPost * setlocal formatoptions-=o
   " autochdir emulation
-  autocmd BufEnter * if expand('%') !~# '^fugitive://' | execute ':lcd ' . escape(expand('%:p:h'), ' ') | endif
+  autocmd BufEnter * call s:autoChdir(5)
+  function! s:autoChdir(n) "{{{
+    function! s:getTopDir(dir, n) "{{{
+      let i = 0
+      let dir = a:dir
+
+      while i < a:n
+        let dirs = split(dir, '/')
+        if !exists('midx')
+          let midx = len(dirs)
+        endif
+        let idx = midx - i
+        if idx < 0
+          break
+        endif
+
+        let dir = '/'.join(dirs[0:idx], '/')
+        if filereadable(dir.'/Gemfile')
+          return dir
+        endif
+        let i += 1
+      endwhile
+
+      return a:dir
+    endfunction"}}}
+
+    if expand('%') =~# '^fugitive://'
+      return
+    endif
+
+    let dir = s:getTopDir(expand('%:p:h'), 5)
+
+    execute ':lcd ' . escape(dir, ' ')
+  endfunction"}}}
+
   autocmd BufRead,BufNewFile *.ru,Gemfile,Guardfile set filetype=ruby
 
   autocmd User Rails nnoremap <buffer> <Space>r :<C-u>R
@@ -446,8 +479,8 @@ augroup END
 let g:ref_refe_cmd = $HOME . '/rubyrefm/refe-1_9_2'
 
 " plug: ctrlp.vim "{{{
-let g:ctrlp_map = '<Space>ff'
-let g:ctrlp_command = 'CtrlP'
+" let g:ctrlp_map = '<Space>ff'
+" let g:ctrlp_command = 'CtrlPCurWD'
 let g:ctrlp_jump_to_buffer = 2
 let g:ctrlp_working_path_mode = 2
 let g:ctrlp_match_window_bottom = 1
@@ -485,7 +518,7 @@ set wildignore+=*.mp4,*.flv,*.mpg,*.mkv,*.avi,*.wmv,*.mov,*.iso
 set wildignore+=.DS_Store
 
 noremap <Space>fb :CtrlPBuffer<Cr>
-noremap <Space>ff :CtrlP<Cr>
+noremap <Space>ff :CtrlPCurWD<Cr>
 noremap <Space>fm :CtrlPMRU<Cr>
 noremap <Space>ft :CtrlPBufTag<Cr>
 noremap <Space>fT :CtrlPBufTagAll<Cr>
