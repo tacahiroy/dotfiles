@@ -544,6 +544,12 @@ let g:loga_enable_auto_lookup = 0
 let g:loga_delimiter = '=3'
 map <Space>a <Plug>(loga-lookup)
 imap <Leader>v <Plug>(loga-insert-delimiter)
+
+" plug: edtime.vim
+let g:edtime_accept_pattern = '^'.$HOME.'/\%(\.\w\+$\|Projects\)'
+let g:edtime_ignore_pattern = '\(\.txt$\|\.git/\)'
+nnoremap ,tt :<C-u>EdTime<Cr>
+nnoremap ,ta :<C-u>EdTime all<Cr>
 "}}}
 
 if has('multi_byte_ime') || has('xim')
