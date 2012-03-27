@@ -23,7 +23,7 @@ Bundle 'scrooloose/nerdtree'
 
 Bundle 'vim-ruby/vim-ruby'
 Bundle 'tpope/vim-rails'
-Bundle 'kchmck/vim-coffee-script'
+" Bundle 'kchmck/vim-coffee-script'
 Bundle 'jiangmiao/simple-javascript-indenter'
 Bundle 'avakhov/vim-yaml'
 Bundle 'bbommarito/vim-slim'
