@@ -210,18 +210,16 @@ function! g:idiotPath(path, ratio)
     return ''
   endif
 
+  let path = substitute(a:path, $HOME, '~', '')
+  let plen = len(path)
   let width = (&columns + &numberwidth) * 1.0
-  let plen = len(a:path)
-  let path = ''
 
   if 0.5 < plen / width
     let slen = float2nr(plen * a:ratio * 0.01)
-    let path = strpart(a:path, 0, slen) . '...' . strpart(a:path, plen - slen)
-  else
-    let path = a:path
+    let path = strpart(path, 0, slen) . '...' . strpart(path, plen - slen)
   endif
 
-  return '(' . path . ')'
+  return '(' . path . '/)'
 endfunction
 " }}}
 
