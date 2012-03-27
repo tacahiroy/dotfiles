@@ -302,6 +302,7 @@ nnoremap <Space>t :<C-u>tabe<Space>
 
 nnoremap <silent> <Space>_ :<C-u>edit $MYVIMRC<Cr>
 nnoremap <silent> <Space>g_ :<C-u>edit $MYGVIMRC<Cr>
+nnoremap <Space>S :<C-u>source %<Cr>
 
 nnoremap <silent> <Esc><Esc> <Esc>:<C-u>nohlsearch<Cr>
 
@@ -376,7 +377,8 @@ augroup MyAutoCmd
   autocmd BufReadPost * if !search('\S', 'cnw') | let &l:fileencoding = &encoding | endif
   " restore cursor position
   autocmd BufReadPost * if line("'\"") <= line('$') | execute "normal '\"" | endif
-  autocmd BufReadPost * setlocal formatoptions-=o
+  autocmd BufEnter * setlocal formatoptions-=o
+
   " autochdir emulation
   autocmd BufEnter * call s:autoChdir(5)
   function! s:autoChdir(n) "{{{
@@ -477,8 +479,8 @@ augroup END
 let g:ref_refe_cmd = $HOME . '/rubyrefm/refe-1_9_2'
 
 " plug: ctrlp.vim "{{{
-" let g:ctrlp_map = '<Space>ff'
-" let g:ctrlp_command = 'CtrlPCurWD'
+let g:ctrlp_map = '<Space>ff'
+let g:ctrlp_command = 'CtrlPCurWD'
 let g:ctrlp_jump_to_buffer = 2
 let g:ctrlp_working_path_mode = 2
 let g:ctrlp_match_window_bottom = 1
@@ -509,7 +511,7 @@ let g:ctrlp_prompt_mappings = {
 
 let g:ctrlp_extensions = ['tag', 'buffertag', 'dir', 'thefunks']
 
-set wildignore+=*/.git/*,*/.hg/*,*/.svn/*
+" set wildignore+=*/.git/*,*/.hg/*,*/.svn/*
 set wildignore+=*/.vimundo/*
 set wildignore+=*.mp3,*.aac,*.flac
 set wildignore+=*.mp4,*.flv,*.mpg,*.mkv,*.avi,*.wmv,*.mov,*.iso
