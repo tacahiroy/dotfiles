@@ -546,10 +546,10 @@ map <Space>a <Plug>(loga-lookup)
 imap <Leader>v <Plug>(loga-insert-delimiter)
 
 " plug: edtime.vim
-let g:edtime_accept_pattern = '^'.$HOME.'/\%(\.\w\+$\|Projects\)'
-let g:edtime_ignore_pattern = '\(\.txt$\|\.git/\)'
+let g:edtime_accept_pattern = '^~/\%(\.\w\+$\|Projects\)'
+let g:edtime_ignore_pattern = '\(a\.\w\+$\|\.txt$\|\.git/\)'
 nnoremap ,tt :<C-u>EdTime<Cr>
-nnoremap ,ta :<C-u>EdTime all<Cr>
+nnoremap ,ta :<C-u>EdTimeAll<Cr>
 "}}}
 
 if has('multi_byte_ime') || has('xim')
