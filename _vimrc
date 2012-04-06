@@ -245,8 +245,7 @@ nnoremap Y y$
 nnoremap j gj
 nnoremap k gk
 nnoremap vv <C-v>
-nnoremap [visual-row-without-eol] 0vg_
-nmap vV [visual-row-without-eol]
+nnoremap vV 0vg_
 nnoremap <C-]> <C-]>zz
 nnoremap <C-t> <C-t>zz
 
@@ -281,11 +280,14 @@ sunmap e
 
 " open current directory with filer
 if has('mac')
-  nnoremap <silent> <Space>e :<C-u>silent execute ':!open -a Finder %:p:h'<Cr>:redraw!<Cr>
+  nnoremap <silent> <Space>e
+        \ :<C-u>silent execute ':!open -a Finder %:p:h'<Cr>:redraw!<Cr>
 elseif has('win32') || has('win64')
-  nnoremap <silent> <Space>e :<C-u>silent execute ":!start explorer \"" . g:cps(expand("%:p:h"), "\\") . "\""<Cr>
+  nnoremap <silent> <Space>e
+        \ :<C-u>silent execute ":!start explorer \"" . g:cps(expand("%:p:h"), "\\") . "\""<Cr>
   " open current directory with Command Prompt
-  nnoremap <silent> <Space>E :<C-u>silent execute ":!start cmd /k cd \"" . g:cps(expand("%:p:h"), "\\") . "\""<Cr>
+  nnoremap <silent> <Space>E
+        \ :<C-u>silent execute ":!start cmd /k cd \"" . g:cps(expand("%:p:h"), "\\") . "\""<Cr>
 endif
 
 " inspired by ujihisa's. cooool!!
@@ -416,6 +418,7 @@ augroup MyAutoCmd
   endfunction"}}}
 
   autocmd BufRead,BufNewFile *.ru,Gemfile,Guardfile set filetype=ruby
+  autocmd BufRead,BufNewFile ?zshrc,?zshenv set filetype=zsh
 
   autocmd User Rails nnoremap <buffer> <Space>r :<C-u>R
 
@@ -423,12 +426,12 @@ augroup MyAutoCmd
 
   " http://vim-users.jp/2009/11/hack96/ {{{
   autocmd FileType *
-  \   if &l:omnifunc == ''
+  \   if empty(&l:omnifunc)
   \|   setlocal omnifunc=syntaxcomplete#Complete
   \| endif
   " }}}
 
-  autocmd FileType help,qf nnoremap <buffer> <silent> qq <C-w>c
+  autocmd FileType help,qf,logaling nnoremap <buffer> <silent> qq <C-w>c
   autocmd FileType javascript* setlocal omnifunc=javascriptcomplete#CompleteJS
 
   autocmd FileType rspec compiler rspec
@@ -460,6 +463,7 @@ augroup MyAutoCmd
   autocmd FileType c setlocal makeprg=gcc\ -Wall\ %\ -o\ %:r.o
   autocmd FileType c nnoremap <buffer> <Space>m :<C-u>write<Cr>:make --std=c99<Cr>
 
+  " only for the WinMerge document translation project
   function! s:moveToSegment(is_prev)
     let flag = a:is_prev ? 'b' : ''
     call search('<\(para\|section\|term\)[^>]*>', 'esW'.flag)
@@ -480,7 +484,7 @@ let g:ref_refe_cmd = $HOME . '/rubyrefm/refe-1_9_2'
 
 " plug: ctrlp.vim "{{{
 let g:ctrlp_map = '<Space>ff'
-let g:ctrlp_command = 'CtrlPCurWD'
+let g:ctrlp_command = 'CtrlPRoot'
 let g:ctrlp_jump_to_buffer = 2
 let g:ctrlp_working_path_mode = 2
 let g:ctrlp_match_window_bottom = 1
@@ -548,6 +552,7 @@ imap <Leader>v <Plug>(loga-insert-delimiter)
 " plug: edtime.vim
 let g:edtime_accept_pattern = '^~/\%(\.\w\+$\|Projects\)'
 let g:edtime_ignore_pattern = '\(a\.\w\+$\|\.txt$\|\.git/\)'
+" let g:edtime_is_display_zero = 1
 nnoremap ,tt :<C-u>EdTime<Cr>
 nnoremap ,ta :<C-u>EdTimeAll<Cr>
 "}}}
