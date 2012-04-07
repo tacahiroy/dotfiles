@@ -149,7 +149,7 @@ set pumheight=24
 set scroll=0
 set shellslash
 set shiftround
-set showbreak=\ \ \ \ \ 
+set showbreak=>\ 
 set showfulltag
 set showmatch matchtime=1
 set showtabline=1
@@ -188,10 +188,6 @@ let g:solarized_hitrail = 1
 let g:solarized_menu = 0
 set background=light
 colorscheme solarized
-
-" if !has('gui_running')
-"   colorscheme summerfruit256
-" endif
 
 set formatoptions& formatoptions+=mM formatoptions-=r
 
