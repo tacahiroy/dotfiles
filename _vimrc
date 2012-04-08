@@ -488,12 +488,14 @@ let g:ctrlp_clear_cache_on_exit = 0
 let g:ctrlp_follow_symlinks = 1
 let g:ctrlp_highlight_match = [1, 'Constant']
 let g:ctrlp_max_files = 5000
-let g:ctrlp_max_depth = 20
+let g:ctrlp_max_depth = 16
+let g:ctrlp_dotfiles = 0
 
 let g:ctrlp_user_command = {
       \ 'types': {
         \ 1: ['.git/', 'cd %s && git ls-files'],
         \ 2: ['.hg/', 'hg --cwd %s locate -I .'],
+        \ 3: ['.svn/', 'svn ls file://%s'],
         \ },
       \ 'fallback': 'find %s -type f'
       \ }
@@ -509,13 +511,12 @@ let g:ctrlp_prompt_mappings = {
   \ 'PrtHistory(1)':        ['<Down>'],
   \ }
 
-let g:ctrlp_extensions = ['tag', 'buffertag', 'dir', 'thefunks']
+let g:ctrlp_extensions = ['tag', 'buffertag', 'dir', 'funks']
 
-" set wildignore+=*/.git/*,*/.hg/*,*/.svn/*
-set wildignore+=*/.vimundo/*
-set wildignore+=*.mp3,*.aac,*.flac
-set wildignore+=*.mp4,*.flv,*.mpg,*.mkv,*.avi,*.wmv,*.mov,*.iso
-set wildignore+=.DS_Store
+let g:ctrlp_custom_ignore = {
+  \ 'dir':  '\.git$\|\.hg$\|\.svn$\|\.vimundo/\|\.ctrlp_cache/\|\.rbenv/\|\.gem/',
+  \ 'file': '\.exe$\|\.so$\|\.dll$\|\.DS_Store$',
+  \ }
 
 noremap <Space>fb :CtrlPBuffer<Cr>
 noremap <Space>ff :CtrlPCurWD<Cr>
@@ -523,8 +524,8 @@ noremap <Space>fm :CtrlPMRU<Cr>
 noremap <Space>ft :CtrlPBufTag<Cr>
 noremap <Space>fT :CtrlPBufTagAll<Cr>
 
-command! CtrlPTheFunks call ctrlp#init(ctrlp#thefunks#id())
-noremap <Space>fu :CtrlPTheFunks<Cr>
+command! CtrlPFunks call ctrlp#init(ctrlp#funks#id())
+noremap <Space>fu :CtrlPFunks<Cr>
 "}}}
 
 " plug: Align
