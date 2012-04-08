@@ -8,6 +8,8 @@ filetype off
 set runtimepath+=~/.vim/vundle.git
 call vundle#rc()
 
+Bundle 'gmarik/vundle'
+
 Bundle 'kien/ctrlp.vim'
 Bundle 'tpope/vim-surround'
 Bundle 'tpope/vim-fugitive'
@@ -156,6 +158,7 @@ set showtabline=1
 set nosplitbelow
 set splitright
 set smartcase
+set spelllang=en
 set swapfile directory=$DOTVIM/swaps
 set switchbuf=useopen,usetab
 set synmaxcol=300
@@ -323,10 +326,10 @@ nnoremap <silent> <Space>p <C-w>}
 nnoremap <silent> <Space>P :pclose<Cr>
 
 " vim-endwise support
-function! s:crInInsertModeBetterWay()
+function! s:CrInInsertModeBetterWay()
   return pumvisible() ? "\<C-y>\<Cr>" : "\<Cr>"
 endfunction
-inoremap <silent> <Cr> <C-R>=<SID>crInInsertModeBetterWay()<Cr>
+inoremap <silent> <Cr> <C-R>=<SID>CrInInsertModeBetterWay()<Cr>
 
 inoremap <silent> ,dt <C-R>=strftime('%Y.%m.%d')<Cr>
 inoremap <silent> ,ti <C-R>=strftime('%H:%M')<Cr>
@@ -418,15 +421,13 @@ augroup MyAutoCmd
 
   autocmd User Rails nnoremap <buffer> <Space>r :<C-u>R
 
+  autocmd FileType text,mail setlocal spell
   autocmd FileType slim setlocal makeprg=slimrb\ -c\ %
 
   " http://vim-users.jp/2009/11/hack96/ {{{
   autocmd FileType *
-  \   if empty(&l:omnifunc)
-  \|   setlocal omnifunc=syntaxcomplete#Complete
-  \| endif
+  \   if empty(&l:omnifunc) | setlocal omnifunc=syntaxcomplete#Complete | endif
   " }}}
-
   autocmd FileType help,qf,logaling nnoremap <buffer> <silent> qq <C-w>c
   autocmd FileType javascript* setlocal omnifunc=javascriptcomplete#CompleteJS
 
