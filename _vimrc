@@ -548,8 +548,9 @@ imap <Leader>v <Plug>(loga-insert-delimiter)
 
 " plug: edtime.vim
 let g:edtime_accept_pattern = '^~/\%(\.\w\+$\|Projects\)'
-let g:edtime_ignore_pattern = '\(a\.\w\+$\|\.txt$\|\.git/\)'
-" let g:edtime_is_display_zero = 1
+let g:edtime_ignore_pattern = '\(/a\.\w\+$\|\.txt$\|/\.git/\)'
+let g:edtime_sort_base_is_today = 1
+let g:edtime_is_display_zero = 1
 nnoremap ,tt :<C-u>EdTime<Cr>
 nnoremap ,ta :<C-u>EdTimeAll<Cr>
 "}}}
