@@ -55,7 +55,7 @@ case ${UID} in
   PROMPT2="%B%{${fg[red]}%}%_#%{${reset_color}%}%b "
   SPROMPT="%B%{${fg[red]}%}%r is correct? [n,y,a,e]:%{${reset_color}%}%b "
   [ -n "${REMOTEHOST}${SSH_CONNECTION}" ] &&
-    PROMPT="%{${fg[white]}%}${HOST%%.*} ${PROMPT}"
+    PROMPT="%{${fg[cyan]}%}%n@%m:${PROMPT}"
   ;;
 *)
   PROMPT="%{${fg[red]}%}%/%{${reset_color}%}${fg[green]}%1v${reset_color}
@@ -65,7 +65,7 @@ case ${UID} in
   # RPROMPT="[%{${fg[red]}%}%/%{${reset_color}%}]"
   RPROMPT=""
   [ -n "${REMOTEHOST}${SSH_CONNECTION}" ] &&
-    PROMPT="%{${fg[white]}%}${HOST%%.*} ${PROMPT}"
+    PROMPT="%{${fg[magenta]}%}%n@%m:${PROMPT}"
   ;;
 esac
 
@@ -206,10 +206,12 @@ esac # }}}
 autoload -Uz compinit
 compinit
 
-eval "$(rbenv init -)"
+if [ -x rbenv ]; then
+  eval "$(rbenv init -)"
+fi
 
 ## tmux
-if [ $SHLVL = 1 ]; then
+if [ -x tmux -a $SHLVL = 1 ]; then
   tmux attach || tmux
 fi
 
