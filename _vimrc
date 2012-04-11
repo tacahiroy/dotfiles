@@ -292,7 +292,7 @@ endif
 " inspired by ujihisa's. cooool!!
 nnoremap <Space>w :<C-u>update<Cr>
 nnoremap <Space>q :<C-u>quit<Cr>
-nnoremap <Space>W :<C-u>write!<Cr>
+nnoremap <Space>W :<C-u>update!<Cr>
 nnoremap <Space>Q :<C-u>quit!<Cr>
 
 nnoremap <Space>j <C-f>
@@ -333,7 +333,8 @@ inoremap <silent> <Cr> <C-R>=<SID>CrInInsertModeBetterWay()<Cr>
 
 inoremap <silent> ,dt <C-R>=strftime('%Y.%m.%d')<Cr>
 inoremap <silent> ,ti <C-R>=strftime('%H:%M')<Cr>
-inoremap <silent> ,fn <C-R>=expand('%')<Cr>
+inoremap <silent> ,fn <C-R>=@%<Cr>
+
 " ^J is used to toggle IME
 inoremap <silent> <C-j> <Nop>
 cnoremap <silent> <C-j> <Nop>
@@ -502,10 +503,10 @@ let g:ctrlp_user_command = {
       \ }
 
 let g:ctrlp_prompt_mappings = {
-	\ 'AcceptSelection("e")': ['<Cr>'],
-	\ 'AcceptSelection("h")': ['<C-x>', '<C-Cr>'],
-	\ 'AcceptSelection("t")': ['<C-t>'],
-	\ 'AcceptSelection("v")': ['<C-v>'],
+  \ 'AcceptSelection("e")': ['<Cr>'],
+  \ 'AcceptSelection("h")': ['<C-x>', '<C-Cr>'],
+  \ 'AcceptSelection("t")': ['<C-t>'],
+  \ 'AcceptSelection("v")': ['<C-v>'],
   \ 'PrtSelectMove("j")':   ['<C-n>'],
   \ 'PrtSelectMove("k")':   ['<C-p>'],
   \ 'PrtHistory(-1)':       ['<Up>'],
