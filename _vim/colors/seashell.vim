@@ -1,7 +1,6 @@
 " Vim color file
 " Author:       Gerald S. Williams
 " Maintainer:   tacahiroy
-" Last Change:  29-Mar-2010.
 
 " This is very reminiscent of a seashell. Good contrast, yet not too hard on
 " the eyes. BlackSea, it's opposite, has now been folded into this scheme.
@@ -46,7 +45,7 @@ else
   hi   DiffAdd        guibg=LightGreen      ctermbg=DarkGreen   ctermfg=White
   hi   DiffChange     guibg=Gray90          ctermbg=DarkCyan    ctermfg=White
   hi   DiffText       gui=NONE              guibg=LightCyan2    ctermbg=DarkCyan   ctermfg=Yellow
-  hi   Comment        guifg=#88ccaa         gui=bold
+  hi   Comment        guifg=#228844         gui=bold
   hi   Constant       guifg=DeepPink
   hi   PreProc        guifg=DarkMagenta
   hi   StatusLine     gui=NONE              guibg=Orange    guifg=Black        cterm=NONE       ctermfg=White   ctermbg=DarkGreen
