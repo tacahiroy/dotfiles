@@ -15,14 +15,14 @@ Bundle 'tpope/vim-surround'
 Bundle 'tpope/vim-fugitive'
 Bundle 'tpope/vim-commentary'
 Bundle 'msanders/snipmate.vim'
-
 Bundle 'tacahiroy/vim-endwise'
+
+Bundle 'glidenote/memolist.vim'
 
 Bundle 'thinca/vim-quickrun'
 Bundle 'thinca/vim-ref'
 
 Bundle 'scrooloose/nerdtree'
-
 Bundle 'vim-ruby/vim-ruby'
 Bundle 'tpope/vim-rails'
 " Bundle 'kchmck/vim-coffee-script'
@@ -289,7 +289,6 @@ elseif has('win32') || has('win64')
         \ :<C-u>silent execute ":!start cmd /k cd \"" . g:cps(expand("%:p:h"), "\\") . "\""<Cr>
 endif
 
-" inspired by ujihisa's. cooool!!
 nnoremap <Space>w :<C-u>update<Cr>
 nnoremap <Space>q :<C-u>quit<Cr>
 nnoremap <Space>W :<C-u>update!<Cr>
@@ -304,6 +303,8 @@ nnoremap <Space>t :<C-u>tabe<Space>
 nnoremap <silent> <Space>_ :<C-u>edit $MYVIMRC<Cr>
 nnoremap <silent> <Space>g_ :<C-u>edit $MYGVIMRC<Cr>
 nnoremap <Space>S :<C-u>source %<Cr>
+
+nnoremap <Space>T :<C-u>NERDTreeToggle<Cr>
 
 nnoremap <silent> <Esc><Esc> <Esc>:<C-u>nohlsearch<Cr>
 
@@ -417,6 +418,7 @@ augroup MyAutoCmd
     execute ':lcd ' . escape(dir, ' ')
   endfunction"}}}
 
+  autocmd BufRead,BufNewFile *.md set filetype=markdown
   autocmd BufRead,BufNewFile *.ru,Gemfile,Guardfile set filetype=ruby
   autocmd BufRead,BufNewFile ?zshrc,?zshenv set filetype=zsh
 
@@ -468,7 +470,7 @@ augroup MyAutoCmd
   endfunction
   autocmd FileType xml nnoremap <silent> <buffer> <Tab> :call <SID>moveToSegment(0)<Cr>
   autocmd FileType xml nnoremap <silent> <buffer> <S-Tab> :call <SID>moveToSegment(1)<Cr>
-  autocmd FileType xml noremap  <silent> <buffer> <leader>ty :call <SID>runTidy(80)<Cr>
+  autocmd FileType xml noremap  <silent> <buffer> <leader>a :call <SID>runTidy(80)<Cr>
   autocmd BufRead,BufEnter *.xml set updatetime=1000
   autocmd BufLeave,BufWinLeave *.xml set updatetime&
 augroup END
@@ -529,6 +531,20 @@ noremap <Space>fT :CtrlPBufTagAll<Cr>
 command! CtrlPFunks call ctrlp#init(ctrlp#funks#id())
 noremap <Space>fu :CtrlPFunks<Cr>
 "}}}
+
+" plug: memolist.vim " {{{
+let g:memolist_template_dir_path = $HOME.'/.vim/memo'
+let g:memolist_memo_suffix = 'md'
+let g:memolist_memo_date = '%Y-%m-%d %H:%M'
+let g:memolist_prompt_tags = 1
+let g:memolist_prompt_categories = 1
+let g:memolist_qfixgrep = 0
+let g:memolist_vimfiler = 0
+
+nnoremap <Space>mn  :MemoNew<CR>
+nnoremap <Space>ml  :MemoList<CR>
+nnoremap <Space>mg  :MemoGrep<CR>
+" }}}
 
 " plug: Align
 let g:DrChipTopLvlMenu = ''
