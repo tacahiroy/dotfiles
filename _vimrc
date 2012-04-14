@@ -352,8 +352,10 @@ if executable('tidyp')
     let enc = &l:fileencoding ? &l:fileencoding : &encoding
     let enc = substitute(enc, '-', '', 'g')
 
-    silent execute printf(': %d,%d!tidyp -xml -i -%s -wrap %d -q -asxml', a:firstline, a:lastline, enc, a:col)
+    silent execute printf(': %d,%d!tidyp -xml -i -%s -wrap %d -q -asxml', a:firstline, a:lastline, enc, eval(a:col))
   endfunction
+
+  command! -nargs=1 -range Tidy call s:runTidy(<args>)
 endif
 
 let g:xml_tag_completion_map = ''
@@ -470,7 +472,7 @@ augroup MyAutoCmd
   endfunction
   autocmd FileType xml nnoremap <silent> <buffer> <Tab> :call <SID>moveToSegment(0)<Cr>
   autocmd FileType xml nnoremap <silent> <buffer> <S-Tab> :call <SID>moveToSegment(1)<Cr>
-  autocmd FileType xml noremap  <silent> <buffer> <leader>a :call <SID>runTidy(80)<Cr>
+  autocmd FileType xml noremap  <silent> <buffer> <Leader>a :call <SID>runTidy(80)<Cr>
   autocmd BufRead,BufEnter *.xml set updatetime=1000
   autocmd BufLeave,BufWinLeave *.xml set updatetime&
 augroup END
@@ -541,9 +543,9 @@ let g:memolist_prompt_categories = 1
 let g:memolist_qfixgrep = 0
 let g:memolist_vimfiler = 0
 
-nnoremap <Space>mn  :MemoNew<CR>
+nnoremap <Space>mc  :MemoNew<CR>
 nnoremap <Space>ml  :MemoList<CR>
-nnoremap <Space>mg  :MemoGrep<CR>
+nnoremap <Space>ms  :MemoGrep<CR>
 " }}}
 
 " plug: Align
