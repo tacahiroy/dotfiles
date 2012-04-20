@@ -332,7 +332,7 @@ function! s:CrInInsertModeBetterWay()
 endfunction
 inoremap <silent> <Cr> <C-R>=<SID>CrInInsertModeBetterWay()<Cr>
 
-inoremap <silent> ,dt <C-R>=strftime('%Y.%m.%d')<Cr>
+inoremap <silent> ,dd <C-R>=strftime('%Y-%m-%d')<Cr>
 inoremap <silent> ,ti <C-R>=strftime('%H:%M')<Cr>
 inoremap <silent> ,fn <C-R>=@%<Cr>
 
@@ -420,7 +420,6 @@ augroup MyAutoCmd
     execute ':lcd ' . escape(dir, ' ')
   endfunction"}}}
 
-  autocmd BufRead,BufNewFile *.md set filetype=markdown
   autocmd BufRead,BufNewFile *.ru,Gemfile,Guardfile set filetype=ruby
   autocmd BufRead,BufNewFile ?zshrc,?zshenv set filetype=zsh
 
@@ -535,7 +534,6 @@ noremap <Space>fu :CtrlPFunks<Cr>
 "}}}
 
 " plug: memolist.vim " {{{
-let g:memolist_template_dir_path = $HOME.'/.vim/memo'
 let g:memolist_memo_suffix = 'md'
 let g:memolist_memo_date = '%Y-%m-%d %H:%M'
 let g:memolist_prompt_tags = 1
@@ -543,9 +541,9 @@ let g:memolist_prompt_categories = 1
 let g:memolist_qfixgrep = 0
 let g:memolist_vimfiler = 0
 
-nnoremap <Space>mc  :MemoNew<CR>
-nnoremap <Space>ml  :MemoList<CR>
-nnoremap <Space>ms  :MemoGrep<CR>
+nnoremap <Space>mc :MemoNew<CR>
+nnoremap <Space>ml :MemoList<CR>
+nnoremap <Space>mg :MemoGrep<CR>
 " }}}
 
 " plug: Align
@@ -561,6 +559,7 @@ let g:prd_fontList .= ',Takao明朝:h10:cDEFAULT'
 let g:prd_fontList .= ',ＭＳ_明朝:h10:cDEFAULT'
 
 " plug: loga.vim
+let g:loga_executable = $HOME.'/.rbenv/shims/loga'
 let g:loga_enable_auto_lookup = 0
 let g:loga_delimiter = '=3'
 map <Space>a <Plug>(loga-lookup)
