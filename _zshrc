@@ -215,6 +215,10 @@ if [ -x `which tmux 2>/dev/null` -a $SHLVL = 1 ]; then
   tmux attach || tmux
 fi
 
+if [ -f ~/.zsh.local ]; then
+  source ~/.zsh.local
+fi
+
 # __END__
 # vim: fdm=marker
 
