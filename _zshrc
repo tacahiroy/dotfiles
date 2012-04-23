@@ -206,12 +206,14 @@ esac # }}}
 autoload -Uz compinit
 compinit
 
-if [ -x `which rbenv 2>/dev/null` ]; then
+which rbenv > /dev/null
+if [ $? = 0 ]; then
   eval "$(rbenv init -)"
 fi
 
 ## tmux
-if [ -x `which tmux 2>/dev/null` -a $SHLVL = 1 ]; then
+which tmux > /dev/null
+if [ $? = 0 -a $SHLVL = 1 ]; then
   tmux attach || tmux
 fi
 
