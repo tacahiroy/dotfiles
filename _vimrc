@@ -29,6 +29,7 @@ Bundle 'tpope/vim-rails'
 Bundle 'jiangmiao/simple-javascript-indenter'
 Bundle 'avakhov/vim-yaml'
 Bundle 'bbommarito/vim-slim'
+Bundle 'tpope/vim-markdown'
 " Bundle 'mattn/zencoding-vim'
 
 Bundle 'matchit.zip'
@@ -463,6 +464,10 @@ augroup MyAutoCmd
   autocmd Filetype c compiler gcc
   autocmd FileType c setlocal makeprg=gcc\ -Wall\ %\ -o\ %:r.o
   autocmd FileType c nnoremap <buffer> <Space>m :<C-u>write<Cr>:make --std=c99<Cr>
+
+  autocmd FileType markdown inoremap <buffer> <Leader>h1 <Esc>10i=<Esc>^
+                         \| inoremap <buffer> <Leader>h2 <Esc>10i-<Esc>^
+                         \| inoremap <buffer> <Leader>hr <Esc>i- - -<Esc>^
 
   " only for the WinMerge document translation project
   function! s:moveToSegment(is_prev)
