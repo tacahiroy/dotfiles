@@ -140,6 +140,7 @@ set laststatus=2
 set lazyredraw
 set modeline
 set modelines=5
+set mouse=a
 
 if 702 < v:version
   set relativenumber
@@ -186,8 +187,8 @@ endif
 
 let g:solarized_termcolors = 256
 let g:solarized_termtrans = 1
-let g:solarized_contrast = 'normal'
-let g:solarized_visibility = 'normal'
+let g:solarized_contrast = 'high'
+let g:solarized_visibility = 'high'
 let g:solarized_hitrail = 1
 let g:solarized_menu = 0
 set background=light
@@ -333,9 +334,9 @@ function! s:CrInInsertModeBetterWay()
 endfunction
 inoremap <silent> <Cr> <C-R>=<SID>CrInInsertModeBetterWay()<Cr>
 
-inoremap <silent> ,dd <C-R>=strftime('%Y-%m-%d')<Cr>
-inoremap <silent> ,ti <C-R>=strftime('%H:%M')<Cr>
-inoremap <silent> ,fn <C-R>=@%<Cr>
+inoremap <silent> <Leader>dd <C-R>=strftime('%Y-%m-%d')<Cr>
+inoremap <silent> <Leader>ti <C-R>=strftime('%H:%M')<Cr>
+inoremap <silent> <Leader>fn <C-R>=@%<Cr>
 
 " ^J is used to toggle IME
 inoremap <silent> <C-j> <Nop>
@@ -403,9 +404,12 @@ augroup MyAutoCmd
         endif
 
         let dir = '/'.join(dirs[0:idx], '/')
-        if filereadable(dir.'/Gemfile')
-          return dir
-        endif
+        let files = ['Gemfile', 'Rakefile', 'README.md', 'README.markdown']
+        for f in files
+          if filereadable(dir.'/'.f)
+            return dir
+          endif
+        endfor
         let i += 1
       endwhile
 
@@ -490,7 +494,7 @@ let g:ref_refe_cmd = $HOME . '/rubyrefm/refe-1_9_2'
 
 " plug: ctrlp.vim "{{{
 let g:ctrlp_map = '<Space>ff'
-let g:ctrlp_command = 'CtrlPRoot'
+let g:ctrlp_command = 'CtrlP'
 let g:ctrlp_jump_to_buffer = 2
 let g:ctrlp_working_path_mode = 2
 let g:ctrlp_match_window_bottom = 1
@@ -524,7 +528,7 @@ let g:ctrlp_prompt_mappings = {
 let g:ctrlp_extensions = ['tag', 'buffertag', 'dir', 'funks']
 
 let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\.git$\|\.hg$\|\.svn$\|\.vimundo/\|\.ctrlp_cache/\|\.rbenv/\|\.gem/',
+  \ 'dir':  '\.git$\|\.hg$\|\.svn$\|\.vimundo$\|\.ctrlp_cache/\|\.rbenv/\|\.gem/',
   \ 'file': '\.exe$\|\.so$\|\.dll$\|\.DS_Store$',
   \ }
 
@@ -573,7 +577,7 @@ imap <Leader>v <Plug>(loga-insert-delimiter)
 " plug: edtime.vim
 let g:edtime_accept_pattern = '^~/\%(\.\w\+$\|Projects\)'
 let g:edtime_ignore_pattern = '\(/a\.\w\+$\|\.txt$\|/\.git/\)'
-let g:edtime_sort_base_is_today = 1
+let g:edtime_sort_base_is_today = 0
 let g:edtime_is_display_zero = 1
 nnoremap ,tt :<C-u>EdTime<Cr>
 nnoremap ,ta :<C-u>EdTimeAll<Cr>
