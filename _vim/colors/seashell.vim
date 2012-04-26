@@ -12,6 +12,7 @@ if exists("syntax_on")
 endif
 
 let g:colors_name = "seashell"
+
 hi Cursor   gui=NONE guibg=Violet
 hi CursorIM gui=NONE guibg=#67db57
 
@@ -38,7 +39,7 @@ if s:seashell_style == 'dark'
   "hi Constant guifg=DeepPink
   "hi PreProc guifg=Magenta ctermfg=Magenta
 else
-  hi   Normal         guibg=seashell        ctermbg=Gray        ctermfg=Black
+  hi   Normal         guibg=seashell        ctermfg=Black
   hi   NonText        guibg=LavenderBlush   guifg=Gray30
   hi   LineNr         guibg=LavenderBlush   guifg=Gray30
   hi   DiffDelete     guibg=LightRed        guifg=Black         ctermbg=DarkRed    ctermfg=White
