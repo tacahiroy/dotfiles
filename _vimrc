@@ -5,7 +5,7 @@ scriptencoding utf-8
 
 " vundle plugin management "{{{
 filetype off
-set runtimepath+=~/.vim/vundle.git
+set runtimepath+=~/.vim/bundle/vundle
 call vundle#rc()
 
 Bundle 'gmarik/vundle'
@@ -87,7 +87,6 @@ function! s:previewTagLight(word)
     endif
   endfor
 endfunction
-"}}}
 "}}}
 
 
@@ -200,6 +199,8 @@ set formatoptions& formatoptions+=mM formatoptions-=r
 let &statusline = '[#%n]%<%f %m%r%h%w'
 let &statusline .= '%{&filetype.":".(&l:fileencoding != "" ? &l:fileencoding : &encoding).":".&fileformat}'
 let &statusline .= '(%{&expandtab ? "" : ">"}%{&l:tabstop})'
+let &statusline .= '%{&mouse}'
+let &statusline .= '%{(&paste ? "p" : "")}'
 let &statusline .= '%#Constant#%{fugitive#statusline()}%*'
 " monstermethod.vim support
 " let &statusline .= '%{exists("b:mmi.name") && 0<len(b:mmi.name) ? " -- ".b:mmi.name."(".b:mmi.lines.")" : ""}'
@@ -261,6 +262,8 @@ nnoremap Q q
 
 nnoremap <silent> <Space>o :<C-u>cwindow<Cr>
 nnoremap <silent> <Space>O :<C-u>cclose<Cr>
+nnoremap <silent> <Leader><Leader>a :let &mouse = empty(&mouse) ? 'a' : ''<Cr>
+nnoremap <silent> <Leader><Leader>p :set paste!<Cr>
 
 " commentary.vim
 nmap <Space>c <Plug>CommentaryLine
