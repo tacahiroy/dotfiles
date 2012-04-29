@@ -204,24 +204,32 @@ let &statusline .= '%{(&paste ? "p" : "")}'
 let &statusline .= '%#Constant#%{fugitive#statusline()}%*'
 " monstermethod.vim support
 " let &statusline .= '%{exists("b:mmi.name") && 0<len(b:mmi.name) ? " -- ".b:mmi.name."(".b:mmi.lines.")" : ""}'
-let &statusline .= ' %=%{g:idiotPath(getcwd(), 24)}'
+let &statusline .= ' %=%{g:iAmHere()}'
 let &statusline .= '%-12( %l/%LL,%c %)%P'
 
-function! g:idiotPath(path, ratio)
-  if !empty(&buftype)
+function! g:iAmHere()
+  function! IdiotPath(path, ratio)
+    if !empty(&buftype)
+      return ''
+    endif
+
+    let path = substitute(a:path, $HOME, '~', '')
+    let plen = len(path)
+    let width = (&columns + &numberwidth) * 1.0
+
+    if 0.5 < plen / width
+      let slen = float2nr(plen * a:ratio * 0.01)
+      let path = strpart(path, 0, slen) . '...' . strpart(path, plen - slen)
+    endif
+
+    return '(' . path . '/)'
+  endfunction
+
+  if !get(g:, 'iamhere_enabled', 1)
     return ''
   endif
 
-  let path = substitute(a:path, $HOME, '~', '')
-  let plen = len(path)
-  let width = (&columns + &numberwidth) * 1.0
-
-  if 0.5 < plen / width
-    let slen = float2nr(plen * a:ratio * 0.01)
-    let path = strpart(path, 0, slen) . '...' . strpart(path, plen - slen)
-  endif
-
-  return '(' . path . '/)'
+  return IdiotPath(getcwd(), 24)
 endfunction
 " }}}
 
@@ -497,14 +505,14 @@ let g:ref_refe_cmd = $HOME . '/rubyrefm/refe-1_9_2'
 
 " plug: ctrlp.vim "{{{
 let g:ctrlp_map = '<Space>ff'
-let g:ctrlp_command = 'CtrlP'
+let g:ctrlp_command = 'CtrlPRoot'
 let g:ctrlp_jump_to_buffer = 2
 let g:ctrlp_working_path_mode = 2
 let g:ctrlp_match_window_bottom = 1
 let g:ctrlp_clear_cache_on_exit = 0
 let g:ctrlp_follow_symlinks = 1
 let g:ctrlp_highlight_match = [1, 'Constant']
-let g:ctrlp_max_files = 5000
+let g:ctrlp_max_files = 12800
 let g:ctrlp_max_depth = 16
 let g:ctrlp_dotfiles = 0
 
@@ -536,8 +544,9 @@ let g:ctrlp_custom_ignore = {
   \ }
 
 noremap <Space>fb :CtrlPBuffer<Cr>
-noremap <Space>ff :CtrlPCurWD<Cr>
+noremap <Space>fd :CtrlPCurWD<Cr>
 noremap <Space>fm :CtrlPMRU<Cr>
+noremap <Space>fk :CtrlPBookmarkDir<Cr>
 noremap <Space>ft :CtrlPBufTag<Cr>
 noremap <Space>fT :CtrlPBufTagAll<Cr>
 
@@ -577,13 +586,15 @@ let g:loga_delimiter = '=3'
 map <Space>a <Plug>(loga-lookup)
 imap <Leader>v <Plug>(loga-insert-delimiter)
 
-" plug: edtime.vim
-let g:edtime_accept_pattern = '^~/\%(\.\w\+$\|Projects\)'
-let g:edtime_ignore_pattern = '\(/a\.\w\+$\|\.txt$\|/\.git/\)'
-let g:edtime_sort_base_is_today = 0
-let g:edtime_is_display_zero = 1
-nnoremap ,tt :<C-u>EdTime<Cr>
-nnoremap ,ta :<C-u>EdTimeAll<Cr>
+" plug: bestfriend.vim
+let g:bestfriend_accept_path_pattern = '^~/\%(\.\w\+$\|Projects\)'
+let g:bestfriend_ignore_path_pattern = '\(/a\+\.\w\+$\|/\.git/\|tags\|tags-.+\|NERD_tree_.\+$\)'
+let g:bestfriend_is_sort_base_today = 1
+let g:bestfriend_is_display_zero = 1
+let g:bestfriend_is_debug = 0
+let g:bestfriend_display_limit = 0
+nnoremap ,tt :<C-u>BestFriend<Cr>
+nnoremap ,ta :<C-u>BestFriends<Cr>
 "}}}
 
 if has('multi_byte_ime') || has('xim')
@@ -595,11 +606,6 @@ endif
 " open loaded buffer with new tab.
 command! -nargs=1 -complete=buffer NTab :999tab sbuffer <args>
 command! Big wincmd _ | wincmd |
-
-if !exists(':DiffOrig')
-  command! DiffOrig
-        \ vnew | setlocal buftype=nofile | read# | 0d_ | diffthis | wincmd p | diffthis
-endif
 " }}}
 
 if filereadable(expand('~/.vimrc.mine'))
