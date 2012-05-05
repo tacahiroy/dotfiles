@@ -118,9 +118,10 @@ bindkey "^p" history-beginning-search-backward-end
 bindkey "^n" history-beginning-search-forward-end
 bindkey "\\ep" history-beginning-search-backward-end
 bindkey "\\en" history-beginning-search-forward-end
+bindkey "^r" history-incremental-search-backward
 
 # ^J is used to toggle IME
-bindkey -s "^J" ""
+bindkey -s "^j" ""
 bindkey -s "^F" ""
 
 # available multibyte characters
