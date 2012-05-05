@@ -26,7 +26,7 @@ Bundle 'scrooloose/nerdtree'
 Bundle 'vim-ruby/vim-ruby'
 Bundle 'tpope/vim-rails'
 " Bundle 'kchmck/vim-coffee-script'
-Bundle 'jiangmiao/simple-javascript-indenter'
+" Bundle 'jiangmiao/simple-javascript-indenter'
 Bundle 'avakhov/vim-yaml'
 Bundle 'bbommarito/vim-slim'
 Bundle 'tpope/vim-markdown'
@@ -117,7 +117,7 @@ set backspace=indent,eol,start
 set backup
 set backupext=.bac
 set backupdir=$DOTVIM/backups
-set backupskip& backupskip+=*.bac,COMMIT_EDITMSG,hg-editor-*.txt,svn-commit.tmp,svn-commit.[0-9]*.tmp
+set backupskip& backupskip+=/tmp/*,/private/tmp/*,*.bac,COMMIT_EDITMSG,hg-editor-*.txt,svn-commit.tmp,svn-commit.[0-9]*.tmp
 set cedit=
 set cmdheight=2
 set colorcolumn=80
@@ -191,7 +191,7 @@ let g:solarized_visibility = 'high'
 let g:solarized_hitrail = 1
 let g:solarized_menu = 0
 set background=light
-colorscheme solarized
+colorscheme seashell
 
 set formatoptions& formatoptions+=mM formatoptions-=r
 
@@ -204,10 +204,10 @@ let &statusline .= '%{(&paste ? "p" : "")}'
 let &statusline .= '%#Constant#%{fugitive#statusline()}%*'
 " monstermethod.vim support
 " let &statusline .= '%{exists("b:mmi.name") && 0<len(b:mmi.name) ? " -- ".b:mmi.name."(".b:mmi.lines.")" : ""}'
-let &statusline .= ' %=%{g:iAmHere()}'
+let &statusline .= ' %=%{g:i_am_here()}'
 let &statusline .= '%-12( %l/%LL,%c %)%P'
 
-function! g:iAmHere()
+function! g:i_am_here()
   function! IdiotPath(path, ratio)
     if !empty(&buftype)
       return ''
@@ -229,7 +229,7 @@ function! g:iAmHere()
     return ''
   endif
 
-  return IdiotPath(getcwd(), 24)
+  return IdiotPath(getcwd(), 25)
 endfunction
 " }}}
 
@@ -527,8 +527,8 @@ let g:ctrlp_user_command = {
 
 let g:ctrlp_prompt_mappings = {
   \ 'AcceptSelection("e")': ['<Cr>'],
-  \ 'AcceptSelection("h")': ['<C-x>', '<C-Cr>'],
-  \ 'AcceptSelection("t")': ['<C-t>'],
+  \ 'AcceptSelection("h")': ['<C-x>'],
+  \ 'AcceptSelection("t")': ['<C-t>', '<C-Cr>'],
   \ 'AcceptSelection("v")': ['<C-v>'],
   \ 'PrtSelectMove("j")':   ['<C-n>'],
   \ 'PrtSelectMove("k")':   ['<C-p>'],
@@ -587,7 +587,7 @@ map <Space>a <Plug>(loga-lookup)
 imap <Leader>v <Plug>(loga-insert-delimiter)
 
 " plug: bestfriend.vim
-let g:bestfriend_accept_path_pattern = '^~/\%(\.\w\+$\|Projects\)'
+let g:bestfriend_accept_path_pattern = '^~/\%(\..\+$\|Projects\)'
 let g:bestfriend_ignore_path_pattern = '\(/a\+\.\w\+$\|/\.git/\|tags\|tags-.+\|NERD_tree_.\+$\)'
 let g:bestfriend_is_sort_base_today = 1
 let g:bestfriend_is_display_zero = 1
