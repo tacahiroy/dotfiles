@@ -522,7 +522,6 @@ let g:ctrlp_user_command = {
         \ 2: ['.hg/', 'hg --cwd %s locate -I .'],
         \ 3: ['.svn/', 'svn ls file://%s'],
         \ },
-      \ 'fallback': 'find %s -type f'
       \ }
 
 let g:ctrlp_prompt_mappings = {
@@ -534,6 +533,7 @@ let g:ctrlp_prompt_mappings = {
   \ 'PrtSelectMove("k")':   ['<C-p>'],
   \ 'PrtHistory(-1)':       ['<Up>'],
   \ 'PrtHistory(1)':        ['<Down>'],
+  \ 'CreateNewFile()':      ['<C-y>'],
   \ }
 
 let g:ctrlp_extensions = ['tag', 'buffertag', 'dir', 'funks']
@@ -592,7 +592,8 @@ let g:bestfriend_ignore_path_pattern = '\(/a\+\.\w\+$\|/\.git/\|tags\|tags-.+\|N
 let g:bestfriend_is_sort_base_today = 1
 let g:bestfriend_is_display_zero = 1
 let g:bestfriend_is_debug = 0
-let g:bestfriend_display_limit = 0
+let g:bestfriend_display_limit = 15
+let g:bestfriend_observe_cursor_position = 1
 nnoremap ,tt :<C-u>BestFriend<Cr>
 nnoremap ,ta :<C-u>BestFriends<Cr>
 "}}}
