@@ -16,12 +16,9 @@ Bundle 'tpope/vim-fugitive'
 Bundle 'tpope/vim-commentary'
 Bundle 'msanders/snipmate.vim'
 Bundle 'tacahiroy/vim-endwise'
-
 Bundle 'glidenote/memolist.vim'
-
 Bundle 'thinca/vim-quickrun'
 Bundle 'thinca/vim-ref'
-
 Bundle 'scrooloose/nerdtree'
 Bundle 'vim-ruby/vim-ruby'
 Bundle 'tpope/vim-rails'
@@ -31,12 +28,10 @@ Bundle 'avakhov/vim-yaml'
 Bundle 'bbommarito/vim-slim'
 Bundle 'tpope/vim-markdown'
 " Bundle 'mattn/zencoding-vim'
-
 Bundle 'matchit.zip'
 " Bundle 'IndentAnything'
 Bundle 'Align'
 Bundle 'camelcasemotion'
-
 " Bundle 'increment_new.vim'
 Bundle 'altercation/vim-colors-solarized'
 
@@ -117,7 +112,7 @@ set backspace=indent,eol,start
 set backup
 set backupext=.bac
 set backupdir=$DOTVIM/backups
-set backupskip& backupskip+=/tmp/*,/private/tmp/*,*.bac,COMMIT_EDITMSG,hg-editor-*.txt,svn-commit.tmp,svn-commit.[0-9]*.tmp
+set backupskip& backupskip+=/tmp/*,/private/tmp/*,*.bac,COMMIT_EDITMSG,hg-editor-*.txt,svn-commit.[0-9]*.tmp
 set cedit=
 set cmdheight=2
 set colorcolumn=80
@@ -280,7 +275,6 @@ xmap <Space>c <Plug>Commentary
 " surround.vim
 let g:surround_{char2nr('k')} = "「\r」"
 let g:surround_{char2nr('K')} = "『\r』"
-let g:surround_indent = 0
 
 " camelcasemotion
 map <silent> w <plug>CamelCaseMotion_w
@@ -441,7 +435,7 @@ augroup MyAutoCmd
 
   autocmd User Rails nnoremap <buffer> <Space>r :<C-u>R
 
-  autocmd FileType text,mail setlocal spell
+  autocmd FileType mail setlocal spell
   autocmd FileType slim setlocal makeprg=slimrb\ -c\ %
 
   " http://vim-users.jp/2009/11/hack96/ {{{
