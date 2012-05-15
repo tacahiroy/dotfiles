@@ -43,9 +43,64 @@ zstyle ':vcs_info:*' unstagedstr "*"
 function _vcs_info() {
   psvar=()
   LANG=en_US.UTF-8 vcs_info
-  psvar[1]="$vcs_info_msg_0_"
+  local _vcs_name _status
+  if [ -n "$vcs_info_msg_0_" ]; then
+    # _vcs_name=$(echo "$vcs_info_msg_0_" | cut -d : -f 1)
+    _vcs_name=$(echo "$vcs_info_msg_0_")
+    _status=$(_git_untracked_or_not_pushed)
+    psvar[1]="${_vcs_name}${_status}"
+  fi
 }
 add-zsh-hook precmd _vcs_info
+
+function _git_untracked_or_not_pushed() {
+  local git_status head remotes stagedstr
+  local  staged_unstaged=$1 not_pushed="@" untracked="?"
+
+  # cwd is a Git's working copy or not
+  if [ "$(git rev-parse --is-inside-work-tree 2> /dev/null)" = "true" ]; then
+    git_status=$(git status -s 2> /dev/null)
+    # untracked file
+    if ! echo "$git_status" | grep "^??" > /dev/null 2>&1; then
+      untracked=""
+    fi
+
+    zstyle -s ":vcs_info:git:*" stagedstr stagedstr
+    # find out staged file
+    if [ -n "$stagedstr" ] && ! printf "$staged_unstaged" | grep "$stagedstr" > /dev/null 2>&1 \
+        && echo "$git_status" | grep "^A" > /dev/null 2>&1; then
+      staged_unstaged=${staged_unstaged}${stagedstr}
+    fi
+
+    # HEAD's hash value
+    head=$(git rev-parse --verify -q HEAD 2> /dev/null)
+    if [ $? -eq 0 ]; then
+      # get remote's hash value as an array
+      remotes=($(git rev-parse --remotes 2> /dev/null))
+      if [ "$remotes[*]" ]; then
+        for x in ${remotes[@]}; do
+          # compare hash value HEAD and remote
+          if [ "$head" = "$x" ]; then
+            # already pushed
+            not_pushed=""
+            break
+          fi
+        done
+      else
+        # no remote
+        not_pushed=""
+      fi
+    else
+      # HEAD doesn't exist
+      not_pushed=""
+    fi
+
+    if [ -n "$staged_unstaged" -o -n "$untracked" -o -n "$not_pushed" ]; then
+      printf "${staged_unstaged}${untracked}${not_pushed}"
+    fi
+  fi
+  return 0
+}
 
 autoload colors
 colors
