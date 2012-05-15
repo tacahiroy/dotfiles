@@ -3,6 +3,10 @@
 
 scriptencoding utf-8
 
+if $PATH !~# expand('$HOME/.rbenv/shims')
+  let $PATH = expand('$HOME/.rbenv/shims:$PATH')
+endif
+
 set cmdheight=2
 set columns=100
 set guioptions=aeciM
@@ -15,9 +19,8 @@ set mouse=a
 set nomousefocus
 set mousehide
 
-
-nmap <C-LeftMouse> <C-]>zz
-nmap <C-RightMouse> <C-t>zz
+nnoremap <C-LeftMouse> <C-]>zz
+nnoremap <C-RightMouse> <C-t>zz
 
 
 if &guioptions =~# 'M'
@@ -34,7 +37,7 @@ if has('macunix')
   set guifont=Menlo\ Regular:h12
   set antialias
 
-  set fuoptions+=maxhorz
+  set fuoptions& fuoptions+=maxhorz
 elseif has('unix')
   set guifont=M+1VM+IPAG\ circle\ 10
 else
