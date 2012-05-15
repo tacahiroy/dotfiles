@@ -5,7 +5,7 @@ scriptencoding utf-8
 
 " vundle plugin management "{{{
 filetype off
-set runtimepath+=~/.vim/bundle/vundle
+set runtimepath& runtimepath+=~/.vim/bundle/vundle
 call vundle#rc()
 
 Bundle 'gmarik/vundle'
@@ -54,6 +54,9 @@ if isdirectory(expand('$DOTVIM/sandbox'))
   let dirs = split(glob($DOTVIM.'/sandbox/*'))
   for d in dirs
     execute ':set runtimepath+=' . d
+    if d =~# 'doc$'
+      execute ':helptags ' . d
+    endif
   endfor
 endif
 
@@ -114,6 +117,7 @@ set backupext=.bac
 set backupdir=$DOTVIM/backups
 set backupskip& backupskip+=/tmp/*,/private/tmp/*,*.bac,COMMIT_EDITMSG,hg-editor-*.txt,svn-commit.[0-9]*.tmp
 set cedit=
+set clipboard& clipboard+=unnamed
 set cmdheight=2
 set colorcolumn=80
 set noequalalways
@@ -311,7 +315,8 @@ nnoremap <silent> <Space>_ :<C-u>edit $MYVIMRC<Cr>
 nnoremap <silent> <Space>g_ :<C-u>edit $MYGVIMRC<Cr>
 nnoremap <Space>S :<C-u>source %<Cr>
 
-nnoremap <Space>T :<C-u>NERDTreeToggle<Cr>
+nnoremap <Space>TT :<C-u>NERDTreeToggle<Cr>
+nnoremap <Space>Tf :<C-u>NERDTreeFind<Cr>
 
 nnoremap <silent> <Esc><Esc> <Esc>:<C-u>nohlsearch<Cr>
 
@@ -385,6 +390,8 @@ let g:vimsyntax_noerror = 1
 " * something "{{{
 augroup MyAutoCmd
   autocmd!
+
+  autocmd VimLeave * :mksession! ~/.vimsession
 
   autocmd BufReadPost * if !search('\S', 'cnw') | let &l:fileencoding = &encoding | endif
   " restore cursor position
@@ -508,15 +515,15 @@ let g:ctrlp_follow_symlinks = 1
 let g:ctrlp_highlight_match = [1, 'Constant']
 let g:ctrlp_max_files = 12800
 let g:ctrlp_max_depth = 16
-let g:ctrlp_dotfiles = 0
+let g:ctrlp_dotfiles = 1
 
 let g:ctrlp_user_command = {
       \ 'types': {
         \ 1: ['.git/', 'cd %s && git ls-files'],
         \ 2: ['.hg/', 'hg --cwd %s locate -I .'],
         \ 3: ['.svn/', 'svn ls file://%s'],
-        \ },
-      \ }
+      \ },
+\ }
 
 let g:ctrlp_prompt_mappings = {
   \ 'AcceptSelection("e")': ['<Cr>'],
@@ -530,7 +537,7 @@ let g:ctrlp_prompt_mappings = {
   \ 'CreateNewFile()':      ['<C-y>'],
   \ }
 
-let g:ctrlp_extensions = ['tag', 'buffertag', 'dir', 'funks']
+let g:ctrlp_extensions = ['tag', 'buffertag', 'dir', 'funky']
 
 let g:ctrlp_custom_ignore = {
   \ 'dir':  '\.git$\|\.hg$\|\.svn$\|\.vimundo$\|\.ctrlp_cache/\|\.rbenv/\|\.gem/',
@@ -544,8 +551,8 @@ noremap <Space>fk :CtrlPBookmarkDir<Cr>
 noremap <Space>ft :CtrlPBufTag<Cr>
 noremap <Space>fT :CtrlPBufTagAll<Cr>
 
-command! CtrlPFunks call ctrlp#init(ctrlp#funks#id())
-noremap <Space>fu :CtrlPFunks<Cr>
+command! CtrlPFunky call ctrlp#init(ctrlp#funky#id())
+noremap <Space>fu :CtrlPFunky<Cr>
 "}}}
 
 " plug: memolist.vim " {{{
@@ -588,8 +595,8 @@ let g:bestfriend_is_display_zero = 1
 let g:bestfriend_is_debug = 0
 let g:bestfriend_display_limit = 15
 let g:bestfriend_observe_cursor_position = 1
-nnoremap ,tt :<C-u>BestFriend<Cr>
-nnoremap ,ta :<C-u>BestFriends<Cr>
+nnoremap ,tt :<C-u>TimeTap<Cr>
+nnoremap ,ta :<C-u>TimeTapProject<Cr>
 "}}}
 
 if has('multi_byte_ime') || has('xim')
