@@ -66,7 +66,7 @@ set verbose=0
 " * functions "{{{1
 " convert path separator "{{{
 " unix <-> dos
-function! g:cps(path, sep)
+function! Cps(path, sep)
   return substitute(a:path, '[/\\]', a:sep, 'g')
 endfunction "}}}
 
@@ -79,9 +79,9 @@ function! s:previewTagLight(word)
   for item in t
     if -1 < stridx(item.filename, current)
       " [filename] tag definition
-      echohl Search | echomsg printf('%-36s %s', '[' . g:cps(item.filename, '/') . ']', item.cmd) | echohl None
+      echohl Search | echomsg printf('%-36s %s', '[' . Cps(item.filename, '/') . ']', item.cmd) | echohl None
     else
-      echomsg printf('%-36s %s', '[' . substitute(g:cps(item.filename, '/'), '\s\s*$', '', '') . ']', item.cmd)
+      echomsg printf('%-36s %s', '[' . substitute(Cps(item.filename, '/'), '\s\s*$', '', '') . ']', item.cmd)
     endif
   endfor
 endfunction
@@ -201,34 +201,36 @@ let &statusline .= '(%{&expandtab ? "" : ">"}%{&l:tabstop})'
 let &statusline .= '%{&mouse}'
 let &statusline .= '%{(&paste ? "p" : "")}'
 let &statusline .= '%#Constant#%{fugitive#statusline()}%*'
-" monstermethod.vim support
-" let &statusline .= '%{exists("b:mmi.name") && 0<len(b:mmi.name) ? " -- ".b:mmi.name."(".b:mmi.lines.")" : ""}'
-let &statusline .= ' %=%{g:i_am_here()}'
+let &statusline .= ' %=%{ImHere()}'
 let &statusline .= '%-12( %l/%LL,%c %)%P'
 
-function! g:i_am_here()
-  function! IdiotPath(path, ratio)
+function! ImHere()
+  function! ShortenPath(path, ratio)
     if !empty(&buftype)
       return ''
     endif
 
     let path = substitute(a:path, $HOME, '~', '')
-    let plen = len(path)
-    let width = (&columns + &numberwidth) * 1.0
+    " let plen = len(path)
+    " let width = (&columns + &numberwidth) * 1.0
 
-    if 0.5 < plen / width
-      let slen = float2nr(plen * a:ratio * 0.01)
-      let path = strpart(path, 0, slen) . '...' . strpart(path, plen - slen)
+    " if 0.5 < plen / width
+    "   let slen = float2nr(plen * a:ratio * 0.01)
+    "   let path = strpart(path, 0, slen) . '...' . strpart(path, plen - slen)
+    " endif
+
+    if 1 < len(split(path, '/'))
+      return '(' . join(split(path, '/')[-3:-1], '/') . ')'
+    else
+      return '(' . path . '/)'
     endif
-
-    return '(' . path . '/)'
   endfunction
 
   if !get(g:, 'iamhere_enabled', 1)
     return ''
   endif
 
-  return IdiotPath(getcwd(), 25)
+  return ShortenPath(getcwd(), 25)
 endfunction
 " }}}
 
@@ -294,10 +296,10 @@ if has('mac')
         \ :<C-u>silent execute ':!open -a Finder %:p:h'<Cr>:redraw!<Cr>
 elseif has('win32') || has('win64')
   nnoremap <silent> <Space>e
-        \ :<C-u>silent execute ":!start explorer \"" . g:cps(expand("%:p:h"), "\\") . "\""<Cr>
+        \ :<C-u>silent execute ":!start explorer \"" . Cps(expand("%:p:h"), "\\") . "\""<Cr>
   " open current directory with Command Prompt
   nnoremap <silent> <Space>E
-        \ :<C-u>silent execute ":!start cmd /k cd \"" . g:cps(expand("%:p:h"), "\\") . "\""<Cr>
+        \ :<C-u>silent execute ":!start cmd /k cd \"" . Cps(expand("%:p:h"), "\\") . "\""<Cr>
 endif
 
 nnoremap <Space>w :<C-u>update<Cr>
@@ -397,11 +399,12 @@ augroup MyAutoCmd
   " restore cursor position
   autocmd BufReadPost * if line("'\"") <= line('$') | execute "normal '\"" | endif
   autocmd BufEnter * setlocal formatoptions-=o
+  autocmd BufEnter,BufWritePost * if &expandtab && search('\t', 'cnw') && !&readonly | setlocal list | else | setlocal nolist | endif
 
   " autochdir emulation
-  autocmd BufEnter * call s:autoChdir(5)
+  autocmd BufEnter * call s:autoChdir(6)
   function! s:autoChdir(n) "{{{
-    function! s:getTopDir(dir, n) "{{{
+    function! GetTopDir(dir, n) "{{{
       let i = 0
       let dir = a:dir
 
@@ -416,7 +419,7 @@ augroup MyAutoCmd
         endif
 
         let dir = '/'.join(dirs[0:idx], '/')
-        let files = ['Gemfile', 'Rakefile', 'README.md', 'README.markdown']
+        let files = ['Gemfile', 'Rakefile', 'README.md', 'README.markdown', 'README.rdoc']
         for f in files
           if filereadable(dir.'/'.f)
             return dir
@@ -432,7 +435,7 @@ augroup MyAutoCmd
       return
     endif
 
-    let dir = s:getTopDir(expand('%:p:h'), 5)
+    let dir = GetTopDir(expand('%:p:h'), 5)
 
     execute ':lcd ' . escape(dir, ' ')
   endfunction"}}}
