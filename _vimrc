@@ -347,7 +347,7 @@ endfunction
 inoremap <silent> <Cr> <C-R>=<SID>CrInInsertModeBetterWay()<Cr>
 
 inoremap <silent> <Leader>dd <C-R>=strftime('%Y-%m-%d')<Cr>
-inoremap <silent> <Leader>ti <C-R>=strftime('%H:%M')<Cr>
+inoremap <silent> <Leader>tm <C-R>=strftime('%H:%M')<Cr>
 inoremap <silent> <Leader>fn <C-R>=@%<Cr>
 
 " ^J is used to toggle IME
@@ -611,6 +611,20 @@ endif
 " open loaded buffer with new tab.
 command! -nargs=1 -complete=buffer NTab :999tab sbuffer <args>
 command! Big wincmd _ | wincmd |
+
+function! s:upload_cookbook()
+  let path = expand('%:p')
+  if path !~# '/cookbooks/_default/.\+'
+    return
+  endif
+
+  let m = matchlist(path, '^\(.\+/cookbooks/_default\)/\([^/]\+\)/')
+  let cb = m[1]
+  let recipe = m[2]
+
+  execute printf(':!knife cookbook upload -o %s %s', cb, recipe)
+endfunction
+command! -nargs=0 CookbookUpload call s:upload_cookbook()
 " }}}
 
 if filereadable(expand('~/.vimrc.mine'))
