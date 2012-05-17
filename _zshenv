@@ -13,8 +13,12 @@ export RUBYOPT=-rubygems
 # export GEM_HOME=/usr/local/Cellar/gems/1.9
 export TERM=xterm-256color
 # colorize
-export LV='-c'
-export PAGER='lv'
+if [ -x '`which lv 2>/dev/null`' ]; then
+  export PAGER='lv'
+  export LV='-c'
+else
+  export PAGER='less'
+fi
 export EDITOR='vim'
 
 ## path
@@ -49,10 +53,10 @@ python_path=(
 typeset -xT CLASSPATH class_path
 typeset -U class_path
 class_path=(
-  /usr/local/Cellar/clojure/1.3.0/*.jar
-  /usr/local/Cellar/clojure-contrib/1.2.0/*.jar
-  $HOME/Projects/wk/vimclojure.hg/build/libs/*.jar
-  $HOME/Projects/wk/vimclojure.hg/server/build/libs/*.jar
+  /usr/local/Cellar/clojure/1.3.0/*.jar(N-/)
+  /usr/local/Cellar/clojure-contrib/1.2.0/*.jar(N-/)
+  $HOME/Projects/wk/vimclojure.hg/build/libs/*.jar(N-/)
+  $HOME/Projects/wk/vimclojure.hg/server/build/libs/*.jar(N-/)
 )
 
 export LEIN_JAR=$HOME/.lein/self-installs/leiningen-1.6.1.1-standalone.jar

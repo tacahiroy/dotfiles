@@ -32,6 +32,7 @@ esac # }}}
 #
 # set prompt
 #
+# settings for vcs prompt # {{{
 autoload -Uz vcs_info
 zstyle ':vcs_info:*' enable git svn hg
 zstyle ':vcs_info:*' check-for-changes true
@@ -40,6 +41,7 @@ zstyle ':vcs_info:*' actionformats '[%s:%b|%a]%c%u'
 zstyle ':vcs_info:*' stagedstr "+"
 zstyle ':vcs_info:*' unstagedstr "*"
 
+# http://d.hatena.ne.jp/yonchu/20120506/1336335973
 function _vcs_info() {
   psvar=()
   LANG=en_US.UTF-8 vcs_info
@@ -69,7 +71,7 @@ function _git_untracked_or_not_pushed() {
     # find out staged file
     if [ -n "$stagedstr" ] && ! printf "$staged_unstaged" | grep "$stagedstr" > /dev/null 2>&1 \
         && echo "$git_status" | grep "^A" > /dev/null 2>&1; then
-      staged_unstaged=${staged_unstaged}${stagedstr}
+      staged_unstaged=${stagedstr}
     fi
 
     # HEAD's hash value
@@ -101,6 +103,7 @@ function _git_untracked_or_not_pushed() {
   fi
   return 0
 }
+# }}}
 
 autoload colors
 colors
@@ -163,7 +166,11 @@ setopt mark_dirs
 #
 # emacs like keybind (e.x. Ctrl-a goes to head of a line and Ctrl-e goes
 # to end of it)
-bindkey -v
+if [ -z $SSH_CLIENT ]; then
+  bindkey -v
+else
+  bindkey -e
+fi
 
 # historical backward/forward search with linehead string binded to ^P/^N
 autoload history-search-end
@@ -175,9 +182,11 @@ bindkey "\\ep" history-beginning-search-backward-end
 bindkey "\\en" history-beginning-search-forward-end
 bindkey "^r" history-incremental-search-backward
 
-# ^J is used to toggle IME
-bindkey -s "^j" ""
-bindkey -s "^F" ""
+if [ -z $SSH_CLIENT ]; then
+  # ^J is used to toggle IME
+  bindkey -s "^j" ""
+  bindkey -s "^F" ""
+fi
 
 # available multibyte characters
 setopt print_eight_bit
@@ -262,15 +271,16 @@ esac # }}}
 autoload -Uz compinit
 compinit
 
-which rbenv > /dev/null
-if [ $? = 0 ]; then
+if [ -x '`which rbenv 2>/dev/null`' ]; then
   eval "$(rbenv init -)"
 fi
 
 ## tmux
-which tmux > /dev/null
-if [ $? = 0 -a $SHLVL = 1 ]; then
-  tmux attach || tmux
+# which tmux > /dev/null
+if [ -z $SSH_CLIENT ]; then
+  if [ -x '`which tmux 2>/dev/null`' -a $SHLVL = 1 ]; then
+    tmux attach || tmux
+  fi
 fi
 
 if [ -f ~/.zsh.local ]; then
