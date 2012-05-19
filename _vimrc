@@ -273,6 +273,7 @@ nnoremap <silent> <Space>o :<C-u>cwindow<Cr>
 nnoremap <silent> <Space>O :<C-u>cclose<Cr>
 nnoremap <silent> <Leader><Leader>a :let &mouse = empty(&mouse) ? 'a' : ''<Cr>
 nnoremap <silent> <Leader><Leader>p :set paste!<Cr>
+nnoremap <silent> <Leader><Leader>l :set list!<Cr>
 
 " commentary.vim
 nmap <Space>c <Plug>CommentaryLine
