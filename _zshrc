@@ -113,7 +113,7 @@ case ${UID} in
   PROMPT2="%B%{${fg[red]}%}%_#%{${reset_color}%}%b "
   SPROMPT="%B%{${fg[red]}%}%r is correct? [n,y,a,e]:%{${reset_color}%}%b "
   [ -n "${REMOTEHOST}${SSH_CONNECTION}" ] &&
-    PROMPT="%{${fg[cyan]}%}%n@%m:${PROMPT}"
+    PROMPT="%{${fg[cyan]}%}%n%{${reset_color}%}@%{${fg[yellow]}%}%m%{${reset_color}%}:${PROMPT}"
   ;;
 *)
   PROMPT="%{${fg[red]}%}%/%{${reset_color}%}${fg[green]}%1v${reset_color}
@@ -123,7 +123,7 @@ case ${UID} in
   # RPROMPT="[%{${fg[red]}%}%/%{${reset_color}%}]"
   RPROMPT=""
   [ -n "${REMOTEHOST}${SSH_CONNECTION}" ] &&
-    PROMPT="%{${fg[magenta]}%}%n@%m:${PROMPT}"
+    PROMPT="%{${fg[magenta]}%}%n%{${reset_color}%}@%{${fg[yellow]}%}%m%{${reset_color}%}:${PROMPT}"
   ;;
 esac
 
@@ -166,7 +166,7 @@ setopt mark_dirs
 #
 # emacs like keybind (e.x. Ctrl-a goes to head of a line and Ctrl-e goes
 # to end of it)
-if [ -z $SSH_CLIENT ]; then
+if [ -n $SSH_CLIENT ]; then
   bindkey -v
 else
   bindkey -e
@@ -271,14 +271,13 @@ esac # }}}
 autoload -Uz compinit
 compinit
 
-if [ -x '`which rbenv 2>/dev/null`' ]; then
+if [[ -x `which rbenv` ]]; then
   eval "$(rbenv init -)"
 fi
 
 ## tmux
-# which tmux > /dev/null
 if [ -z $SSH_CLIENT ]; then
-  if [ -x '`which tmux 2>/dev/null`' -a $SHLVL = 1 ]; then
+  if [[ -x `which tmux` && $SHLVL = 1 ]]; then
     tmux attach || tmux
   fi
 fi

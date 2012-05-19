@@ -13,7 +13,7 @@ export RUBYOPT=-rubygems
 # export GEM_HOME=/usr/local/Cellar/gems/1.9
 export TERM=xterm-256color
 # colorize
-if [ -x '`which lv 2>/dev/null`' ]; then
+if [ '`which -s lv`' ]; then
   export PAGER='lv'
   export LV='-c'
 else
