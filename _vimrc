@@ -585,7 +585,7 @@ let g:prd_fontList .= ',Takao明朝:h10:cDEFAULT'
 let g:prd_fontList .= ',ＭＳ_明朝:h10:cDEFAULT'
 
 " plug: loga.vim
-let g:loga_executable = $HOME.'/.rbenv/shims/loga'
+let g:loga_executable = system('which loga')
 let g:loga_enable_auto_lookup = 0
 let g:loga_delimiter = '=3'
 map <Space>a <Plug>(loga-lookup)
