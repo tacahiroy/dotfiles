@@ -36,8 +36,8 @@ esac # }}}
 autoload -Uz vcs_info
 zstyle ':vcs_info:*' enable git svn hg
 zstyle ':vcs_info:*' check-for-changes true
-zstyle ':vcs_info:*' formats '[%s:%b],%c%u'
-zstyle ':vcs_info:*' actionformats '[%s:%b|%a]%c%u'
+zstyle ':vcs_info:*' formats '[%s:%b],%u%c'
+zstyle ':vcs_info:*' actionformats '[%s:%b|%a]%u%c'
 zstyle ':vcs_info:*' stagedstr "+"
 zstyle ':vcs_info:*' unstagedstr "*"
 
@@ -49,8 +49,8 @@ function _vcs_info() {
   if [ -n "$vcs_info_msg_0_" ]; then
     _vcs_name=$(echo "$vcs_info_msg_0_" | cut -d , -f 1)
     _staged=$(echo "$vcs_info_msg_0_" | cut -d , -f 2)
-    _status=$(_git_untracked_or_not_pushed)
-    psvar[1]="${_vcs_name}${_staged}${_status}"
+    _status=$(_git_untracked_or_not_pushed $_staged)
+    psvar[1]="${_vcs_name}${_status}"
   fi
 }
 add-zsh-hook precmd _vcs_info
@@ -98,7 +98,7 @@ function _git_untracked_or_not_pushed() {
     fi
 
     if [ -n "$staged_unstaged" -o -n "$untracked" -o -n "$not_pushed" ]; then
-      printf "${staged_unstaged}${untracked}${not_pushed}"
+      printf "${untracked}${staged_unstaged}${not_pushed}"
     fi
   fi
   return 0
