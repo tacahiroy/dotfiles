@@ -1,9 +1,7 @@
-require 'rubygems'
-require 'pp'
-require 'wirble'
+require "rubygems"
+require "pp"
+require "irb/completion"
 
 IRB.conf[:SAVE_HISTORY] = 100000
-
-Wirble.init(:skip_prompt => :DEFAULT)
-Wirble.colorize
+IRB.conf[:AUTO_INDENT] = true
 
