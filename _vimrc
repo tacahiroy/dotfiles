@@ -117,7 +117,7 @@ set backupext=.bac
 set backupdir=$DOTVIM/backups
 set backupskip& backupskip+=/tmp/*,/private/tmp/*,*.bac,COMMIT_EDITMSG,hg-editor-*.txt,svn-commit.[0-9]*.tmp
 set cedit=
-set clipboard& clipboard+=unnamed
+" set clipboard& clipboard+=unnamed
 set cmdheight=2
 set colorcolumn=80
 set noequalalways
@@ -219,7 +219,7 @@ function! ImHere()
     "   let path = strpart(path, 0, slen) . '...' . strpart(path, plen - slen)
     " endif
 
-    if 1 < len(split(path, '/'))
+    if 3 < len(split(path, '/'))
       return '(' . join(split(path, '/')[-3:-1], '/') . ')'
     else
       return '(' . path . '/)'
@@ -341,6 +341,11 @@ nnoremap <2-MiddleMouse> <Nop>
 nnoremap <silent> <Space>p <C-w>}
 nnoremap <silent> <Space>P :pclose<Cr>
 
+" Ctrl-H dispute
+" set t_kb=<Bs>
+" set t_kD=<Del>
+" inoremap <Del> <Bs>
+
 " vim-endwise support
 function! s:CrInInsertModeBetterWay()
   return pumvisible() ? "\<C-y>\<Cr>" : "\<Cr>"
@@ -400,7 +405,7 @@ augroup MyAutoCmd
   " restore cursor position
   autocmd BufReadPost * if line("'\"") <= line('$') | execute "normal '\"" | endif
   autocmd BufEnter * setlocal formatoptions-=o
-  autocmd BufEnter,BufWritePost * if &expandtab && search('\t', 'cnw') && !&readonly | setlocal list | else | setlocal nolist | endif
+  autocmd BufRead,BufWritePost * if &expandtab && search('\t', 'cnw') && !&readonly | setlocal list | else | setlocal nolist | endif
 
   " autochdir emulation
   autocmd BufEnter * call s:autoChdir(6)
@@ -430,7 +435,7 @@ augroup MyAutoCmd
       endwhile
 
       return a:dir
-    endfunction"}}}
+    endfunction "}}}
 
     if expand('%') =~# '^fugitive://'
       return
@@ -439,7 +444,7 @@ augroup MyAutoCmd
     let dir = GetTopDir(expand('%:p:h'), 5)
 
     execute ':lcd ' . escape(dir, ' ')
-  endfunction"}}}
+  endfunction "}}}
 
   autocmd BufRead,BufNewFile *.ru,Gemfile,Guardfile set filetype=ruby
   autocmd BufRead,BufNewFile ?zshrc,?zshenv set filetype=zsh
@@ -465,7 +470,7 @@ augroup MyAutoCmd
 
   autocmd FileType css,sass,scss,less setlocal omnifunc=csscomplete#CompleteCSS tabstop=2 shiftwidth=2 softtabstop=2
 
-  let g:loaded_sql_completion = 1
+  " let g:loaded_sql_completion = 1
   autocmd FileType sql*,plsql setlocal tabstop=4 shiftwidth=4 softtabstop=4
   autocmd FileType sql*,plsql nnoremap <buffer> <silent> <C-Return> :DBExecSQLUnderCursor<Cr>
   autocmd FileType sql*,plsql vnoremap <buffer> <silent> <C-Return> :DBExecVisualSQL<Cr>
@@ -613,19 +618,35 @@ endif
 command! -nargs=1 -complete=buffer NTab :999tab sbuffer <args>
 command! Big wincmd _ | wincmd |
 
-function! s:upload_cookbook()
+" Chef
+function! s:upload_cookbook(...)
   let path = expand('%:p')
   if path !~# '/cookbooks/_default/.\+'
     return
   endif
 
-  let m = matchlist(path, '^\(.\+/cookbooks/_default\)/\([^/]\+\)/')
-  let cb = m[1]
-  let recipe = m[2]
+  let cookbooks = []
+  if 0 < a:0
+    let cookbooks = deepcopy(a:000)
+  endif
 
-  execute printf(':!knife cookbook upload -o %s %s', cb, recipe)
+  let m = matchlist(path, '^\(.\+/cookbooks/_default\)/\([^/]\+\)/')
+  let cb_path = m[1]
+  call insert(cookbooks, m[2])
+
+  if 0 < len(cookbooks)
+    let cookbooks = filter(cookbooks, 'isdirectory(cb_path."/".v:val)')
+    echomsg printf('Uploading cookbooks: %s', join(cookbooks, ' '))
+    execute printf('!knife cookbook upload -o %s %s', cb_path, join(cookbooks, ' '))
+  else
+    echoerr 'no cookbooks are found.'
+  endif
 endfunction
-command! -nargs=0 CookbookUpload call s:upload_cookbook()
+command! -nargs=* CookbookUpload call s:upload_cookbook(<f-args>)
+" }}}
+
+" highlight " {{{
+
 " }}}
 
 if filereadable(expand('~/.vimrc.mine'))
