@@ -15,7 +15,9 @@ zstyle ':completion:*' verbose yes
 WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
 WORDCHARS=${WORDCHARS:s,/,,}
 
+# stty erase '^H'
 stty intr '^C'
+stty susp '^Z'
 
 # set terminal title including current directory # {{{
 #
@@ -154,13 +156,22 @@ setopt nolistbeep
 
 # for dir completion. added '/'
 setopt auto_param_slash
+# add '/'
+setopt mark_dirs
 
 setopt complete_in_word
 setopt glob_complete
 setopt hist_expand
-# add '/'
-setopt mark_dirs
 
+unset menu_complete
+setopt auto_list
+setopt auto_menu
+
+zmodload zsh/complist
+bindkey -M menuselect 'h' vi-backward-char
+bindkey -M menuselect 'j' vi-down-line-or-history
+bindkey -M menuselect 'k' vi-up-line-or-history
+bindkey -M menuselect 'l' vi-forward-char
 
 ## Keybind configuration
 #
@@ -194,12 +205,19 @@ setopt no_flow_control
 
 ## Command history configuration
 HISTFILE=~/.zsh_history
-HISTSIZE=100000
-SAVEHIST=$HISTSIZE
+HISTSIZE=10000
+SAVEHIST=100000
+
+if [ $UID = 0 ]; then
+  unset HISTFILE
+  SAVEHIST=0
+fi
 
 setopt hist_ignore_space # not save history, starts from space
 setopt hist_ignore_all_dups
+setopt hist_ignore_dups
 setopt hist_save_nodups # remove duplicated history when save history
+setopt hist_no_store # `history` command won't be saved to $HISTFILE
 setopt share_history # share command history data
 setopt hist_reduce_blanks # trim space when save history
 setopt interactive_comments # comment after '#'
@@ -267,6 +285,17 @@ cons25)
   ;;
 esac # }}}
 
+# functions # {{{
+# goto parent directory
+function cdup() {
+  echo
+  cd ..
+  zle reset-prompt
+}
+zle -N cdup
+bindkey '^\^' cdup
+# }}}
+
 ## Completion configuration
 autoload -Uz compinit
 compinit
@@ -281,6 +310,8 @@ if [ -z $SSH_CLIENT ]; then
     tmux attach || tmux
   fi
 fi
+
+[ -n $TMUX ] && tmux rename-window -t 0 '(^3^)'
 
 if [ -f ~/.zsh.local ]; then
   source ~/.zsh.local
