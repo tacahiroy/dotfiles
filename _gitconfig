@@ -19,12 +19,12 @@
 	st = status
 	d = diff
 	b = branch
-	bc = branch
 	l = log
 	logo = log --pretty=oneline --abbrev-commit
 	logg = log --graph --pretty=oneline --abbrev-commit
 	logs = log --stat
-	lc = log ORIG_HEAD.. --stat --no-merges
+	logc = log ORIG_HEAD.. --stat --no-merges
+	up = pull --rebase
 
 ; vim: ts=4 sw=4 sts=4 noexpandtab
 
