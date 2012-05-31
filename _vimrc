@@ -190,6 +190,7 @@ let g:solarized_visibility = 'high'
 let g:solarized_hitrail = 1
 let g:solarized_menu = 0
 set background=light
+set t_Co=256
 colorscheme seashell
 
 set formatoptions& formatoptions+=mM formatoptions-=r
