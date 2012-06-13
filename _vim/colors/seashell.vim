@@ -35,9 +35,7 @@ if s:seashell_style == 'dark'
   hi   Folded         guibg=gray20
   hi   FoldColumn     guibg=gray10
 
-  " Original values:
-  "hi Constant guifg=DeepPink
-  "hi PreProc guifg=Magenta ctermfg=Magenta
+  hi   FileName       gui=NONE guibg=White guifg=Blue
 else
   hi   Normal         guibg=seashell        ctermfg=Black
   hi   NonText        guibg=LavenderBlush   guifg=Gray30
@@ -67,6 +65,6 @@ else
 
   hi   Visual         guibg=#dddddd guifg=NONE
 
-  hi   FileTypeOnStatusLine gui=NONE guifg=DarkGreen guibg=#ffffff
+  hi   FileName       gui=NONE guifg=Purple guibg=White
 endif
 
