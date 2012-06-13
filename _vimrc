@@ -1,5 +1,5 @@
 " $HOME/.vimrc
-" Maintainer: tacahiroy <tacahiroy```AT```gmail.com>
+" Author: Tacahiroy <tacahiroy```AT```gmail.com>
 
 scriptencoding utf-8
 
@@ -27,7 +27,7 @@ Bundle 'tpope/vim-rails'
 Bundle 'avakhov/vim-yaml'
 Bundle 'bbommarito/vim-slim'
 Bundle 'tpope/vim-markdown'
-" Bundle 'mattn/zencoding-vim'
+Bundle 'mattn/zencoding-vim'
 Bundle 'matchit.zip'
 " Bundle 'IndentAnything'
 Bundle 'Align'
@@ -195,13 +195,14 @@ colorscheme seashell
 
 set formatoptions& formatoptions+=mM formatoptions-=r
 
-" statusline {{{
-let &statusline = '[#%n]%<%f %m%r%h%w'
-let &statusline .= '%{&filetype.":".(&l:fileencoding != "" ? &l:fileencoding : &encoding).":".&fileformat}'
+let &statusline = '[#%n]%<%#FileName#%f%* %m%r%h%w'
+" let &statusline .= '%{&filetype.":".(&l:fileencoding != "" ? &l:fileencoding : &encoding).":".&fileformat}'
+let &statusline .= '%{&filetype}:'
+let &statusline .= '%{(&l:fileencoding != "" ? &l:fileencoding : &encoding).":".&fileformat}'
 let &statusline .= '(%{&expandtab ? "" : ">"}%{&l:tabstop})'
 let &statusline .= '%{&mouse}'
-let &statusline .= '%{(&paste ? "p" : "")}'
-let &statusline .= '%#Constant#%{fugitive#statusline()}%*'
+let &statusline .= '%{(&paste ? "p" : "")} '
+let &statusline .= '%#Function#%{fugitive#statusline()}%*'
 let &statusline .= ' %=%{ImHere()}'
 let &statusline .= '%-12( %l/%LL,%c %)%P'
 
@@ -293,7 +294,7 @@ sunmap b
 sunmap e
 
 " open current directory with filer
-if has('mac')
+if has('macunix')
   nnoremap <silent> <Space>e
         \ :<C-u>silent execute ':!open -a Finder %:p:h'<Cr>:redraw!<Cr>
 elseif has('win32') || has('win64')
@@ -378,8 +379,6 @@ if executable('tidyp')
 
   command! -nargs=1 -range Tidy call s:runTidy(<args>)
 endif
-
-let g:xml_tag_completion_map = ''
 "}}}
 
 
@@ -387,8 +386,9 @@ let g:xml_tag_completion_map = ''
 inoreabbr funciton function
 inoreabbr requrie require
 inoreabbr reuqire require
+inoreabbr passowrd password
 inoreabbr WinMerege WinMerge
-inoreabbr winmerge WinMerge
+inoreabbr Winmerge WinMerge
 "}}}
 
 
@@ -397,7 +397,7 @@ let g:vimsyntax_noerror = 1
 
 
 " * something "{{{
-augroup MyAutoCmd
+augroup Tacahiroy
   autocmd!
 
   autocmd VimLeave * :mksession! ~/.vimsession
@@ -455,10 +455,6 @@ augroup MyAutoCmd
   autocmd FileType mail setlocal spell
   autocmd FileType slim setlocal makeprg=slimrb\ -c\ %
 
-  " http://vim-users.jp/2009/11/hack96/ {{{
-  autocmd FileType *
-  \   if empty(&l:omnifunc) | setlocal omnifunc=syntaxcomplete#Complete | endif
-  " }}}
   autocmd FileType help,qf,logaling nnoremap <buffer> <silent> qq <C-w>c
   autocmd FileType javascript* setlocal omnifunc=javascriptcomplete#CompleteJS
 
@@ -573,9 +569,10 @@ let g:memolist_prompt_categories = 1
 let g:memolist_qfixgrep = 0
 let g:memolist_vimfiler = 0
 
-nnoremap <Space>mc :MemoNew<CR>
-nnoremap <Space>ml :MemoList<CR>
-nnoremap <Space>mg :MemoGrep<CR>
+nnoremap <Space>mc :MemoNew<Cr>
+nnoremap <Space>mg :MemoGrep<Cr>
+nnoremap <Space>mL :MemoList<Cr>
+nnoremap <Space>ml :execute 'CtrlP' . g:memolist_path<Cr><F5>
 " }}}
 
 " plug: Align
@@ -646,10 +643,6 @@ endfunction
 command! -nargs=* CookbookUpload call s:upload_cookbook(<f-args>)
 " }}}
 
-" highlight " {{{
-
-" }}}
-
 if filereadable(expand('~/.vimrc.mine'))
   source ~/.vimrc.mine
 endif
@@ -659,5 +652,5 @@ if has('gui_running') && filereadable(expand('~/.gvimrc'))
 end
 
 " __END__ {{{
-" vim: ts=2 sts=2 sw=2 fdm=marker
+" vim: ts=2 sts=2 sw=2
 

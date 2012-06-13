@@ -1,5 +1,5 @@
 " $HOME/.gvimrc
-" Maintainer: tacahiroy <tacahiroy```AT```gmail.com>
+" Author: Tacahiroy <tacahiroy```AT```gmail.com>
 
 scriptencoding utf-8
 
@@ -8,7 +8,7 @@ if $PATH !~# expand('$HOME/.rbenv/shims')
 endif
 
 set cmdheight=2
-set columns=100
+set columns=132
 set guioptions=aeciM
 set guitablabel=%N)\ %f
 set lines=100
