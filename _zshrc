@@ -39,7 +39,7 @@ autoload -Uz vcs_info
 zstyle ':vcs_info:*' enable git svn hg
 zstyle ':vcs_info:*' check-for-changes true
 zstyle ':vcs_info:*' formats '[%s:%b],%u%c'
-zstyle ':vcs_info:*' actionformats '[%s:%b|%a]%u%c'
+zstyle ':vcs_info:*' actionformats '[%s:%b|%a],%u%c'
 zstyle ':vcs_info:*' stagedstr "+"
 zstyle ':vcs_info:*' unstagedstr "*"
 
@@ -107,6 +107,14 @@ function _git_untracked_or_not_pushed() {
 }
 # }}}
 
+# function _rbenv_info() {
+#   [[ ! -x `which rbenv` ]] || return
+#   psvar=()
+#   psvar[2]="($(rbenv global))"
+#   psvar[2]="($(rbenv local))"
+# }
+# add-zsh-hook precmd _rbenv_info
+
 autoload colors
 colors
 case ${UID} in
@@ -123,7 +131,7 @@ case ${UID} in
   PROMPT2="%{${fg[red]}%}%_%{${reset_color}%}%% "
   SPROMPT="%{${fg[red]}%}%r is correct? [n,y,a,e]:%{${reset_color}%}"
   # RPROMPT="[%{${fg[red]}%}%/%{${reset_color}%}]"
-  RPROMPT=""
+  RPROMPT="%{${fg[red]}%}%2v%{${reset_color}%}"
   [ -n "${REMOTEHOST}${SSH_CONNECTION}" ] &&
     PROMPT="%{${fg[magenta]}%}%n%{${reset_color}%}@%{${fg[yellow]}%}%m%{${reset_color}%}:${PROMPT}"
   ;;
@@ -318,5 +326,5 @@ if [ -f ~/.zsh.local ]; then
 fi
 
 # __END__
-# vim: fdm=marker
+# vim: et ts=2 sts=2 sw=2
 
