@@ -199,7 +199,8 @@ let &statusline = '[#%n]%<%#FileName#%f%* %m%r%h%w'
 " let &statusline .= '%{&filetype.":".(&l:fileencoding != "" ? &l:fileencoding : &encoding).":".&fileformat}'
 let &statusline .= '%{&filetype}:'
 let &statusline .= '%{(&l:fileencoding != "" ? &l:fileencoding : &encoding).":".&fileformat}'
-let &statusline .= '(%{&expandtab ? "" : ">"}%{&l:tabstop})'
+let &statusline .= '(%{&expandtab ? "" : ">"}%{&l:tabstop}'
+let &statusline .= '%{search("\\t", "cnw") ? "<" : ""})'
 let &statusline .= '%{&mouse}'
 let &statusline .= '%{(&paste ? "p" : "")} '
 let &statusline .= '%#Function#%{fugitive#statusline()}%*'
@@ -258,7 +259,8 @@ nnoremap Y y$
 nnoremap j gj
 nnoremap k gk
 nnoremap vv <C-v>
-nnoremap vV 0vg_
+nnoremap vV ^vg_
+nnoremap v4 vg_
 nnoremap <C-]> <C-]>zz
 nnoremap <C-t> <C-t>zz
 
@@ -273,9 +275,9 @@ nnoremap Q q
 
 nnoremap <silent> <Space>o :<C-u>cwindow<Cr>
 nnoremap <silent> <Space>O :<C-u>cclose<Cr>
-nnoremap <silent> <Leader><Leader>a :let &mouse = empty(&mouse) ? 'a' : ''<Cr>
-nnoremap <silent> <Leader><Leader>p :set paste!<Cr>
-nnoremap <silent> <Leader><Leader>l :set list!<Cr>
+nnoremap <silent> <Leader>A :let &mouse = empty(&mouse) ? 'a' : ''<Cr>
+nnoremap <silent> <Leader>P :set paste!<Cr>
+nnoremap <silent> <Leader>L :set list!<Cr>
 
 " commentary.vim
 nmap <Space>c <Plug>CommentaryLine
@@ -406,7 +408,7 @@ augroup Tacahiroy
   " restore cursor position
   autocmd BufReadPost * if line("'\"") <= line('$') | execute "normal '\"" | endif
   autocmd BufEnter * setlocal formatoptions-=o
-  autocmd BufRead,BufWritePost * if &expandtab && search('\t', 'cnw') && !&readonly | setlocal list | else | setlocal nolist | endif
+  " autocmd BufRead,BufWritePost * if &expandtab && search('\t', 'cnw') && !&readonly | setlocal list | else | setlocal nolist | endif
 
   " autochdir emulation
   autocmd BufEnter * call s:autoChdir(6)
@@ -508,7 +510,7 @@ augroup END
 
 " * plugins "{{{
 " plug: vim-ref
-let g:ref_refe_cmd = $HOME . '/rubyrefm/refe-1_9_2'
+let g:ref_refe_cmd = $HOME . '/Projects/wk/rubyrefm/refe-1_9_2'
 
 " plug: ctrlp.vim "{{{
 let g:ctrlp_map = '<Space>ff'
@@ -572,7 +574,7 @@ let g:memolist_vimfiler = 0
 nnoremap <Space>mc :MemoNew<Cr>
 nnoremap <Space>mg :MemoGrep<Cr>
 nnoremap <Space>mL :MemoList<Cr>
-nnoremap <Space>ml :execute 'CtrlP' . g:memolist_path<Cr><F5>
+nnoremap <Space>ml :execute 'CtrlP ' . g:memolist_path<Cr><F5>
 " }}}
 
 " plug: Align
