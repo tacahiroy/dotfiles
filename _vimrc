@@ -522,7 +522,7 @@ let g:ctrlp_clear_cache_on_exit = 0
 let g:ctrlp_follow_symlinks = 1
 let g:ctrlp_highlight_match = [1, 'Constant']
 let g:ctrlp_max_files = 12800
-let g:ctrlp_max_depth = 16
+let g:ctrlp_max_depth = 24
 let g:ctrlp_dotfiles = 1
 
 let g:ctrlp_user_command = {
@@ -545,7 +545,7 @@ let g:ctrlp_prompt_mappings = {
   \ 'CreateNewFile()':      ['<C-y>'],
   \ }
 
-let g:ctrlp_extensions = ['tag', 'buffertag', 'dir', 'funky']
+let g:ctrlp_extensions = ['tag', 'buffertag', 'dir', 'mixed', 'line', 'funky']
 
 let g:ctrlp_custom_ignore = {
   \ 'dir':  '\.git$\|\.hg$\|\.svn$\|\.vimundo$\|\.ctrlp_cache/\|\.rbenv/\|\.gem/',
@@ -555,6 +555,8 @@ let g:ctrlp_custom_ignore = {
 noremap <Space>fb :CtrlPBuffer<Cr>
 noremap <Space>fd :CtrlPCurWD<Cr>
 noremap <Space>fm :CtrlPMRU<Cr>
+noremap <Space>fl :CtrlPLine<Cr>
+noremap <Space>fx :CtrlPMixed<Cr>
 noremap <Space>fk :CtrlPBookmarkDir<Cr>
 noremap <Space>ft :CtrlPBufTag<Cr>
 noremap <Space>fT :CtrlPBufTagAll<Cr>
@@ -605,7 +607,7 @@ let g:bestfriend_is_debug = 0
 let g:bestfriend_display_limit = 15
 let g:bestfriend_observe_cursor_position = 1
 nnoremap ,tt :<C-u>TimeTap<Cr>
-nnoremap ,ta :<C-u>TimeTapProject<Cr>
+nnoremap ,ta :<C-u>TimeTapCurrentProject<Cr>
 "}}}
 
 if has('multi_byte_ime') || has('xim')
