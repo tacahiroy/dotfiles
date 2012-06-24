@@ -35,13 +35,6 @@ esac # }}}
 # set prompt
 #
 # settings for vcs prompt # {{{
-autoload -Uz vcs_info
-zstyle ':vcs_info:*' enable git svn hg
-zstyle ':vcs_info:*' check-for-changes true
-zstyle ':vcs_info:*' formats '[%s:%b],%u%c'
-zstyle ':vcs_info:*' actionformats '[%s:%b|%a],%u%c'
-zstyle ':vcs_info:*' stagedstr "+"
-zstyle ':vcs_info:*' unstagedstr "*"
 
 # http://d.hatena.ne.jp/yonchu/20120506/1336335973
 function _vcs_info() {
@@ -55,7 +48,6 @@ function _vcs_info() {
     psvar[1]="${_vcs_name}${_status}"
   fi
 }
-add-zsh-hook precmd _vcs_info
 
 function _git_untracked_or_not_pushed() {
   local git_status head remotes stagedstr
@@ -105,6 +97,18 @@ function _git_untracked_or_not_pushed() {
   fi
   return 0
 }
+
+if [ -n $SSH_CLIENT ]; then
+  autoload -Uz vcs_info
+  zstyle ':vcs_info:*' enable git svn hg
+  zstyle ':vcs_info:*' check-for-changes true
+  zstyle ':vcs_info:*' formats '[%s:%b],%u%c'
+  zstyle ':vcs_info:*' actionformats '[%s:%b|%a],%u%c'
+  zstyle ':vcs_info:*' stagedstr "+"
+  zstyle ':vcs_info:*' unstagedstr "*"
+
+  add-zsh-hook precmd _vcs_info
+fi
 # }}}
 
 # function _rbenv_info() {
@@ -201,12 +205,6 @@ bindkey "\\ep" history-beginning-search-backward-end
 bindkey "\\en" history-beginning-search-forward-end
 bindkey "^r" history-incremental-search-backward
 
-if [ -z $SSH_CLIENT ]; then
-  # ^J is used to toggle IME
-  bindkey -s "^j" ""
-  bindkey -s "^F" ""
-fi
-
 # available multibyte characters
 setopt print_eight_bit
 setopt no_flow_control
@@ -216,10 +214,10 @@ HISTFILE=~/.zsh_history
 HISTSIZE=10000
 SAVEHIST=100000
 
-if [ $UID = 0 ]; then
-  unset HISTFILE
-  SAVEHIST=0
-fi
+# if [ $UID = 0 ]; then
+#   unset HISTFILE
+#   SAVEHIST=0
+# fi
 
 setopt hist_ignore_space # not save history, starts from space
 setopt hist_ignore_all_dups
@@ -315,11 +313,11 @@ fi
 ## tmux
 if [ -z $SSH_CLIENT ]; then
   if [[ -x `which tmux` && $SHLVL = 1 ]]; then
-    tmux attach || tmux
+    tmux attach || tmux new-session -s default
   fi
+  [ -n $TMUX ] && tmux rename-window -t 0 '(^3^)'
 fi
 
-[ -n $TMUX ] && tmux rename-window -t 0 '(^3^)'
 
 if [ -f ~/.zsh.local ]; then
   source ~/.zsh.local
