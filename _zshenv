@@ -39,12 +39,20 @@ ruby_path=(
   ./lib(N-/)
 )
 
+## Perl
+typeset -xT PERL5LIB perl5_lib
+typeset -U perl5_lib
+
+perl5_lib=(
+  $HOME/perl5(N-/)
+)
+
 ## Python
 typeset -xT PYTHONPATH python_path
 typeset -U python_path
 
 python_path=(
-  /usr/local/lib/python2.7/site-packages
+/usr/local/lib/python2.7/site-packages(N-/)
 )
 
 ## Clojure
