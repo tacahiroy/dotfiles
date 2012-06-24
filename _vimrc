@@ -266,15 +266,41 @@ nnoremap <C-t> <C-t>zz
 
 nnoremap <silent> qj :cnext<Cr>
 nnoremap <silent> qk :cprevious<Cr>
-nnoremap <silent> <Space>n :bnext<Cr>
-nnoremap <silent> <Space>N :bprevious<Cr>
+nnoremap <silent> qh :bnext<Cr>
+nnoremap <silent> ql :bprevious<Cr>
 
 nnoremap s <Nop>
 nnoremap q <Nop>
 nnoremap Q q
 
-nnoremap <silent> <Space>o :<C-u>cwindow<Cr>
-nnoremap <silent> <Space>O :<C-u>cclose<Cr>
+nnoremap <silent> qo :<C-u>silent call <SID>toggle_qf_list()<Cr>
+function! s:toggle_qf_list()
+  let bufs = s:redir('buffers')
+  let l = matchstr(split(bufs, '\n'), '[\t ]*\d\+[\t ]\+.\+[\t ]\+"\[Quickfix\ List\]"')
+
+  let winnr = -1
+  if !empty(l)
+    let bufnbr = matchstr(l, '[\t ]*\zs\d\+\ze[\t ]\+')
+    let winnr = bufwinnr(str2nr(bufnbr, 10))
+  endif
+
+  if !empty(getqflist())
+    if winnr == -1
+      copen
+    else
+      cclose
+    endif
+  endif
+endfunction
+
+function! s:redir(cmd)
+  redir => res
+  execute a:cmd 
+  redir END
+
+  return res
+endfunction
+
 nnoremap <silent> <Leader>A :let &mouse = empty(&mouse) ? 'a' : ''<Cr>
 nnoremap <silent> <Leader>P :set paste!<Cr>
 nnoremap <silent> <Leader>L :set list!<Cr>
@@ -492,6 +518,7 @@ augroup Tacahiroy
   autocmd FileType markdown inoremap <buffer> <Leader>h1 <Esc>10i=<Esc>^
                          \| inoremap <buffer> <Leader>h2 <Esc>10i-<Esc>^
                          \| inoremap <buffer> <Leader>hr <Esc>i- - -<Esc>^
+  autocmd FileType markdown setlocal autoindent
 
   " only for the WinMerge document translation project
   function! s:moveToSegment(is_prev)
@@ -503,7 +530,11 @@ augroup Tacahiroy
   autocmd FileType xml noremap  <silent> <buffer> <Leader>a :call <SID>runTidy(80)<Cr>
   autocmd BufRead,BufEnter *.xml set updatetime=1000
   autocmd BufLeave,BufWinLeave *.xml set updatetime&
+
 augroup END
+
+syn match ExtraSpaces '[\t ]\+$'
+hi def link ExtraSpaces Error
 
 "}}}
 
@@ -598,16 +629,17 @@ let g:loga_delimiter = '=3'
 map <Space>a <Plug>(loga-lookup)
 imap <Leader>v <Plug>(loga-insert-delimiter)
 
-" plug: bestfriend.vim
-let g:bestfriend_accept_path_pattern = '^~/\%(\..\+$\|Projects\)'
-let g:bestfriend_ignore_path_pattern = '\(/a\+\.\w\+$\|/\.git/\|tags\|tags-.+\|NERD_tree_.\+$\)'
-let g:bestfriend_is_sort_base_today = 1
-let g:bestfriend_is_display_zero = 1
-let g:bestfriend_is_debug = 0
-let g:bestfriend_display_limit = 15
-let g:bestfriend_observe_cursor_position = 1
+" plug: timetap.vim
+let g:timetap_accept_path_pattern = '^~/\%(\..\+$\|Projects\)'
+let g:timetap_ignore_path_pattern = '\(/a\+\.\w\+$\|/\.git/\|tags\|tags-.+\|NERD_tree_.\+$\)'
+let g:timetap_is_sort_base_today = 1
+let g:timetap_is_display_zero = 1
+let g:timetap_is_debug = 0
+let g:timetap_display_limit = 15
+let g:timetap_observe_cursor_position = 1
 nnoremap ,tt :<C-u>TimeTap<Cr>
 nnoremap ,ta :<C-u>TimeTapCurrentProject<Cr>
+nnoremap ,tp :<C-u>TimeTapProject<Cr>
 "}}}
 
 if has('multi_byte_ime') || has('xim')
