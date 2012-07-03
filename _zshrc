@@ -310,6 +310,10 @@ if [[ -x `which rbenv` ]]; then
   eval "$(rbenv init -)"
 fi
 
+if [ -f ~/.zsh.local ]; then
+  source ~/.zsh.local
+fi
+
 ## tmux
 if [ -z $SSH_CLIENT ]; then
   if [[ -x `which tmux` && $SHLVL = 1 ]]; then
@@ -318,10 +322,6 @@ if [ -z $SSH_CLIENT ]; then
   [ -n $TMUX ] && tmux rename-window -t 0 '(^3^)'
 fi
 
-
-if [ -f ~/.zsh.local ]; then
-  source ~/.zsh.local
-fi
 
 # __END__
 # vim: et ts=2 sts=2 sw=2
