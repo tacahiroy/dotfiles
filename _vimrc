@@ -34,6 +34,7 @@ Bundle 'Align'
 Bundle 'camelcasemotion'
 " Bundle 'increment_new.vim'
 Bundle 'altercation/vim-colors-solarized'
+Bundle 'tyru/open-browser.vim'
 
 filetype plugin indent on
 "}}}
@@ -625,6 +626,11 @@ let g:prd_fontList .= ',VL_ゴシック:h10:cDEFAULT'
 let g:prd_fontList .= ',Takaoゴシック:h10:cDEFAULT'
 let g:prd_fontList .= ',Takao明朝:h10:cDEFAULT'
 let g:prd_fontList .= ',ＭＳ_明朝:h10:cDEFAULT'
+
+" plug: openbrowser.vim
+let g:netrw_nogx = 1
+nmap gx <Plug>(openbrowser-smart-search)
+vmap gx <Plug>(openbrowser-smart-search)
 
 " plug: loga.vim
 let g:loga_executable = system('which loga')
