@@ -38,6 +38,10 @@ Bundle 'altercation/vim-colors-solarized'
 filetype plugin indent on
 "}}}
 
+if $PATH !~# expand('$HOME/.rbenv/shims')
+  let $PATH = expand('$HOME/.rbenv/shims:$PATH')
+endif
+
 set cpo&vim
 
 autocmd!
