@@ -30,7 +30,8 @@ colorscheme seashell
 
 if has('macunix')
   " set guifont=Monaco:h12
-  set guifont=Menlo\ Regular:h12
+  " set guifont=Menlo\ Regular:h12
+  set guifont=Migu\ 2M\ Regular:h13
   set antialias
 
   set fuoptions& fuoptions+=maxhorz
