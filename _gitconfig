@@ -8,8 +8,8 @@
 	status = auto
 	interactive = auto
 [core]
-	editor = /usr/bin/vim
-	pager = lv
+	editor = $EDITOR
+	pager = $PAGER
 	excludesfile = ~/.gitmine/gitignore
 
 [alias]
