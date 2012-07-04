@@ -130,7 +130,7 @@ case ${UID} in
     PROMPT="%{${fg[cyan]}%}%n%{${reset_color}%}@%{${fg[yellow]}%}%m%{${reset_color}%}:${PROMPT}"
 
   [ -n "$SSH_CONNECTION" ] &&
-      RPROMPT="%{${fg[blue]}%}$(date +%H:%M)%{${reset_color}%}"
+      RPROMPT="%{${fg[blue]}%}%2v%{${reset_color}%}"
   ;;
 *)
   PROMPT="%{${fg[red]}%}%/%{${reset_color}%}${fg[green]}%1v${reset_color}
@@ -140,7 +140,7 @@ case ${UID} in
 
   # RPROMPT="%{${fg[red]}%}%2v%{${reset_color}%}"
   [ -n "$SSH_CONNECTION" ] &&
-      RPROMPT="%{${fg[blue]}%}$(date +%H:%M)%{${reset_color}%}"
+      RPROMPT="%{${fg[blue]}%}%2v%{${reset_color}%}"
 
   [ -n "${REMOTEHOST}${SSH_CONNECTION}" ] &&
       PROMPT="%{${fg[magenta]}%}%n%{${reset_color}%}@%{${fg[yellow]}%}%m%{${reset_color}%}:${PROMPT}"
