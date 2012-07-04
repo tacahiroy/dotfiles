@@ -18,7 +18,11 @@ else
   export PAGER='less'
 fi
 
-export EDITOR='vim'
+if [ -x /Applications/MacVim.app/Contents/MacOS/Vim ]; then
+  export EDITOR='/Applications/MacVim.app/Contents/MacOS/Vim'
+else
+  export EDITOR='vim'
+fi
 
 ## path
 typeset -U path
@@ -69,4 +73,8 @@ export LEIN_JAR=$HOME/.lein/self-installs/leiningen-1.7.1-standalone.jar
 export CLOJURE_JAR=/usr/local/Cellar/clojure/1.4.0/clojure-1.4.0.jar
 
 export NODE_PATH=/usr/local/lib/node_modules
+
+if [ -f ~/.zsh.local ]; then
+  source ~/.zsh.local
+fi
 
