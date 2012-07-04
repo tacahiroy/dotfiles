@@ -23,7 +23,7 @@ Bundle 'scrooloose/nerdtree'
 Bundle 'vim-ruby/vim-ruby'
 Bundle 'tpope/vim-rails'
 " Bundle 'kchmck/vim-coffee-script'
-" Bundle 'jiangmiao/simple-javascript-indenter'
+Bundle 'jiangmiao/simple-javascript-indenter'
 Bundle 'avakhov/vim-yaml'
 Bundle 'bbommarito/vim-slim'
 Bundle 'tpope/vim-markdown'
@@ -596,6 +596,7 @@ noremap <Space>fx :CtrlPMixed<Cr>
 noremap <Space>fk :CtrlPBookmarkDir<Cr>
 noremap <Space>ft :CtrlPBufTag<Cr>
 noremap <Space>fT :CtrlPBufTagAll<Cr>
+noremap <Space>fo :execute 'CtrlP ' . $chef . '/cookbooks/_default'<Cr>
 
 command! CtrlPFunky call ctrlp#init(ctrlp#funky#id())
 noremap <Space>fu :CtrlPFunky<Cr>
