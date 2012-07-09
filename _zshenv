@@ -74,6 +74,10 @@ export CLOJURE_JAR=/usr/local/Cellar/clojure/1.4.0/clojure-1.4.0.jar
 
 export NODE_PATH=/usr/local/lib/node_modules
 
+if [[ -x `which rbenv` ]]; then
+  eval "$(rbenv init -)"
+fi
+
 if [ -f ~/.zsh.local ]; then
   source ~/.zsh.local
 fi

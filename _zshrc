@@ -240,8 +240,8 @@ setopt complete_aliases # aliased ls needs if file/dir completions work
 
 case "${OSTYPE}" in
   freebsd*|darwin*)
-    alias vim='/Applications/MacVim.app/Contents/MacOS/Vim '$@""
-    alias gvim='open -a /Applications/MacVim.app '$@""
+    alias vim='~/Applications/MacVim.app/Contents/MacOS/Vim '$@""
+    alias gvim='/usr/local/bin/mvim --remote-tab-silent '$@""
     alias ls='gls -F --color'
     ;;
   *)
@@ -311,10 +311,6 @@ bindkey '^\^' cdup
 ## Completion configuration
 autoload -Uz compinit
 compinit
-
-if [[ -x `which rbenv` ]]; then
-  eval "$(rbenv init -)"
-fi
 
 ## tmux
 if [ -z $SSH_CLIENT ]; then
