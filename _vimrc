@@ -130,8 +130,11 @@ set helplang=en,ja
 set hidden
 set history=10000
 set hlsearch
+set infercase
 set ignorecase
 set incsearch
+set nojoinspaces
+set keywordprg=:help
 set linebreak
 set linespace=0
 set nolist
@@ -154,6 +157,7 @@ set scroll=0
 set shellslash
 set shiftround
 set showbreak=>\ 
+set showcmd
 set showfulltag
 set showmatch matchtime=1
 set showtabline=1
@@ -164,13 +168,15 @@ set spelllang=en
 set swapfile directory=$DOTVIM/swaps
 set switchbuf=useopen,usetab
 set synmaxcol=300
-set tags=./tags,tags;
+if has('path_extra')
+  set tags=tags,./tags,**5/tags,tags;/Projects
+endif
 set title
 set titlestring=Vim:\ %F\ %h%r%m
 set titlelen=255
 set tabstop=2 shiftwidth=2 softtabstop=2
 set viminfo='64,<100,s10,n~/.viminfo
-set virtualedit=block
+set virtualedit=block,onemore
 set visualbell
 set wildignore=*.exe,*.dll,*.class,*.o,*.obj
 set wildmenu
@@ -481,6 +487,11 @@ augroup Tacahiroy
   autocmd BufRead,BufNewFile *.ru,Gemfile,Guardfile set filetype=ruby
   autocmd BufRead,BufNewFile ?zshrc,?zshenv set filetype=zsh
 
+  augroup PersistentUndo
+    autocmd BufWritePre COMMIT_EDITMSG setlocal noundofile
+    autocmd BufWritePre *.bak *.bac setlocal noundofile
+  augroup END
+
   autocmd User Rails nnoremap <buffer> <Space>r :<C-u>R
 
   autocmd FileType mail setlocal spell
@@ -491,6 +502,7 @@ augroup Tacahiroy
 
   autocmd FileType rspec compiler rspec
   autocmd FileType rspec setlocal omnifunc=rubycomplete#Complete
+  autocmd FileType *ruby,rspec :execute 'setlocal iskeyword+=' . char2nr('?')
 
   autocmd FileType vim,snippet setlocal tabstop=2 shiftwidth=2 softtabstop=2
 
@@ -513,6 +525,9 @@ augroup Tacahiroy
     autocmd FileType javascript*,*html setlocal errorformat=%f(%l):\ %m
   endif
 
+  autocmd BufRead knife-edit-*.js set filetype=javascript.json
+  autocmd FileType javascript.json setlocal makeprg=ruby\ $HOME/bin/jsonv.rb\ %
+
   autocmd Filetype c set tabstop=4 softtabstop=4 shiftwidth=4
   autocmd Filetype c compiler gcc
   autocmd FileType c setlocal makeprg=gcc\ -Wall\ %\ -o\ %:r.o
@@ -520,6 +535,9 @@ augroup Tacahiroy
 
   autocmd FileType markdown inoremap <buffer> <Leader>h1 <Esc>10i=<Esc>^
                          \| inoremap <buffer> <Leader>h2 <Esc>10i-<Esc>^
+                         \| inoremap <buffer> <Leader>h3 <Esc>I### 
+                         \| inoremap <buffer> <Leader>h4 <Esc>I#### 
+                         \| inoremap <buffer> <Leader>h5 <Esc>I##### 
                          \| inoremap <buffer> <Leader>hr <Esc>i- - -<Esc>^
   autocmd FileType markdown setlocal autoindent
 
