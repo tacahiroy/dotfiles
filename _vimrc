@@ -693,7 +693,9 @@ function! s:upload_cookbook(...)
 
   let m = matchlist(path, '^\(.\+/cookbooks/_default\)/\([^/]\+\)/')
   let cb_path = m[1]
-  call insert(cookbooks, m[2])
+  if index(cookbooks, m[2]) == -1
+    call insert(cookbooks, m[2])
+  endif
 
   if 0 < len(cookbooks)
     let cookbooks = filter(cookbooks, 'isdirectory(cb_path."/".v:val)')
@@ -703,7 +705,8 @@ function! s:upload_cookbook(...)
     echoerr 'no cookbooks are found.'
   endif
 endfunction
-command! -nargs=* CookbookUpload call s:upload_cookbook(<f-args>)
+command! -nargs=* CCookbookUpload call s:upload_cookbook(<f-args>)
+nnoremap <Space>U :<C-u>CCookbookUpload<Cr>
 " }}}
 
 if filereadable(expand('~/.vimrc.mine'))
