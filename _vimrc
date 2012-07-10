@@ -14,7 +14,7 @@ Bundle 'kien/ctrlp.vim'
 Bundle 'tpope/vim-surround'
 Bundle 'tpope/vim-fugitive'
 Bundle 'tpope/vim-commentary'
-Bundle 'msanders/snipmate.vim'
+" Bundle 'msanders/snipmate.vim'
 Bundle 'tacahiroy/vim-endwise'
 Bundle 'glidenote/memolist.vim'
 Bundle 'thinca/vim-quickrun'
@@ -35,13 +35,10 @@ Bundle 'camelcasemotion'
 " Bundle 'increment_new.vim'
 Bundle 'altercation/vim-colors-solarized'
 Bundle 'tyru/open-browser.vim'
+" Bundle 'xolox/vim-easytags'
 
 filetype plugin indent on
 "}}}
-
-if $PATH !~# expand('$HOME/.rbenv/shims')
-  let $PATH = expand('$HOME/.rbenv/shims:$PATH')
-endif
 
 set cpo&vim
 
@@ -59,7 +56,7 @@ if isdirectory(expand('$DOTVIM/sandbox'))
   let dirs = split(glob($DOTVIM.'/sandbox/*'))
   for d in dirs
     execute ':set runtimepath+=' . d
-    if d =~# 'doc$'
+    if d =~# '/doc$'
       execute ':helptags ' . d
     endif
   endfor
@@ -317,6 +314,7 @@ xmap <Space>c <Plug>Commentary
 " surround.vim
 let g:surround_{char2nr('k')} = "「\r」"
 let g:surround_{char2nr('K')} = "『\r』"
+xmap c <Plug>VSurround
 
 " camelcasemotion
 map <silent> w <plug>CamelCaseMotion_w
@@ -566,7 +564,7 @@ let g:ctrlp_user_command = {
         \ 1: ['.git/', 'cd %s && git ls-files'],
         \ 2: ['.hg/', 'hg --cwd %s locate -I .'],
         \ 3: ['.svn/', 'svn ls file://%s'],
-      \ },
+      \ }
 \ }
 
 let g:ctrlp_prompt_mappings = {
@@ -588,15 +586,15 @@ let g:ctrlp_custom_ignore = {
   \ 'file': '\.exe$\|\.so$\|\.dll$\|\.DS_Store$',
   \ }
 
-noremap <Space>fb :CtrlPBuffer<Cr>
+noremap <Space>ls :CtrlPBuffer<Cr>
 noremap <Space>fd :CtrlPCurWD<Cr>
 noremap <Space>fm :CtrlPMRU<Cr>
 noremap <Space>fl :CtrlPLine<Cr>
-noremap <Space>fx :CtrlPMixed<Cr>
 noremap <Space>fk :CtrlPBookmarkDir<Cr>
 noremap <Space>ft :CtrlPBufTag<Cr>
 noremap <Space>fT :CtrlPBufTagAll<Cr>
 noremap <Space>fo :execute 'CtrlP ' . $chef . '/cookbooks/_default'<Cr>
+noremap <Space>fw :execute 'CtrlP ' . getcwd()<Cr>
 
 command! CtrlPFunky call ctrlp#init(ctrlp#funky#id())
 noremap <Space>fu :CtrlPFunky<Cr>
