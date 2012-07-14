@@ -30,7 +30,8 @@ Bundle 'tpope/vim-markdown'
 Bundle 'mattn/zencoding-vim'
 Bundle 'matchit.zip'
 " Bundle 'IndentAnything'
-Bundle 'Align'
+Bundle 'godlygeek/tabular'
+" Bundle 'Align'
 Bundle 'camelcasemotion'
 " Bundle 'increment_new.vim'
 Bundle 'altercation/vim-colors-solarized'
@@ -303,7 +304,7 @@ endfunction
 
 function! s:redir(cmd)
   redir => res
-  execute a:cmd 
+  execute a:cmd
   redir END
 
   return res
@@ -498,7 +499,7 @@ augroup Tacahiroy
   autocmd FileType mail setlocal spell
   autocmd FileType slim setlocal makeprg=slimrb\ -c\ %
 
-  autocmd FileType help,qf,logaling nnoremap <buffer> <silent> qq <C-w>c
+  autocmd FileType help,qf,logaling,ref-* nnoremap <buffer> <silent> qq <C-w>c
   autocmd FileType javascript* setlocal omnifunc=javascriptcomplete#CompleteJS
 
   autocmd FileType rspec compiler rspec
@@ -553,11 +554,9 @@ augroup Tacahiroy
   autocmd BufRead,BufEnter *.xml set updatetime=1000
   autocmd BufLeave,BufWinLeave *.xml set updatetime&
 
+  autocmd BufRead,BufNewFile * syn match ExtraSpaces '[\t ]\+$'
+  hi def link ExtraSpaces Error
 augroup END
-
-syn match ExtraSpaces '[\t ]\+$'
-hi def link ExtraSpaces Error
-
 "}}}
 
 
@@ -601,7 +600,7 @@ let g:ctrlp_prompt_mappings = {
 let g:ctrlp_extensions = ['tag', 'buffertag', 'dir', 'mixed', 'line', 'funky']
 
 let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\.git$\|\.hg$\|\.svn$\|\.vimundo$\|\.ctrlp_cache/\|\.rbenv/\|\.gem/',
+  \ 'dir':  '\.git$\|\.hg$\|\.svn$\|\.vimundo$\|\.ctrlp_cache/\|\.rbenv/\|\.gem/\|backup$',
   \ 'file': '\.exe$\|\.so$\|\.dll$\|\.DS_Store$',
   \ }
 
