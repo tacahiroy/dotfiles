@@ -404,6 +404,8 @@ cnoremap <silent> <C-j> <Nop>
 vnoremap * y/<C-R>"<Cr>
 vnoremap < <gv
 vnoremap > >gv
+vnoremap <C-k> :m-2<Cr>gv
+vnoremap <C-j> :m+1<Cr>gv
 
 if executable('tidyp')
   function! s:runTidy(col) range
