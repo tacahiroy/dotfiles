@@ -10,33 +10,33 @@ call vundle#rc()
 
 Bundle 'gmarik/vundle'
 
-Bundle 'kien/ctrlp.vim'
-Bundle 'tpope/vim-surround'
-Bundle 'tpope/vim-fugitive'
-Bundle 'tpope/vim-commentary'
-" Bundle 'msanders/snipmate.vim'
-Bundle 'tacahiroy/vim-endwise'
-Bundle 'glidenote/memolist.vim'
-Bundle 'thinca/vim-quickrun'
-Bundle 'thinca/vim-ref'
-Bundle 'scrooloose/nerdtree'
-Bundle 'vim-ruby/vim-ruby'
-Bundle 'tpope/vim-rails'
-" Bundle 'kchmck/vim-coffee-script'
-Bundle 'jiangmiao/simple-javascript-indenter'
+" Bundle 'altercation/vim-colors-solarized'
 Bundle 'avakhov/vim-yaml'
-Bundle 'bbommarito/vim-slim'
-Bundle 'tpope/vim-markdown'
-Bundle 'mattn/zencoding-vim'
-Bundle 'matchit.zip'
-" Bundle 'IndentAnything'
+" Bundle 'bbommarito/vim-slim'
+Bundle 'glidenote/memolist.vim'
 Bundle 'godlygeek/tabular'
+Bundle 'jiangmiao/simple-javascript-indenter'
+" Bundle 'kchmck/vim-coffee-script'
+Bundle 'kien/ctrlp.vim'
+Bundle 'mattn/zencoding-vim'
+" Bundle 'msanders/snipmate.vim'
+Bundle 'scrooloose/nerdtree'
+Bundle 'tacahiroy/vim-endwise'
+" Bundle 'thinca/vim-quickrun'
+Bundle 'thinca/vim-ref'
+Bundle 'tpope/vim-commentary'
+Bundle 'tpope/vim-fugitive'
+Bundle 'tpope/vim-markdown'
+" Bundle 'tpope/vim-rails'
+Bundle 'tpope/vim-surround'
+Bundle 'tyru/open-browser.vim'
+Bundle 'vim-ruby/vim-ruby'
+
 " Bundle 'Align'
+" Bundle 'IndentAnything'
 Bundle 'camelcasemotion'
 " Bundle 'increment_new.vim'
-Bundle 'altercation/vim-colors-solarized'
-Bundle 'tyru/open-browser.vim'
-" Bundle 'xolox/vim-easytags'
+Bundle 'matchit.zip'
 
 filetype plugin indent on
 "}}}
@@ -45,6 +45,8 @@ set cpo&vim
 
 autocmd!
 
+let g:mapleader = ','
+
 if isdirectory($HOME . '/.vim')
   let $DOTVIM = $HOME . '/.vim'
 else
@@ -52,7 +54,7 @@ else
   let $DOTVIM = $HOME . '/vimfiles'
 endif
 
-" self pathogen
+" likes pathogen?
 if isdirectory(expand('$DOTVIM/sandbox'))
   let dirs = split(glob($DOTVIM.'/sandbox/*'))
   for d in dirs
@@ -66,16 +68,16 @@ endif
 set nocompatible
 set verbose=0
 
-" * functions "{{{1
-" convert path separator "{{{
+" * functions "{{{
+" convert path separator
 " unix <-> dos
 function! Cps(path, sep)
   return substitute(a:path, '[/\\]', a:sep, 'g')
-endfunction "}}}
+endfunction
 
 
 " tag information show in command window
-function! s:previewTagLight(word)
+function! s:previewTagLite(word)
   let t = taglist('^' . a:word . '$')
   let current = expand('%:t')
 
@@ -120,7 +122,6 @@ set backupext=.bac
 set backupdir=$DOTVIM/backups
 set backupskip& backupskip+=/tmp/*,/private/tmp/*,*.bac,COMMIT_EDITMSG,hg-editor-*.txt,svn-commit.[0-9]*.tmp
 set cedit=
-" set clipboard& clipboard+=unnamed
 set cmdheight=2
 set colorcolumn=80
 set noequalalways
@@ -139,7 +140,7 @@ set keywordprg=:help
 set linebreak
 set linespace=0
 set nolist
-set listchars=tab:>-,trail:-,extends:>,precedes:<,eol:<
+set listchars=tab:>-,trail:-,extends:>,precedes:<
 set laststatus=2
 set lazyredraw
 set modeline
@@ -169,9 +170,7 @@ set spelllang=en
 set swapfile directory=$DOTVIM/swaps
 set switchbuf=useopen,usetab
 set synmaxcol=300
-if has('path_extra')
-  set tags=tags,./tags,**5/tags,tags;/Projects
-endif
+set tags=tags,./tags,**3/tags,tags;/Projects
 set title
 set titlestring=Vim:\ %F\ %h%r%m
 set titlelen=255
@@ -210,8 +209,10 @@ let &statusline .= '%{&filetype}:'
 let &statusline .= '%{(&l:fileencoding != "" ? &l:fileencoding : &encoding).":".&fileformat}'
 let &statusline .= '(%{&expandtab ? "" : ">"}%{&l:tabstop}'
 let &statusline .= '%{search("\\t", "cnw") ? "<" : ""})'
-let &statusline .= '%{&mouse}'
-let &statusline .= '%{(&paste ? "p" : "")} '
+let &statusline .= '%{(empty(&mouse) ? "" : "m")}'
+let &statusline .= '%{(&paste ? "p" : "")}'
+let &statusline .= '%{(&list ? "l" : "")}'
+let &statusline .= '%{(empty(&clipboard) ? "" : "c")} '
 let &statusline .= '%#Function#%{fugitive#statusline()}%*'
 let &statusline .= ' %=%{ImHere()}'
 let &statusline .= '%-12( %l/%LL,%c %)%P'
@@ -269,7 +270,8 @@ nnoremap j gj
 nnoremap k gk
 nnoremap vv <C-v>
 nnoremap vV ^vg_
-nnoremap v4 vg_
+nnoremap vo vg_
+nnoremap <Return> :<C-u>call append(line('.'), '')<Cr>
 nnoremap <C-]> <C-]>zz
 nnoremap <C-t> <C-t>zz
 
@@ -310,9 +312,11 @@ function! s:redir(cmd)
   return res
 endfunction
 
-nnoremap <silent> <Leader>A :let &mouse = empty(&mouse) ? 'a' : ''<Cr>
+nnoremap <silent> <Leader>M :let &mouse = empty(&mouse) ? 'a' : ''<Cr>
 nnoremap <silent> <Leader>P :set paste!<Cr>
 nnoremap <silent> <Leader>L :set list!<Cr>
+nnoremap <silent> <Leader>C :let &clipboard =
+      \ empty(&clipboard) ? 'unnamed,unnamedplus' : ''<Cr>
 
 " commentary.vim
 nmap <Space>c <Plug>CommentaryLine
@@ -466,7 +470,7 @@ augroup Tacahiroy
         endif
 
         let dir = '/'.join(dirs[0:idx], '/')
-        let files = ['Gemfile', 'Rakefile', 'README.md', 'README.markdown', 'README.rdoc']
+        let files = ['Gemfile', 'Rakefile', 'README.mkd', 'README.md', 'README.markdown', 'README.rdoc']
         for f in files
           if filereadable(dir.'/'.f)
             return dir
@@ -509,6 +513,7 @@ augroup Tacahiroy
   autocmd FileType *ruby,rspec :execute 'setlocal iskeyword+=' . char2nr('?')
 
   autocmd FileType vim,snippet setlocal tabstop=2 shiftwidth=2 softtabstop=2
+  autocmd FileType vim :execute 'setlocal iskeyword+=' . char2nr(':')
 
   autocmd FileType html,xhtml,xml,xslt,mathml,svg setlocal tabstop=2 shiftwidth=2 softtabstop=2
 
@@ -544,6 +549,17 @@ augroup Tacahiroy
                          \| inoremap <buffer> <Leader>h5 <Esc>I##### 
                          \| inoremap <buffer> <Leader>hr <Esc>i- - -<Esc>^
   autocmd FileType markdown setlocal autoindent
+
+  " easy way
+  if executable('markdown')
+    autocmd FileType markdown nnoremap <buffer> <Leader>r :<C-u>call <SID>md_preview_by_browser(expand('%'))<Cr>
+    function! s:md_preview_by_browser(f)
+      let tmp = '/tmp/vimmarkdown.html'
+      call system('markdown ' . a:f . ' > ' . tmp)
+      call system('open ' . tmp)
+    endfunction
+  endif
+
 
   " only for the WinMerge document translation project
   function! s:moveToSegment(is_prev)
@@ -599,25 +615,24 @@ let g:ctrlp_prompt_mappings = {
   \ 'CreateNewFile()':      ['<C-y>'],
   \ }
 
-let g:ctrlp_extensions = ['tag', 'buffertag', 'dir', 'mixed', 'line', 'funky']
+let g:ctrlp_extensions = ['line', 'buffertag', 'dir', 'mixed', 'funky']
 
 let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\.git$\|\.hg$\|\.svn$\|\.vimundo$\|\.ctrlp_cache/\|\.rbenv/\|\.gem/\|backup$',
+  \ 'dir':  '\.git$\|\.hg$\|\.svn$\|\.vimundo$\|\.ctrlp_cache/\|\.rbenv/\|\.gem/\|backup$\|Downloads$',
   \ 'file': '\.exe$\|\.so$\|\.dll$\|\.DS_Store$',
   \ }
 
-noremap <Space>ls :CtrlPBuffer<Cr>
-noremap <Space>fd :CtrlPCurWD<Cr>
-noremap <Space>fm :CtrlPMRU<Cr>
-noremap <Space>fl :CtrlPLine<Cr>
-noremap <Space>fk :CtrlPBookmarkDir<Cr>
-noremap <Space>ft :CtrlPBufTag<Cr>
-noremap <Space>fT :CtrlPBufTagAll<Cr>
-noremap <Space>fo :execute 'CtrlP ' . $chef . '/cookbooks/_default'<Cr>
-noremap <Space>fw :execute 'CtrlP ' . getcwd()<Cr>
+nnoremap <Space>ls :CtrlPBuffer<Cr>
+nnoremap <Space>fd :CtrlPCurWD<Cr>
+nnoremap <Space>fm :CtrlPMRU<Cr>
+nnoremap <Space>fl :CtrlPLine<Cr>
+nnoremap <Space>fk :CtrlPBookmarkDir<Cr>
+nnoremap <Space>ft :CtrlPBufTag<Cr>
+nnoremap <Space>fT :CtrlPBufTagAll<Cr>
+nnoremap <Space>fo :execute 'CtrlP ' . $chef . '/cookbooks/_default'<Cr>
+nnoremap <Space>fw :execute 'CtrlP ' . getcwd()<Cr>
 
-command! CtrlPFunky call ctrlp#init(ctrlp#funky#id())
-noremap <Space>fu :CtrlPFunky<Cr>
+nnoremap <Space>fu :CtrlPFunky<Cr>
 "}}}
 
 " plug: memolist.vim " {{{
@@ -666,9 +681,9 @@ let g:timetap_is_display_zero = 1
 let g:timetap_is_debug = 0
 let g:timetap_display_limit = 15
 let g:timetap_observe_cursor_position = 1
-nnoremap ,tt :<C-u>TimeTap<Cr>
-nnoremap ,ta :<C-u>TimeTapCurrentProject<Cr>
-nnoremap ,tp :<C-u>TimeTapProject<Cr>
+nnoremap <Leader>tt :<C-u>TimeTap<Cr>
+nnoremap <Leader>ta :<C-u>TimeTapCurrentProject<Cr>
+nnoremap <Leader>tp :<C-u>TimeTapProject<Cr>
 "}}}
 
 if has('multi_byte_ime') || has('xim')
