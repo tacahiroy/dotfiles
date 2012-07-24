@@ -240,8 +240,8 @@ setopt complete_aliases # aliased ls needs if file/dir completions work
 
 case "${OSTYPE}" in
   freebsd*|darwin*)
-    alias vim='~/Applications/MacVim.app/Contents/MacOS/Vim '$@""
-    alias gvim='/usr/local/bin/mvim --remote-tab-silent '$@""
+    alias vim="$EDITOR "$@""
+    alias gvim="$EDITOR -g --remote-tab "$@""
     alias ls='gls -F --color'
     ;;
   *)
