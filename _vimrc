@@ -701,7 +701,7 @@ command! Big wincmd _ | wincmd |
 " Chef
 function! s:upload_cookbook(...)
   let path = expand('%:p')
-  if path !~# '/cookbooks/_default/.\+'
+  if path !~# '/cookbooks/[^/]\+/.\+'
     return
   endif
 
@@ -710,7 +710,7 @@ function! s:upload_cookbook(...)
     let cookbooks = deepcopy(a:000)
   endif
 
-  let m = matchlist(path, '^\(.\+/cookbooks/_default\)/\([^/]\+\)/')
+  let m = matchlist(path, '^\(.\+/cookbooks/[^/]\+\)/\([^/]\+\)/')
   let cb_path = m[1]
   if index(cookbooks, m[2]) == -1
     call insert(cookbooks, m[2])
