@@ -365,7 +365,7 @@ nnoremap <silent> <Space>g_ :<C-u>edit $MYGVIMRC<Cr>
 nnoremap <Space>S :<C-u>source %<Cr>
 
 nnoremap <Space>TT :<C-u>NERDTreeToggle<Cr>
-nnoremap <Space>Tf :<C-u>NERDTreeFind<Cr>
+nnoremap <Space>Tf :<C-u>NERDTreeFind<Cr><C-w><C-w>
 
 nnoremap <silent> <Esc><Esc> <Esc>:<C-u>nohlsearch<Cr>
 
