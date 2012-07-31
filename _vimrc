@@ -8,8 +8,6 @@ filetype off
 set runtimepath& runtimepath+=~/.vim/bundle/vundle
 call vundle#rc()
 
-Bundle 'gmarik/vundle'
-
 " Bundle 'altercation/vim-colors-solarized'
 Bundle 'avakhov/vim-yaml'
 " Bundle 'bbommarito/vim-slim'
@@ -38,7 +36,7 @@ Bundle 'vim-ruby/vim-ruby'
 Bundle 'camelcasemotion'
 " Bundle 'increment_new.vim'
 Bundle 'matchit.zip'
-Bundle 'DrawIt'
+" Bundle 'DrawIt'
 
 filetype plugin indent on
 "}}}
