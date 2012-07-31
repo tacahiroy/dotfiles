@@ -363,7 +363,7 @@ nnoremap <silent> <Space>g_ :<C-u>edit $MYGVIMRC<Cr>
 nnoremap <Space>S :<C-u>source %<Cr>
 
 nnoremap <Space>TT :<C-u>NERDTreeToggle<Cr>
-nnoremap <Space>Tf :<C-u>NERDTreeFind<Cr><C-w><C-w>
+nnoremap <Space>Tf :<C-u>NERDTreeFind<Cr>zz<C-w><C-w>
 
 nnoremap <silent> <Esc><Esc> <Esc>:<C-u>nohlsearch<Cr>
 
@@ -408,8 +408,8 @@ cnoremap <silent> <C-j> <Nop>
 vnoremap * y/<C-R>"<Cr>
 vnoremap < <gv
 vnoremap > >gv
-vnoremap <C-k> :m-2<Cr>gv
-vnoremap <C-j> :m+1<Cr>gv
+vnoremap <Up> :m-2<Cr>==gv
+vnoremap <Down> :m+1<Cr>==gv
 
 if executable('tidyp')
   function! s:runTidy(col) range
