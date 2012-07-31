@@ -482,7 +482,7 @@ augroup Tacahiroy
       return a:dir
     endfunction "}}}
 
-    if expand('%') =~# '^fugitive://'
+    if expand('%') =~# '^\S\+://'
       return
     endif
 
