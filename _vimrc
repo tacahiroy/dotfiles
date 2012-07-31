@@ -617,8 +617,10 @@ let g:ctrlp_prompt_mappings = {
 
 let g:ctrlp_extensions = ['line', 'buffertag', 'dir', 'mixed', 'funky']
 
+let dir = ['\.git$', '\.hg$', '\.svn$', '\.vimundo$', '\.ctrlp_cache/',
+      \    '\.rbenv/', '\.gem/', 'backup$', 'Downloads$', $TMPDIR]
 let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\.git$\|\.hg$\|\.svn$\|\.vimundo$\|\.ctrlp_cache/\|\.rbenv/\|\.gem/\|backup$\|Downloads$',
+  \ 'dir': join(dir, '\|'),
   \ 'file': '\.exe$\|\.so$\|\.dll$\|\.DS_Store$',
   \ }
 
