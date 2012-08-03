@@ -408,8 +408,22 @@ cnoremap <silent> <C-j> <Nop>
 vnoremap * y/<C-R>"<Cr>
 vnoremap < <gv
 vnoremap > >gv
-vnoremap <Up> :m-2<Cr>==gv
-vnoremap <Down> :m+1<Cr>==gv
+vnoremap <Down> :call <SID>moveLines('d')<Cr>==gv
+vnoremap <Up> :call <SID>moveLines('u')<Cr>==gv
+
+function! s:moveLines(d) range
+  let cnt = a:lastline - a:firstline
+
+  if a:d ==# 'u'
+    let sign = '-'
+    let cnt = 2
+  else
+    let sign = '+'
+    let cnt += 1
+  endif
+
+  execute printf('%d,%dmove%s%d', a:firstline, a:lastline, sign, cnt)
+endfunction
 
 if executable('tidyp')
   function! s:runTidy(col) range
