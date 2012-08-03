@@ -5,7 +5,7 @@ scriptencoding utf-8
 
 " vundle plugin management "{{{
 filetype off
-set runtimepath& runtimepath+=~/.vim/bundle/vundle
+set runtimepath& runtimepath+=~/.vim/vundle.git
 call vundle#rc()
 
 " Bundle 'altercation/vim-colors-solarized'
