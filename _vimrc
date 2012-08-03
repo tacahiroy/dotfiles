@@ -715,17 +715,13 @@ command! Big wincmd _ | wincmd |
 
 " Chef
 if executable('knife')
-  function! s:upload_cookbook(...)
+  function! s:upload_cookbook(...) abort
     let path = expand('%:p')
     if path !~# '/cookbooks/[^/]\+/.\+'
       return
     endif
 
-    let cookbooks = []
-    if 0 < a:0
-      let cookbooks = deepcopy(a:000)
-    endif
-
+    let cookbooks = a:0 ? a:000 : []
     let m = matchlist(path, '^\(.\+/cookbooks/[^/]\+\)/\([^/]\+\)/')
     let cb_path = m[1]
     if index(cookbooks, m[2]) == -1
@@ -735,8 +731,11 @@ if executable('knife')
     if 0 < len(cookbooks)
       let cookbooks = filter(cookbooks, 'isdirectory(cb_path."/".v:val)')
       let mes = 'Uploading cookbook' . 1 < len(cookbooks) ? 's' : ''
+      let cmd = printf('knife cookbook upload -o %s %s', cb_path, join(cookbooks, ' '))
+
       echomsg printf('%s: %s', mes, join(cookbooks, ' '))
-      call s:tmux_run(printf('knife cookbook upload -o %s %s', cb_path, join(cookbooks, ' ')))
+
+      call s:tmux.run(cmd, 1)
     else
       echoerr 'no cookbooks are found.'
     endif
@@ -747,19 +746,35 @@ if executable('knife')
 endif
 
 " tmux: just send keys against tmux
-if executable('tmux')
-  function! s:tmux_run(cmd)
-    call system('tmux ls -F "#{session_name}:#{session_attached}" | grep :1')
-    if v:shell_error
-      echoerr 'tmux list-sessions failed.'
-      return
-    endif
+let s:tmux = {}
 
+function! s:tmux.is_installed()
+  call system('which tmux')
+  return v:shell_error == 0
+endfunction
+
+function! s:tmux.is_running()
+  call system('tmux ls -F "#{session_name}:#{session_attached}" | grep :1')
+  return v:shell_error == 0
+endfunction
+
+function! s:tmux.run(cmd, ...)
+  let run_in_vim = a:0 ? a:1 : 0
+
+  if self.is_running()
+    " echom printf('`tmux send "%s" Enter`', a:cmd)
     call system(printf('`tmux send "%s" Enter`', a:cmd))
-  endfunction
+  elseif run_in_vim
+    execute ':!' . a:cmd
+  else
+    echohl ErrorMsg | echo 'ERR: tmux is not running' | echohl NONE
+    return
+  endif
+endfunction
 
-  command! -nargs=+ TMRun call s:tmux_run(<q-args>)
-  nnoremap <Space>r :<C-u>TMRun 
+if s:tmux.is_installed()
+  command! -nargs=+ TMRun call s:tmux.run(<q-args>)
+  nnoremap <Space>r :<C-u>TMRun<Space>
 endif
 " }}}
 
