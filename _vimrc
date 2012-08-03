@@ -714,34 +714,39 @@ command! -nargs=1 -complete=buffer NTab :999tab sbuffer <args>
 command! Big wincmd _ | wincmd |
 
 " Chef
-function! s:upload_cookbook(...)
-  let path = expand('%:p')
-  if path !~# '/cookbooks/[^/]\+/.\+'
-    return
-  endif
+if executable('knife')
+  function! s:upload_cookbook(...)
+    let path = expand('%:p')
+    if path !~# '/cookbooks/[^/]\+/.\+'
+      return
+    endif
 
-  let cookbooks = []
-  if 0 < a:0
-    let cookbooks = deepcopy(a:000)
-  endif
+    let cookbooks = []
+    if 0 < a:0
+      let cookbooks = deepcopy(a:000)
+    endif
 
-  let m = matchlist(path, '^\(.\+/cookbooks/[^/]\+\)/\([^/]\+\)/')
-  let cb_path = m[1]
-  if index(cookbooks, m[2]) == -1
-    call insert(cookbooks, m[2])
-  endif
+    let m = matchlist(path, '^\(.\+/cookbooks/[^/]\+\)/\([^/]\+\)/')
+    let cb_path = m[1]
+    if index(cookbooks, m[2]) == -1
+      call insert(cookbooks, m[2])
+    endif
 
-  if 0 < len(cookbooks)
-    let cookbooks = filter(cookbooks, 'isdirectory(cb_path."/".v:val)')
-    echomsg printf('Uploading cookbooks: %s', join(cookbooks, ' '))
-    execute printf('!knife cookbook upload -o %s %s', cb_path, join(cookbooks, ' '))
-  else
-    echoerr 'no cookbooks are found.'
-  endif
-endfunction
-command! -nargs=* CCookbookUpload call s:upload_cookbook(<f-args>)
-nnoremap <Space>U :<C-u>CCookbookUpload<Cr>
+    if 0 < len(cookbooks)
+      let cookbooks = filter(cookbooks, 'isdirectory(cb_path."/".v:val)')
+      let mes = 'Uploading cookbook' . 1 < len(cookbooks) ? 's' : ''
+      echomsg printf('%s: %s', mes, join(cookbooks, ' '))
+      call s:tmux_run(printf('knife cookbook upload -o %s %s', cb_path, join(cookbooks, ' ')))
+    else
+      echoerr 'no cookbooks are found.'
+    endif
+  endfunction
+
+  command! -nargs=* CCookbookUpload call s:upload_cookbook(<f-args>)
+  nnoremap <Space>U :<C-u>CCookbookUpload<Cr>
+endif
 " }}}
+
 
 if filereadable(expand('~/.vimrc.mine'))
   source ~/.vimrc.mine
