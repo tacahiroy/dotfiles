@@ -745,6 +745,22 @@ if executable('knife')
   command! -nargs=* CCookbookUpload call s:upload_cookbook(<f-args>)
   nnoremap <Space>U :<C-u>CCookbookUpload<Cr>
 endif
+
+" tmux: just send keys against tmux
+if executable('tmux')
+  function! s:tmux_run(cmd)
+    call system('tmux ls -F "#{session_name}:#{session_attached}" | grep :1')
+    if v:shell_error
+      echoerr 'tmux list-sessions failed.'
+      return
+    endif
+
+    call system(printf('`tmux send "%s" Enter`', a:cmd))
+  endfunction
+
+  command! -nargs=+ TMRun call s:tmux_run(<q-args>)
+  nnoremap <Space>r :<C-u>TMRun 
+endif
 " }}}
 
 
