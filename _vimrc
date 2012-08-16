@@ -8,8 +8,7 @@ filetype off
 set runtimepath& runtimepath+=~/.vim/vundle.git
 call vundle#rc()
 
-" Bundle 'altercation/vim-colors-solarized'
-Bundle 'avakhov/vim-yaml'
+" Bundle 'avakhov/vim-yaml'
 " Bundle 'bbommarito/vim-slim'
 Bundle 'glidenote/memolist.vim'
 Bundle 'godlygeek/tabular'
@@ -36,7 +35,11 @@ Bundle 'vim-ruby/vim-ruby'
 Bundle 'camelcasemotion'
 " Bundle 'increment_new.vim'
 Bundle 'matchit.zip'
-" Bundle 'DrawIt'
+Bundle 'DrawIt'
+
+" it seems this has ftdetect problem
+" Bundle 'chrisbra/csv.vim'
+
 
 filetype plugin indent on
 "}}}
@@ -265,24 +268,26 @@ cnoremap <C-b> <Left>
 cnoremap <C-d> <Del>
 cnoremap <C-o> <C-d>
 
+nnoremap s <Nop>
+nnoremap q <Nop>
+nnoremap Q q
+
 nnoremap Y y$
 nnoremap j gj
 nnoremap k gk
 nnoremap vv <C-v>
-nnoremap vV ^vg_
 nnoremap vo vg_
+nnoremap vO ^vg_
 nnoremap <Return> :<C-u>call append(line('.'), '')<Cr>
 nnoremap <C-]> <C-]>zz
 nnoremap <C-t> <C-t>zz
+nnoremap * *N
+nnoremap # #N
 
 nnoremap <silent> qj :cnext<Cr>
 nnoremap <silent> qk :cprevious<Cr>
 nnoremap <silent> qh :bnext<Cr>
 nnoremap <silent> ql :bprevious<Cr>
-
-nnoremap s <Nop>
-nnoremap q <Nop>
-nnoremap Q q
 
 nnoremap <silent> qo :<C-u>silent call <SID>toggle_qf_list()<Cr>
 function! s:toggle_qf_list()
@@ -408,10 +413,10 @@ cnoremap <silent> <C-j> <Nop>
 vnoremap * y/<C-R>"<Cr>
 vnoremap < <gv
 vnoremap > >gv
-vnoremap <Down> :call <SID>moveLines('d')<Cr>==gv
-vnoremap <Up> :call <SID>moveLines('u')<Cr>==gv
+vnoremap <Down> :call <SID>moveBlock('d')<Cr>==gv
+vnoremap <Up> :call <SID>moveBlock('u')<Cr>==gv
 
-function! s:moveLines(d) range
+function! s:moveBlock(d) range
   let cnt = a:lastline - a:firstline
 
   if a:d ==# 'u'
@@ -516,18 +521,19 @@ augroup Tacahiroy
 
   autocmd User Rails nnoremap <buffer> <Space>r :<C-u>R
 
-  autocmd FileType mail setlocal spell
+  autocmd FileType mail set spell
   autocmd FileType slim setlocal makeprg=slimrb\ -c\ %
 
   autocmd FileType help,qf,logaling,ref-* nnoremap <buffer> <silent> qq <C-w>c
-  autocmd FileType javascript* setlocal omnifunc=javascriptcomplete#CompleteJS
+  autocmd FileType javascript* set omnifunc=javascriptcomplete#CompleteJS
 
   autocmd FileType rspec compiler rspec
-  autocmd FileType rspec setlocal omnifunc=rubycomplete#Complete
+  autocmd FileType rspec set omnifunc=rubycomplete#Complete
   autocmd FileType *ruby,rspec :execute 'setlocal iskeyword+=' . char2nr('?')
+  autocmd FileType python setlocal tabstop=4 shiftwidth=4 softtabstop=4
 
   autocmd FileType vim,snippet setlocal tabstop=2 shiftwidth=2 softtabstop=2
-  autocmd FileType vim :execute 'setlocal iskeyword+=' . char2nr(':')
+  autocmd FileType vim :execute 'set iskeyword+=' . char2nr(':')
 
   autocmd FileType html,xhtml,xml,xslt,mathml,svg setlocal tabstop=2 shiftwidth=2 softtabstop=2
 
@@ -551,18 +557,18 @@ augroup Tacahiroy
   autocmd BufRead knife-edit-*.js set filetype=javascript.json
   autocmd FileType javascript.json setlocal makeprg=ruby\ $HOME/bin/jsonv.rb\ %
 
-  autocmd Filetype c set tabstop=4 softtabstop=4 shiftwidth=4
+  autocmd Filetype c setlocal tabstop=4 softtabstop=4 shiftwidth=4
   autocmd Filetype c compiler gcc
   autocmd FileType c setlocal makeprg=gcc\ -Wall\ %\ -o\ %:r.o
   autocmd FileType c nnoremap <buffer> <Space>m :<C-u>write<Cr>:make --std=c99<Cr>
 
   autocmd FileType markdown inoremap <buffer> <Leader>h1 <Esc>10i=<Esc>^
                          \| inoremap <buffer> <Leader>h2 <Esc>10i-<Esc>^
-                         \| inoremap <buffer> <Leader>h3 <Esc>I### 
-                         \| inoremap <buffer> <Leader>h4 <Esc>I#### 
-                         \| inoremap <buffer> <Leader>h5 <Esc>I##### 
+                         \| inoremap <buffer> <Leader>h3 <Esc>I###<Space>
+                         \| inoremap <buffer> <Leader>h4 <Esc>I####<Space>
+                         \| inoremap <buffer> <Leader>h5 <Esc>I#####<Space>
                          \| inoremap <buffer> <Leader>hr <Esc>i- - -<Esc>^
-  autocmd FileType markdown setlocal autoindent
+  autocmd FileType markdown set autoindent
 
   " easy way
   if executable('markdown')
@@ -735,7 +741,8 @@ if executable('knife')
 
       echomsg printf('%s: %s', mes, join(cookbooks, ' '))
 
-      call s:tmux.run(cmd, 1)
+      " call s:tmux.run(cmd, 1)
+      execute ':!' . cmd
     else
       echoerr 'no cookbooks are found.'
     endif
@@ -782,10 +789,6 @@ endif
 if filereadable(expand('~/.vimrc.mine'))
   source ~/.vimrc.mine
 endif
-
-if has('gui_running') && filereadable(expand('~/.gvimrc'))
-  source ~/.gvimrc
-end
 
 " __END__ {{{
 " vim: ts=2 sts=2 sw=2
