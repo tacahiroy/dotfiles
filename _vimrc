@@ -396,7 +396,7 @@ nnoremap <silent> <Space>P :pclose<Cr>
 function! s:CrInInsertModeBetterWay()
   return pumvisible() ? "\<C-y>\<Cr>" : "\<Cr>"
 endfunction
-inoremap <silent> <Cr> <C-R>=<SID>CrInInsertModeBetterWay()<Cr>
+inoremap <silent> <Return> <C-R>=<SID>CrInInsertModeBetterWay()<Cr>
 
 inoremap <silent> <Leader>dd <C-R>=strftime('%Y-%m-%d')<Cr>
 inoremap <silent> <Leader>tm <C-R>=strftime('%H:%M')<Cr>
