@@ -94,7 +94,7 @@ if [[ -x `which rbenv` ]]; then
   eval "$(rbenv init -)"
 fi
 
-if [ -f ~/.zsh.local ]; then
-  source ~/.zsh.local
+if [ -f ~/.zshrc.mine ]; then
+  source ~/.zshrc.mine
 fi
 
