@@ -754,6 +754,7 @@ endif
 
 " tmux: just send keys against tmux
 let s:tmux = {}
+let s:tmux.last_cmd = ''
 
 function! s:tmux.is_installed()
   call system('which tmux')
@@ -766,11 +767,20 @@ function! s:tmux.is_running()
 endfunction
 
 function! s:tmux.run(cmd, ...)
-  let run_in_vim = a:0 ? a:1 : 0
+  let split = get(a:, 1, 0)
+  let run_in_vim = get(a:, 2, 0)
+  let self.last_cmd = a:cmd
 
   if self.is_running()
-    " echom printf('`tmux send "%s" Enter`', a:cmd)
-    call system(printf('`tmux send "%s" Enter`', a:cmd))
+    if split
+      let res = system(printf('tmux splitw -v "%s"', a:cmd))
+      if v:shell_error
+        echomsg res
+      endif
+    else
+      let enter = (a:cmd =~# '^\^[a-zA-Z]$' ? '' : 'Enter')
+      call system(printf('`tmux send "%s" %s`', a:cmd, enter))
+    endif
   elseif run_in_vim
     execute ':!' . a:cmd
   else
@@ -779,9 +789,23 @@ function! s:tmux.run(cmd, ...)
   endif
 endfunction
 
+function! s:tmux.internal(cmd)
+  if self.is_running()
+    call system(printf('`tmux "%s"`', a:cmd))
+  endif
+endfunction
+
 if s:tmux.is_installed()
   command! -nargs=+ TMRun call s:tmux.run(<q-args>)
+  command! -nargs=0 TMInt call s:tmux.run('^C')
+  command! -nargs=0 TMClear call s:tmux.run('^L')
+  command! -nargs=0 TMRunAgain echo s:tmux.last_cmd | call s:tmux.run(s:tmux.last_cmd)
+  command! -nargs=0 TMNextWindow call s:tmux.internal('next-window')
+  command! -nargs=0 TMPrevWindow call s:tmux.internal('previous-window')
+
   nnoremap <Space>r :<C-u>TMRun<Space>
+  nnoremap <D-Right> :<C-u>TMNextWindow<Cr>
+  nnoremap <D-Left> :<C-u>TMPrevWindow<Cr>
 endif
 " }}}
 
