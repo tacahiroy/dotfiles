@@ -61,6 +61,10 @@ endif
 filetype plugin indent on
 "}}}
 
+let s:is_mac = has('macunix')
+let s:is_linux = !has('macunix') && has('unix')
+let s:is_win = has('win32') || has('win64')
+
 set cpo&vim
 
 autocmd!
@@ -154,9 +158,9 @@ endif
 set previewheight=8
 set pumheight=24
 set scroll=0
-if has('macunix')
+if s:is_mac
   set shell=/usr/local/bin/zsh
-elseif has('unix')
+elseif s:is_linux
   set shell=/usr/bin/zsh
 endif
 set shellslash
@@ -314,10 +318,10 @@ function! s:redir(cmd)
   return res
 endfunction
 
-nnoremap <silent> <Leader>M :let &mouse = empty(&mouse) ? 'a' : ''<Cr>
-nnoremap <silent> <Leader>P :set paste!<Cr>
-nnoremap <silent> <Leader>L :set list!<Cr>
-nnoremap <silent> <Leader>C :let &clipboard =
+nnoremap <silent> <Leader>tm :let &mouse = empty(&mouse) ? 'a' : ''<Cr>
+nnoremap <silent> <Leader>tp :set paste!<Cr>
+nnoremap <silent> <Leader>tl :set list!<Cr>
+nnoremap <silent> <Leader>tc :let &clipboard =
       \ empty(&clipboard) ? 'unnamed,unnamedplus' : ''<Cr>
 
 " commentary.vim
@@ -338,10 +342,13 @@ sunmap b
 sunmap e
 
 " open current directory with filer
-if has('macunix')
+if s:is_mac
   nnoremap <silent> <Space>e
         \ :<C-u>silent execute ':!open -a Finder %:p:h'<Cr>:redraw!<Cr>
-elseif has('win32') || has('win64')
+elseif s:is_linux
+  nnoremap <silent> <Space>e
+        \ :<C-u>silent execute ':!nautilus %:p:h &'<Cr>:redraw!<Cr>
+elseif s:is_win
   nnoremap <silent> <Space>e
         \ :<C-u>silent execute ":!start explorer \"" . Cps(expand("%:p:h"), "\\") . "\""<Cr>
   " open current directory with Command Prompt
@@ -364,8 +371,8 @@ nnoremap <silent> <Space>_ :<C-u>edit $MYVIMRC<Cr>
 nnoremap <silent> <Space>g_ :<C-u>edit $MYGVIMRC<Cr>
 nnoremap <Space>S :<C-u>source %<Cr>
 
-nnoremap <Space>NN :<C-u>NERDTreeToggle<Cr>
-nnoremap <Space>FF :<C-u>NERDTreeFind<Cr>zz<C-w><C-w>
+nnoremap <Leader>nn :<C-u>NERDTreeToggle<Cr>
+nnoremap <Leader>nf :<C-u>NERDTreeFind<Cr>zz<C-w><C-w>
 
 nnoremap <silent> <Esc><Esc> <Esc>:<C-u>nohlsearch<Cr>
 
