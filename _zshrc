@@ -217,7 +217,7 @@ setopt no_flow_control
 
 ## Command history configuration
 HISTFILE=~/.zsh_history
-HISTSIZE=10000
+HISTSIZE=20000
 SAVEHIST=100000
 
 # if [ $UID = 0 ]; then
