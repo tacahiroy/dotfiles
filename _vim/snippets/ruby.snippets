@@ -25,11 +25,11 @@ snippet cookbook_file
 snippet bash
 	bash "${1}" do
 		user "${2:root}"
-		code <<-EOH
+		code <<-EOS
 			${3}
-		EOH
+		EOS
 
-		not_if ${4}
+		not_if "${4}"
 	end
 
 snippet apt
