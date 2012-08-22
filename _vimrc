@@ -783,7 +783,7 @@ function! s:tmux.run(cmd, ...)
   endif
 endfunction
 
-function! s:tmux.internal(cmd)
+function! s:tmux.operate(cmd)
   if self.is_running()
     call system(printf('`tmux "%s"`', a:cmd))
   endif
@@ -794,12 +794,14 @@ if s:tmux.is_installed()
   command! -nargs=0 TMInt call s:tmux.run('^C')
   command! -nargs=0 TMClear call s:tmux.run('^L')
   command! -nargs=0 TMRunAgain echo s:tmux.last_cmd | call s:tmux.run(s:tmux.last_cmd)
-  command! -nargs=0 TMNextWindow call s:tmux.internal('next-window')
-  command! -nargs=0 TMPrevWindow call s:tmux.internal('previous-window')
+  command! -nargs=0 TMNextWindow call s:tmux.operate('next-window')
+  command! -nargs=0 TMPrevWindow call s:tmux.operate('previous-window')
 
-  nnoremap <Space>r :<C-u>TMRun<Space>
-  nnoremap <D-Right> :<C-u>TMNextWindow<Cr>
-  nnoremap <D-Left> :<C-u>TMPrevWindow<Cr>
+  nnoremap <Leader>r :<C-u>TMRun<Space>
+  nnoremap <Leader>! :<C-u>TMRunAgain<Cr>
+  nnoremap <Leader>c :<C-u>TMInt<Cr>
+  nnoremap <Leader>> :<C-u>TMNextWindow<Cr>
+  nnoremap <Leader>< :<C-u>TMPrevWindow<Cr>
 endif
 " }}}
 
