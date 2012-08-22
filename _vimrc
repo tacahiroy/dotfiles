@@ -3,6 +3,8 @@
 
 scriptencoding utf-8
 
+let g:mapleader = ','
+
 " vundle plugin management "{{{
 filetype off
 set runtimepath& runtimepath+=~/.vim/vundle.git
@@ -24,31 +26,20 @@ Bundle 'thinca/vim-ref'
 Bundle 'tpope/vim-commentary'
 Bundle 'tpope/vim-fugitive'
 Bundle 'hallison/vim-markdown'
-
 " Bundle 'tpope/vim-rails'
 Bundle 'tpope/vim-surround'
 Bundle 'tyru/open-browser.vim'
 Bundle 'vim-ruby/vim-ruby'
-
 " Bundle 'Align'
 " Bundle 'IndentAnything'
 Bundle 'camelcasemotion'
 " Bundle 'increment_new.vim'
 Bundle 'matchit.zip'
-Bundle 'DrawIt'
+" Bundle 'DrawIt'
 
 " it seems this has ftdetect problem
 " Bundle 'chrisbra/csv.vim'
-
-
-filetype plugin indent on
-"}}}
-
-set cpo&vim
-
-autocmd!
-
-let g:mapleader = ','
+Bundle 'netrw.vim'
 
 if isdirectory($HOME . '/.vim')
   let $DOTVIM = $HOME . '/.vim'
@@ -57,9 +48,8 @@ else
   let $DOTVIM = $HOME . '/vimfiles'
 endif
 
-" likes pathogen?
 if isdirectory(expand('$DOTVIM/sandbox'))
-  let dirs = split(glob($DOTVIM.'/sandbox/*'))
+  let dirs = split(glob($DOTVIM.'/sandbox/**/*'))
   for d in dirs
     execute ':set runtimepath+=' . d
     if d =~# '/doc$'
@@ -67,6 +57,13 @@ if isdirectory(expand('$DOTVIM/sandbox'))
     endif
   endfor
 endif
+
+filetype plugin indent on
+"}}}
+
+set cpo&vim
+
+autocmd!
 
 set nocompatible
 set verbose=0
@@ -149,16 +146,19 @@ set lazyredraw
 set modeline
 set modelines=5
 set mouse=a
-
 if 702 < v:version
   set relativenumber
 else
   set number
 endif
-
 set previewheight=8
 set pumheight=24
 set scroll=0
+if has('macunix')
+  set shell=/usr/local/bin/zsh
+elseif has('unix')
+  set shell=/usr/bin/zsh
+endif
 set shellslash
 set shiftround
 set showbreak=>\ 
@@ -194,14 +194,8 @@ if has('persistent_undo')
   augroup END
 endif
 
-let g:solarized_termcolors = 256
-let g:solarized_termtrans = 1
-let g:solarized_contrast = 'high'
-let g:solarized_visibility = 'high'
-let g:solarized_hitrail = 1
-let g:solarized_menu = 0
-set background=light
 set t_Co=256
+set background=light
 colorscheme seashell
 
 set formatoptions& formatoptions+=mM formatoptions-=r
@@ -283,6 +277,9 @@ nnoremap <C-]> <C-]>zz
 nnoremap <C-t> <C-t>zz
 nnoremap * *N
 nnoremap # #N
+" http://stevelosh.com/blog/2010/09/coming-home-to-vim/
+nnoremap <Tab> %
+vnoremap <Tab> %
 
 nnoremap <silent> qj :cnext<Cr>
 nnoremap <silent> qk :cprevious<Cr>
@@ -360,20 +357,20 @@ nnoremap <Space>Q :<C-u>quit!<Cr>
 nnoremap <Space>j <C-f>
 nnoremap <Space>k <C-b>
 
-nnoremap <Space>h :<C-u>h<Space>
+nnoremap <C-h> :<C-u>h<Space>
 nnoremap <Space>t :<C-u>tabe<Space>
 
 nnoremap <silent> <Space>_ :<C-u>edit $MYVIMRC<Cr>
 nnoremap <silent> <Space>g_ :<C-u>edit $MYGVIMRC<Cr>
 nnoremap <Space>S :<C-u>source %<Cr>
 
-nnoremap <Space>TT :<C-u>NERDTreeToggle<Cr>
-nnoremap <Space>Tf :<C-u>NERDTreeFind<Cr>zz<C-w><C-w>
+nnoremap <Space>NN :<C-u>NERDTreeToggle<Cr>
+nnoremap <Space>FF :<C-u>NERDTreeFind<Cr>zz<C-w><C-w>
 
 nnoremap <silent> <Esc><Esc> <Esc>:<C-u>nohlsearch<Cr>
 
-nnoremap <silent> ,f :<C-u>echo expand('%:p')<Cr>
-nnoremap <silent> ,d :<C-u>pwd<Cr>
+nnoremap <silent> <Leader>f :<C-u>echo expand('%:p')<Cr>
+nnoremap <silent> <Leader>d :<C-u>pwd<Cr>
 
 nnoremap <silent> sh <C-w>h
 nnoremap <silent> sk <C-w>k
@@ -390,7 +387,7 @@ nnoremap <2-MiddleMouse> <Nop>
 nnoremap <silent> <Space>p <C-w>}
 nnoremap <silent> <Space>P :pclose<Cr>
 
-" Ctrl-H dispute
+" Ctrl-H dispution
 " set t_kb=<Bs>
 " set t_kD=<Del>
 " inoremap <Del> <Bs>
@@ -704,9 +701,6 @@ let g:timetap_is_display_zero = 1
 let g:timetap_is_debug = 0
 let g:timetap_display_limit = 15
 let g:timetap_observe_cursor_position = 1
-nnoremap <Leader>tt :<C-u>TimeTap<Cr>
-nnoremap <Leader>ta :<C-u>TimeTapCurrentProject<Cr>
-nnoremap <Leader>tp :<C-u>TimeTapProject<Cr>
 "}}}
 
 if has('multi_byte_ime') || has('xim')
@@ -727,7 +721,7 @@ if executable('knife')
       return
     endif
 
-    let cookbooks = a:0 ? a:000 : []
+    let cookbooks = get(a:, 1, [])
     let m = matchlist(path, '^\(.\+/cookbooks/[^/]\+\)/\([^/]\+\)/')
     let cb_path = m[1]
     if index(cookbooks, m[2]) == -1
@@ -736,13 +730,13 @@ if executable('knife')
 
     if 0 < len(cookbooks)
       let cookbooks = filter(cookbooks, 'isdirectory(cb_path."/".v:val)')
-      let mes = 'Uploading cookbook' . 1 < len(cookbooks) ? 's' : ''
+      let mes = 'Uploading cookbook' . (1 < len(cookbooks) ? 's' : '')
       let cmd = printf('knife cookbook upload -o %s %s', cb_path, join(cookbooks, ' '))
 
       echomsg printf('%s: %s', mes, join(cookbooks, ' '))
 
-      " call s:tmux.run(cmd, 1)
-      execute ':!' . cmd
+      call s:tmux.run(cmd, 1, 1)
+      " execute ':!' . cmd
     else
       echoerr 'no cookbooks are found.'
     endif
@@ -813,6 +807,12 @@ endif
 if filereadable(expand('~/.vimrc.mine'))
   source ~/.vimrc.mine
 endif
+
+if has('gui_running')
+  source ~/.gvimrc
+endif
+
+let g:netrw_dynamic_maxfilenamelen = 1
 
 " __END__ {{{
 " vim: ts=2 sts=2 sw=2
