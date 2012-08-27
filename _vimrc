@@ -62,8 +62,8 @@ filetype plugin indent on
 "}}}
 
 let s:is_mac = has('macunix')
-let s:is_linux = !has('macunix') && has('unix')
-let s:is_win = has('win32') || has('win64')
+" no AIX, BSD, HP-UX and any other UNIX
+let s:is_linux = !s:is_mac && has('unix')
 
 set cpo&vim
 
@@ -74,30 +74,39 @@ set verbose=0
 
 " * functions "{{{
 " convert path separator
-" unix <-> dos
-function! Cps(path, sep)
+function! s:cps(path, sep)
   return substitute(a:path, '[/\\]', a:sep, 'g')
 endfunction
 
 
 " tag information show in command window
-function! s:previewTagLite(word)
+function! s:preview_tag_lite(word)
   let t = taglist('^' . a:word . '$')
   let current = expand('%:t')
 
   for item in t
     if -1 < stridx(item.filename, current)
       " [filename] tag definition
-      echohl Search | echomsg printf('%-36s %s', '[' . Cps(item.filename, '/') . ']', item.cmd) | echohl None
+      echohl Search | echomsg printf('%-36s %s', '[' . s:cps(item.filename, '/') . ']', item.cmd) | echohl None
     else
-      echomsg printf('%-36s %s', '[' . substitute(Cps(item.filename, '/'), '\s\s*$', '', '') . ']', item.cmd)
+      echomsg printf('%-36s %s', '[' . substitute(s:cps(item.filename, '/'), '\s\s*$', '', '') . ']', item.cmd)
     endif
   endfor
+endfunction
+command! -nargs=0 PreviewTagLite call s:preview_tag_lite(expand('<cword>'))
+
+function! s:which(cmd)
+  let res = system('which ' . a:cmd)
+  if v:shell_error
+    return ''
+  else
+    return substitute(res, '\n$', '', '')
+  endif
 endfunction
 "}}}
 
 
-" GUI menu is not necessary. "{{{
+" GUI menu is unnecessary "{{{
 let did_install_default_menus = 1
 let did_install_syntax_menu = 1
 "}}}
@@ -105,13 +114,8 @@ let did_install_syntax_menu = 1
 syntax enable
 filetype plugin indent on
 
-if has('unix')
-  set encoding=utf-8
-  set termencoding=utf-8
-else
-  set encoding=cp932
-  set termencoding=cp932
-endif
+set encoding=utf-8
+set termencoding=utf-8
 
 
 " * options {{{
@@ -131,7 +135,7 @@ set colorcolumn=80
 set noequalalways
 set expandtab smarttab
 set fileencodings=ucs-bom,utf-8,iso-2022-jp,euc-jp,cp932
-let &fileformats = has('unix') ? 'unix,dos,mac' : 'dos,unix,mac'
+set fileformats=unix,dos,mac
 set helplang=en,ja
 set hidden
 set history=10000
@@ -155,6 +159,7 @@ if 702 < v:version
 else
   set number
 endif
+set nrformats=hex
 set previewheight=8
 set pumheight=24
 set scroll=0
@@ -165,7 +170,7 @@ elseif s:is_linux
 endif
 set shellslash
 set shiftround
-set showbreak=>\ 
+set showbreak=>~\ 
 set showcmd
 set showfulltag
 set showmatch matchtime=1
@@ -190,12 +195,43 @@ set wildmenu
 set wildmode=longest:list,full
 set nowrapscan
 
+set matchpairs& matchpairs+=<:>
+let g:loaded_matchparen = 0
+
 if has('persistent_undo')
   set undodir=~/.vimundo
   augroup UndoFile
     autocmd!
     autocmd BufReadPre ~/* setlocal undofile
   augroup END
+endif
+
+if has('gui_running')
+  set columns=132
+  set guioptions=aeciM
+  set guitablabel=%N)\ %f
+  set lines=100
+  set mousehide
+  set nomousefocus
+
+  if &guioptions =~# 'M'
+    let &guioptions = substitute(&guioptions, '[mT]', '', 'g')
+  endif
+
+  if s:is_mac
+    set guifont=Migu\ 1M\ Regular:h13
+    set antialias
+    set fuoptions& fuoptions+=maxhorz
+  elseif s:is_linux
+    set guifont=M+1VM+IPAG\ circle\ 10
+  else
+    " Windows
+    set guifont=M+1VM+IPAG_circle:h10:cDEFAULT
+  endif
+
+  if has('printer')
+    let &printfont = &guifont
+  endif
 endif
 
 set t_Co=256
@@ -215,48 +251,31 @@ let &statusline .= '%{(&paste ? "p" : "")}'
 let &statusline .= '%{(&list ? "l" : "")}'
 let &statusline .= '%{(empty(&clipboard) ? "" : "c")} '
 let &statusline .= '%#Function#%{fugitive#statusline()}%*'
-let &statusline .= ' %=%{ImHere()}'
+let &statusline .= ' %=%{Gps()}'
 let &statusline .= '%-12( %l/%LL,%c %)%P'
 
-function! ImHere()
-  function! ShortenPath(path, ratio)
-    if !empty(&buftype)
-      return ''
-    endif
-
-    let path = substitute(a:path, $HOME, '~', '')
-    " let plen = len(path)
-    " let width = (&columns + &numberwidth) * 1.0
-
-    " if 0.5 < plen / width
-    "   let slen = float2nr(plen * a:ratio * 0.01)
-    "   let path = strpart(path, 0, slen) . '...' . strpart(path, plen - slen)
-    " endif
-
-    if 3 < len(split(path, '/'))
-      return '(' . join(split(path, '/')[-3:-1], '/') . ')'
-    else
-      return '(' . path . '/)'
-    endif
-  endfunction
-
-  if !get(g:, 'iamhere_enabled', 1)
+function! s:shorten_path(path, ratio)
+  if !empty(&buftype)
     return ''
   endif
 
-  return ShortenPath(getcwd(), 25)
-endfunction
-" }}}
+  let path = substitute(a:path, $HOME, '~', '')
 
-set matchpairs& matchpairs+=<:>
-let g:loaded_matchparen = 0
-"highlight! MatchParen term=reverse ctermbg=LightRed gui=NONE guifg=fg guibg=LightRed
+  if 3 < len(split(path, '/'))
+    return join(split(path, '/')[-3:-1], '/')
+  else
+    return path
+  endif
+endfunction
+
+function! Gps()
+  return '(' . s:shorten_path(getcwd(), 25) . ')'
+endfunction
 " }}}
 
 
 " * map "{{{
-" ummmmm like Emacs
-" cmdline editing
+" Emacs rules!
 cnoremap <C-p> <Up>
 cnoremap <C-n> <Down>
 cnoremap <C-a> <Home>
@@ -281,16 +300,12 @@ nnoremap <C-]> <C-]>zz
 nnoremap <C-t> <C-t>zz
 nnoremap * *N
 nnoremap # #N
-" http://stevelosh.com/blog/2010/09/coming-home-to-vim/
-nnoremap <Tab> %
-vnoremap <Tab> %
 
 nnoremap <silent> qj :cnext<Cr>
 nnoremap <silent> qk :cprevious<Cr>
-nnoremap <silent> qh :bnext<Cr>
-nnoremap <silent> ql :bprevious<Cr>
 
 nnoremap <silent> qo :<C-u>silent call <SID>toggle_qf_list()<Cr>
+
 function! s:toggle_qf_list()
   let bufs = s:redir('buffers')
   let l = matchstr(split(bufs, '\n'), '[\t ]*\d\+[\t ]\+.\+[\t ]\+"\[Quickfix\ List\]"')
@@ -348,21 +363,12 @@ if s:is_mac
 elseif s:is_linux
   nnoremap <silent> <Space>e
         \ :<C-u>silent execute ':!nautilus %:p:h &'<Cr>:redraw!<Cr>
-elseif s:is_win
-  nnoremap <silent> <Space>e
-        \ :<C-u>silent execute ":!start explorer \"" . Cps(expand("%:p:h"), "\\") . "\""<Cr>
-  " open current directory with Command Prompt
-  nnoremap <silent> <Space>E
-        \ :<C-u>silent execute ":!start cmd /k cd \"" . Cps(expand("%:p:h"), "\\") . "\""<Cr>
 endif
 
 nnoremap <Space>w :<C-u>update<Cr>
 nnoremap <Space>q :<C-u>quit<Cr>
 nnoremap <Space>W :<C-u>update!<Cr>
 nnoremap <Space>Q :<C-u>quit!<Cr>
-
-nnoremap <Space>j <C-f>
-nnoremap <Space>k <C-b>
 
 nnoremap <C-h> :<C-u>h<Space>
 nnoremap <Space>t :<C-u>tabe<Space>
@@ -375,9 +381,6 @@ nnoremap <Leader>nn :<C-u>NERDTreeToggle<Cr>
 nnoremap <Leader>nf :<C-u>NERDTreeFind<Cr>zz<C-w><C-w>
 
 nnoremap <silent> <Esc><Esc> <Esc>:<C-u>nohlsearch<Cr>
-
-nnoremap <silent> <Leader>f :<C-u>echo expand('%:p')<Cr>
-nnoremap <silent> <Leader>d :<C-u>pwd<Cr>
 
 nnoremap <silent> sh <C-w>h
 nnoremap <silent> sk <C-w>k
@@ -399,28 +402,27 @@ nnoremap <silent> <Space>P :pclose<Cr>
 " set t_kD=<Del>
 " inoremap <Del> <Bs>
 
-" vim-endwise support
-function! s:CrInInsertModeBetterWay()
-  return pumvisible() ? "\<C-y>\<Cr>" : "\<Cr>"
-endfunction
-inoremap <silent> <Return> <C-R>=<SID>CrInInsertModeBetterWay()<Cr>
-
 inoremap <silent> <Leader>dd <C-R>=strftime('%Y-%m-%d')<Cr>
 inoremap <silent> <Leader>tm <C-R>=strftime('%H:%M')<Cr>
 inoremap <silent> <Leader>fn <C-R>=@%<Cr>
 
-" ^J is used to toggle IME
+" used to toggle IME
 inoremap <silent> <C-j> <Nop>
 cnoremap <silent> <C-j> <Nop>
+inoremap <silent> <C-l> <Nop>
+cnoremap <silent> <C-l> <Nop>
+inoremap <silent> <C-S-f> <Nop>
+cnoremap <silent> <C-S-f> <Nop>
 
 " selected text search
 vnoremap * y/<C-R>"<Cr>
 vnoremap < <gv
 vnoremap > >gv
-vnoremap <Down> :call <SID>moveBlock('d')<Cr>==gv
-vnoremap <Up> :call <SID>moveBlock('u')<Cr>==gv
 
-function! s:moveBlock(d) range
+vnoremap <Down> :call <SID>move_block('d')<Cr>==gv
+vnoremap <Up> :call <SID>move_block('u')<Cr>==gv
+
+function! s:move_block(d) range
   let cnt = a:lastline - a:firstline
 
   if a:d ==# 'u'
@@ -435,7 +437,7 @@ function! s:moveBlock(d) range
 endfunction
 
 if executable('tidyp')
-  function! s:runTidy(col) range
+  function! s:run_tidy(col) range
     " this code is not perfect.
     " tidy's Character encoding option and Vim's fileencoding/encoding is not a pair
     let enc = &l:fileencoding ? &l:fileencoding : &encoding
@@ -444,18 +446,8 @@ if executable('tidyp')
     silent execute printf(': %d,%d!tidyp -xml -i -%s -wrap %d -q -asxml', a:firstline, a:lastline, enc, eval(a:col))
   endfunction
 
-  command! -nargs=1 -range Tidy call s:runTidy(<args>)
+  command! -nargs=1 -range Tidy <line1>,<line2>call s:run_tidy(<args>)
 endif
-"}}}
-
-
-" * abbreviations"{{{
-inoreabbr funciton function
-inoreabbr requrie require
-inoreabbr reuqire require
-inoreabbr passowrd password
-inoreabbr WinMerege WinMerge
-inoreabbr Winmerge WinMerge
 "}}}
 
 
@@ -467,52 +459,51 @@ let g:vimsyntax_noerror = 1
 augroup Tacahiroy
   autocmd!
 
-  autocmd VimLeave * :mksession! ~/.vimsession
-
   autocmd BufReadPost * if !search('\S', 'cnw') | let &l:fileencoding = &encoding | endif
   " restore cursor position
   autocmd BufReadPost * if line("'\"") <= line('$') | execute "normal '\"" | endif
   autocmd BufEnter * setlocal formatoptions-=o
-  " autocmd BufRead,BufWritePost * if &expandtab && search('\t', 'cnw') && !&readonly | setlocal list | else | setlocal nolist | endif
 
   " autochdir emulation
-  autocmd BufEnter * call s:autoChdir(6)
-  function! s:autoChdir(n) "{{{
-    function! GetTopDir(dir, n) "{{{
-      let i = 0
-      let dir = a:dir
+  autocmd BufEnter * call s:auto_chdir(6)
 
-      while i < a:n
-        let dirs = split(dir, '/')
-        if !exists('midx')
-          let midx = len(dirs)
+  function! s:get_project_root(dir, depth)
+    let i = 0
+    let dir = a:dir
+
+    while i < a:depth
+      let dirs = split(dir, '/')
+      if !exists('midx')
+        let midx = len(dirs)
+      endif
+
+      let idx = midx - i
+      if idx < 0
+        break
+      endif
+
+      let dir = '/'.join(dirs[0:idx], '/')
+      let files = ['Gemfile', 'Rakefile', 'README.mkd', 'README.md', 'README.markdown', 'README.rdoc']
+      for f in files
+        if filereadable(dir.'/'.f)
+          return dir
         endif
-        let idx = midx - i
-        if idx < 0
-          break
-        endif
+      endfor
+      let i += 1
+    endwhile
 
-        let dir = '/'.join(dirs[0:idx], '/')
-        let files = ['Gemfile', 'Rakefile', 'README.mkd', 'README.md', 'README.markdown', 'README.rdoc']
-        for f in files
-          if filereadable(dir.'/'.f)
-            return dir
-          endif
-        endfor
-        let i += 1
-      endwhile
+    return a:dir
+  endfunction
 
-      return a:dir
-    endfunction "}}}
-
+  function! s:auto_chdir(n)
     if expand('%') =~# '^\S\+://'
       return
     endif
 
-    let dir = GetTopDir(expand('%:p:h'), 5)
+    let dir = s:get_project_root(expand('%:p:h'), 5)
 
     execute ':lcd ' . escape(dir, ' ')
-  endfunction "}}}
+  endfunction
 
   autocmd BufRead,BufNewFile *.ru,Gemfile,Guardfile set filetype=ruby
   autocmd BufRead,BufNewFile ?zshrc,?zshenv set filetype=zsh
@@ -558,7 +549,9 @@ augroup Tacahiroy
     autocmd FileType javascript*,*html setlocal errorformat=%f(%l):\ %m
   endif
 
+  " Chef
   autocmd BufRead knife-edit-*.js set filetype=javascript.json
+
   autocmd FileType javascript.json setlocal makeprg=ruby\ $HOME/bin/jsonv.rb\ %
 
   autocmd Filetype c setlocal tabstop=4 softtabstop=4 shiftwidth=4
@@ -576,28 +569,35 @@ augroup Tacahiroy
 
   " easy way
   if executable('markdown')
-    autocmd FileType markdown nnoremap <buffer> <Leader>r :<C-u>call <SID>md_preview_by_browser(expand('%'))<Cr>
     function! s:md_preview_by_browser(f)
       let tmp = '/tmp/vimmarkdown.html'
       call system('markdown ' . a:f . ' > ' . tmp)
       call system('open ' . tmp)
     endfunction
+    autocmd FileType markdown command! -buffer -nargs=0 MdPreview call s:md_preview_by_browser(expand('%'))
   endif
 
-
   " only for the WinMerge document translation project
-  function! s:moveToSegment(is_prev)
+  function! s:move_to_segment(is_prev)
     let flag = a:is_prev ? 'b' : ''
     call search('<\(para\|section\|term\)[^>]*>', 'esW'.flag)
   endfunction
-  autocmd FileType xml nnoremap <silent> <buffer> <Tab> :call <SID>moveToSegment(0)<Cr>
-  autocmd FileType xml nnoremap <silent> <buffer> <S-Tab> :call <SID>moveToSegment(1)<Cr>
-  autocmd FileType xml noremap  <silent> <buffer> <Leader>a :call <SID>runTidy(80)<Cr>
+
+  autocmd FileType xml nnoremap <silent> <buffer> <Tab> :call <SID>move_to_segment(0)<Cr>
+  autocmd FileType xml nnoremap <silent> <buffer> <S-Tab> :call <SID>move_to_segment(1)<Cr>
+  autocmd FileType xml noremap  <silent> <buffer> <Leader>a :call <SID>run_tidy(80)<Cr>
   autocmd BufRead,BufEnter *.xml set updatetime=1000
   autocmd BufLeave,BufWinLeave *.xml set updatetime&
 
   autocmd BufRead,BufNewFile * syn match ExtraSpaces '[\t ]\+$'
   hi def link ExtraSpaces Error
+
+  inoreabbr funciton function
+  inoreabbr requrie require
+  inoreabbr reuqire require
+  inoreabbr passowrd password
+  inoreabbr WinMerege WinMerge
+  inoreabbr Winmerge WinMerge
 augroup END
 "}}}
 
@@ -612,6 +612,8 @@ let g:ctrlp_command = 'CtrlPRoot'
 let g:ctrlp_jump_to_buffer = 2
 let g:ctrlp_working_path_mode = 2
 let g:ctrlp_match_window_bottom = 1
+let g:ctrlp_match_window_reversed = 0
+let g:ctrlp_max_height = 20
 let g:ctrlp_clear_cache_on_exit = 0
 let g:ctrlp_follow_symlinks = 1
 let g:ctrlp_highlight_match = [1, 'Constant']
@@ -620,11 +622,11 @@ let g:ctrlp_max_depth = 24
 let g:ctrlp_dotfiles = 1
 
 let g:ctrlp_user_command = {
-      \ 'types': {
-        \ 1: ['.git/', 'cd %s && git ls-files'],
-        \ 2: ['.hg/', 'hg --cwd %s locate -I .'],
-        \ 3: ['.svn/', 'svn ls file://%s'],
-      \ }
+  \ 'types': {
+    \ 1: ['.git/', 'cd %s && git ls-files'],
+    \ 2: ['.hg/', 'hg --cwd %s locate -I .'],
+    \ 3: ['.svn/', 'svn ls file://%s'],
+  \ }
 \ }
 
 let g:ctrlp_prompt_mappings = {
@@ -645,7 +647,7 @@ let dir = ['\.git$', '\.hg$', '\.svn$', '\.vimundo$', '\.ctrlp_cache/',
       \    '\.rbenv/', '\.gem/', 'backup$', 'Downloads$', $TMPDIR]
 let g:ctrlp_custom_ignore = {
   \ 'dir': join(dir, '\|'),
-  \ 'file': '\.exe$\|\.so$\|\.dll$\|\.DS_Store$',
+  \ 'file': '\.exe$\|\.so$\|\.dll$\|\.DS_Store$\|\.db',
   \ }
 
 nnoremap <Space>ls :CtrlPBuffer<Cr>
@@ -653,8 +655,6 @@ nnoremap <Space>fd :CtrlPCurWD<Cr>
 nnoremap <Space>fm :CtrlPMRU<Cr>
 nnoremap <Space>fl :CtrlPLine<Cr>
 nnoremap <Space>fk :CtrlPBookmarkDir<Cr>
-nnoremap <Space>ft :CtrlPBufTag<Cr>
-nnoremap <Space>fT :CtrlPBufTagAll<Cr>
 nnoremap <Space>fo :execute 'CtrlP ' . $chef . '/cookbooks/_default'<Cr>
 nnoremap <Space>fw :execute 'CtrlP ' . getcwd()<Cr>
 
@@ -694,11 +694,11 @@ nmap gx <Plug>(openbrowser-smart-search)
 vmap gx <Plug>(openbrowser-smart-search)
 
 " plug: loga.vim
-let g:loga_executable = system('which loga')
+let g:loga_executable = s:which('loga')
 let g:loga_enable_auto_lookup = 0
 let g:loga_delimiter = '=3'
-map <Space>a <Plug>(loga-lookup)
-imap <Leader>v <Plug>(loga-insert-delimiter)
+map  <Space>a <Plug>(loga-lookup)
+autocmd FileType logaling imap <buffer> <Leader>v <Plug>(loga-insert-delimiter)
 
 " plug: timetap.vim
 let g:timetap_accept_path_pattern = '^~/\%(\..\+$\|Projects\)'
@@ -715,8 +715,8 @@ if has('multi_byte_ime') || has('xim')
   inoremap <silent> <Esc> <Esc>:<C-u>set iminsert=0<Cr>
 endif
 
-" * commands {{{
-" open loaded buffer with new tab.
+" {{{
+" open a loaded buffer with new tab
 command! -nargs=1 -complete=buffer NTab :999tab sbuffer <args>
 command! Big wincmd _ | wincmd |
 
@@ -770,7 +770,11 @@ endfunction
 function! s:tmux.run(cmd, ...)
   let split = get(a:, 1, 0)
   let run_in_vim = get(a:, 2, 0)
-  let self.last_cmd = a:cmd
+  let is_control = (a:cmd =~# '^\^[a-zA-Z]$')
+
+  if !is_control
+    let self.last_cmd = a:cmd
+  endif
 
   if self.is_running()
     if split
@@ -779,7 +783,7 @@ function! s:tmux.run(cmd, ...)
         echomsg res
       endif
     else
-      let enter = (a:cmd =~# '^\^[a-zA-Z]$' ? '' : 'Enter')
+      let enter = (is_control ? '' : 'Enter')
       call system(printf('`tmux send "%s" %s`', a:cmd, enter))
     endif
   elseif run_in_vim
@@ -793,6 +797,9 @@ endfunction
 function! s:tmux.operate(cmd)
   if self.is_running()
     call system(printf('`tmux "%s"`', a:cmd))
+  else
+    echohl ErrorMsg | echo 'ERR: tmux is not running' | echohl NONE
+    return
   endif
 endfunction
 
@@ -816,12 +823,6 @@ endif
 if filereadable(expand('~/.vimrc.mine'))
   source ~/.vimrc.mine
 endif
-
-if has('gui_running')
-  source ~/.gvimrc
-endif
-
-let g:netrw_dynamic_maxfilenamelen = 1
 
 " __END__ {{{
 " vim: ts=2 sts=2 sw=2
