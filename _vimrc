@@ -62,7 +62,7 @@ filetype plugin indent on
 "}}}
 
 let s:is_mac = has('macunix')
-" no AIX, BSD, HP-UX and any other UNIX
+" I don't use AIX, BSD, HP-UX and any other UNIX
 let s:is_linux = !s:is_mac && has('unix')
 
 set cpo&vim
@@ -73,12 +73,6 @@ set nocompatible
 set verbose=0
 
 " * functions "{{{
-" convert path separator
-function! s:cps(path, sep)
-  return substitute(a:path, '[/\\]', a:sep, 'g')
-endfunction
-
-
 " tag information show in command window
 function! s:preview_tag_lite(word)
   let t = taglist('^' . a:word . '$')
@@ -87,14 +81,15 @@ function! s:preview_tag_lite(word)
   for item in t
     if -1 < stridx(item.filename, current)
       " [filename] tag definition
-      echohl Search | echomsg printf('%-36s %s', '[' . s:cps(item.filename, '/') . ']', item.cmd) | echohl None
+      echohl Search | echomsg printf('%-36s %s', '[' . item.filename . ']', item.cmd) | echohl None
     else
-      echomsg printf('%-36s %s', '[' . substitute(s:cps(item.filename, '/'), '\s\s*$', '', '') . ']', item.cmd)
+      echomsg printf('%-36s %s', '[' . substitute(item.filename, '\s\s*$', '', '') . ']', item.cmd)
     endif
   endfor
 endfunction
 command! -nargs=0 PreviewTagLite call s:preview_tag_lite(expand('<cword>'))
 
+" which + chop
 function! s:which(cmd)
   let res = system('which ' . a:cmd)
   if v:shell_error
@@ -106,10 +101,10 @@ endfunction
 "}}}
 
 
-" GUI menu is unnecessary "{{{
+" I don't need GUI menus
 let did_install_default_menus = 1
 let did_install_syntax_menu = 1
-"}}}
+
 
 syntax enable
 filetype plugin indent on
@@ -196,6 +191,7 @@ set wildmode=longest:list,full
 set nowrapscan
 
 set matchpairs& matchpairs+=<:>
+" prevent highlighting a pair of parentheses and brackets
 let g:loaded_matchparen = 0
 
 if has('persistent_undo')
@@ -206,6 +202,7 @@ if has('persistent_undo')
   augroup END
 endif
 
+" gVim specific
 if has('gui_running')
   set columns=132
   set guioptions=aeciM
@@ -359,10 +356,10 @@ sunmap e
 " open current directory with filer
 if s:is_mac
   nnoremap <silent> <Space>e
-        \ :<C-u>silent execute ':!open -a Finder %:p:h'<Cr>:redraw!<Cr>
+        \ :<C-u>silent execute '!open -a Finder %:p:h'<Cr>:redraw!<Cr>
 elseif s:is_linux
   nnoremap <silent> <Space>e
-        \ :<C-u>silent execute ':!nautilus %:p:h &'<Cr>:redraw!<Cr>
+        \ :<C-u>silent execute '!nautilus %:p:h &'<Cr>:redraw!<Cr>
 endif
 
 nnoremap <Space>w :<C-u>update<Cr>
@@ -647,16 +644,16 @@ let dir = ['\.git$', '\.hg$', '\.svn$', '\.vimundo$', '\.ctrlp_cache/',
       \    '\.rbenv/', '\.gem/', 'backup$', 'Downloads$', $TMPDIR]
 let g:ctrlp_custom_ignore = {
   \ 'dir': join(dir, '\|'),
-  \ 'file': '\.exe$\|\.so$\|\.dll$\|\.DS_Store$\|\.db',
+  \ 'file': '\v(\.exe\|\.so\|\.dll\|\.DS_Store\|\.db)@<!$',
   \ }
 
-nnoremap <Space>ls :CtrlPBuffer<Cr>
+nnoremap <Space>fl :CtrlPBuffer<Cr>
 nnoremap <Space>fd :CtrlPCurWD<Cr>
 nnoremap <Space>fm :CtrlPMRU<Cr>
-nnoremap <Space>fl :CtrlPLine<Cr>
+nnoremap <Space>li :CtrlPLine<Cr>
 nnoremap <Space>fk :CtrlPBookmarkDir<Cr>
 nnoremap <Space>fo :execute 'CtrlP ' . $chef . '/cookbooks/_default'<Cr>
-nnoremap <Space>fw :execute 'CtrlP ' . getcwd()<Cr>
+nnoremap <Space>fw :execute 'CtrlP ' . expand('%:p:h')<Cr>
 
 nnoremap <Space>fu :CtrlPFunky<Cr>
 "}}}
