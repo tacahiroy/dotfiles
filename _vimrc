@@ -289,14 +289,24 @@ nnoremap Q q
 nnoremap Y y$
 nnoremap j gj
 nnoremap k gk
+
+" selection
 nnoremap vv <C-v>
 nnoremap vo vg_
 nnoremap vO ^vg_
+
 nnoremap <Return> :<C-u>call append(line('.'), '')<Cr>
+
 nnoremap <C-]> <C-]>zz
 nnoremap <C-t> <C-t>zz
+
 nnoremap * *N
 nnoremap # #N
+
+nnoremap ; :
+nnoremap : ;
+vnoremap ; :
+vnoremap : ;
 
 nnoremap <silent> qj :cnext<Cr>
 nnoremap <silent> qk :cprevious<Cr>
@@ -434,16 +444,17 @@ function! s:move_block(d) range
 endfunction
 
 if executable('tidyp')
-  function! s:run_tidy(col) range
+  function! s:run_tidy(...) range
     " this code is not perfect.
     " tidy's Character encoding option and Vim's fileencoding/encoding is not a pair
+    let col = get(a:, 1, 80)
     let enc = &l:fileencoding ? &l:fileencoding : &encoding
     let enc = substitute(enc, '-', '', 'g')
 
-    silent execute printf(': %d,%d!tidyp -xml -i -%s -wrap %d -q -asxml', a:firstline, a:lastline, enc, eval(a:col))
+    silent execute printf(': %d,%d!tidyp -xml -i -%s -wrap %d -q -asxml', a:firstline, a:lastline, enc, eval(col))
   endfunction
 
-  command! -nargs=1 -range Tidy <line1>,<line2>call s:run_tidy(<args>)
+  command! -nargs=? -range Tidy <line1>,<line2>call s:run_tidy(<args>)
 endif
 "}}}
 
@@ -515,6 +526,9 @@ augroup Tacahiroy
 
   autocmd FileType mail set spell
   autocmd FileType slim setlocal makeprg=slimrb\ -c\ %
+
+  autocmd BufRead,BufNewFile *.applescript,*.scpt setfiletype applescript
+  autocmd FileType applescript set commentstring=#\ %s
 
   autocmd FileType help,qf,logaling,ref-* nnoremap <buffer> <silent> qq <C-w>c
   autocmd FileType javascript* set omnifunc=javascriptcomplete#CompleteJS
@@ -725,7 +739,7 @@ if executable('knife')
       return
     endif
 
-    let cookbooks = get(a:, 1, [])
+    let cookbooks = [get(a:, 1, '')]
     let m = matchlist(path, '^\(.\+/cookbooks/[^/]\+\)/\([^/]\+\)/')
     let cb_path = m[1]
     if index(cookbooks, m[2]) == -1
