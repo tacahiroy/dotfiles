@@ -658,7 +658,7 @@ let dir = ['\.git$', '\.hg$', '\.svn$', '\.vimundo$', '\.ctrlp_cache/',
       \    '\.rbenv/', '\.gem/', 'backup$', 'Downloads$', $TMPDIR]
 let g:ctrlp_custom_ignore = {
   \ 'dir': join(dir, '\|'),
-  \ 'file': '\v(\.exe\|\.so\|\.dll\|\.DS_Store\|\.db)@<!$',
+  \ 'file': '\v(\.exe\|\.so\|\.dll\|\.DS_Store\|\.db)$',
   \ }
 
 nnoremap <Space>fl :CtrlPBuffer<Cr>
