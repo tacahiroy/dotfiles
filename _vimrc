@@ -379,6 +379,7 @@ nnoremap <Space>Q :<C-u>quit!<Cr>
 
 nnoremap <C-h> :<C-u>h<Space>
 nnoremap <Space>t :<C-u>tabe<Space>
+nnoremap s<Space> i<Space><Esc>
 
 nnoremap <silent> <Space>_ :<C-u>edit $MYVIMRC<Cr>
 nnoremap <silent> <Space>g_ :<C-u>edit $MYGVIMRC<Cr>
@@ -418,8 +419,6 @@ inoremap <silent> <C-j> <Nop>
 cnoremap <silent> <C-j> <Nop>
 inoremap <silent> <C-l> <Nop>
 cnoremap <silent> <C-l> <Nop>
-inoremap <silent> <C-S-f> <Nop>
-cnoremap <silent> <C-S-f> <Nop>
 
 " selected text search
 vnoremap * y/<C-R>"<Cr>
