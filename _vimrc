@@ -608,6 +608,7 @@ augroup Tacahiroy
   inoreabbr passowrd password
   inoreabbr WinMerege WinMerge
   inoreabbr Winmerge WinMerge
+  inoreabbr ture true
 augroup END
 "}}}
 
