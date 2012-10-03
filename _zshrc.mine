@@ -1,0 +1,48 @@
+export proj=~/Projects/
+export fc=~/Projects/Fc/
+export chef=~/Projects/fc/chef.git/
+
+alias -g EEE='--secret-file ~/.chef/encrypted_data_bag_secret'
+
+NODES=($(cat $HOME/bin/nodes.txt))
+
+function tm_conn2srvs() {
+  local SSH=/usr/bin/ssh
+  local MOS=$HOME/bin/mos
+  local SSH_CONFIG=$HOME/.ssh/config
+  local pat=$1
+  if [ -z "${pat}" ]; then
+    echo 'Usage: tm_conn2srvs PATTERN'
+    return
+  fi
+
+  servers=($(echo ${NODES} | tr ' ' '\n' | grep "${pat}"))
+
+  for server in ${servers[@]}; do
+    if ! tmux list-windows | grep ${server}; then
+      if grep -q "^Host ${server}m$" ${SSH_CONFIG}; then
+        echo mosh
+        # tmux new-window -n ${server} "${MOS} ${server}"
+      else
+        echo ssh
+        # tmux new-window -n ${server} "${SSH} ${server}"
+      fi
+    fi
+  done
+}
+
+function tm_kill_other_windows() {
+  local pat=$1
+  local windows="`tmux list-windows -F '#{window_index}:#{window_name}-#{window_active}'`"
+
+  [ `echo "${windows}" | wc -l | tr -d ' ' | grep '^1$'` ] && return
+
+  local cur_win_nbr=`echo "${windows}" | grep '\-1$' | grep -o '^[0-9]\+'`
+  windows=`echo "${windows}" | grep -v "^${cur_win_nbr}:" \
+                             | grep "^[0-9]\+:.*${pat}.*-[01]$"`
+
+  for i in `echo "${windows}" | grep -o '^[0-9]\+'`; do
+    tmux kill-window -t ${i}
+  done
+}
+
