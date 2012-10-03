@@ -24,6 +24,8 @@ task :mksymlink do
     unlink dest if FileTest.symlink?(dest)
     ln_s src, dest
   end
+
+  Rake::Task[:mkunmanageddirs].invoke
 end
 
 desc "create symlink(dry run)"
@@ -34,3 +36,11 @@ task :testmksymlink do
     puts "#{src} => #{dest}"
   end
 end
+
+task :mkunmanageddirs do
+  %w(backups swaps).each do |d|
+    dest = "#{ENV['HOME']}/.vim/#{d}"
+    mkdir "#{ENV['HOME']}/.vim/#{d}" unless File.exist?(dest)
+  end
+end
+
