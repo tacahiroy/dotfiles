@@ -44,3 +44,17 @@ task :mkunmanageddirs do
   end
 end
 
+desc "create symlinks to sandbox directory"
+task :link2sandbox do
+  plugins = %w(ctrlp-funky.git
+               vim-endwise.git
+               vim-logaling.git
+  )
+  proj = "#{ENV['HOME']}/Projects/vim"
+  sandbox = "#{ENV['HOME']}/.vim/sandbox"
+
+  plugins.each do |plugin|
+    ln_s "#{proj}/#{plugin}", "#{sandbox}/#{plugin}" unless File.symlink?("#{sandbox}/#{plugin}")
+  end
+end
+
