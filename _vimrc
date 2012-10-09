@@ -513,6 +513,7 @@ augroup Tacahiroy
 
   autocmd BufRead,BufNewFile *.ru,Gemfile,Guardfile set filetype=ruby
   autocmd BufRead,BufNewFile ?zshrc,?zshenv set filetype=zsh
+  autocmd BufRead,BufNewFile *.md,*.mkd,*.markdown set filetype=markdown
 
   augroup PersistentUndo
     autocmd BufWritePre COMMIT_EDITMSG setlocal noundofile
