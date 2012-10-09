@@ -517,7 +517,7 @@ augroup Tacahiroy
 
   augroup PersistentUndo
     autocmd BufWritePre COMMIT_EDITMSG setlocal noundofile
-    autocmd BufWritePre *.bak *.bac setlocal noundofile
+    autocmd BufWritePre *.bak,*.bac setlocal noundofile
     autocmd BufWritePre knife-edit-*.js setlocal noundofile
   augroup END
 
