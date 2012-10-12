@@ -243,9 +243,9 @@ let &statusline .= '%{(&l:fileencoding != "" ? &l:fileencoding : &encoding).":".
 let &statusline .= '(%{&expandtab ? "" : ">"}%{&l:tabstop}'
 let &statusline .= '%{search("\\t", "cnw") ? "<" : ""})'
 let &statusline .= '%{(empty(&mouse) ? "" : "m")}'
-let &statusline .= '%{(&paste ? "p" : "")}'
 let &statusline .= '%{(&list ? "l" : "")}'
 let &statusline .= '%{(empty(&clipboard) ? "" : "c")} '
+let &statusline .= '%{(&paste ? "p" : "")}'
 let &statusline .= '%#Function#%{fugitive#statusline()}%*'
 let &statusline .= ' %=%{Gps()}'
 let &statusline .= '%-12( %l/%LL,%c %)%P'
@@ -344,6 +344,23 @@ nnoremap <silent> <Leader>tp :set paste!<Cr>
 nnoremap <silent> <Leader>tl :set list!<Cr>
 nnoremap <silent> <Leader>tc :let &clipboard =
       \ empty(&clipboard) ? 'unnamed,unnamedplus' : ''<Cr>
+nnoremap <silent> <Leader>tn :<C-u>silent call <SID>toggle_line_number()<Cr>
+
+function! s:toggle_line_number()
+  let NONU = 'nonumber'
+  let NU   = 'number'
+  let RNU  = 'relativenumber'
+
+  if &number
+    let b:number = NU
+  elseif &relativenumber
+    let b:number = RNU
+  else
+    let b:number = get(b:, 'number', NU)
+  endif
+
+  execute printf('let &%s = !&%s', b:number, b:number)
+endfunction
 
 " commentary.vim
 nmap <Space>c <Plug>CommentaryLine
@@ -386,6 +403,8 @@ nnoremap <Space>S :<C-u>source %<Cr>
 
 nnoremap <Leader>nn :<C-u>NERDTreeToggle<Cr>
 nnoremap <Leader>nf :<C-u>NERDTreeFind<Cr>zz<C-w><C-w>
+nnoremap <Leader>S :<C-u>s/
+nnoremap <Leader>s :<C-u>%s/
 
 nnoremap <silent> <Esc><Esc> <Esc>:<C-u>nohlsearch<Cr>
 
