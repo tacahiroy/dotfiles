@@ -237,14 +237,13 @@ colorscheme seashell
 set formatoptions& formatoptions+=mM formatoptions-=r
 
 let &statusline = '[#%n]%<%#FileName#%f%* %m%r%h%w'
-" let &statusline .= '%{&filetype.":".(&l:fileencoding != "" ? &l:fileencoding : &encoding).":".&fileformat}'
 let &statusline .= '%{&filetype}:'
 let &statusline .= '%{(&l:fileencoding != "" ? &l:fileencoding : &encoding).":".&fileformat}'
 let &statusline .= '(%{&expandtab ? "" : ">"}%{&l:tabstop}'
-let &statusline .= '%{search("\\t", "cnw") ? "<" : ""})'
+let &statusline .= '%{search("\\t", "cnw") ? "!" : ""})'
 let &statusline .= '%{(empty(&mouse) ? "" : "m")}'
 let &statusline .= '%{(&list ? "l" : "")}'
-let &statusline .= '%{(empty(&clipboard) ? "" : "c")} '
+let &statusline .= '%{(empty(&clipboard) ? "" : "c")}'
 let &statusline .= '%{(&paste ? "p" : "")}'
 let &statusline .= '%#Function#%{fugitive#statusline()}%*'
 let &statusline .= ' %=%{Gps()}'
