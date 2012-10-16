@@ -524,7 +524,7 @@ augroup Tacahiroy
       return
     endif
 
-    let dir = s:get_project_root(expand('%:p:h'), 5)
+    let dir = s:get_project_root(expand('%:p:h'), a:n)
 
     execute ':lcd ' . escape(dir, ' ')
   endfunction
