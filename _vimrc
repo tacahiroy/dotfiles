@@ -754,7 +754,6 @@ if has('multi_byte_ime') || has('xim')
 endif
 
 " open a loaded buffer with new tab
-command! -nargs=1 -complete=buffer NTab :999tab sbuffer <args>
 command! Big wincmd _ | wincmd |
 
 " remove missing files from ctrlp's MRU cache
