@@ -1,3 +1,4 @@
+; vim: ts=4 sw=4 sts=4 noexpandtab
 [user]
 	name = tacahiroy
 	email = tacahiroy@gmail.com
@@ -26,5 +27,6 @@
 	logc = log ORIG_HEAD.. --stat --no-merges
 	up = pull --rebase
 
-; vim: ts=4 sw=4 sts=4 noexpandtab
+[advice]
+	statusHints = false
 
