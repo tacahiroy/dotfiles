@@ -83,8 +83,8 @@ typeset -U class_path
 class_path=(
   /usr/local/Cellar/clojure/1.4.0/*.jar(N-/)
   /usr/local/Cellar/clojure-contrib/1.2.0/*.jar(N-/)
-  $HOME/Projects/wk/vimclojure.hg/build/libs/*.jar(N-/)
-  $HOME/Projects/wk/vimclojure.hg/server/build/libs/*.jar(N-/)
+  $HOME/Projects/gitro/vimclojure.hg/build/libs/*.jar(N-/)
+  $HOME/Projects/gitro/vimclojure.hg/server/build/libs/*.jar(N-/)
 )
 
 export LEIN_JAR=$HOME/.lein/self-installs/leiningen-1.7.1-standalone.jar
