@@ -657,6 +657,7 @@ let g:ctrlp_highlight_match = [1, 'Constant']
 let g:ctrlp_max_files = 12800
 let g:ctrlp_max_depth = 24
 let g:ctrlp_dotfiles = 1
+let g:ctrlp_mruf_max = 512
 
 let g:ctrlp_user_command = {
   \ 'types': {
@@ -752,10 +753,36 @@ if has('multi_byte_ime') || has('xim')
   inoremap <silent> <Esc> <Esc>:<C-u>set iminsert=0<Cr>
 endif
 
-" {{{
 " open a loaded buffer with new tab
 command! -nargs=1 -complete=buffer NTab :999tab sbuffer <args>
 command! Big wincmd _ | wincmd |
+
+" remove missing files from ctrlp's MRU cache
+function! s:clean_ctrlp_cache()
+  echomsg 'Cleaning the CtrlP MRU Cache list ...'
+
+  let cache_dir = get(g:, 'ctrlp_cache_dir', expand('$HOME/.ctrlp_cache'))
+  let cache_file = cache_dir . '/mru/cache.txt'
+  let lines = readfile(cache_file)
+  let len = len(lines)
+
+  let i = 0
+  for l in lines
+    if !filereadable(l)
+      call remove(lines, i)
+      let i -= 1
+    endif
+    let i += 1
+  endfor
+
+  if len(lines) < len
+    call writefile(lines, cache_file)
+    echomsg printf('[INFO] %d→%d done!', len, len(lines))
+  else
+    echomsg '[INFO] No files were removed from the cache.'
+  endif
+endfunction
+command! -nargs=0 CleanCtrlPMRUCache call s:clean_ctrlp_cache()
 
 " Chef
 if executable('knife')
@@ -854,7 +881,6 @@ if s:tmux.is_installed()
   nnoremap <Leader>> :<C-u>TMNextWindow<Cr>
   nnoremap <Leader>< :<C-u>TMPrevWindow<Cr>
 endif
-" }}}
 
 
 if filereadable(expand('~/.vimrc.mine'))
