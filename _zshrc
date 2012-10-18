@@ -241,7 +241,7 @@ setopt complete_aliases # aliased ls needs if file/dir completions work
 case "${OSTYPE}" in
   freebsd*|darwin*)
     alias vim="$EDITOR "$@""
-    alias gvim="/usr/local/bin/mvim"
+    alias gvim="$EDITOR -g "$@""
     alias ls='gls -F --color'
     ;;
   *)
