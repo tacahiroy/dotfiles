@@ -533,6 +533,14 @@ augroup Tacahiroy
   autocmd BufRead,BufNewFile ?zshrc,?zshenv set filetype=zsh
   autocmd BufRead,BufNewFile *.md,*.mkd,*.markdown set filetype=markdown
 
+  function! s:insert_today_for_md_changelog()
+    call append(line('.') - 1, strftime('%Y-%m-%d'))
+    call append(line('.') - 1, '----------')
+  endfunction
+
+  autocmd FileType markdown nnoremap <buffer> <Leader>it :<C-u>call <SID>insert_today_for_md_changelog()<Cr>
+  autocmd FileType markdown nnoremap <buffer> <Leader>ix i[x]<Space><Esc>
+
   augroup PersistentUndo
     autocmd BufWritePre COMMIT_EDITMSG setlocal noundofile
     autocmd BufWritePre *.bak,*.bac setlocal noundofile
