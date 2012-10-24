@@ -10,6 +10,11 @@
     <productid>0x111</productid>
   </deviceproductdef>
 
+  <deviceproductdef>
+    <productname>Realforce_86</productname>
+    <productid>0x10e</productid>
+  </deviceproductdef>
+
   <devicevendordef>
     <vendorname>Apple_Inc</vendorname>
     <vendorid>0x5ac</vendorid>
@@ -26,38 +31,61 @@
   </deviceproductdef>
 
   <item>
-    <name>Swap Option and Command</name>
-    <identifier>private.deviceproductdef.topre.swap_option_and_command</identifier>
-    <device_only>DeviceVendor::Topre_Corporation, DeviceProduct::Realforce_87</device_only>
-    <autogen>--KeyToKey-- KeyCode::OPTION_L, KeyCode::COMMAND_L</autogen>
-    <autogen>--KeyToKey-- KeyCode::COMMAND_L, KeyCode::OPTION_L</autogen>
-    <autogen>--KeyToKey-- KeyCode::OPTION_R, KeyCode::COMMAND_R</autogen>
-    <autogen>--KeyToKey-- KeyCode::COMMAND_R, KeyCode::OPTION_R</autogen>
+    <name>Topre Realforce</name>
+    <item>
+      <name>Swap Options and Commands</name>
+      <identifier>private.deviceproductdef.topre.swap_option_and_command</identifier>
+      <device_only>DeviceVendor::Topre_Corporation</device_only>
+      <autogen>--KeyToKey-- KeyCode::OPTION_L, KeyCode::COMMAND_L</autogen>
+      <autogen>--KeyToKey-- KeyCode::COMMAND_L, KeyCode::OPTION_L</autogen>
+      <autogen>--KeyToKey-- KeyCode::OPTION_R, KeyCode::COMMAND_R</autogen>
+      <autogen>--KeyToKey-- KeyCode::COMMAND_R, KeyCode::OPTION_R</autogen>
+    </item>
+
+    <item>
+      <name>Apply Volume Controls (87)</name>
+      <identifier>private.deviceproductdef.topre.apply_volume_controls_realforce87</identifier>
+      <device_only>DeviceVendor::Topre_Corporation, DeviceProduct::Realforce_87</device_only>
+      <autogen>--KeyToConsumer-- KeyCode::F13, ConsumerKeyCode::VOLUME_MUTE</autogen>
+      <autogen>--KeyToConsumer-- KeyCode::PC_KEYPAD_NUMLOCK, ConsumerKeyCode::VOLUME_DOWN</autogen>
+      <autogen>--KeyToConsumer-- KeyCode::PC_PAUSE, ConsumerKeyCode::VOLUME_UP</autogen>
+    </item>
+
+    <item>
+      <name>Apply Volume Controls (86)</name>
+      <identifier>private.deviceproductdef.topre.apply_volume_controls_realforce86</identifier>
+      <device_only>DeviceVendor::Topre_Corporation, DeviceProduct::Realforce_86</device_only>
+      <autogen>--KeyToConsumer-- KeyCode::F13, ConsumerKeyCode::VOLUME_MUTE</autogen>
+      <autogen>--KeyToConsumer-- KeyCode::PC_SCROLLLOCK, ConsumerKeyCode::VOLUME_DOWN</autogen>
+      <autogen>--KeyToConsumer-- KeyCode::PC_PAUSE, ConsumerKeyCode::VOLUME_UP</autogen>
+    </item>
+
+    <item>
+      <name>App to Option (86)</name>
+      <identifier>private.deviceproductdef.topre.app_to_option_realforce86</identifier>
+      <device_only>DeviceVendor::Topre_Corporation, DeviceProduct::Realforce_86</device_only>
+      <autogen>--KeyToKey-- KeyCode::PC_APPLICATION, KeyCode::OPTION_R</autogen>
+    </item>
+
+    <item>
+      <name>Home/End</name>
+      <identifier>private.deviceproductdef.topre.home_end</identifier>
+      <device_only>DeviceVendor::Topre_Corporation</device_only>
+      <autogen>--KeyToKey-- KeyCode::HOME, KeyCode::CURSOR_LEFT, VK_COMMAND</autogen>
+      <autogen>--KeyToKey-- KeyCode::END, KeyCode::CURSOR_RIGHT, VK_COMMAND</autogen>
+    </item>
   </item>
 
   <item>
-    <name>Apply Volume Controls</name>
-    <identifier>private.deviceproductdef.topre.apply_volume_controls</identifier>
-    <device_only>DeviceVendor::Topre_Corporation, DeviceProduct::Realforce_87</device_only>
-    <autogen>--KeyToConsumer-- KeyCode::F13, ConsumerKeyCode::VOLUME_MUTE</autogen>
-    <autogen>--KeyToConsumer-- KeyCode::PC_KEYPAD_NUMLOCK, ConsumerKeyCode::VOLUME_DOWN</autogen>
-    <autogen>--KeyToConsumer-- KeyCode::PC_PAUSE, ConsumerKeyCode::VOLUME_UP</autogen>
-  </item>
-
-  <item>
-    <name>Home/End</name>
-    <identifier>private.deviceproductdef.topre.home_end</identifier>
-    <device_only>DeviceVendor::Topre_Corporation, DeviceProduct::Realforce_87</device_only>
-    <autogen>--KeyToKey-- KeyCode::HOME, KeyCode::A, VK_CONTROL</autogen>
-    <autogen>--KeyToKey-- KeyCode::END, KeyCode::E, VK_CONTROL</autogen>
-  </item>
-
-  <item>
-    <name>Option_R to Control</name>
-    <identifier>private.deviceproductdef.apple</identifier>
-    <device_only>DeviceVendor::Apple_Inc, DeviceProduct::Apple_Internal_keyboard_MBA,
-                 DeviceVendor::Apple_Inc, DeviceProduct::Apple_Internal_keyboard_MBP
-    </device_only>
-    <autogen>--KeyToKey-- KeyCode::OPTION_R, KeyCode::CONTROL_L</autogen>
+    <name>MacBook Pro/Air</name>
+    <item>
+      <name>Option_R to Control</name>
+      <identifier>private.deviceproductdef.apple</identifier>
+      <device_only>DeviceVendor::Apple_Inc, DeviceProduct::Apple_Internal_keyboard_MBA,
+                  DeviceVendor::Apple_Inc, DeviceProduct::Apple_Internal_keyboard_MBP
+      </device_only>
+      <autogen>--KeyToKey-- KeyCode::OPTION_R, KeyCode::CONTROL_L</autogen>
+    </item>
   </item>
 </root>
+
