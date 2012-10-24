@@ -1,5 +1,5 @@
 " $HOME/.vimrc
-" Author: Tacahiroy <tacahiroy```AT```gmail.com>
+" Author: Tacahiroy <tacahiroy\AT/gmail.com>
 
 scriptencoding utf-8
 
@@ -88,13 +88,18 @@ function! s:preview_tag_lite(word)
 endfunction
 command! -nargs=0 PreviewTagLite call s:preview_tag_lite(expand('<cword>'))
 
+function! s:system(cmd)
+  let res = system(a:cmd)
+  return { 'out': res, 'err': v:shell_error }
+endfunction
+
 " which + chop
 function! s:which(cmd)
-  let res = system('which ' . a:cmd)
-  if v:shell_error
+  let res = s:system('which ' . a:cmd)
+  if res.err
     return ''
   else
-    return substitute(res, '\n$', '', '')
+    return substitute(res.out, '\n$', '', '')
   endif
 endfunction
 "}}}
@@ -564,7 +569,7 @@ augroup Tacahiroy
   autocmd FileType python setlocal tabstop=4 shiftwidth=4 softtabstop=4
 
   autocmd FileType vim,snippet setlocal tabstop=2 shiftwidth=2 softtabstop=2
-  autocmd FileType vim :execute 'set iskeyword+=' . char2nr(':')
+  " autocmd FileType vim :execute 'set iskeyword+=' . char2nr(':')
 
   autocmd FileType html,xhtml,xml,xslt,mathml,svg setlocal tabstop=2 shiftwidth=2 softtabstop=2
 
@@ -626,14 +631,12 @@ augroup Tacahiroy
   autocmd BufLeave,BufWinLeave *.xml set updatetime&
 
   autocmd BufRead,BufNewFile * syn match ExtraSpaces '[\t ]\+$'
-  hi def link ExtraSpaces Error
+        \| hi def link ExtraSpaces MatchParen
 
   inoreabbr funciton function
   inoreabbr requrie require
   inoreabbr reuqire require
   inoreabbr passowrd password
-  inoreabbr WinMerege WinMerge
-  inoreabbr Winmerge WinMerge
   inoreabbr ture true
 augroup END
 "}}}
@@ -658,6 +661,7 @@ let g:ctrlp_max_files = 12800
 let g:ctrlp_max_depth = 24
 let g:ctrlp_dotfiles = 1
 let g:ctrlp_mruf_max = 512
+let g:ctrlp_mruf_exclude = 'knife-edit-*.*'
 
 let g:ctrlp_user_command = {
   \ 'types': {
@@ -689,12 +693,12 @@ let g:ctrlp_custom_ignore = {
   \ }
 
 nnoremap <Space>fl :CtrlPBuffer<Cr>
-nnoremap <Space>fd :CtrlPCurWD<Cr>
+nnoremap <Space>fd :CtrlPDir<Cr>
 nnoremap <Space>fm :CtrlPMRU<Cr>
 nnoremap <Space>li :CtrlPLine<Cr>
 nnoremap <Space>fk :CtrlPBookmarkDir<Cr>
 nnoremap <Space>fo :execute 'CtrlP ' . $chef . '/cookbooks/_default'<Cr>
-nnoremap <Space>fw :execute 'CtrlP ' . expand('%:p:h')<Cr>
+nnoremap <Space>fw :CtrlPCurFile<Cr>
 
 nnoremap <Space>fu :CtrlPFunky<Cr>
 "}}}
@@ -758,7 +762,7 @@ command! Big wincmd _ | wincmd |
 
 " remove missing files from ctrlp's MRU cache
 function! s:clean_ctrlp_cache()
-  echomsg 'Cleaning the CtrlP MRU Cache list ...'
+  echomsg 'Cleaning CtrlP MRU Cache list ...'
 
   let cache_dir = get(g:, 'ctrlp_cache_dir', expand('$HOME/.ctrlp_cache'))
   let cache_file = cache_dir . '/mru/cache.txt'
@@ -803,10 +807,17 @@ if executable('knife')
       let mes = 'Uploading cookbook' . (1 < len(cookbooks) ? 's' : '')
       let cmd = printf('knife cookbook upload -o %s %s', cb_path, join(cookbooks, ' '))
 
+      if executable('growlnotify')
+        let gmsg = join(cookbooks, ' ')
+        let gtitle = 'cookbooks have been uploaded:'
+        let gapp = 'Chef'
+        let cmd .= printf('; growlnotify -n %s -m \"%s\" \"%s\"', gapp, gmsg, gtitle)
+      endif
+
       echomsg printf('%s: %s', mes, join(cookbooks, ' '))
 
+      " echom ':!' . cmd
       call s:tmux.run(cmd, 1, 1)
-      " execute ':!' . cmd
     else
       echoerr 'no cookbooks are found.'
     endif
@@ -821,13 +832,12 @@ let s:tmux = {}
 let s:tmux.last_cmd = ''
 
 function! s:tmux.is_installed()
-  call system('which tmux')
-  return v:shell_error == 0
+  return s:which('which tmux') !=# ''
 endfunction
 
 function! s:tmux.is_running()
-  call system('tmux ls -F "#{session_name}:#{session_attached}" | grep :1')
-  return v:shell_error == 0
+  let r = s:system('tmux ls -F "#{session_name}:#{session_attached}" | grep :1')
+  return r.err == 0
 endfunction
 
 function! s:tmux.run(cmd, ...)
@@ -841,13 +851,13 @@ function! s:tmux.run(cmd, ...)
 
   if self.is_running()
     if split
-      let res = system(printf('tmux splitw -v "%s"', a:cmd))
-      if v:shell_error
-        echomsg res
+      let res = s:system(printf('tmux splitw -v "%s"', a:cmd))
+      if res.err
+        echomsg res.out
       endif
     else
       let enter = (is_control ? '' : 'Enter')
-      call system(printf('`tmux send "%s" %s`', a:cmd, enter))
+      call s:system(printf('`tmux send "%s" %s`', a:cmd, enter))
     endif
   elseif run_in_vim
     execute ':!' . a:cmd
@@ -859,7 +869,7 @@ endfunction
 
 function! s:tmux.operate(cmd)
   if self.is_running()
-    call system(printf('`tmux "%s"`', a:cmd))
+    call s:system(printf('`tmux "%s"`', a:cmd))
   else
     echohl ErrorMsg | echo 'ERR: tmux is not running' | echohl NONE
     return
