@@ -265,6 +265,7 @@ alias su='su -l'
 alias lv='lv -c'
 
 alias v='vim'
+alias vi='vim'
 alias vv='gvim'
 
 alias bdl='bundle'
