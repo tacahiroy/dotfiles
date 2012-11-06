@@ -50,9 +50,9 @@ endif
 if isdirectory(expand('$DOTVIM/sandbox'))
   let dirs = split(glob($DOTVIM.'/sandbox/**/*'))
   for d in dirs
-    execute ':set runtimepath+=' . d
+    execute 'set runtimepath+=' . d
     if d =~# '/doc$'
-      execute ':helptags ' . d
+      execute 'helptags ' . d
     endif
   endfor
 endif
@@ -472,7 +472,7 @@ if executable('tidyp')
     let enc = &l:fileencoding ? &l:fileencoding : &encoding
     let enc = substitute(enc, '-', '', 'g')
 
-    silent execute printf(': %d,%d!tidyp -xml -i -%s -wrap %d -q -asxml', a:firstline, a:lastline, enc, eval(col))
+    silent execute printf('%d,%d!tidyp -xml -i -%s -wrap %d -q -asxml', a:firstline, a:lastline, enc, eval(col))
   endfunction
 
   command! -nargs=? -range Tidy <line1>,<line2>call s:run_tidy(<args>)
@@ -531,7 +531,7 @@ augroup Tacahiroy
 
     let dir = s:get_project_root(expand('%:p:h'), a:n)
 
-    execute ':lcd ' . escape(dir, ' ')
+    execute 'lcd ' . escape(dir, ' ')
   endfunction
 
   autocmd BufRead,BufNewFile *.ru,Gemfile,Guardfile set filetype=ruby
@@ -860,7 +860,7 @@ function! s:tmux.run(cmd, ...)
       call s:system(printf('`tmux send "%s" %s`', a:cmd, enter))
     endif
   elseif run_in_vim
-    execute ':!' . a:cmd
+    execute '!' . a:cmd
   else
     echohl ErrorMsg | echo 'ERR: tmux is not running' | echohl NONE
     return
