@@ -20,6 +20,7 @@ Bundle 'kien/ctrlp.vim'
 Bundle 'mattn/zencoding-vim'
 Bundle 'msanders/snipmate.vim'
 Bundle 'scrooloose/nerdtree'
+Bundle 'scrooloose/syntastic'
 " Bundle 'thinca/vim-quickrun'
 Bundle 'thinca/vim-ref'
 Bundle 'tpope/vim-commentary'
@@ -72,7 +73,17 @@ set nocompatible
 set verbose=0
 
 " * functions "{{{
-" tag information show in command window
+function! g:echohl(group, msg)
+  try
+    execute 'echohl ' . a:group
+    echomsg a:msg
+  finally
+    echohl NONE
+  endtry
+endfunction
+
+
+" shows tag information into command window
 function! s:preview_tag_lite(word)
   let t = taglist('^' . a:word . '$')
   let current = expand('%:t')
@@ -80,7 +91,7 @@ function! s:preview_tag_lite(word)
   for item in t
     if -1 < stridx(item.filename, current)
       " [filename] tag definition
-      echohl Search | echomsg printf('%-36s %s', '[' . item.filename . ']', item.cmd) | echohl None
+      call g:echohl('Search', printf('%-36s [%s]', item.filename, item.cmd))
     else
       echomsg printf('%-36s %s', '[' . substitute(item.filename, '\s\s*$', '', '') . ']', item.cmd)
     endif
@@ -311,10 +322,14 @@ nnoremap : ;
 vnoremap ; :
 vnoremap : ;
 
-nnoremap <silent> qj :cnext<Cr>
-nnoremap <silent> qk :cprevious<Cr>
+" quickfix
+function! s:redir(cmd)
+  redir => res
+  execute a:cmd
+  redir END
 
-nnoremap <silent> qo :<C-u>silent call <SID>toggle_qf_list()<Cr>
+  return res
+endfunction
 
 function! s:toggle_qf_list()
   let bufs = s:redir('buffers')
@@ -334,14 +349,9 @@ function! s:toggle_qf_list()
     endif
   endif
 endfunction
-
-function! s:redir(cmd)
-  redir => res
-  execute a:cmd
-  redir END
-
-  return res
-endfunction
+nnoremap <silent> qo :<C-u>silent call <SID>toggle_qf_list()<Cr>
+nnoremap <silent> qj :cnext<Cr>zz
+nnoremap <silent> qk :cprevious<Cr>zz
 
 nnoremap <silent> <Leader>tm :let &mouse = empty(&mouse) ? 'a' : ''<Cr>
 nnoremap <silent> <Leader>tp :set paste!<Cr>
@@ -383,14 +393,39 @@ sunmap w
 sunmap b
 sunmap e
 
-" open current directory with filer
-if s:is_mac
-  nnoremap <silent> <Space>e
-        \ :<C-u>silent execute '!open -a Finder %:p:h'<Cr>:redraw!<Cr>
-elseif s:is_linux
-  nnoremap <silent> <Space>e
-        \ :<C-u>silent execute '!nautilus %:p:h &'<Cr>:redraw!<Cr>
-endif
+" open the current editing file's location using file manager
+function! s:open_with_filer(...)
+  let cmd = s:get_command()
+  let path = get(a:, 1, s:convert_path(expand('%:p:h')))
+
+  if cmd is# ''
+    call g:echohl('Error', 'Your system is not supported.')
+    return
+  endif
+
+  execute printf('!%s %s', cmd, path)
+endfunction
+command! -nargs=? Finder call s:open_with_filer(<f-args>)
+
+function! s:convert_path(path)
+  if has('win32') || has('win64')
+    return '"' . substitute(a:path, '/', '\', 'g') . '"'
+  else
+    return a:path
+  endif
+endfunction
+
+function! s:get_command()
+  if has ('mac')
+    return 'open -a Finder'
+  elseif has('unix') && has('gui_gnome')
+    return 'nautilus'
+  elseif has('win32') || has('win64')
+    return 'start explorer'
+  else
+    return ''
+  endif
+endfunction
 
 nnoremap <Space>w :<C-u>update<Cr>
 nnoremap <Space>q :<C-u>quit<Cr>
@@ -398,17 +433,17 @@ nnoremap <Space>W :<C-u>update!<Cr>
 nnoremap <Space>Q :<C-u>quit!<Cr>
 
 nnoremap <C-h> :<C-u>h<Space>
-nnoremap <Space>t :<C-u>tabe<Space>
 nnoremap s<Space> i<Space><Esc>
 
 nnoremap <silent> <Space>_ :<C-u>edit $MYVIMRC<Cr>
 nnoremap <silent> <Space>g_ :<C-u>edit $MYGVIMRC<Cr>
 nnoremap <Space>S :<C-u>source %<Cr>
 
-nnoremap <Leader>nn :<C-u>NERDTreeToggle<Cr>
+nnoremap <Leader>ne :<C-u>NERDTreeToggle<Cr>
 nnoremap <Leader>nf :<C-u>NERDTreeFind<Cr>zz<C-w><C-w>
-nnoremap <Leader>S :<C-u>s/
-nnoremap <Leader>s :<C-u>%s/
+nnoremap <Leader>s :<C-u>s/
+nnoremap <Leader>S :<C-u>%s/
+nnoremap <Leader>te :<C-u>tabe<Space>
 
 nnoremap <silent> <Esc><Esc> <Esc>:<C-u>nohlsearch<Cr>
 
@@ -591,9 +626,9 @@ augroup Tacahiroy
   endif
 
   " Chef
-  autocmd BufRead knife-edit-*.js set filetype=javascript.json
-
-  autocmd FileType javascript.json setlocal makeprg=ruby\ $HOME/bin/jsonv.rb\ %
+  autocmd BufRead knife-edit-*.js
+        \  set filetype=javascript.json
+        \| setlocal makeprg=ruby\ $HOME/bin/jsonv.rb\ %
 
   autocmd Filetype c setlocal tabstop=4 softtabstop=4 shiftwidth=4
   autocmd Filetype c compiler gcc
@@ -682,7 +717,6 @@ let g:ctrlp_prompt_mappings = {
   \ 'PrtHistory(1)':        ['<Down>'],
   \ 'CreateNewFile()':      ['<C-y>'],
   \ }
-
 let g:ctrlp_extensions = ['line', 'buffertag', 'dir', 'mixed', 'funky']
 
 let dir = ['\.git$', '\.hg$', '\.svn$', '\.vimundo$', '\.ctrlp_cache/',
@@ -697,7 +731,7 @@ nnoremap <Space>fd :CtrlPDir<Cr>
 nnoremap <Space>fm :CtrlPMRU<Cr>
 nnoremap <Space>li :CtrlPLine<Cr>
 nnoremap <Space>fk :CtrlPBookmarkDir<Cr>
-nnoremap <Space>fo :execute 'CtrlP ' . $chef . '/cookbooks/_default'<Cr>
+nnoremap <Space>fc :execute 'CtrlP ' . $chef . '/cookbooks/_default'<Cr>
 nnoremap <Space>fw :CtrlPCurFile<Cr>
 
 nnoremap <Space>fu :CtrlPFunky<Cr>
@@ -805,18 +839,19 @@ if executable('knife')
     if 0 < len(cookbooks)
       let cookbooks = filter(cookbooks, 'isdirectory(cb_path."/".v:val)')
       let mes = 'Uploading cookbook' . (1 < len(cookbooks) ? 's' : '')
-      let cmd = printf('knife cookbook upload -o %s %s', cb_path, join(cookbooks, ' '))
+      let cmd = printf('knife cookbook upload -o %s %s;', cb_path, join(cookbooks, ' '))
 
-      if executable('growlnotify')
-        let gmsg = join(cookbooks, ' ')
-        let gtitle = 'cookbooks have been uploaded:'
+      if s:is_mac && executable('growlnotify')
+        let gtitle = 'cookbook upload: ' . join(cookbooks, ' ')
         let gapp = 'Chef'
-        let cmd .= printf('; growlnotify -n %s -m \"%s\" \"%s\"', gapp, gmsg, gtitle)
+        let cmd .= 'if [ $? -eq 0 ]; then echo SUCCESS; else echo FAILURE; fi | '
+        let cmd .= printf('growlnotify -n %s \"%s\"', gapp, gtitle)
       endif
 
       echomsg printf('%s: %s', mes, join(cookbooks, ' '))
 
-      " echom ':!' . cmd
+      " echo  echom ':!' . cmd
+      " execute ':!' . cmd
       call s:tmux.run(cmd, 1, 1)
     else
       echoerr 'no cookbooks are found.'
@@ -862,7 +897,7 @@ function! s:tmux.run(cmd, ...)
   elseif run_in_vim
     execute '!' . a:cmd
   else
-    echohl ErrorMsg | echo 'ERR: tmux is not running' | echohl NONE
+    call g:echohl('ErrorMsg', 'ERR: tmux is not running')
     return
   endif
 endfunction
@@ -871,7 +906,7 @@ function! s:tmux.operate(cmd)
   if self.is_running()
     call s:system(printf('`tmux "%s"`', a:cmd))
   else
-    echohl ErrorMsg | echo 'ERR: tmux is not running' | echohl NONE
+    call g:echohl('ErrorMsg', 'ERR: tmux is not running')
     return
   endif
 endfunction
