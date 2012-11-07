@@ -1,3 +1,4 @@
+# Chef related vocabulary
 snippet template
 	template "${1}" do
 		source "${2}"
@@ -7,7 +8,7 @@ snippet template
 		variables({${6}})
 	end
 
-snippet directory
+snippet cdir
 	directory "${1}" do
 		owner "${2:root}"
 		group "${3:root}"
@@ -17,13 +18,14 @@ snippet directory
 
 snippet file
 	file "${1}" do
-		source "${2}"
-		mode ${3:0644}
-		owner "${4:root}"
-		group "${5:root}"
+		action ${2:create}
+		source "${4}"
+		mode ${5:0644}
+		owner "${6:root}"
+		group "${7:root}"
 	end
 
-snippet cookbook_file
+snippet cfile
 	cookbook_file "${1}" do
 		source "${2}"
 		mode ${3:0644}
