@@ -30,3 +30,7 @@
 [advice]
 	statusHints = false
 
+[push]
+	default = simple
+[help]
+	autocorrect = 1
