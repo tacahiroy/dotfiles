@@ -73,7 +73,7 @@ set nocompatible
 set verbose=0
 
 " * functions "{{{
-function! g:echohl(group, msg)
+function! Echohl(group, msg)
   try
     execute 'echohl ' . a:group
     echomsg a:msg
@@ -91,7 +91,7 @@ function! s:preview_tag_lite(word)
   for item in t
     if -1 < stridx(item.filename, current)
       " [filename] tag definition
-      call g:echohl('Search', printf('%-36s [%s]', item.filename, item.cmd))
+      call Echohl('Search', printf('%-36s [%s]', item.filename, item.cmd))
     else
       echomsg printf('%-36s %s', '[' . substitute(item.filename, '\s\s*$', '', '') . ']', item.cmd)
     endif
@@ -399,7 +399,7 @@ function! s:open_with_filer(...)
   let path = get(a:, 1, s:convert_path(expand('%:p:h')))
 
   if cmd is# ''
-    call g:echohl('Error', 'Your system is not supported.')
+    call Echohl('Error', 'Your system is not supported.')
     return
   endif
 
@@ -756,14 +756,6 @@ nnoremap <Space>ml :execute 'CtrlP ' . g:memolist_path<Cr><F5>
 let g:DrChipTopLvlMenu = ''
 let g:Align_xstrlen = 0
 
-" plug: prtdialog
-let g:prd_fontList  = 'M+1VM+IPAG_circle:h10:cDEFAULT'
-let g:prd_fontList .= ',M+2VM+IPAG_circle:h10:cDEFAULT'
-let g:prd_fontList .= ',VL_ゴシック:h10:cDEFAULT'
-let g:prd_fontList .= ',Takaoゴシック:h10:cDEFAULT'
-let g:prd_fontList .= ',Takao明朝:h10:cDEFAULT'
-let g:prd_fontList .= ',ＭＳ_明朝:h10:cDEFAULT'
-
 " plug: openbrowser.vim
 let g:netrw_nogx = 1
 nmap gx <Plug>(openbrowser-smart-search)
@@ -897,7 +889,7 @@ function! s:tmux.run(cmd, ...)
   elseif run_in_vim
     execute '!' . a:cmd
   else
-    call g:echohl('ErrorMsg', 'ERR: tmux is not running')
+    call Echohl('ErrorMsg', 'ERR: tmux is not running')
     return
   endif
 endfunction
@@ -906,7 +898,7 @@ function! s:tmux.operate(cmd)
   if self.is_running()
     call s:system(printf('`tmux "%s"`', a:cmd))
   else
-    call g:echohl('ErrorMsg', 'ERR: tmux is not running')
+    call Echohl('ErrorMsg', 'ERR: tmux is not running')
     return
   endif
 endfunction
