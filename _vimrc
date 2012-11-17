@@ -173,11 +173,15 @@ set nrformats=hex
 set previewheight=8
 set pumheight=24
 set scroll=0
-if s:is_mac
-  set shell=/usr/local/bin/zsh
-elseif s:is_linux
-  set shell=/usr/bin/zsh
-endif
+
+set shell&
+for sh in ['/usr/local/bin/zsh', '/usr/bin/zsh', '/bin/zsh', '/bin/bash']
+  if executable(sh)
+    let &shell = sh
+    break
+  endif
+endfor
+
 set shellslash
 set shiftround
 set showbreak=>~\ 
