@@ -9,8 +9,10 @@ zstyle ':completion:*:default' menu select=2
 zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin \
             /usr/sbin /usr/bin /sbin /bin /usr/X11R6/bin
 
+zstyle ':completion:*' accept-exact '*(N)'
 zstyle ':completion:*' use-cache yes
 zstyle ':completion:*' verbose yes
+zstyle ':completion:*' cache-path ~/.zsh/cache
 
 WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
 WORDCHARS=${WORDCHARS:s,/,,}
