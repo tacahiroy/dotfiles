@@ -19,6 +19,7 @@ Bundle 'jiangmiao/simple-javascript-indenter'
 Bundle 'kien/ctrlp.vim'
 Bundle 'mattn/zencoding-vim'
 Bundle 'msanders/snipmate.vim'
+Bundle 'majutsushi/tagbar'
 Bundle 'scrooloose/nerdtree'
 Bundle 'scrooloose/syntastic'
 " Bundle 'thinca/vim-quickrun'
@@ -364,6 +365,7 @@ nnoremap <silent> <Leader>tc :let &clipboard =
       \ empty(&clipboard) ? 'unnamed,unnamedplus' : ''<Cr>
 nnoremap <silent> <Leader>tn :<C-u>silent call <SID>toggle_line_number()<Cr>
 
+" doesn't care whether 'number' or 'relativenumber'
 function! s:toggle_line_number()
   let NONU = 'nonumber'
   let NU   = 'number'
@@ -380,16 +382,16 @@ function! s:toggle_line_number()
   execute printf('let &%s = !&%s', b:number, b:number)
 endfunction
 
-" commentary.vim
+" plug: commentary.vim
 nmap <Space>c <Plug>CommentaryLine
 xmap <Space>c <Plug>Commentary
 
-" surround.vim
+" plug: surround.vim
 let g:surround_{char2nr('k')} = "「\r」"
 let g:surround_{char2nr('K')} = "『\r』"
 xmap c <Plug>VSurround
 
-" camelcasemotion
+" plug: camelcasemotion
 map <silent> w <plug>CamelCaseMotion_w
 map <silent> b <plug>CamelCaseMotion_b
 map <silent> e <plug>CamelCaseMotion_e
@@ -420,7 +422,7 @@ function! s:convert_path(path)
 endfunction
 
 function! s:get_command()
-  if has ('mac')
+  if s:is_mac
     return 'open -a Finder'
   elseif has('unix') && has('gui_gnome')
     return 'nautilus'
@@ -439,14 +441,15 @@ nnoremap <Space>Q :<C-u>quit!<Cr>
 nnoremap <C-h> :<C-u>h<Space>
 nnoremap s<Space> i<Space><Esc>
 
-nnoremap <silent> <Space>_ :<C-u>edit $MYVIMRC<Cr>
-nnoremap <silent> <Space>g_ :<C-u>edit $MYGVIMRC<Cr>
+nnoremap <Space>_ :<C-u>edit $MYVIMRC<Cr>
+nnoremap <Space>g_ :<C-u>edit $MYGVIMRC<Cr>
 nnoremap <Space>S :<C-u>source %<Cr>
+nnoremap <Space>ne :<C-u>NERDTreeToggle<Cr>
+nnoremap <Space>nf :<C-u>NERDTreeFind<Cr>zz<C-w><C-w>
 
-nnoremap <Leader>ne :<C-u>NERDTreeToggle<Cr>
-nnoremap <Leader>nf :<C-u>NERDTreeFind<Cr>zz<C-w><C-w>
 nnoremap <Leader>s :<C-u>s/
 nnoremap <Leader>S :<C-u>%s/
+nnoremap <Leader>g :<C-u>g/
 nnoremap <Leader>te :<C-u>tabe<Space>
 
 nnoremap <silent> <Esc><Esc> <Esc>:<C-u>nohlsearch<Cr>
@@ -492,7 +495,7 @@ vnoremap <Up> :call <SID>move_block('u')<Cr>==gv
 function! s:move_block(d) range
   let cnt = a:lastline - a:firstline
 
-  if a:d ==# 'u'
+  if a:d is# 'u'
     let sign = '-'
     let cnt = 2
   else
@@ -541,11 +544,11 @@ augroup Tacahiroy
 
     while i < a:depth
       let dirs = split(dir, '/')
-      if !exists('midx')
-        let midx = len(dirs)
+      if !exists('maxidx')
+        let maxidx = len(dirs)
       endif
 
-      let idx = midx - i
+      let idx = maxidx - i
       if idx < 0
         break
       endif
@@ -639,8 +642,8 @@ augroup Tacahiroy
   autocmd FileType c setlocal makeprg=gcc\ -Wall\ %\ -o\ %:r.o
   autocmd FileType c nnoremap <buffer> <Space>m :<C-u>write<Cr>:make --std=c99<Cr>
 
-  autocmd FileType markdown inoremap <buffer> <Leader>h1 <Esc>10i=<Esc>^
-                         \| inoremap <buffer> <Leader>h2 <Esc>10i-<Esc>^
+  autocmd FileType markdown inoremap <buffer> <Leader>h1 <Esc>I#<Space>
+                         \| inoremap <buffer> <Leader>h2 <Esc>I##<Space>
                          \| inoremap <buffer> <Leader>h3 <Esc>I###<Space>
                          \| inoremap <buffer> <Leader>h4 <Esc>I####<Space>
                          \| inoremap <buffer> <Leader>h5 <Esc>I#####<Space>
@@ -682,6 +685,9 @@ augroup END
 
 
 " * plugins "{{{
+" plug: NERDTree
+let NERDTreeShowBookmarks = 1
+
 " plug: vim-ref
 let g:ref_refe_cmd = $HOME . '/Projects/wk/rubyrefm/refe-1_9_2'
 
