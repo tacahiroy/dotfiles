@@ -6,7 +6,6 @@ search: --remote
 :backtrace: false
 :sources:
 - http://rubygems.org
-- http://gems.github.com
 :bulk_threshold: 1000
 :verbose: true
 
