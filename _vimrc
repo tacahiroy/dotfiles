@@ -540,6 +540,12 @@ augroup Tacahiroy
         \|    nnoremap <Return> :<C-u>call append(line("."), "")<Cr>
         \| endif
 
+  autocmd BufRead,BufNewFile *
+        \  if expand('%:p:h') =~# '.*/cookbooks/.*'
+        \|   setlocal makeprg=foodcritic\ $*\ %
+        \|   setlocal errorformat=%m:\ %f:%l
+        \| endif
+
   " autochdir emulation
   autocmd BufEnter * call s:auto_chdir(6)
 
