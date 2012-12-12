@@ -23,7 +23,7 @@ Bundle 'majutsushi/tagbar'
 Bundle 'scrooloose/nerdtree'
 Bundle 'scrooloose/syntastic'
 " Bundle 'thinca/vim-quickrun'
-Bundle 'thinca/vim-ref'
+" Bundle 'thinca/vim-ref'
 Bundle 'tpope/vim-commentary'
 Bundle 'tpope/vim-fugitive'
 Bundle 'tpope/vim-markdown'
@@ -31,7 +31,6 @@ Bundle 'tpope/vim-rake'
 Bundle 'tpope/vim-surround'
 Bundle 'tyru/open-browser.vim'
 Bundle 'vim-ruby/vim-ruby'
-" Bundle 'Align'
 " Bundle 'IndentAnything'
 Bundle 'camelcasemotion'
 " Bundle 'increment_new.vim'
@@ -362,7 +361,6 @@ nnoremap <silent> <Leader>tp :set paste!<Cr>
 nnoremap <silent> <Leader>tl :set list!<Cr>
 nnoremap <silent> <Leader>tc :let &clipboard =
       \ empty(&clipboard) ? 'unnamed,unnamedplus' : ''<Cr>
-nnoremap <silent> <Leader>tn :<C-u>silent call <SID>toggle_line_number()<Cr>
 
 " doesn't care whether 'number' or 'relativenumber'
 function! s:toggle_line_number()
@@ -380,6 +378,7 @@ function! s:toggle_line_number()
 
   execute printf('let &%s = !&%s', b:number, b:number)
 endfunction
+nnoremap <silent> <Leader>tn :<C-u>silent call <SID>toggle_line_number()<Cr>
 
 " plug: commentary.vim
 nmap <Space>c <Plug>CommentaryLine
@@ -811,18 +810,11 @@ function! s:clean_ctrlp_cache()
   let lines = readfile(cache_file)
   let len = len(lines)
 
-  let i = 0
-  for l in lines
-    if !filereadable(l)
-      call remove(lines, i)
-      let i -= 1
-    endif
-    let i += 1
-  endfor
+  let lines = filter(lines, 'filereadable(v:val)')
 
   if len(lines) < len
     call writefile(lines, cache_file)
-    echomsg printf('[INFO] %d→%d done!', len, len(lines))
+    echomsg printf('[INFO] %d -> %d done!', len, len(lines))
   else
     echomsg '[INFO] No files were removed from the cache.'
   endif
@@ -941,4 +933,60 @@ endif
 
 " __END__ {{{
 " vim: ts=2 sts=2 sw=2
+
+" Mark
+let s:mk = {
+  \ 'patterns': [],
+  \ 'level': -1,
+  \ 'colours': ['LightRed', 'LightGreen', 'LightBlue', 'LightCyan',
+           \  'LightMagenta', 'LightYellow', 'LightGray']
+\ }
+
+function! s:mk.do(pattern) dict
+  if !search(a:pattern, 'cnw')
+    call Echohl('Error', 'pattern not found.')
+    return
+  endif
+
+  let self.level += 1
+
+  if len(self.colours) <= self.level
+    let self.level = 0
+  endif
+
+  call add(self.patterns, a:pattern)
+  call self.highlight(1)
+endfunction
+
+function! s:mk.highlight(do_preview) dict
+  let pos = getpos('.')
+  let group_name = 'Mark' . self.level
+
+  if a:do_preview
+    execute printf('global/%s/echo getline(".") | noh', self.current_pattern())
+  endif
+
+  syntax case ignore
+  execute printf('syn match %s "%s"', group_name, self.current_pattern())
+  execute printf('highlight %s gui=underline guibg=%s', group_name, self.current_colour())
+
+  call setpos('.', pos)
+endfunction
+
+function! s:mk.current_pattern() dict
+  return self.patterns[self.level]
+endfunction
+
+function! s:mk.current_colour() dict
+  return self.colours[self.level]
+endfunction
+
+function! s:mk.clear_all() dict
+  let s:mk.level = -1
+  let s:mk.patterns = []
+  syntax on
+endfunction
+
+command! -nargs=1 MkDo call s:mk.do(<q-args>)
+command! -nargs=0 MkRemoveAll call s:mk.clear_all()
 
