@@ -49,6 +49,7 @@ path=(
   /usr/local/bin(N-/)
   /usr/local/sbin(N-/)
   /usr/local/bin(N-/)
+  /usr/local/share/python(N-/)
   /usr/local/Cellar/android-sdk/r18/platform-tools(N-/)
   $path
 )
@@ -59,6 +60,7 @@ typeset -U ruby_path
 
 ruby_path=(
   ./lib(N-/)
+  $HOME/lib/ruby(N-/)
 )
 
 ## Perl
