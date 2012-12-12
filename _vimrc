@@ -314,8 +314,6 @@ nnoremap vv <C-v>
 nnoremap vo vg_
 nnoremap vO ^vg_
 
-nnoremap <Return> :<C-u>call append(line('.'), '')<Cr>
-
 nnoremap <C-]> <C-]>zz
 nnoremap <C-t> <C-t>zz
 
@@ -349,6 +347,7 @@ function! s:toggle_qf_list()
   if !empty(getqflist())
     if winnr == -1
       copen
+      doautocmd Tacahiroy BufEnter *
     else
       cclose
     endif
@@ -534,6 +533,13 @@ augroup Tacahiroy
   " restore cursor position
   autocmd BufReadPost * if line("'\"") <= line('$') | execute "normal '\"" | endif
   autocmd BufEnter * setlocal formatoptions-=o
+
+  autocmd BufEnter,BufNewFile *
+        \  if &l:buftype =~# '^\(quickfix\|help\|nofile\)$' || &l:readonly
+        \|    nunmap <Return>
+        \| else
+        \|    nnoremap <Return> :<C-u>call append(line("."), "")<Cr>
+        \| endif
 
   " autochdir emulation
   autocmd BufEnter * call s:auto_chdir(6)
