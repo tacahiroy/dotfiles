@@ -1,7 +1,11 @@
-# Created by newuser for 4.3.4
 # users generic .zshrc file for zsh(1)
 
-autoload -Uz add-zsh-hook
+autoload -Uz is-at-least
+
+if is-at-least 4.3.10; then
+  autoload -Uz add-zsh-hook
+fi
+
 ## ignore case for completion
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 zstyle ':completion:*:default' menu select=2
@@ -47,8 +51,13 @@ function _vcs_info() {
     _vcs_name=$(echo "$vcs_info_msg_0_" | cut -d , -f 1)
     _staged=$(echo "$vcs_info_msg_0_" | cut -d , -f 2)
     _status=$(_git_untracked_or_not_pushed $_staged)
-    psvar[1]="${_vcs_name}${_status}"
+    _stash=$(_git_stash_count)
+    psvar[1]="${_vcs_name}${_status}${_stash}"
   fi
+}
+
+function _is_git_local_repo() {
+  return "$(git rev-parse --is-inside-work-tree 2> /dev/null)" = "true"
 }
 
 function _git_untracked_or_not_pushed() {
@@ -56,7 +65,8 @@ function _git_untracked_or_not_pushed() {
   local staged_unstaged=$1 not_pushed="@" untracked="?"
 
   # cwd is a Git's working copy or not
-  if [ "$(git rev-parse --is-inside-work-tree 2> /dev/null)" = "true" ]; then
+  # if [ "$(git rev-parse --is-inside-work-tree 2> /dev/null)" = "true" ]; then
+  if [ _is_git_local_repo ]; then
     git_status=$(git status -s 2> /dev/null)
     # untracked file
     if ! echo "$git_status" | grep "^??" > /dev/null 2>&1; then
@@ -100,16 +110,32 @@ function _git_untracked_or_not_pushed() {
   return 0
 }
 
-if [ -n $SSH_CONNECTION ]; then
-  autoload -Uz vcs_info
-  zstyle ':vcs_info:*' enable git svn hg
-  zstyle ':vcs_info:*' check-for-changes true
-  zstyle ':vcs_info:*' formats '[%s:%b],%u%c'
-  zstyle ':vcs_info:*' actionformats '[%s:%b|%a],%u%c'
-  zstyle ':vcs_info:*' stagedstr "+"
-  zstyle ':vcs_info:*' unstagedstr "*"
+function _git_stash_count() {
+  local count=0
+  if [ _is_git_local_repo ]; then
+    count=$(git stash list 2>&1 | wc -l | tr -d ' ')
+  fi
 
-  add-zsh-hook precmd _vcs_info
+  if [ $count -eq 0 ]; then
+    return ''
+  else
+    print "(${count})"
+  fi
+}
+
+
+if [ -n $SSH_CONNECTION ]; then
+  if is-at-least 4.3.4; then
+    autoload -Uz vcs_info
+    zstyle ':vcs_info:*' enable git svn hg
+    zstyle ':vcs_info:*' check-for-changes true
+    zstyle ':vcs_info:*' formats '[%s:%b],%u%c'
+    zstyle ':vcs_info:*' actionformats '[%s:%b|%a],%u%c'
+    zstyle ':vcs_info:*' stagedstr "+"
+    zstyle ':vcs_info:*' unstagedstr "*"
+
+    add-zsh-hook precmd _vcs_info
+  fi
 fi
 # }}}
 
@@ -260,6 +286,7 @@ alias la='ls -a'
 alias ll='ls -l'
 alias lla='ls -la'
 alias ltr='ls -ltr'
+alias llh='ls -lh'
 
 alias du='du -h'
 alias df='df -h'
@@ -270,16 +297,19 @@ alias v='vim'
 alias vi='vim'
 alias vv='gvim'
 
+# Ruby
+alias renv='rbenv'
 alias bdl='bundle'
 
 # global
-alias -g KK='|xargs kill -9'
+alias -g K9='|xargs kill -9'
 
 alias -g L='|$PAGER'
 alias -g G='|grep'
+alias -g W='|wc -l'
 # }}}
 
-## terminal configuration# {{{
+## terminal configurations # {{{
 #
 unset LSCOLORS
 case "${TERM}" in
