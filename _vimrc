@@ -346,7 +346,6 @@ function! s:toggle_qf_list()
   if !empty(getqflist())
     if winnr == -1
       copen
-      doautocmd Tacahiroy BufEnter *
     else
       cclose
     endif
@@ -518,12 +517,8 @@ augroup Tacahiroy
   autocmd BufReadPost * if line("'\"") <= line('$') | execute "normal '\"" | endif
   autocmd BufEnter * setlocal formatoptions-=o
 
-  autocmd BufEnter,BufNewFile *
-        \  if &l:buftype =~# '^\(quickfix\|help\|nofile\)$' || &l:readonly
-        \|    nunmap <Return>
-        \| else
-        \|    nnoremap <Return> :<C-u>call append(line("."), "")<Cr>
-        \| endif
+  autocmd BufEnter,BufNewFile * nnoremap <Return> :<C-u>call append(line("."), "")<Cr>
+  autocmd FileType quickfix nnoremap <silent> <buffer> <Return> :<C-u>execute 'cc ' . line('.')<Cr>
 
   autocmd BufRead,BufNewFile *
         \  if expand('%:p:h') =~# '.*/cookbooks/.*'
