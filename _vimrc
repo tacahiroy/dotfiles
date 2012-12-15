@@ -567,9 +567,9 @@ augroup Tacahiroy
     execute 'lcd ' . escape(dir, ' ')
   endfunction
 
-  autocmd BufRead,BufNewFile *.ru,Gemfile,Guardfile set filetype=ruby
-  autocmd BufRead,BufNewFile ?zshrc,?zshenv set filetype=zsh
-  autocmd BufRead,BufNewFile *.md,*.mkd,*.markdown set filetype=markdown
+  autocmd BufRead,BufNewFile *.ru,Gemfile,Guardfile setlocal filetype=ruby
+  autocmd BufRead,BufNewFile ?zshrc,?zshenv setlocal filetype=zsh
+  autocmd BufRead,BufNewFile *.md,*.mkd,*.markdown setlocal filetype=markdown
 
   function! s:insert_today_for_md_changelog()
     call append(line('.') - 1, strftime('%Y-%m-%d'))
@@ -624,9 +624,8 @@ augroup Tacahiroy
   endif
 
   " Chef
-  autocmd BufRead knife-edit-*.js
-        \  set filetype=javascript.json
-        \| setlocal makeprg=ruby\ $HOME/bin/jsonv.rb\ %
+  autocmd BufRead knife-edit-*.js,*.json setlocal filetype=javascript.json
+  autocmd FileType *.json setlocal makeprg=ruby\ $HOME/bin/jsonv.rb\ %
 
   autocmd Filetype c setlocal tabstop=4 softtabstop=4 shiftwidth=4
   autocmd Filetype c compiler gcc
