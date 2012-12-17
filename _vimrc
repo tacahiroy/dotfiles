@@ -61,7 +61,7 @@ endif
 filetype plugin indent on
 "}}}
 
-let s:is_mac = has('macunix')
+let s:is_mac = has('macunix') || system('uname | grep "^Darwin"') =~# "^Darwin"
 " I don't use AIX, BSD, HP-UX and any other UNIX
 let s:is_linux = !s:is_mac && has('unix')
 
