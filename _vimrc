@@ -235,7 +235,7 @@ if has('gui_running')
   endif
 
   if s:is_mac
-    set guifont=Migu\ 1M\ Regular:h13
+    set guifont=Migu\ 1M\ Regular:h12
     set antialias
     set fuoptions& fuoptions+=maxhorz
   elseif s:is_linux
@@ -916,8 +916,8 @@ if s:tmux.is_installed()
 endif
 
 
-if filereadable(expand('~/.vimrc.mine'))
-  source ~/.vimrc.mine
+if filereadable(expand('~/.vimrc.local'))
+  source ~/.vimrc.local
 endif
 
 " __END__ {{{
