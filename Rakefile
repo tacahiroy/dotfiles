@@ -47,7 +47,6 @@ end
 desc "create symlinks to sandbox directory"
 task :link2sandbox do
   plugins = %w(ctrlp-funky.git
-               vim-endwise.git
                vim-logaling.git
   )
   proj = "#{ENV['HOME']}/Projects/vim"
