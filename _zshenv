@@ -79,19 +79,6 @@ python_path=(
 /usr/local/lib/python2.7/site-packages(N-/)
 )
 
-## Clojure
-typeset -xT CLASSPATH class_path
-typeset -U class_path
-class_path=(
-  /usr/local/Cellar/clojure/1.4.0/*.jar(N-/)
-  /usr/local/Cellar/clojure-contrib/1.2.0/*.jar(N-/)
-  $HOME/Projects/gitro/vimclojure.hg/build/libs/*.jar(N-/)
-  $HOME/Projects/gitro/vimclojure.hg/server/build/libs/*.jar(N-/)
-)
-
-export LEIN_JAR=$HOME/.lein/self-installs/leiningen-1.7.1-standalone.jar
-export CLOJURE_JAR=/usr/local/Cellar/clojure/1.4.0/clojure-1.4.0.jar
-
 export NODE_PATH=/usr/local/lib/node_modules
 
 if [[ -x `which rbenv` ]]; then
