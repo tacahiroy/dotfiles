@@ -82,7 +82,7 @@ python_path=(
 export NODE_PATH=/usr/local/lib/node_modules
 
 if [[ -x `which rbenv` ]]; then
-  eval "$(rbenv init -)"
+  eval "$(rbenv init - zsh)"
 fi
 
 if [ -f ~/.zshrc.mine ]; then
