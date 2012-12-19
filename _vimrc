@@ -430,6 +430,8 @@ nnoremap <Space>nf :<C-u>NERDTreeFind<Cr>zz<C-w><C-w>
 
 nnoremap <Leader>s :<C-u>s/
 nnoremap <Leader>S :<C-u>%s/
+vnoremap <Leader>s :s/
+vnoremap <Leader>S :s/
 nnoremap <Leader>g :<C-u>g/
 nnoremap <Leader>te :<C-u>tabe<Space>
 
