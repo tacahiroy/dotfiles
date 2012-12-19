@@ -361,24 +361,7 @@ nnoremap <silent> <Leader>tp :set paste!<Cr>
 nnoremap <silent> <Leader>tl :set list!<Cr>
 nnoremap <silent> <Leader>tc :let &clipboard =
       \ empty(&clipboard) ? 'unnamed,unnamedplus' : ''<Cr>
-
-" doesn't care whether 'number' or 'relativenumber'
-function! s:toggle_line_number()
-  let NONU = 'nonumber'
-  let NU   = 'number'
-  let RNU  = 'relativenumber'
-
-  if &number
-    let b:number = NU
-  elseif &relativenumber
-    let b:number = RNU
-  else
-    let b:number = get(b:, 'number', NU)
-  endif
-
-  execute printf('let &%s = !&%s', b:number, b:number)
-endfunction
-nnoremap <silent> <Leader>tn :<C-u>silent call <SID>toggle_line_number()<Cr>
+nnoremap <silent> <Leader>tn :<C-u>setlocal relativenumber!<Cr>
 
 " plug: commentary.vim
 nmap <Space>c <Plug>CommentaryLine
