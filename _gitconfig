@@ -11,7 +11,7 @@
 [core]
 	editor = $EDITOR
 	pager = $PAGER
-	excludesfile = ~/.gitmine/gitignore
+	excludesfile = ~/.gitlocal/gitignore
 
 [alias]
 	ci = commit
