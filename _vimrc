@@ -421,9 +421,9 @@ nnoremap <C-h> :<C-u>h<Space>
 nnoremap s<Space> i<Space><Esc>
 
 nnoremap <Space>_ :<C-u>tabedit $MYVIMRC<Cr>
-nnoremap <Space>S :<C-u>source %<Cr>
+nnoremap <Space>S :<C-u>source %<Cr>:nohlsearch<Cr>
 nnoremap <Space>ne :<C-u>NERDTreeToggle<Cr>
-nnoremap <Space>nf :<C-u>NERDTreeFind<Cr>zz<C-w><C-w>
+nnoremap <Space>nn :<C-u>NERDTreeFind<Cr>zz<C-w><C-w>
 
 nnoremap <Leader>s :<C-u>s/
 nnoremap <Leader>S :<C-u>%s/
@@ -454,8 +454,8 @@ nnoremap <silent> <Space>P :pclose<Cr>
 " set t_kD=<Del>
 " inoremap <Del> <Bs>
 
-inoremap <silent> <Leader>dd <C-R>=strftime('%Y-%m-%d')<Cr>
-inoremap <silent> <Leader>tm <C-R>=strftime('%H:%M')<Cr>
+inoremap <silent> <Leader>date <C-R>=strftime('%Y-%m-%d')<Cr>
+inoremap <silent> <Leader>time <C-R>=strftime('%H:%M')<Cr>
 inoremap <silent> <Leader>fn <C-R>=@%<Cr>
 
 " used to toggle IME
@@ -516,7 +516,7 @@ augroup Tacahiroy
   autocmd BufEnter * setlocal formatoptions-=o
 
   autocmd BufEnter,BufNewFile *
-        \  if &buftype !~# '^\(quickfix\|help\|nofile\)$' || !&readonly
+        \  if &buftype !~# '^\(quickfix\|help\|nofile\)$'
         \|    nnoremap <buffer>  <Return> :<C-u>call append(line("."), "")<Cr>
         \| endif
 
@@ -576,6 +576,7 @@ augroup Tacahiroy
     call append(line('.') - 1, '----------')
   endfunction
 
+  autocmd FileType gitcommit setlocal spell
   autocmd FileType markdown nnoremap <buffer> <Leader>it :<C-u>call <SID>insert_today_for_md_changelog()<Cr>
   autocmd FileType markdown nnoremap <buffer> <Leader>ix i[x]<Space><Esc>
 
