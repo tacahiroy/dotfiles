@@ -39,7 +39,6 @@ Bundle 'matchit.zip'
 
 " it seems this has ftdetect problem
 " Bundle 'chrisbra/csv.vim'
-Bundle 'netrw.vim'
 
 if isdirectory($HOME . '/.vim')
   let $DOTVIM = $HOME . '/.vim'
@@ -421,8 +420,7 @@ nnoremap <Space>Q :<C-u>quit!<Cr>
 nnoremap <C-h> :<C-u>h<Space>
 nnoremap s<Space> i<Space><Esc>
 
-nnoremap <Space>_ :<C-u>edit $MYVIMRC<Cr>
-nnoremap <Space>g_ :<C-u>edit $MYGVIMRC<Cr>
+nnoremap <Space>_ :<C-u>tabedit $MYVIMRC<Cr>
 nnoremap <Space>S :<C-u>source %<Cr>
 nnoremap <Space>ne :<C-u>NERDTreeToggle<Cr>
 nnoremap <Space>nf :<C-u>NERDTreeFind<Cr>zz<C-w><C-w>
@@ -517,8 +515,10 @@ augroup Tacahiroy
   autocmd BufReadPost * if line("'\"") <= line('$') | execute "normal '\"" | endif
   autocmd BufEnter * setlocal formatoptions-=o
 
-  autocmd BufEnter,BufNewFile * nnoremap <Return> :<C-u>call append(line("."), "")<Cr>
-  autocmd FileType quickfix nnoremap <silent> <buffer> <Return> :<C-u>execute 'cc ' . line('.')<Cr>
+  autocmd BufEnter,BufNewFile *
+        \  if &buftype !~# '^\(quickfix\|help\|nofile\)$' || !&readonly
+        \|    nnoremap <buffer>  <Return> :<C-u>call append(line("."), "")<Cr>
+        \| endif
 
   autocmd BufRead,BufNewFile *
         \  if expand('%:p:h') =~# '.*/cookbooks/.*'
@@ -844,7 +844,7 @@ if executable('knife')
   endfunction
 
   command! -nargs=* CCookbookUpload call s:upload_cookbook(<f-args>)
-  nnoremap <Space>U :<C-u>CCookbookUpload<Cr>
+  nnoremap <Space>K :<C-u>CCookbookUpload<Cr>
 endif
 
 " tmux: just send keys against tmux
