@@ -1,0 +1,4 @@
+; vim: ft=gitconfig ts=4 sw=4 sts=4 noexpandtab
+[user]
+	name = tacahiroy
+	email = tacahiroy@gmail.com

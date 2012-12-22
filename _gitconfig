@@ -1,9 +1,9 @@
 ; vim: ts=4 sw=4 sts=4 noexpandtab
-[user]
+; [user]
 	; name = tacahiroy
 	; email = tacahiroy@gmail.com
 [include]
-	path = ~/.gitlocal/gitlocal
+	path = ~/.gitlocal
 [color]
 	diff = auto
 	branch = auto
