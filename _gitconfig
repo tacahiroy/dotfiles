@@ -16,7 +16,7 @@
 [alias]
 	ci = commit
 	co = checkout
-	s = status
+	s = status -sb
 	st = status
 	d = diff
 	b = branch
@@ -34,3 +34,5 @@
 	default = simple
 [help]
 	autocorrect = 1
+[diff]
+	mnemonicprefix = true
