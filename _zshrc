@@ -52,7 +52,8 @@ function _vcs_info() {
     _staged=$(echo "$vcs_info_msg_0_" | cut -d , -f 2)
     _status=$(_git_untracked_or_not_pushed $_staged)
     _stash=$(_git_stash_count)
-    psvar[1]="${_vcs_name}${_status}${_stash}"
+    psvar[1]="${_vcs_name}"
+    psvar[2]="${_status}${_stash}"
   fi
 }
 
@@ -158,17 +159,17 @@ case ${UID} in
     PROMPT="%{${fg[cyan]}%}%n%{${reset_color}%}@%{${fg[yellow]}%}%m%{${reset_color}%}:${PROMPT}"
 
   [ -n "$SSH_CONNECTION" ] &&
-      RPROMPT="%{${fg[blue]}%}%2v%{${reset_color}%}"
+      RPROMPT="%{${fg[blue]}%}%3v%{${reset_color}%}"
   ;;
 *)
-  PROMPT="%{${fg[red]}%}%/%{${reset_color}%}${fg[green]}%1v${reset_color}
+  PROMPT="%{${fg[red]}%}%/%{${reset_color}%}${fg[green]}%1v${reset_color}${fg[yellow]}%2v${reset_color}
 %% "
   PROMPT2="%{${fg[red]}%}%_%{${reset_color}%}%% "
   SPROMPT="%{${fg[red]}%}%r is correct? [n,y,a,e]:%{${reset_color}%}"
 
-  # RPROMPT="%{${fg[red]}%}%2v%{${reset_color}%}"
+  # RPROMPT="%{${fg[red]}%}%3v%{${reset_color}%}"
   [ -n "$SSH_CONNECTION" ] &&
-      RPROMPT="%{${fg[blue]}%}%2v%{${reset_color}%}"
+      RPROMPT="%{${fg[blue]}%}%3v%{${reset_color}%}"
 
   [ -n "${REMOTEHOST}${SSH_CONNECTION}" ] &&
       PROMPT="%{${fg[magenta]}%}%n%{${reset_color}%}@%{${fg[yellow]}%}%m%{${reset_color}%}:${PROMPT}"
