@@ -265,7 +265,9 @@ let &statusline .= '%{(&list ? "l" : "")}'
 let &statusline .= '%{(empty(&clipboard) ? "" : "c")}'
 let &statusline .= '%{(&paste ? "p" : "")}'
 let &statusline .= '%#Function#%{fugitive#statusline()}%*'
-let &statusline .= ' %=%{Gps()}'
+let &statusline .= ' %='
+let &statusline .= '%{Gps()}'
+let &statusline .= '%{(g:auto_chdir_enabled ? "e" : "d")}'
 let &statusline .= '%-12( %l/%LL,%c %)%P'
 
 function! s:shorten_path(path, ratio)
@@ -502,8 +504,11 @@ endif
 "}}}
 
 
-" syntax: vim.vim
-let g:vimsyntax_noerror = 1
+if has('vim_starting')
+  let g:auto_chdir_enabled = get(g:, 'auto_chdir_enabled', 1)
+  " syntax: vim.vim
+  let g:vimsyntax_noerror = 1
+endif
 
 
 " * something "{{{
@@ -516,7 +521,7 @@ augroup Tacahiroy
   autocmd BufEnter * setlocal formatoptions-=o
 
   autocmd BufEnter,BufNewFile *
-        \  if &buftype !~# '^\(quickfix\|help\|nofile\)$'
+        \  if  expand('%') !~# '^\(scp\|ftp\):' && &l:buftype !~# '^\(quickfix\|help\|nofile\)$'
         \|    nnoremap <buffer>  <Return> :<C-u>call append(line("."), "")<Cr>
         \| endif
 
@@ -558,6 +563,10 @@ augroup Tacahiroy
   endfunction
 
   function! s:auto_chdir(n)
+    if ! get(g:, 'auto_chdir_enabled', 1)
+      return
+    endif
+
     if expand('%') =~# '^\S\+://'
       return
     endif
@@ -566,6 +575,12 @@ augroup Tacahiroy
 
     execute 'lcd ' . escape(dir, ' ')
   endfunction
+
+  function! s:toggle_auto_chdir_mode()
+    let g:auto_chdir_enabled = ! get(g:, 'auto_chdir_enabled', 1)
+    call Echohl('Constant', 'AutoChdir: ' . (g:auto_chdir_enabled ? 'enabled' : 'disabled'))
+  endfunction
+  command! -nargs=0 -bang AutoChdirToggle call s:toggle_auto_chdir_mode()
 
   autocmd BufRead,BufNewFile *.ru,Gemfile,Guardfile setlocal filetype=ruby
   autocmd BufRead,BufNewFile ?zshrc,?zshenv setlocal filetype=zsh
@@ -685,8 +700,9 @@ let g:ref_refe_cmd = $HOME . '/Projects/wk/rubyrefm/refe-1_9_2'
 " plug: ctrlp.vim "{{{
 let g:ctrlp_map = '<Space>ff'
 let g:ctrlp_command = 'CtrlPRoot'
-let g:ctrlp_jump_to_buffer = 2
-let g:ctrlp_working_path_mode = 2
+let g:ctrlp_switch_buffer = 'Et'
+let g:ctrlp_tabpage_position = 'ac'
+let g:ctrlp_working_path_mode = 'ra'
 let g:ctrlp_match_window_bottom = 1
 let g:ctrlp_match_window_reversed = 0
 let g:ctrlp_max_height = 20
@@ -728,12 +744,12 @@ let g:ctrlp_custom_ignore = {
   \ }
 
 nnoremap <Space>fl :CtrlPBuffer<Cr>
-nnoremap <Space>fd :CtrlPDir<Cr>
 nnoremap <Space>fm :CtrlPMRU<Cr>
 nnoremap <Space>li :CtrlPLine<Cr>
 nnoremap <Space>fk :CtrlPBookmarkDir<Cr>
 nnoremap <Space>fc :execute 'CtrlP ' . $chef . '/cookbooks/_default'<Cr>
 nnoremap <Space>fw :CtrlPCurFile<Cr>
+nnoremap <Space>fd :CtrlPCurWD<Cr>
 
 nnoremap <Space>fu :CtrlPFunky<Cr>
 "}}}
@@ -856,7 +872,7 @@ if executable('knife')
   nnoremap <Space>K :<C-u>CCookbookUpload<Cr>
 endif
 
-" tmux: just send keys against tmux
+" light tmux integration
 let s:tmux = {}
 let s:tmux.last_cmd = ''
 
@@ -927,60 +943,4 @@ endif
 
 " __END__ {{{
 " vim: ts=2 sts=2 sw=2
-
-" Mark
-let s:mk = {
-  \ 'patterns': [],
-  \ 'level': -1,
-  \ 'colours': ['LightRed', 'LightGreen', 'LightBlue', 'LightCyan',
-           \  'LightMagenta', 'LightYellow', 'LightGray']
-\ }
-
-function! s:mk.do(pattern) dict
-  if !search(a:pattern, 'cnw')
-    call Echohl('Error', 'pattern not found.')
-    return
-  endif
-
-  let self.level += 1
-
-  if len(self.colours) <= self.level
-    let self.level = 0
-  endif
-
-  call add(self.patterns, a:pattern)
-  call self.highlight(1)
-endfunction
-
-function! s:mk.highlight(do_preview) dict
-  let pos = getpos('.')
-  let group_name = 'Mark' . self.level
-
-  if a:do_preview
-    execute printf('global/%s/echo getline(".") | noh', self.current_pattern())
-  endif
-
-  syntax case ignore
-  execute printf('syn match %s "%s"', group_name, self.current_pattern())
-  execute printf('highlight %s gui=underline guibg=%s', group_name, self.current_colour())
-
-  call setpos('.', pos)
-endfunction
-
-function! s:mk.current_pattern() dict
-  return self.patterns[self.level]
-endfunction
-
-function! s:mk.current_colour() dict
-  return self.colours[self.level]
-endfunction
-
-function! s:mk.clear_all() dict
-  let s:mk.level = -1
-  let s:mk.patterns = []
-  syntax on
-endfunction
-
-command! -nargs=1 MkDo call s:mk.do(<q-args>)
-command! -nargs=0 MkRemoveAll call s:mk.clear_all()
 
