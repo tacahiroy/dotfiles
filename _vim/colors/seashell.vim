@@ -1,6 +1,6 @@
 " Vim color file
 " Author:       Gerald S. Williams
-" Maintainer:   tacahiroy
+" Maintainer:   Tacahiroy <tacahiroy@gmail.com>
 
 " This is very reminiscent of a seashell. Good contrast, yet not too hard on
 " the eyes. BlackSea, it's opposite, has now been folded into this scheme.
@@ -17,7 +17,7 @@ hi Cursor   gui=NONE guibg=Violet
 hi CursorIM gui=NONE guibg=#67db57
 
 if s:seashell_style == 'dark'
-  hi   Normal         guibg=Black           guifg=seashell         ctermfg=White
+  hi   Normal         guibg=#0c0e66         guifg=seashell         ctermfg=White
   hi   NonText        guifg=LavenderBlush   ctermfg=LightMagenta
   hi   DiffDelete     guibg=DarkRed         guifg=Black            ctermbg=DarkRed    ctermfg=White
   hi   DiffAdd        guibg=DarkGreen       ctermbg=DarkGreen      ctermfg=White
@@ -28,7 +28,7 @@ if s:seashell_style == 'dark'
   hi   StatusLine     gui=NONE              guibg=DarkGreen        guifg=White        cterm=NONE       ctermfg=White   ctermbg=DarkGreen
   hi   StatusLineNC   guifg=Gray
   hi   VertSplit      guifg=Gray
-  hi   Type           gui=NONE
+  hi   Type           gui=NONE              guifg=#c1e3af
   hi   Identifier     guifg=Cyan
   hi   Statement      guifg=Brown3          ctermfg=DarkRed
   hi   Search         guibg=Gold3           ctermfg=White
@@ -44,7 +44,7 @@ else
   hi   DiffAdd        guibg=LightGreen      ctermbg=DarkGreen   ctermfg=White
   hi   DiffChange     guibg=Gray90          ctermbg=DarkCyan    ctermfg=White
   hi   DiffText       gui=NONE              guibg=LightCyan2    ctermbg=DarkCyan   ctermfg=Yellow
-  hi   Comment        guifg=#228844         gui=bold
+  hi   Comment        guifg=#339933         gui=Bold
   hi   Constant       guifg=DeepPink
   hi   PreProc        guifg=DarkMagenta
   hi   StatusLine     gui=NONE              guibg=Orange    guifg=Black        cterm=NONE       ctermfg=White   ctermbg=DarkGreen
