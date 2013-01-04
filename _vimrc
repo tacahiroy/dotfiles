@@ -798,9 +798,9 @@ let g:timetap_observe_cursor_position = 1
 let g:syntastic_mode_map =
       \ { 'mode': 'active',
         \ 'active_filetypes': ['ruby', 'eruby', 'cucumber', 'javascript', 'python', 'sh'],
-        \ 'passive_filetypes': [] }
+        \ 'passive_filetypes': ['xml'] }
 let g:syntastic_enable_balloons = 0
-let g:syntastic_auto_loc_list=1
+let g:syntastic_auto_loc_list = 0
 "}}}
 
 if has('multi_byte_ime') || has('xim')
