@@ -15,15 +15,14 @@ call vundle#rc()
 Bundle 'glidenote/memolist.vim'
 Bundle 'godlygeek/tabular'
 Bundle 'jiangmiao/simple-javascript-indenter'
-" Bundle 'kchmck/vim-coffee-script'
 Bundle 'kien/ctrlp.vim'
 Bundle 'mattn/zencoding-vim'
 Bundle 'msanders/snipmate.vim'
-Bundle 'majutsushi/tagbar'
 Bundle 'scrooloose/nerdtree'
 Bundle 'scrooloose/syntastic'
 " Bundle 'thinca/vim-quickrun'
 " Bundle 'thinca/vim-ref'
+Bundle 'sjl/gundo.vim'
 Bundle 'tpope/vim-commentary'
 Bundle 'tpope/vim-fugitive'
 Bundle 'tpope/vim-markdown'
@@ -31,9 +30,7 @@ Bundle 'tpope/vim-rake'
 Bundle 'tpope/vim-surround'
 Bundle 'tyru/open-browser.vim'
 Bundle 'vim-ruby/vim-ruby'
-" Bundle 'IndentAnything'
 Bundle 'camelcasemotion'
-" Bundle 'increment_new.vim'
 Bundle 'matchit.zip'
 " Bundle 'DrawIt'
 
@@ -265,9 +262,7 @@ let &statusline .= '%{(&list ? "l" : "")}'
 let &statusline .= '%{(empty(&clipboard) ? "" : "c")}'
 let &statusline .= '%{(&paste ? "p" : "")}'
 let &statusline .= '%#Function#%{fugitive#statusline()}%*'
-let &statusline .= ' %='
-let &statusline .= '%{Gps()}'
-let &statusline .= '%{(g:auto_chdir_enabled ? "e" : "d")}'
+let &statusline .= ' %=%{Gps()}'
 let &statusline .= '%-12( %l/%LL,%c %)%P'
 
 function! s:shorten_path(path, ratio)
@@ -355,6 +350,7 @@ endfunction
 nnoremap <silent> qo :<C-u>silent call <SID>toggle_qf_list()<Cr>
 nnoremap <silent> qj :cnext<Cr>zz
 nnoremap <silent> qk :cprevious<Cr>zz
+nnoremap <silent> qf :cc<Cr>zz
 
 nnoremap <silent> <Leader>tm :let &mouse = empty(&mouse) ? 'a' : ''<Cr>
 nnoremap <silent> <Leader>tp :set paste!<Cr>
@@ -504,11 +500,8 @@ endif
 "}}}
 
 
-if has('vim_starting')
-  let g:auto_chdir_enabled = get(g:, 'auto_chdir_enabled', 1)
-  " syntax: vim.vim
-  let g:vimsyntax_noerror = 1
-endif
+" syntax: vim.vim
+let g:vimsyntax_noerror = 1
 
 
 " * something "{{{
@@ -520,8 +513,8 @@ augroup Tacahiroy
   autocmd BufReadPost * if line("'\"") <= line('$') | execute "normal '\"" | endif
   autocmd BufEnter * setlocal formatoptions-=o
 
-  autocmd BufEnter,BufNewFile *
-        \  if  expand('%') !~# '^\(scp\|ftp\):' && &l:buftype !~# '^\(quickfix\|help\|nofile\)$'
+  autocmd FileType *
+        \  if &buftype !~# '^\(quickfix\|help\|nofile\)$'
         \|    nnoremap <buffer>  <Return> :<C-u>call append(line("."), "")<Cr>
         \| endif
 
@@ -563,10 +556,6 @@ augroup Tacahiroy
   endfunction
 
   function! s:auto_chdir(n)
-    if ! get(g:, 'auto_chdir_enabled', 1)
-      return
-    endif
-
     if expand('%') =~# '^\S\+://'
       return
     endif
@@ -575,12 +564,6 @@ augroup Tacahiroy
 
     execute 'lcd ' . escape(dir, ' ')
   endfunction
-
-  function! s:toggle_auto_chdir_mode()
-    let g:auto_chdir_enabled = ! get(g:, 'auto_chdir_enabled', 1)
-    call Echohl('Constant', 'AutoChdir: ' . (g:auto_chdir_enabled ? 'enabled' : 'disabled'))
-  endfunction
-  command! -nargs=0 -bang AutoChdirToggle call s:toggle_auto_chdir_mode()
 
   autocmd BufRead,BufNewFile *.ru,Gemfile,Guardfile setlocal filetype=ruby
   autocmd BufRead,BufNewFile ?zshrc,?zshenv setlocal filetype=zsh
@@ -640,8 +623,9 @@ augroup Tacahiroy
   endif
 
   " Chef
-  autocmd BufRead knife-edit-*.js,*.json setlocal filetype=javascript.json
-  autocmd FileType *.json setlocal makeprg=ruby\ $HOME/bin/jsonv.rb\ %
+  autocmd BufRead,BufNewFile knife-edit-*.js,*.json setlocal filetype=javascript.json
+  autocmd FileType *.json setlocal makeprg=python\ -mjson.tool\ %\ 1\ >\ /dev/null
+                       \| setlocal errorformat=%m:\ line\ %l\ column\ %c\ %.%#
 
   autocmd Filetype c setlocal tabstop=4 softtabstop=4 shiftwidth=4
   autocmd Filetype c compiler gcc
@@ -686,6 +670,7 @@ augroup Tacahiroy
   inoreabbr reuqire require
   inoreabbr passowrd password
   inoreabbr ture true
+  inoreabbr stating staging
 augroup END
 "}}}
 
@@ -700,9 +685,8 @@ let g:ref_refe_cmd = $HOME . '/Projects/wk/rubyrefm/refe-1_9_2'
 " plug: ctrlp.vim "{{{
 let g:ctrlp_map = '<Space>ff'
 let g:ctrlp_command = 'CtrlPRoot'
-let g:ctrlp_switch_buffer = 'Et'
-let g:ctrlp_tabpage_position = 'ac'
-let g:ctrlp_working_path_mode = 'ra'
+let g:ctrlp_jump_to_buffer = 2
+let g:ctrlp_working_path_mode = 2
 let g:ctrlp_match_window_bottom = 1
 let g:ctrlp_match_window_reversed = 0
 let g:ctrlp_max_height = 20
@@ -744,12 +728,12 @@ let g:ctrlp_custom_ignore = {
   \ }
 
 nnoremap <Space>fl :CtrlPBuffer<Cr>
+nnoremap <Space>fd :CtrlPDir<Cr>
 nnoremap <Space>fm :CtrlPMRU<Cr>
 nnoremap <Space>li :CtrlPLine<Cr>
 nnoremap <Space>fk :CtrlPBookmarkDir<Cr>
 nnoremap <Space>fc :execute 'CtrlP ' . $chef . '/cookbooks/_default'<Cr>
 nnoremap <Space>fw :CtrlPCurFile<Cr>
-nnoremap <Space>fd :CtrlPCurWD<Cr>
 
 nnoremap <Space>fu :CtrlPFunky<Cr>
 "}}}
@@ -797,7 +781,7 @@ let g:timetap_observe_cursor_position = 1
 " plug: syntastic
 let g:syntastic_mode_map =
       \ { 'mode': 'active',
-        \ 'active_filetypes': ['ruby', 'eruby', 'cucumber', 'javascript', 'python', 'sh'],
+        \ 'active_filetypes': ['ruby', 'eruby', 'cucumber', 'perl', 'javascript', 'python', 'sh'],
         \ 'passive_filetypes': ['xml'] }
 let g:syntastic_enable_balloons = 0
 let g:syntastic_auto_loc_list = 0
@@ -872,7 +856,7 @@ if executable('knife')
   nnoremap <Space>K :<C-u>CCookbookUpload<Cr>
 endif
 
-" light tmux integration
+" tmux: just send keys against tmux
 let s:tmux = {}
 let s:tmux.last_cmd = ''
 
