@@ -10,10 +10,11 @@ filetype off
 set runtimepath& runtimepath+=~/.vim/vundle.git
 call vundle#rc()
 
-" Bundle 'avakhov/vim-yaml'
+Bundle 'avakhov/vim-yaml'
 " Bundle 'bbommarito/vim-slim'
 Bundle 'glidenote/memolist.vim'
 Bundle 'godlygeek/tabular'
+Bundle 'jiangmiao/auto-pairs'
 Bundle 'jiangmiao/simple-javascript-indenter'
 Bundle 'kien/ctrlp.vim'
 Bundle 'mattn/zencoding-vim'
@@ -22,9 +23,8 @@ Bundle 'majutsushi/tagbar'
 Bundle 'scrooloose/nerdtree'
 Bundle 'scrooloose/syntastic'
 Bundle 'slj/gundo.vim'
-" Bundle 'thinca/vim-quickrun'
-" Bundle 'thinca/vim-ref'
 Bundle 'tpope/vim-commentary'
+Bundle 'tpope/vim-endwise'
 Bundle 'tpope/vim-fugitive'
 Bundle 'tpope/vim-markdown'
 Bundle 'tpope/vim-rake'
@@ -300,8 +300,7 @@ cnoremap <C-d> <Del>
 cnoremap <C-o> <C-d>
 
 nnoremap s <Nop>
-nnoremap q <Nop>
-nnoremap Q q
+nnoremap Q <Nop>
 
 nnoremap Y y$
 nnoremap j gj
@@ -423,8 +422,6 @@ nnoremap s<Space> i<Space><Esc>
 
 nnoremap <Space>_ :<C-u>tabedit $MYVIMRC<Cr>
 nnoremap <Space>S :<C-u>source %<Cr>:nohlsearch<Cr>
-nnoremap <Space>ne :<C-u>NERDTreeToggle<Cr>
-nnoremap <Space>nn :<C-u>NERDTreeFind<Cr>zz<C-w><C-w>
 
 nnoremap <Leader>s :<C-u>s/
 nnoremap <Leader>S :<C-u>%s/
@@ -617,7 +614,6 @@ augroup Tacahiroy
   autocmd FileType python setlocal tabstop=4 shiftwidth=4 softtabstop=4
 
   autocmd FileType vim,snippet setlocal tabstop=2 shiftwidth=2 softtabstop=2
-  " autocmd FileType vim :execute 'set iskeyword+=' . char2nr(':')
 
   autocmd FileType html,xhtml,xml,xslt,mathml,svg setlocal tabstop=2 shiftwidth=2 softtabstop=2
 
@@ -640,7 +636,7 @@ augroup Tacahiroy
 
   " Chef
   autocmd BufRead,BufNewFile knife-edit-*.js,*.json setlocal filetype=javascript.json
-  autocmd FileType *.json setlocal makeprg=python\ -mjson.tool\ %\ 1\ >\ /dev/null
+  autocmd FileType *json* setlocal makeprg=python\ -mjson.tool\ 2>&1\ %\ >\ /dev/null
                        \| setlocal errorformat=%m:\ line\ %l\ column\ %c\ %.%#
 
   autocmd Filetype c setlocal tabstop=4 softtabstop=4 shiftwidth=4
@@ -694,6 +690,8 @@ augroup END
 " "{{{
 " plug: NERDTree
 let NERDTreeShowBookmarks = 1
+nnoremap <Space>ne :<C-u>NERDTreeToggle<Cr>
+nnoremap <Space>nn :<C-u>NERDTreeFind<Cr>zz<C-w><C-w>
 
 " plug: vim-ref
 let g:ref_refe_cmd = $HOME . '/Projects/wk/rubyrefm/refe-1_9_2'
@@ -753,6 +751,9 @@ nnoremap <Space>fw :CtrlPCurFile<Cr>
 nnoremap <Space>fd :CtrlPCurWD<Cr>
 
 nnoremap <Space>fu :CtrlPFunky<Cr>
+
+" open a loaded buffer with new tab
+command! Big wincmd _ | wincmd |
 "}}}
 
 " plug: memolist.vim " {{{
@@ -787,13 +788,13 @@ map  <Space>a <Plug>(loga-lookup)
 autocmd FileType logaling imap <buffer> <Leader>v <Plug>(loga-insert-delimiter)
 
 " plug: timetap.vim
-let g:timetap_accept_path_pattern = '^~/\%(\..\+$\|Projects\)'
-let g:timetap_ignore_path_pattern = '\(/a\+\.\w\+$\|/\.git/\|tags\|tags-.+\|NERD_tree_.\+$\)'
-let g:timetap_is_sort_base_today = 1
-let g:timetap_is_display_zero = 1
-let g:timetap_is_debug = 0
-let g:timetap_display_limit = 15
-let g:timetap_observe_cursor_position = 1
+let g:bestfriend_accept_path_pattern = '^~/\%(\..\+$\|.*Projects\)'
+let g:bestfriend_ignore_path_pattern = '\(/a\+\.\w\+$\|/\.git/\|tags\|tags-.+\|NERD_tree_.\+$\)'
+let g:bestfriend_is_sort_base_today = 1
+let g:bestfriend_is_display_zero = 1
+let g:bestfriend_is_debug = 0
+let g:bestfriend_display_limit = 15
+let g:bestfriend_observe_cursor_position = 1
 
 " plug: syntastic
 let g:syntastic_mode_map =
@@ -808,29 +809,6 @@ if has('multi_byte_ime') || has('xim')
   set iminsert=0 imsearch=0
   inoremap <silent> <Esc> <Esc>:<C-u>set iminsert=0<Cr>
 endif
-
-" open a loaded buffer with new tab
-command! Big wincmd _ | wincmd |
-
-" remove missing files from ctrlp's MRU cache
-function! s:clean_ctrlp_cache()
-  echomsg 'Cleaning CtrlP MRU Cache list ...'
-
-  let cache_dir = get(g:, 'ctrlp_cache_dir', expand('$HOME/.ctrlp_cache'))
-  let cache_file = cache_dir . '/mru/cache.txt'
-  let lines = readfile(cache_file)
-  let len = len(lines)
-
-  let lines = filter(lines, 'filereadable(v:val)')
-
-  if len(lines) < len
-    call writefile(lines, cache_file)
-    echomsg printf('[INFO] %d -> %d done!', len, len(lines))
-  else
-    echomsg '[INFO] No files were removed from the cache.'
-  endif
-endfunction
-command! -nargs=0 CleanCtrlPMRUCache call s:clean_ctrlp_cache()
 
 " Chef
 if executable('knife')
