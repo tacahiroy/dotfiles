@@ -1,6 +1,6 @@
 " Vim color file
 " Author:       Gerald S. Williams
-" Maintainer:   Tacahiroy <tacahiroy@gmail.com>
+" Maintainer:   Tacahiroy <tacahiroy\AT/gmail.com>
 
 " This is very reminiscent of a seashell. Good contrast, yet not too hard on
 " the eyes. BlackSea, it's opposite, has now been folded into this scheme.
@@ -65,6 +65,7 @@ else
 
   hi   Visual         guibg=#dddddd guifg=NONE
 
-  hi   FileName       gui=NONE guifg=Purple guibg=White
+  hi   FileName       gui=NONE guifg=DarkRed guibg=White
+  hi   ColorColumn    guibg=LightPink
 endif
 
