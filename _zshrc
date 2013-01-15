@@ -289,6 +289,8 @@ alias lla='ls -la'
 alias ltr='ls -ltr'
 alias llh='ls -lh'
 
+alias fgrep='fgrep -nHr'
+
 alias du='du -h'
 alias df='df -h'
 alias su='su -l'

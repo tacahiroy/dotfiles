@@ -1,6 +1,6 @@
 export LANG=ja_JP.UTF-8
 
-fpath=($HOME/.zsh/func $fpath)
+fpath=($HOME/.zsh/func /usr/local/Cellar/zsh-completions/0.7.0/share/zsh-completions $fpath)
 typeset -U fpath
 
 # tmux-powerline
