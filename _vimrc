@@ -14,12 +14,10 @@ Bundle 'avakhov/vim-yaml'
 " Bundle 'bbommarito/vim-slim'
 Bundle 'glidenote/memolist.vim'
 Bundle 'godlygeek/tabular'
-Bundle 'jiangmiao/auto-pairs'
 Bundle 'jiangmiao/simple-javascript-indenter'
 Bundle 'kien/ctrlp.vim'
 Bundle 'mattn/zencoding-vim'
 Bundle 'msanders/snipmate.vim'
-Bundle 'majutsushi/tagbar'
 Bundle 'scrooloose/nerdtree'
 Bundle 'scrooloose/syntastic'
 Bundle 'slj/gundo.vim'
@@ -31,9 +29,9 @@ Bundle 'tpope/vim-rake'
 Bundle 'tpope/vim-surround'
 Bundle 'tyru/open-browser.vim'
 Bundle 'vim-ruby/vim-ruby'
+" Bundle 'DrawIt'
 Bundle 'camelcasemotion'
 Bundle 'matchit.zip'
-" Bundle 'DrawIt'
 
 " it seems this has ftdetect problem
 " Bundle 'chrisbra/csv.vim'
@@ -46,7 +44,7 @@ else
 endif
 
 if isdirectory(expand('$DOTVIM/sandbox'))
-  let dirs = split(glob($DOTVIM.'/sandbox/**/*'))
+  let dirs = filter(split(glob($DOTVIM.'/sandbox/**/*')), 'isdirectory(v:val)')
   for d in dirs
     execute 'set runtimepath+=' . d
     if d =~# '/doc$'
@@ -301,6 +299,8 @@ cnoremap <C-o> <C-d>
 
 nnoremap s <Nop>
 nnoremap Q <Nop>
+nnoremap <C-q> q
+nnoremap q <Nop>
 
 nnoremap Y y$
 nnoremap j gj
@@ -456,12 +456,6 @@ inoremap <silent> <Leader>date <C-R>=strftime('%Y-%m-%d')<Cr>
 inoremap <silent> <Leader>time <C-R>=strftime('%H:%M')<Cr>
 inoremap <silent> <Leader>fn <C-R>=@%<Cr>
 
-" used to toggle IME
-inoremap <silent> <C-j> <Nop>
-cnoremap <silent> <C-j> <Nop>
-inoremap <silent> <C-l> <Nop>
-cnoremap <silent> <C-l> <Nop>
-
 " selected text search
 vnoremap * y/<C-R>"<Cr>
 vnoremap < <gv
@@ -605,7 +599,7 @@ augroup Tacahiroy
   autocmd BufRead,BufNewFile *.applescript,*.scpt setfiletype applescript
   autocmd FileType applescript set commentstring=#\ %s
 
-  autocmd FileType help,qf,logaling,ref-* nnoremap <buffer> <silent> qq <C-w>c
+  autocmd FileType help,qf,logaling,bestfriend,ref-* nnoremap <buffer> <silent> qq <C-w>c
   autocmd FileType javascript* set omnifunc=javascriptcomplete#CompleteJS
 
   autocmd FileType rspec compiler rspec
@@ -812,7 +806,7 @@ endif
 
 " Chef
 if executable('knife')
-  function! s:upload_cookbook(...) abort
+  function! s:knife_cookbook_upload(...) abort
     let path = expand('%:p')
     if path !~# '/cookbooks/[^/]\+/.\+'
       return
@@ -838,17 +832,29 @@ if executable('knife')
       endif
 
       echomsg printf('%s: %s', mes, join(cookbooks, ' '))
-
-      " echo  echom ':!' . cmd
-      " execute ':!' . cmd
       call s:tmux.run(cmd, 1, 1)
     else
       echoerr 'no cookbooks are found.'
     endif
   endfunction
 
-  command! -nargs=* CCookbookUpload call s:upload_cookbook(<f-args>)
-  nnoremap <Space>K :<C-u>CCookbookUpload<Cr>
+  command! -nargs=* KnifeCookbookUpload call s:knife_cookbook_upload(<f-args>)
+  nnoremap <Space>K :<C-u>KnifeCookbookUpload<Cr>
+
+  function! s:knife_data_bag_from_file(json, ...)
+    let path = fnamemodify(expand(a:json), ':p')
+    if path !~# '/data_bags/'
+      call Echohl('WarningMsg', printf('%s is not a data bag file.', path))
+      return
+    endif
+
+    let bag_name = fnamemodify(path, ':p:h:t')
+    let opts = join(a:000, ' ')
+
+    echom printf('!knife data bag from file %s %s %s', bag_name, bufname(a:json), opts)
+    execute printf('!knife data bag from file %s %s %s', bag_name, bufname(a:json), opts)
+  endfunction
+  command! -nargs=+ KnifeDataBagFromFile call s:knife_data_bag_from_file(<f-args>)
 endif
 
 " light tmux integration
