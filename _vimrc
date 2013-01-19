@@ -230,11 +230,11 @@ if has('gui_running')
   endif
 
   if s:is_mac
-    set guifont=Migu\ 1M\ Regular:h12
+    set guifont=Migu\ 1M\ Regular:h13
     set antialias
     set fuoptions& fuoptions+=maxhorz
   elseif s:is_linux
-    set guifont=M+1VM+IPAG\ circle\ 10
+    set guifont=Migu\ 1M\ Regular\ 13
   else
     " Windows
     set guifont=M+1VM+IPAG_circle:h10:cDEFAULT
