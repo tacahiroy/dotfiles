@@ -65,7 +65,9 @@ else
 
   hi   Visual         guibg=#dddddd guifg=NONE
 
+  hi   Folded         guibg=Pink guifg=DarkBlue ctermbg=LightRed ctermfg=DarkRed
+
   hi   FileName       gui=NONE guifg=DarkRed guibg=White
-  hi   ColorColumn    guibg=LightPink
+  hi   ColorColumn    guibg=Grey90
 endif
 
