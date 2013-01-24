@@ -5,6 +5,21 @@ scriptencoding utf-8
 
 let g:mapleader = ','
 
+function! s:system(cmd)
+  let res = system(a:cmd)
+  return { 'out': res, 'err': v:shell_error }
+endfunction
+
+" which + chop
+function! s:which(cmd)
+  let res = s:system('which ' . a:cmd)
+  if res.err
+    return ''
+  else
+    return substitute(res.out, '\n$', '', '')
+  endif
+endfunction
+
 " vundle plugin management "{{{
 filetype off
 set runtimepath& runtimepath+=~/.vim/vundle.git
@@ -25,7 +40,6 @@ Bundle 'tpope/vim-commentary'
 Bundle 'tpope/vim-endwise'
 Bundle 'tpope/vim-fugitive'
 Bundle 'tpope/vim-markdown'
-Bundle 'tpope/vim-rake'
 Bundle 'tpope/vim-surround'
 Bundle 'tyru/open-browser.vim'
 Bundle 'vim-ruby/vim-ruby'
@@ -35,6 +49,133 @@ Bundle 'matchit.zip'
 
 " it seems this has ftdetect problem
 " Bundle 'chrisbra/csv.vim'
+
+" plugin configurations {{{
+" plug: memolist
+  let g:memolist_path = expand('~/Projects/memo')
+  let g:memolist_memo_suffix = 'md'
+  let g:memolist_memo_date = '%Y-%m-%d %H:%M'
+  let g:memolist_prompt_tags = 1
+  let g:memolist_prompt_categories = 0
+  let g:memolist_qfixgrep = 0
+  let g:memolist_vimfiler = 0
+
+  nnoremap <Space>mc :MemoNew<Cr>
+  nnoremap <Space>mg :MemoGrep<Cr>
+  nnoremap <Space>mL :MemoList<Cr>
+  nnoremap <Space>ml :execute 'CtrlP ' . g:memolist_path<Cr><F5>
+
+" plug: ctrlp.vim
+  let g:ctrlp_map = '<Space>ff'
+  let g:ctrlp_command = 'CtrlPRoot'
+  let g:ctrlp_switch_buffer = 'Et'
+  let g:ctrlp_tabpage_position = 'ac'
+  let g:ctrlp_working_path_mode = 'ra'
+  let g:ctrlp_match_window_bottom = 1
+  let g:ctrlp_match_window_reversed = 0
+  let g:ctrlp_max_height = 20
+  let g:ctrlp_clear_cache_on_exit = 0
+  let g:ctrlp_follow_symlinks = 1
+  let g:ctrlp_highlight_match = [1, 'Constant']
+  let g:ctrlp_max_files = 12800
+  let g:ctrlp_max_depth = 24
+  let g:ctrlp_dotfiles = 1
+  let g:ctrlp_mruf_max = 512
+  let g:ctrlp_mruf_exclude = 'knife-edit-*.*'
+
+  let g:ctrlp_user_command = {
+    \ 'types': {
+      \ 1: ['.git/', 'cd %s && git ls-files'],
+      \ 2: ['.hg/', 'hg --cwd %s locate -I .'],
+      \ 3: ['.svn/', 'svn ls file://%s'],
+    \ }
+  \ }
+
+  let g:ctrlp_prompt_mappings = {
+    \ 'AcceptSelection("e")': ['<Cr>'],
+    \ 'AcceptSelection("h")': ['<C-x>'],
+    \ 'AcceptSelection("t")': ['<C-t>', '<C-Cr>'],
+    \ 'AcceptSelection("v")': ['<C-v>'],
+    \ 'PrtSelectMove("j")':   ['<C-n>'],
+    \ 'PrtSelectMove("k")':   ['<C-p>'],
+    \ 'PrtHistory(-1)':       ['<Up>'],
+    \ 'PrtHistory(1)':        ['<Down>'],
+    \ 'CreateNewFile()':      ['<C-y>'],
+    \ }
+  let g:ctrlp_extensions = ['line', 'buffertag', 'dir', 'mixed', 'funky']
+
+  let dir = ['\.git$', '\.hg$', '\.svn$', '\.vimundo$', '\.ctrlp_cache/',
+        \    '\.rbenv/', '\.gem/', 'backup$', 'Downloads$', $TMPDIR]
+  let g:ctrlp_custom_ignore = {
+    \ 'dir': join(dir, '\|'),
+    \ 'file': '\v(\.exe\|\.so\|\.dll\|\.DS_Store\|\.db)$',
+    \ }
+
+  nnoremap <Space>fl :CtrlPBuffer<Cr>
+  nnoremap <Space>fm :CtrlPMRU<Cr>
+  nnoremap <Space>li :CtrlPLine<Cr>
+  nnoremap <Space>fk :CtrlPBookmarkDir<Cr>
+  nnoremap <Space>fc :execute 'CtrlP ' . $chef . '/cookbooks/_default'<Cr>
+  nnoremap <Space>fw :CtrlPCurFile<Cr>
+  nnoremap <Space>fd :CtrlPCurWD<Cr>
+
+  nnoremap <Space>fu :CtrlPFunky<Cr>
+
+" plug: nerdtree
+  let NERDTreeShowBookmarks = 1
+  nnoremap <Space>nt :<C-u>NERDTreeToggle<Cr>
+  nnoremap <Space>nn :<C-u>NERDTreeFind<Cr>zz<C-w><C-w>
+
+" plug: syntastic
+let g:syntastic_mode_map =
+      \ { 'mode': 'active',
+        \ 'active_filetypes': ['ruby', 'eruby', 'cucumber', 'perl', 'javascript', 'python', 'sh'],
+        \ 'passive_filetypes': ['xml'] }
+let g:syntastic_enable_balloons = 0
+let g:syntastic_auto_loc_list = 0
+
+" plug: commentary.vim
+  nmap <Space>c <Plug>CommentaryLine
+  xmap <Space>c <Plug>Commentary
+
+" plug: surround.vim
+  let g:surround_{char2nr('k')} = "「\r」"
+  let g:surround_{char2nr('K')} = "『\r』"
+  xmap c <Plug>VSurround
+
+" plug: openbrowser
+  let g:netrw_nogx = 1
+  nmap gx <Plug>(openbrowser-smart-search)
+  vmap gx <Plug>(openbrowser-smart-search)
+
+" plug: camelcasemotion
+  map <silent> w <plug>CamelCaseMotion_w
+  map <silent> b <plug>CamelCaseMotion_b
+  map <silent> e <plug>CamelCaseMotion_e
+  sunmap w
+  sunmap b
+  sunmap e
+
+" plug: vim-ref
+let g:ref_refe_cmd = $HOME . '/Projects/wk/rubyrefm/refe-1_9_2'
+
+" plug: loga.vim
+let g:loga_executable = s:which('loga')
+let g:loga_enable_auto_lookup = 0
+let g:loga_delimiter = '=3'
+map  <Space>a <Plug>(loga-lookup)
+autocmd FileType logaling imap <buffer> <Leader>v <Plug>(loga-insert-delimiter)
+
+" plug: bestfriend.vim
+let g:bestfriend_accept_path_pattern = '^~/\%(\..\+$\|.*Projects\)'
+let g:bestfriend_ignore_path_pattern = '\(/a\+\.\w\+$\|/\.git/\|tags\|tags-.+\|NERD_tree_.\+$\)'
+let g:bestfriend_is_sort_base_today = 0
+let g:bestfriend_is_display_zero = 1
+let g:bestfriend_is_debug = 0
+let g:bestfriend_display_limit = 15
+let g:bestfriend_observe_cursor_position = 1
+
+" }}}
 
 if isdirectory($HOME . '/.vim')
   let $DOTVIM = $HOME . '/.vim'
@@ -56,7 +197,7 @@ endif
 filetype plugin indent on
 "}}}
 
-let s:is_mac = has('macunix') || system('uname | grep "^Darwin"') =~# "^Darwin"
+let s:is_mac = has('macunix') || has('mac') || system('uname | grep "^Darwin"') =~# "^Darwin"
 " I don't use AIX, BSD, HP-UX and any other UNIX
 let s:is_linux = !s:is_mac && has('unix')
 
@@ -93,21 +234,6 @@ function! s:preview_tag_lite(word)
   endfor
 endfunction
 command! -nargs=0 PreviewTagLite call s:preview_tag_lite(expand('<cword>'))
-
-function! s:system(cmd)
-  let res = system(a:cmd)
-  return { 'out': res, 'err': v:shell_error }
-endfunction
-
-" which + chop
-function! s:which(cmd)
-  let res = s:system('which ' . a:cmd)
-  if res.err
-    return ''
-  else
-    return substitute(res.out, '\n$', '', '')
-  endif
-endfunction
 "}}}
 
 
@@ -361,29 +487,12 @@ nnoremap <silent> <Leader>tc :let &clipboard =
       \ empty(&clipboard) ? 'unnamed,unnamedplus' : ''<Cr>
 nnoremap <silent> <Leader>tn :<C-u>setlocal relativenumber!<Cr>
 
-" plug: commentary.vim
-nmap <Space>c <Plug>CommentaryLine
-xmap <Space>c <Plug>Commentary
-
-" plug: surround.vim
-let g:surround_{char2nr('k')} = "「\r」"
-let g:surround_{char2nr('K')} = "『\r』"
-xmap c <Plug>VSurround
-
-" plug: camelcasemotion
-map <silent> w <plug>CamelCaseMotion_w
-map <silent> b <plug>CamelCaseMotion_b
-map <silent> e <plug>CamelCaseMotion_e
-sunmap w
-sunmap b
-sunmap e
-
 " open the current editing file's location using file manager
 function! s:open_with_filer(...)
   let cmd = s:get_command()
   let path = get(a:, 1, s:convert_path(expand('%:p:h')))
 
-  if cmd is# ''
+  if empty(cmd)
     call Echohl('Error', 'Your system is not supported.')
     return
   endif
@@ -420,7 +529,8 @@ nnoremap <Space>Q :<C-u>quit!<Cr>
 nnoremap <C-h> :<C-u>h<Space>
 nnoremap s<Space> i<Space><Esc>
 
-nnoremap <Space>_ :<C-u>tabedit $MYVIMRC<Cr>
+" open .vimrc
+nnoremap <Space>_ :<C-u>execute (empty(expand('%')) && !&modified ? 'edit ' : 'tabedit ') . $MYVIMRC<Cr>
 nnoremap <Space>S :<C-u>source %<Cr>:nohlsearch<Cr>
 
 nnoremap <Leader>s :<C-u>s/
@@ -430,7 +540,7 @@ vnoremap <Leader>S :s/
 nnoremap <Leader>g :<C-u>g/
 nnoremap <Leader>te :<C-u>tabe<Space>
 
-nnoremap <silent> <Esc><Esc> <Esc>:<C-u>nohlsearch<Cr>
+nnoremap <silent> <C-c> <Esc>:<C-u>nohlsearch<Cr>
 
 nnoremap <silent> sh <C-w>h
 nnoremap <silent> sk <C-w>k
@@ -439,6 +549,18 @@ nnoremap <silent> sj <C-w>j
 
 nnoremap <silent> sn :tabnext<Cr>
 nnoremap <silent> sp :tabprevious<Cr>
+" conflict tmux key binds
+if s:is_mac && has('gui_running')
+  nnoremap <silent> <D-Right> :tabnext<Cr>
+  nnoremap <silent> <D-Left>  :tabprevious<Cr>
+  nnoremap <silent> <M-Left>  <C-w>h
+  nnoremap <silent> <M-Up>    <C-w>k
+  nnoremap <silent> <M-Right> <C-w>l
+  nnoremap <silent> <M-Down>  <C-w>j
+endif
+
+" visual last pasted lines
+nnoremap sv `[v`]
 
 nnoremap <MiddleMouse> <Nop>
 nnoremap <2-MiddleMouse> <Nop>
@@ -455,8 +577,9 @@ nnoremap <silent> <Space>P :pclose<Cr>
 inoremap <silent> <Leader>date <C-R>=strftime('%Y-%m-%d')<Cr>
 inoremap <silent> <Leader>time <C-R>=strftime('%H:%M')<Cr>
 inoremap <silent> <Leader>fn <C-R>=@%<Cr>
+inoremap <silent> <C-v> <Esc>:set paste<Cr>"+P:set nopaste<Cr>v`]
 
-" selected text search
+" search selected text
 vnoremap * y/<C-R>"<Cr>
 vnoremap < <gv
 vnoremap > >gv
@@ -500,8 +623,13 @@ if has('vim_starting')
   let g:vimsyntax_noerror = 1
 endif
 
+if has('multi_byte_ime') || has('xim')
+  set iminsert=0 imsearch=0
+  inoremap <silent> <Esc> <Esc>:<C-u>set iminsert=0<Cr>
+endif
 
-" * something "{{{
+
+" * autocmds "{{{
 augroup Tacahiroy
   autocmd!
 
@@ -572,20 +700,8 @@ augroup Tacahiroy
   endfunction
   command! -nargs=0 -bang AutoChdirToggle call s:toggle_auto_chdir_mode()
 
-  autocmd BufRead,BufNewFile *.ru,Gemfile,Guardfile setlocal filetype=ruby
-  autocmd BufRead,BufNewFile ?zshrc,?zshenv setlocal filetype=zsh
-  autocmd BufRead,BufNewFile *.md,*.mkd,*.markdown setlocal filetype=markdown
-
-  function! s:insert_today_for_md_changelog()
-    call append(line('.') - 1, strftime('%Y-%m-%d'))
-    call append(line('.') - 1, '----------')
-  endfunction
-
-  autocmd FileType gitcommit setlocal spell
-  autocmd FileType markdown nnoremap <buffer> <Leader>it :<C-u>call <SID>insert_today_for_md_changelog()<Cr>
-  autocmd FileType markdown nnoremap <buffer> <Leader>ix i[x]<Space><Esc>
-
   augroup PersistentUndo
+    autocmd!
     autocmd BufWritePre COMMIT_EDITMSG setlocal noundofile
     autocmd BufWritePre *.bak,*.bac setlocal noundofile
     autocmd BufWritePre knife-edit-*.js setlocal noundofile
@@ -593,6 +709,18 @@ augroup Tacahiroy
 
   autocmd User Rails nnoremap <buffer> <Space>r :<C-u>R
 
+  autocmd BufRead,BufNewFile *.ru,Gemfile,Guardfile setlocal filetype=ruby
+  autocmd BufRead,BufNewFile ?zshrc,?zshenv setlocal filetype=zsh
+
+  function! s:insert_today_for_md_changelog()
+    call append(line('.') - 1, strftime('%Y-%m-%d'))
+    call append(line('.') - 1, '----------')
+  endfunction
+  autocmd BufRead,BufNewFile *.md,*.mkd,*.markdown setlocal filetype=markdown
+  autocmd FileType markdown nnoremap <buffer> <Leader>it :<C-u>call <SID>insert_today_for_md_changelog()<Cr>
+  autocmd FileType markdown nnoremap <buffer> <Leader>ix i[x]<Space><Esc>
+
+  autocmd FileType gitcommit setlocal spell
   autocmd FileType mail set spell
   autocmd FileType slim setlocal makeprg=slimrb\ -c\ %
 
@@ -601,19 +729,15 @@ augroup Tacahiroy
 
   autocmd FileType help,qf,logaling,bestfriend,ref-* nnoremap <buffer> <silent> qq <C-w>c
   autocmd FileType javascript* set omnifunc=javascriptcomplete#CompleteJS
-
   autocmd FileType rspec compiler rspec
   autocmd FileType rspec set omnifunc=rubycomplete#Complete
   autocmd FileType *ruby,rspec :execute 'setlocal iskeyword+=' . char2nr('?')
   autocmd FileType python setlocal tabstop=4 shiftwidth=4 softtabstop=4
-
   autocmd FileType vim,snippet setlocal tabstop=2 shiftwidth=2 softtabstop=2
-
   autocmd FileType html,xhtml,xml,xslt,mathml,svg setlocal tabstop=2 shiftwidth=2 softtabstop=2
-
   autocmd FileType css,sass,scss,less setlocal omnifunc=csscomplete#CompleteCSS tabstop=2 shiftwidth=2 softtabstop=2
 
-  " let g:loaded_sql_completion = 1
+  let g:loaded_sql_completion = 1
   autocmd FileType sql*,plsql setlocal tabstop=4 shiftwidth=4 softtabstop=4
   autocmd FileType sql*,plsql nnoremap <buffer> <silent> <C-Return> :DBExecSQLUnderCursor<Cr>
   autocmd FileType sql*,plsql vnoremap <buffer> <silent> <C-Return> :DBExecVisualSQL<Cr>
@@ -671,6 +795,7 @@ augroup Tacahiroy
   autocmd BufRead,BufNewFile * syn match ExtraSpaces '[\t ]\+$'
         \| hi def link ExtraSpaces MatchParen
 
+  " typo correction
   inoreabbr funciton function
   inoreabbr requrie require
   inoreabbr reuqire require
@@ -680,129 +805,6 @@ augroup Tacahiroy
 augroup END
 "}}}
 
-
-" "{{{
-" plug: NERDTree
-let NERDTreeShowBookmarks = 1
-nnoremap <Space>ne :<C-u>NERDTreeToggle<Cr>
-nnoremap <Space>nn :<C-u>NERDTreeFind<Cr>zz<C-w><C-w>
-
-" plug: vim-ref
-let g:ref_refe_cmd = $HOME . '/Projects/wk/rubyrefm/refe-1_9_2'
-
-" plug: ctrlp.vim "{{{
-let g:ctrlp_map = '<Space>ff'
-let g:ctrlp_command = 'CtrlPRoot'
-let g:ctrlp_switch_buffer = 'Et'
-let g:ctrlp_tabpage_position = 'ac'
-let g:ctrlp_working_path_mode = 'ra'
-let g:ctrlp_match_window_bottom = 1
-let g:ctrlp_match_window_reversed = 0
-let g:ctrlp_max_height = 20
-let g:ctrlp_clear_cache_on_exit = 0
-let g:ctrlp_follow_symlinks = 1
-let g:ctrlp_highlight_match = [1, 'Constant']
-let g:ctrlp_max_files = 12800
-let g:ctrlp_max_depth = 24
-let g:ctrlp_dotfiles = 1
-let g:ctrlp_mruf_max = 512
-let g:ctrlp_mruf_exclude = 'knife-edit-*.*'
-
-let g:ctrlp_user_command = {
-  \ 'types': {
-    \ 1: ['.git/', 'cd %s && git ls-files'],
-    \ 2: ['.hg/', 'hg --cwd %s locate -I .'],
-    \ 3: ['.svn/', 'svn ls file://%s'],
-  \ }
-\ }
-
-let g:ctrlp_prompt_mappings = {
-  \ 'AcceptSelection("e")': ['<Cr>'],
-  \ 'AcceptSelection("h")': ['<C-x>'],
-  \ 'AcceptSelection("t")': ['<C-t>', '<C-Cr>'],
-  \ 'AcceptSelection("v")': ['<C-v>'],
-  \ 'PrtSelectMove("j")':   ['<C-n>'],
-  \ 'PrtSelectMove("k")':   ['<C-p>'],
-  \ 'PrtHistory(-1)':       ['<Up>'],
-  \ 'PrtHistory(1)':        ['<Down>'],
-  \ 'CreateNewFile()':      ['<C-y>'],
-  \ }
-let g:ctrlp_extensions = ['line', 'buffertag', 'dir', 'mixed', 'funky']
-
-let dir = ['\.git$', '\.hg$', '\.svn$', '\.vimundo$', '\.ctrlp_cache/',
-      \    '\.rbenv/', '\.gem/', 'backup$', 'Downloads$', $TMPDIR]
-let g:ctrlp_custom_ignore = {
-  \ 'dir': join(dir, '\|'),
-  \ 'file': '\v(\.exe\|\.so\|\.dll\|\.DS_Store\|\.db)$',
-  \ }
-
-nnoremap <Space>fl :CtrlPBuffer<Cr>
-nnoremap <Space>fm :CtrlPMRU<Cr>
-nnoremap <Space>li :CtrlPLine<Cr>
-nnoremap <Space>fk :CtrlPBookmarkDir<Cr>
-nnoremap <Space>fc :execute 'CtrlP ' . $chef . '/cookbooks/_default'<Cr>
-nnoremap <Space>fw :CtrlPCurFile<Cr>
-nnoremap <Space>fd :CtrlPCurWD<Cr>
-
-nnoremap <Space>fu :CtrlPFunky<Cr>
-
-" open a loaded buffer with new tab
-command! Big wincmd _ | wincmd |
-"}}}
-
-" plug: memolist.vim " {{{
-let g:memolist_path = expand('~/Projects/memo')
-let g:memolist_memo_suffix = 'md'
-let g:memolist_memo_date = '%Y-%m-%d %H:%M'
-let g:memolist_prompt_tags = 1
-let g:memolist_prompt_categories = 0
-let g:memolist_qfixgrep = 0
-let g:memolist_vimfiler = 0
-
-nnoremap <Space>mc :MemoNew<Cr>
-nnoremap <Space>mg :MemoGrep<Cr>
-nnoremap <Space>mL :MemoList<Cr>
-nnoremap <Space>ml :execute 'CtrlP ' . g:memolist_path<Cr><F5>
-" }}}
-
-" plug: Align
-let g:DrChipTopLvlMenu = ''
-let g:Align_xstrlen = 0
-
-" plug: openbrowser.vim
-let g:netrw_nogx = 1
-nmap gx <Plug>(openbrowser-smart-search)
-vmap gx <Plug>(openbrowser-smart-search)
-
-" plug: loga.vim
-let g:loga_executable = s:which('loga')
-let g:loga_enable_auto_lookup = 0
-let g:loga_delimiter = '=3'
-map  <Space>a <Plug>(loga-lookup)
-autocmd FileType logaling imap <buffer> <Leader>v <Plug>(loga-insert-delimiter)
-
-" plug: timetap.vim
-let g:bestfriend_accept_path_pattern = '^~/\%(\..\+$\|.*Projects\)'
-let g:bestfriend_ignore_path_pattern = '\(/a\+\.\w\+$\|/\.git/\|tags\|tags-.+\|NERD_tree_.\+$\)'
-let g:bestfriend_is_sort_base_today = 1
-let g:bestfriend_is_display_zero = 1
-let g:bestfriend_is_debug = 0
-let g:bestfriend_display_limit = 15
-let g:bestfriend_observe_cursor_position = 1
-
-" plug: syntastic
-let g:syntastic_mode_map =
-      \ { 'mode': 'active',
-        \ 'active_filetypes': ['ruby', 'eruby', 'cucumber', 'perl', 'javascript', 'python', 'sh'],
-        \ 'passive_filetypes': ['xml'] }
-let g:syntastic_enable_balloons = 0
-let g:syntastic_auto_loc_list = 0
-"}}}
-
-if has('multi_byte_ime') || has('xim')
-  set iminsert=0 imsearch=0
-  inoremap <silent> <Esc> <Esc>:<C-u>set iminsert=0<Cr>
-endif
 
 " Chef
 if executable('knife')
@@ -857,12 +859,13 @@ if executable('knife')
   command! -nargs=+ KnifeDataBagFromFile call s:knife_data_bag_from_file(<f-args>)
 endif
 
-" light tmux integration
+" light tmux integration " {{{
+" reinvent the wheel?
 let s:tmux = {}
 let s:tmux.last_cmd = ''
 
 function! s:tmux.is_installed()
-  return s:which('which tmux') !=# ''
+  return !empty(s:which('which tmux'))
 endfunction
 
 function! s:tmux.is_running()
@@ -920,12 +923,12 @@ if s:tmux.is_installed()
   nnoremap <Leader>> :<C-u>TMNextWindow<Cr>
   nnoremap <Leader>< :<C-u>TMPrevWindow<Cr>
 endif
-
+" }}}
 
 if filereadable(expand('~/.vimrc.local'))
   source ~/.vimrc.local
 endif
 
 " __END__ {{{
-" vim: ts=2 sts=2 sw=2
+" vim: fen fdm=marker ts=2 sts=2 sw=2
 
