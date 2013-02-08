@@ -859,6 +859,41 @@ if executable('knife')
   command! -nargs=+ KnifeDataBagFromFile call s:knife_data_bag_from_file(<f-args>)
 endif
 
+" Chef
+let s:chef = {}
+
+function! s:chef.convert_attr_notation() abort
+  if !search('\>', 'bcnW')
+    return
+  endif
+
+  let [bufnbr, lnum, col, offset] = getpos('.')
+  let line = getline(lnum)
+
+  if match(line, '\.') == -1
+    return
+  endif
+
+  let sc = self.find_attr_pos()
+  let ec = col
+  let l = matchstr(line, printf('.*\%%<%dc', sc))
+  let r = matchstr(line, printf('\%%>%dc.*', ec))
+  let attrs = split(matchstr(line, printf('\%%%dc.\+\%%%dc', sc - 1, ec + 1)), '\.')
+
+  let attr = attrs[0] . join(map(attrs[1:], '"[:".v:val."]"'), '')
+  call setline(lnum, l . attr . r)
+  call setpos('.', [bufnbr, lnum, len(l . attr) + 1, 0])
+  execute 'startinsert'
+endfunction
+
+function! s:chef.find_attr_pos()
+  let pos = searchpos('\(^\|\s\)', 'bnW')
+  return pos[1] + 1
+endfunction
+command! ChefConvertAttrNotation call s:chef.convert_attr_notation()
+inoremap <silent> <C-y>x <Esc>:ChefConvertAttrNotation<Cr>
+
+
 " light tmux integration " {{{
 " reinvent the wheel?
 let s:tmux = {}
@@ -924,6 +959,7 @@ if s:tmux.is_installed()
   nnoremap <Leader>< :<C-u>TMPrevWindow<Cr>
 endif
 " }}}
+
 
 if filereadable(expand('~/.vimrc.local'))
   source ~/.vimrc.local
