@@ -13,7 +13,7 @@ endif
 
 let g:colors_name = "seashell"
 
-hi Cursor   gui=NONE guibg=Violet
+hi Cursor   gui=NONE guibg=Orange
 hi CursorIM gui=NONE guibg=#67db57
 
 if s:seashell_style == 'dark'

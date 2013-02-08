@@ -35,7 +35,7 @@ Bundle 'mattn/zencoding-vim'
 Bundle 'msanders/snipmate.vim'
 Bundle 'scrooloose/nerdtree'
 Bundle 'scrooloose/syntastic'
-Bundle 'slj/gundo.vim'
+Bundle 'sjl/gundo.vim'
 Bundle 'tpope/vim-commentary'
 Bundle 'tpope/vim-endwise'
 Bundle 'tpope/vim-fugitive'
@@ -44,6 +44,7 @@ Bundle 'tpope/vim-surround'
 Bundle 'tyru/open-browser.vim'
 Bundle 'vim-ruby/vim-ruby'
 " Bundle 'DrawIt'
+Bundle 'DirDiff.vim'
 Bundle 'camelcasemotion'
 Bundle 'matchit.zip'
 
@@ -102,7 +103,7 @@ Bundle 'matchit.zip'
     \ 'PrtHistory(1)':        ['<Down>'],
     \ 'CreateNewFile()':      ['<C-y>'],
     \ }
-  let g:ctrlp_extensions = ['line', 'buffertag', 'dir', 'mixed', 'funky']
+  let g:ctrlp_extensions = ['line', 'buffertag', 'dir', 'mixed']
 
   let dir = ['\.git$', '\.hg$', '\.svn$', '\.vimundo$', '\.ctrlp_cache/',
         \    '\.rbenv/', '\.gem/', 'backup$', 'Downloads$', $TMPDIR]
@@ -112,12 +113,13 @@ Bundle 'matchit.zip'
     \ }
 
   nnoremap <Space>fl :CtrlPBuffer<Cr>
-  nnoremap <Space>fm :CtrlPMRU<Cr>
+  nnoremap <Space>fm :CtrlPMRU<Cr><F5>
   nnoremap <Space>li :CtrlPLine<Cr>
   nnoremap <Space>fk :CtrlPBookmarkDir<Cr>
   nnoremap <Space>fc :execute 'CtrlP ' . $chef . '/cookbooks/_default'<Cr>
   nnoremap <Space>fw :CtrlPCurFile<Cr>
   nnoremap <Space>fd :CtrlPCurWD<Cr>
+  nnoremap <Space>fr :CtrlPRTS<Cr>
 
   nnoremap <Space>fu :CtrlPFunky<Cr>
 
@@ -132,7 +134,9 @@ let g:syntastic_mode_map =
         \ 'active_filetypes': ['ruby', 'eruby', 'cucumber', 'perl', 'javascript', 'python', 'sh'],
         \ 'passive_filetypes': ['xml'] }
 let g:syntastic_enable_balloons = 0
-let g:syntastic_auto_loc_list = 0
+let g:syntastic_auto_loc_list = 2
+let g:syntastic_error_symbol='✗'
+let g:syntastic_warning_symbol='⚠'
 
 " plug: commentary.vim
   nmap <Space>c <Plug>CommentaryLine
@@ -141,6 +145,8 @@ let g:syntastic_auto_loc_list = 0
 " plug: surround.vim
   let g:surround_{char2nr('k')} = "「\r」"
   let g:surround_{char2nr('K')} = "『\r』"
+  let g:surround_{char2nr('e')} = "<%= \r %>"
+  let g:surround_{char2nr('b')} = "<%- \r %>"
   xmap c <Plug>VSurround
 
 " plug: openbrowser
@@ -237,7 +243,7 @@ command! -nargs=0 PreviewTagLite call s:preview_tag_lite(expand('<cword>'))
 "}}}
 
 
-" I don't need GUI menus
+" don't need GUI menus
 let did_install_default_menus = 1
 let did_install_syntax_menu = 1
 
@@ -326,6 +332,7 @@ set viminfo='64,<100,s10,n~/.viminfo
 set virtualedit=block,onemore
 set visualbell
 set wildignore=*.exe,*.dll,*.class,*.o,*.obj
+set wildignorecase
 set wildmenu
 set wildmode=longest:list,full
 set nowrapscan
@@ -425,8 +432,8 @@ cnoremap <C-o> <C-d>
 
 nnoremap s <Nop>
 nnoremap Q <Nop>
-nnoremap <C-q> q
 nnoremap q <Nop>
+nnoremap <C-q> q
 
 nnoremap Y y$
 nnoremap j gj
@@ -549,15 +556,6 @@ nnoremap <silent> sj <C-w>j
 
 nnoremap <silent> sn :tabnext<Cr>
 nnoremap <silent> sp :tabprevious<Cr>
-" conflict tmux key binds
-if s:is_mac && has('gui_running')
-  nnoremap <silent> <D-Right> :tabnext<Cr>
-  nnoremap <silent> <D-Left>  :tabprevious<Cr>
-  nnoremap <silent> <M-Left>  <C-w>h
-  nnoremap <silent> <M-Up>    <C-w>k
-  nnoremap <silent> <M-Right> <C-w>l
-  nnoremap <silent> <M-Down>  <C-w>j
-endif
 
 " visual last pasted lines
 nnoremap sv `[v`]
@@ -577,7 +575,7 @@ nnoremap <silent> <Space>P :pclose<Cr>
 inoremap <silent> <Leader>date <C-R>=strftime('%Y-%m-%d')<Cr>
 inoremap <silent> <Leader>time <C-R>=strftime('%H:%M')<Cr>
 inoremap <silent> <Leader>fn <C-R>=@%<Cr>
-inoremap <silent> <C-v> <Esc>:set paste<Cr>"+P:set nopaste<Cr>v`]
+" inoremap <silent> <C-v> <Esc>:set paste<Cr>"+P:set nopaste<Cr>v`]
 
 " search selected text
 vnoremap * y/<C-R>"<Cr>
@@ -768,6 +766,7 @@ augroup Tacahiroy
                          \| inoremap <buffer> <Leader>h4 <Esc>I####<Space>
                          \| inoremap <buffer> <Leader>h5 <Esc>I#####<Space>
                          \| inoremap <buffer> <Leader>hr <Esc>i- - -<Esc>^
+                         \| inoremap <buffer> <Leader>a  <Esc>i[]()<C-o>F]
   autocmd FileType markdown set autoindent
 
   " easy way
@@ -808,7 +807,8 @@ augroup END
 
 " Chef
 if executable('knife')
-  function! s:knife_cookbook_upload(...) abort
+  let s:knife = {}
+  function! s:knife.cookbook_upload(...) abort
     let path = expand('%:p')
     if path !~# '/cookbooks/[^/]\+/.\+'
       return
@@ -824,26 +824,17 @@ if executable('knife')
     if 0 < len(cookbooks)
       let cookbooks = filter(cookbooks, 'isdirectory(cb_path."/".v:val)')
       let mes = 'Uploading cookbook' . (1 < len(cookbooks) ? 's' : '')
-      let cmd = printf('knife cookbook upload -o %s %s;', cb_path, join(cookbooks, ' '))
+      let cmd = printf('knife cookbook upload -o %s %s;', cb_path, join(cookbooks))
+      let cmd .= s:notification('cookbook upload: ' . join(cookbooks), 'Chef')
 
-      if s:is_mac && executable('growlnotify')
-        let gtitle = 'cookbook upload: ' . join(cookbooks, ' ')
-        let gapp = 'Chef'
-        let cmd .= 'if [ $? -eq 0 ]; then echo SUCCESS; else echo FAILURE; fi | '
-        let cmd .= printf('growlnotify -n %s \"%s\"', gapp, gtitle)
-      endif
-
-      echomsg printf('%s: %s', mes, join(cookbooks, ' '))
+      echomsg printf('%s: %s', mes, join(cookbooks))
       call s:tmux.run(cmd, 1, 1)
     else
       echoerr 'no cookbooks are found.'
     endif
   endfunction
 
-  command! -nargs=* KnifeCookbookUpload call s:knife_cookbook_upload(<f-args>)
-  nnoremap <Space>K :<C-u>KnifeCookbookUpload<Cr>
-
-  function! s:knife_data_bag_from_file(json, ...)
+  function! s:knife.data_bag_from_file(json, ...)
     let path = fnamemodify(expand(a:json), ':p')
     if path !~# '/data_bags/'
       call Echohl('WarningMsg', printf('%s is not a data bag file.', path))
@@ -851,12 +842,32 @@ if executable('knife')
     endif
 
     let bag_name = fnamemodify(path, ':p:h:t')
-    let opts = join(a:000, ' ')
+    let opts = join(a:000)
 
-    echom printf('!knife data bag from file %s %s %s', bag_name, bufname(a:json), opts)
-    execute printf('!knife data bag from file %s %s %s', bag_name, bufname(a:json), opts)
+    call self.from_file('data bag', bag_name, bufname(a:json), opts)
   endfunction
-  command! -nargs=+ KnifeDataBagFromFile call s:knife_data_bag_from_file(<f-args>)
+
+  function! s:knife.from_file(what, ...)
+    echom printf('!knife %s from file %s', a:what, join(a:000))
+    execute printf('!knife %s from file %s', a:what, join(a:000))
+  endfunction
+
+  function! s:notification(title, app)
+    let cmd = ''
+    if s:is_mac && executable('growlnotify')
+      let cmd .= 'if [ $? -eq 0 ]; then echo SUCCESS; else echo FAILURE; fi | '
+      let cmd .= printf('growlnotify -n %s \"%s\"', a:app, a:title)
+    endif
+    let cmd .= '; echo Press enter to close the pane.; read'
+
+    return cmd
+  endfunction
+
+  " commands and maps
+  command! -nargs=* KnifeCookbookUpload call s:knife.cookbook_upload(<f-args>)
+  command! -nargs=+ KnifeDataBagFromFile call s:knife.data_bag_from_file(<f-args>)
+
+  nnoremap <Space>K :<C-u>KnifeCookbookUpload<Cr>
 endif
 
 " Chef
