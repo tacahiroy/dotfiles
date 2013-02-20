@@ -18,7 +18,7 @@ snippet cdir
 
 snippet file
 	file "${1}" do
-		action ${2:create}
+		action ${2::create}
 		source "${4}"
 		mode ${5:0644}
 		owner "${6:root}"
