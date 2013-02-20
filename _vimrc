@@ -20,7 +20,7 @@ function! s:which(cmd)
   endif
 endfunction
 
-" vundle plugin management "{{{
+" * vundle plugin management "{{{
 filetype off
 set runtimepath& runtimepath+=~/.vim/vundle.git
 call vundle#rc()
@@ -31,6 +31,7 @@ Bundle 'glidenote/memolist.vim'
 Bundle 'godlygeek/tabular'
 Bundle 'jiangmiao/simple-javascript-indenter'
 Bundle 'kien/ctrlp.vim'
+Bundle 'ksauzz/haproxy.vim'
 Bundle 'mattn/zencoding-vim'
 Bundle 'msanders/snipmate.vim'
 Bundle 'scrooloose/nerdtree'
@@ -46,12 +47,21 @@ Bundle 'vim-ruby/vim-ruby'
 " Bundle 'DrawIt'
 Bundle 'DirDiff.vim'
 Bundle 'camelcasemotion'
+Bundle 'confluencewiki.vim'
 Bundle 'matchit.zip'
 
 " it seems this has ftdetect problem
 " Bundle 'chrisbra/csv.vim'
 
-" plugin configurations {{{
+" * altenative key definitions {{{
+nnoremap [Toggle] <Nop>
+nmap <Leader><Leader> [Toggle]
+
+noremap [Space] <Nop>
+map <Space> [Space]
+" }}}
+
+" * plugin configurations {{{
 " plug: memolist
   let g:memolist_path = expand('~/Projects/memo')
   let g:memolist_memo_suffix = 'md'
@@ -61,13 +71,13 @@ Bundle 'matchit.zip'
   let g:memolist_qfixgrep = 0
   let g:memolist_vimfiler = 0
 
-  nnoremap <Space>mc :MemoNew<Cr>
-  nnoremap <Space>mg :MemoGrep<Cr>
-  nnoremap <Space>mL :MemoList<Cr>
-  nnoremap <Space>ml :execute 'CtrlP ' . g:memolist_path<Cr><F5>
+  nnoremap [Space]mc :MemoNew<Cr>
+  nnoremap [Space]mg :MemoGrep<Cr>
+  nnoremap [Space]mL :MemoList<Cr>
+  nnoremap [Space]ml :execute 'CtrlP ' . g:memolist_path<Cr><F5>
 
 " plug: ctrlp.vim
-  let g:ctrlp_map = '<Space>ff'
+  let g:ctrlp_map = '[Space]ff'
   let g:ctrlp_command = 'CtrlPRoot'
   let g:ctrlp_switch_buffer = 'Et'
   let g:ctrlp_tabpage_position = 'ac'
@@ -81,7 +91,7 @@ Bundle 'matchit.zip'
   let g:ctrlp_max_files = 12800
   let g:ctrlp_max_depth = 24
   let g:ctrlp_dotfiles = 1
-  let g:ctrlp_mruf_max = 512
+  let g:ctrlp_mruf_max = 1024
   let g:ctrlp_mruf_exclude = 'knife-edit-*.*'
 
   let g:ctrlp_user_command = {
@@ -105,42 +115,43 @@ Bundle 'matchit.zip'
     \ }
   let g:ctrlp_extensions = ['line', 'buffertag', 'dir', 'mixed']
 
-  let dir = ['\.git$', '\.hg$', '\.svn$', '\.vimundo$', '\.ctrlp_cache/',
+  let dir = ['\.git$', '\.hg$', '\.svn$', '\.vimundo$', '\.cache/ctrlp',
         \    '\.rbenv/', '\.gem/', 'backup$', 'Downloads$', $TMPDIR]
   let g:ctrlp_custom_ignore = {
     \ 'dir': join(dir, '\|'),
-    \ 'file': '\v(\.exe\|\.so\|\.dll\|\.DS_Store\|\.db)$',
+    \ 'file': '\v(\.exe\|\.so\|\.dll\|\.DS_Store\|\.db\|COMMIT_EDITMSG)$',
     \ }
 
-  nnoremap <Space>fl :CtrlPBuffer<Cr>
-  nnoremap <Space>fm :CtrlPMRU<Cr><F5>
-  nnoremap <Space>li :CtrlPLine<Cr>
-  nnoremap <Space>fk :CtrlPBookmarkDir<Cr>
-  nnoremap <Space>fc :execute 'CtrlP ' . $chef . '/cookbooks/_default'<Cr>
-  nnoremap <Space>fw :CtrlPCurFile<Cr>
-  nnoremap <Space>fd :CtrlPCurWD<Cr>
-  nnoremap <Space>fr :CtrlPRTS<Cr>
+  nnoremap [Space]fl :CtrlPBuffer<Cr>
+  nnoremap [Space]fm :CtrlPMRU<Cr><F5>
+  nnoremap [Space]li :CtrlPLine<Cr>
+  nnoremap [Space]fk :CtrlPBookmarkDir<Cr>
+  nnoremap [Space]fc :execute 'CtrlP ' . $chef . '/cookbooks/_default'<Cr>
+  nnoremap [Space]fw :CtrlPCurFile<Cr>
+  nnoremap [Space]fd :CtrlPCurWD<Cr>
+  nnoremap [Space]fr :CtrlPRTS<Cr>
+  nnoremap [Space]f. :CtrlP .<Cr>
 
-  nnoremap <Space>fu :CtrlPFunky<Cr>
+  nnoremap [Space]fu :CtrlPFunky<Cr>
 
 " plug: nerdtree
   let NERDTreeShowBookmarks = 1
-  nnoremap <Space>nt :<C-u>NERDTreeToggle<Cr>
-  nnoremap <Space>nn :<C-u>NERDTreeFind<Cr>zz<C-w><C-w>
+  nnoremap [Space]nt :<C-u>NERDTreeToggle<Cr>
+  nnoremap [Space]nn :<C-u>NERDTreeFind<Cr>zz<C-w><C-w>
 
 " plug: syntastic
-let g:syntastic_mode_map =
-      \ { 'mode': 'active',
-        \ 'active_filetypes': ['ruby', 'eruby', 'cucumber', 'perl', 'javascript', 'python', 'sh'],
-        \ 'passive_filetypes': ['xml'] }
-let g:syntastic_enable_balloons = 0
-let g:syntastic_auto_loc_list = 2
-let g:syntastic_error_symbol='✗'
-let g:syntastic_warning_symbol='⚠'
+  let g:syntastic_mode_map =
+        \ { 'mode': 'active',
+          \ 'active_filetypes': ['ruby', 'eruby', 'cucumber', 'perl', 'javascript', 'python', 'sh'],
+          \ 'passive_filetypes': ['xml'] }
+  let g:syntastic_enable_balloons = 0
+  let g:syntastic_auto_loc_list = 2
+  let g:syntastic_error_symbol='✗'
+  let g:syntastic_warning_symbol='⚠'
 
 " plug: commentary.vim
-  nmap <Space>c <Plug>CommentaryLine
-  xmap <Space>c <Plug>Commentary
+  nmap [Space]c <Plug>CommentaryLine
+  xmap [Space]c <Plug>Commentary
 
 " plug: surround.vim
   let g:surround_{char2nr('k')} = "「\r」"
@@ -155,32 +166,31 @@ let g:syntastic_warning_symbol='⚠'
   vmap gx <Plug>(openbrowser-smart-search)
 
 " plug: camelcasemotion
-  map <silent> w <plug>CamelCaseMotion_w
-  map <silent> b <plug>CamelCaseMotion_b
-  map <silent> e <plug>CamelCaseMotion_e
-  sunmap w
-  sunmap b
-  sunmap e
+  map <silent> W <plug>CamelCaseMotion_w
+  map <silent> B <plug>CamelCaseMotion_b
+  map <silent> E <plug>CamelCaseMotion_e
+  sunmap W
+  sunmap B
+  sunmap E
 
 " plug: vim-ref
-let g:ref_refe_cmd = $HOME . '/Projects/wk/rubyrefm/refe-1_9_2'
+  let g:ref_refe_cmd = $HOME . '/Projects/wk/rubyrefm/refe-1_9_2'
 
 " plug: loga.vim
-let g:loga_executable = s:which('loga')
-let g:loga_enable_auto_lookup = 0
-let g:loga_delimiter = '=3'
-map  <Space>a <Plug>(loga-lookup)
-autocmd FileType logaling imap <buffer> <Leader>v <Plug>(loga-insert-delimiter)
+  let g:loga_executable = s:which('loga')
+  let g:loga_enable_auto_lookup = 0
+  let g:loga_delimiter = '=3'
+  map  [Space]a <Plug>(loga-lookup)
+  autocmd FileType logaling imap <buffer> <Leader>v <Plug>(loga-insert-delimiter)
 
 " plug: bestfriend.vim
-let g:bestfriend_accept_path_pattern = '^~/\%(\..\+$\|.*Projects\)'
-let g:bestfriend_ignore_path_pattern = '\(/a\+\.\w\+$\|/\.git/\|tags\|tags-.+\|NERD_tree_.\+$\)'
-let g:bestfriend_is_sort_base_today = 0
-let g:bestfriend_is_display_zero = 1
-let g:bestfriend_is_debug = 0
-let g:bestfriend_display_limit = 15
-let g:bestfriend_observe_cursor_position = 1
-
+  let g:bestfriend_accept_path_pattern = '^~/\%(\..\+$\|.*Projects\)'
+  let g:bestfriend_ignore_path_pattern = '\(/a\+\.\w\+$\|/\.git/\|tags\|tags-.+\|NERD_tree_.\+$\)'
+  let g:bestfriend_is_sort_base_today = 0
+  let g:bestfriend_is_display_zero = 1
+  let g:bestfriend_is_debug = 0
+  let g:bestfriend_display_limit = 15
+  let g:bestfriend_observe_cursor_position = 1
 " }}}
 
 if isdirectory($HOME . '/.vim')
@@ -203,9 +213,12 @@ endif
 filetype plugin indent on
 "}}}
 
+" enough
 let s:is_mac = has('macunix') || has('mac') || system('uname | grep "^Darwin"') =~# "^Darwin"
-" I don't use AIX, BSD, HP-UX and any other UNIX
+" 99.999% GNU/Linux
 let s:is_linux = !s:is_mac && has('unix')
+" just in case
+let s:is_windows = has('win32') || has('win64')
 
 set cpo&vim
 
@@ -243,7 +256,7 @@ command! -nargs=0 PreviewTagLite call s:preview_tag_lite(expand('<cword>'))
 "}}}
 
 
-" don't need GUI menus
+" GUI menus is not necessary
 let did_install_default_menus = 1
 let did_install_syntax_menu = 1
 
@@ -269,6 +282,7 @@ set backupskip& backupskip+=/tmp/*,/private/tmp/*,*.bac,COMMIT_EDITMSG,hg-editor
 set cedit=
 set cmdheight=2
 set colorcolumn=80
+set cpo&vim cpoptions+=n
 set noequalalways
 set expandtab smarttab
 set fileencodings=ucs-bom,utf-8,iso-2022-jp,euc-jp,cp932
@@ -297,6 +311,7 @@ else
   set number
 endif
 set nrformats=hex
+set pastetoggle=<F2>
 set previewheight=8
 set pumheight=24
 set scroll=0
@@ -311,7 +326,7 @@ endfor
 
 set shellslash
 set shiftround
-set showbreak=>~\ 
+let &showbreak = "\u279e  "
 set showcmd
 set showfulltag
 set showmatch matchtime=1
@@ -328,6 +343,7 @@ set title
 set titlestring=Vim:\ %F\ %h%r%m
 set titlelen=255
 set tabstop=2 shiftwidth=2 softtabstop=2
+set updatetime=1000
 set viminfo='64,<100,s10,n~/.viminfo
 set virtualedit=block,onemore
 set visualbell
@@ -345,7 +361,8 @@ if has('persistent_undo')
   set undodir=~/.vimundo
   augroup UndoFile
     autocmd!
-    autocmd BufReadPre ~/* setlocal undofile
+    autocmd BufReadPre ~/* if empty(&key) | setlocal undofile | endif
+    " autocmd BufReadPre ~/* setlocal undofile
   augroup END
 endif
 
@@ -384,7 +401,7 @@ colorscheme seashell
 
 set formatoptions& formatoptions+=mM formatoptions-=r
 
-let &statusline = '[#%n]%<%#FileName#%f%* %m%r%h%w'
+let &statusline = '[#%n]%<%#SpecialKey#%f%* %m%r%h%w'
 let &statusline .= '%{&filetype}:'
 let &statusline .= '%{(&l:fileencoding != "" ? &l:fileencoding : &encoding).":".&fileformat}'
 let &statusline .= '(%{&expandtab ? "" : ">"}%{&l:tabstop}'
@@ -394,14 +411,14 @@ let &statusline .= '%{(&list ? "l" : "")}'
 let &statusline .= '%{(empty(&clipboard) ? "" : "c")}'
 let &statusline .= '%{(&paste ? "p" : "")}'
 let &statusline .= '%#Function#%{fugitive#statusline()}%*'
-let &statusline .= ' %='
+let &statusline .= ' %=%#Special#'
 let &statusline .= '%{Gps()}'
 let &statusline .= '%{(g:auto_chdir_enabled ? "e" : "d")}'
-let &statusline .= '%-12( %l/%LL,%c %)%P'
+let &statusline .= '%-12( %l/%LL,%c %)%P%*'
 
 function! s:shorten_path(path, ratio)
   if !empty(&buftype)
-    return ''
+    return '-'
   endif
 
   let path = substitute(a:path, $HOME, '~', '')
@@ -439,10 +456,10 @@ nnoremap Y y$
 nnoremap j gj
 nnoremap k gk
 
-" selection
+" Visual
 nnoremap vv <C-v>
-nnoremap vo vg_
-nnoremap vO ^vg_
+nnoremap vo vg_o
+nnoremap vO ^vg_o
 
 nnoremap <C-]> <C-]>zz
 nnoremap <C-t> <C-t>zz
@@ -487,16 +504,19 @@ nnoremap <silent> qj :cnext<Cr>zz
 nnoremap <silent> qk :cprevious<Cr>zz
 nnoremap <silent> qf :cc<Cr>zz
 
-nnoremap <silent> <Leader>tm :let &mouse = empty(&mouse) ? 'a' : ''<Cr>
-nnoremap <silent> <Leader>tp :set paste!<Cr>
-nnoremap <silent> <Leader>tl :set list!<Cr>
-nnoremap <silent> <Leader>tc :let &clipboard =
+nnoremap <silent> qn :bnext<Cr>
+nnoremap <silent> qp :bprevious<Cr>
+
+nnoremap <silent> [Toggle]m :let &mouse = empty(&mouse) ? 'a' : ''<Cr>
+nnoremap <silent> [Toggle]p :set paste!<Cr>
+nnoremap <silent> [Toggle]l :set list!<Cr>
+nnoremap <silent> [Toggle]c :let &clipboard =
       \ empty(&clipboard) ? 'unnamed,unnamedplus' : ''<Cr>
-nnoremap <silent> <Leader>tn :<C-u>setlocal relativenumber!<Cr>
+nnoremap <silent> [Toggle]n :<C-u>setlocal relativenumber!<Cr>
 
 " open the current editing file's location using file manager
 function! s:open_with_filer(...)
-  let cmd = s:get_command()
+  let cmd = s:get_filer_command()
   let path = get(a:, 1, s:convert_path(expand('%:p:h')))
 
   if empty(cmd)
@@ -506,45 +526,54 @@ function! s:open_with_filer(...)
 
   execute printf('!%s %s', cmd, path)
 endfunction
-command! -nargs=? Finder call s:open_with_filer(<f-args>)
+command! -nargs=? Filer call s:open_with_filer(<f-args>)
 
 function! s:convert_path(path)
-  if has('win32') || has('win64')
+  if s:is_windows
     return '"' . substitute(a:path, '/', '\', 'g') . '"'
   else
     return a:path
   endif
 endfunction
 
-function! s:get_command()
+function! s:get_filer_command()
   if s:is_mac
     return 'open -a Finder'
   elseif has('unix') && has('gui_gnome')
     return 'nautilus'
-  elseif has('win32') || has('win64')
+  elseif s:is_windows
     return 'start explorer'
   else
     return ''
   endif
 endfunction
 
-nnoremap <Space>w :<C-u>update<Cr>
-nnoremap <Space>q :<C-u>quit<Cr>
-nnoremap <Space>W :<C-u>update!<Cr>
-nnoremap <Space>Q :<C-u>quit!<Cr>
+nnoremap [Space]w :<C-u>update<Cr>
+nnoremap [Space]q :<C-u>quit<Cr>
+nnoremap [Space]W :<C-u>update!<Cr>
+nnoremap [Space]Q :<C-u>quit!<Cr>
 
 nnoremap <C-h> :<C-u>h<Space>
 nnoremap s<Space> i<Space><Esc>
 
 " open .vimrc
-nnoremap <Space>_ :<C-u>execute (empty(expand('%')) && !&modified ? 'edit ' : 'tabedit ') . $MYVIMRC<Cr>
-nnoremap <Space>S :<C-u>source %<Cr>:nohlsearch<Cr>
+nnoremap [Space]_ :<C-u>execute (empty(expand('%')) && !&modified ? 'edit ' : 'tabedit ') . $MYVIMRC<Cr>
+nnoremap [Space]S :<C-u>source %<Cr>:nohlsearch<Cr>
 
+nnoremap <Leader>g :<C-u>g/
 nnoremap <Leader>s :<C-u>s/
 nnoremap <Leader>S :<C-u>%s/
-vnoremap <Leader>s :s/
-vnoremap <Leader>S :s/
-nnoremap <Leader>g :<C-u>g/
+" only for Visual mode
+xnoremap <Leader>s :s/
+xnoremap <Leader>S :s/
+xnoremap s :s/
+xnoremap S :s/
+
+if exists(':Tabularize')
+  nnoremap <Leader>t :Tabularize /
+  xnoremap <Leader>t :Tabularize /
+endif
+
 nnoremap <Leader>te :<C-u>tabe<Space>
 
 nnoremap <silent> <C-c> <Esc>:<C-u>nohlsearch<Cr>
@@ -564,8 +593,8 @@ nnoremap <MiddleMouse> <Nop>
 nnoremap <2-MiddleMouse> <Nop>
 
 " preview tag
-nnoremap <silent> <Space>p <C-w>}
-nnoremap <silent> <Space>P :pclose<Cr>
+nnoremap <silent> [Space]p <C-w>}
+nnoremap <silent> [Space]P :pclose<Cr>
 
 " Ctrl-H dispution
 " set t_kb=<Bs>
@@ -576,6 +605,11 @@ inoremap <silent> <Leader>date <C-R>=strftime('%Y-%m-%d')<Cr>
 inoremap <silent> <Leader>time <C-R>=strftime('%H:%M')<Cr>
 inoremap <silent> <Leader>fn <C-R>=@%<Cr>
 " inoremap <silent> <C-v> <Esc>:set paste<Cr>"+P:set nopaste<Cr>v`]
+
+" surround.vim can be used?
+inoremap <silent> <C-y>( <C-g>u(<Esc>ea)
+inoremap <silent> <C-y>{ <C-g>u{<Esc>ea}
+inoremap <silent> <C-y>[ <C-g>u[<Esc>ea]
 
 " search selected text
 vnoremap * y/<C-R>"<Cr>
@@ -628,24 +662,31 @@ endif
 
 
 " * autocmds "{{{
+autocmd User Rails nnoremap <buffer> [Space]r :<C-u>R
 augroup Tacahiroy
   autocmd!
 
   autocmd BufReadPost * if !search('\S', 'cnw') | let &l:fileencoding = &encoding | endif
   " restore cursor position
   autocmd BufReadPost * if line("'\"") <= line('$') | execute "normal '\"" | endif
+  " prevent auto comment insertion when 'o' pressed
   autocmd BufEnter * setlocal formatoptions-=o
 
   autocmd FileType *
         \  if &buftype !~# '^\(quickfix\|help\|nofile\)$'
-        \|    nnoremap <buffer>  <Return> :<C-u>call append(line('.'), '')<Cr>
+        \|    nnoremap <buffer> <Return> :<C-u>call append(line('.'), '')<Cr>
         \| endif
 
+  " Chef
   autocmd BufRead,BufNewFile *
         \  if expand('%:p:h') =~# '.*/cookbooks/.*'
         \|   setlocal makeprg=foodcritic\ $*\ %
         \|   setlocal errorformat=%m:\ %f:%l
         \| endif
+
+  autocmd FileType eruby*
+        \  inoremap <silent> <buffer> <Leader>e <C-g>u<%=  %><Esc>2hi
+        \| inoremap <silent> <buffer> <Leader>b <C-g>u<%-  -%><Esc>3hi
 
   " autochdir emulation
   autocmd BufEnter * call s:auto_chdir(6)
@@ -666,7 +707,7 @@ augroup Tacahiroy
       endif
 
       let dir = '/'.join(dirs[0:idx], '/')
-      let files = ['Gemfile', 'Rakefile', 'README.mkd', 'README.md', 'README.markdown', 'README.rdoc']
+      let files = ['Gemfile', 'Rakefile', 'README', 'README.md', 'README.mkd', 'README.markdown', 'README.rdoc']
       for f in files
         if filereadable(dir.'/'.f)
           return dir
@@ -683,6 +724,7 @@ augroup Tacahiroy
       return
     endif
 
+    " fugitive:// or something
     if expand('%') =~# '^\S\+://'
       return
     endif
@@ -700,12 +742,10 @@ augroup Tacahiroy
 
   augroup PersistentUndo
     autocmd!
-    autocmd BufWritePre COMMIT_EDITMSG setlocal noundofile
-    autocmd BufWritePre *.bak,*.bac setlocal noundofile
-    autocmd BufWritePre knife-edit-*.js setlocal noundofile
+    autocmd BufWritePre
+          \ COMMIT_EDITMSG,*.bak,*.bac,knife-edit-*.js,?.* setlocal noundofile
+    autocmd BufWritePre * if !empty(&key) | setlocal noundofile | endif
   augroup END
-
-  autocmd User Rails nnoremap <buffer> <Space>r :<C-u>R
 
   autocmd BufRead,BufNewFile *.ru,Gemfile,Guardfile setlocal filetype=ruby
   autocmd BufRead,BufNewFile ?zshrc,?zshenv setlocal filetype=zsh
@@ -715,8 +755,9 @@ augroup Tacahiroy
     call append(line('.') - 1, '----------')
   endfunction
   autocmd BufRead,BufNewFile *.md,*.mkd,*.markdown setlocal filetype=markdown
-  autocmd FileType markdown nnoremap <buffer> <Leader>it :<C-u>call <SID>insert_today_for_md_changelog()<Cr>
-  autocmd FileType markdown nnoremap <buffer> <Leader>ix i[x]<Space><Esc>
+  autocmd FileType markdown
+        \  nnoremap <buffer> <Leader>it :<C-u>call <SID>insert_today_for_md_changelog()<Cr>
+        \| nnoremap <buffer> <Leader>ix i[x]<Space><Esc>
 
   autocmd FileType gitcommit setlocal spell
   autocmd FileType mail set spell
@@ -727,13 +768,13 @@ augroup Tacahiroy
 
   autocmd FileType help,qf,logaling,bestfriend,ref-* nnoremap <buffer> <silent> qq <C-w>c
   autocmd FileType javascript* set omnifunc=javascriptcomplete#CompleteJS
-  autocmd FileType rspec compiler rspec
-  autocmd FileType rspec set omnifunc=rubycomplete#Complete
+  autocmd FileType rspec
+        \  compiler rspec
+        \| set omnifunc=rubycomplete#Complete
   autocmd FileType *ruby,rspec :execute 'setlocal iskeyword+=' . char2nr('?')
   autocmd FileType python setlocal tabstop=4 shiftwidth=4 softtabstop=4
-  autocmd FileType vim,snippet setlocal tabstop=2 shiftwidth=2 softtabstop=2
-  autocmd FileType html,xhtml,xml,xslt,mathml,svg setlocal tabstop=2 shiftwidth=2 softtabstop=2
-  autocmd FileType css,sass,scss,less setlocal omnifunc=csscomplete#CompleteCSS tabstop=2 shiftwidth=2 softtabstop=2
+  autocmd FileType vim if &iskeyword !~# '&' | setlocal iskeyword+=& | endif
+  autocmd FileType css,sass,scss,less setlocal omnifunc=csscomplete#CompleteCSS
 
   let g:loaded_sql_completion = 1
   autocmd FileType sql*,plsql setlocal tabstop=4 shiftwidth=4 softtabstop=4
@@ -758,7 +799,7 @@ augroup Tacahiroy
   autocmd Filetype c setlocal tabstop=4 softtabstop=4 shiftwidth=4
   autocmd Filetype c compiler gcc
   autocmd FileType c setlocal makeprg=gcc\ -Wall\ %\ -o\ %:r.o
-  autocmd FileType c nnoremap <buffer> <Space>m :<C-u>write<Cr>:make --std=c99<Cr>
+  autocmd FileType c nnoremap <buffer> [Space]m :<C-u>write<Cr>:make --std=c99<Cr>
 
   autocmd FileType markdown inoremap <buffer> <Leader>h1 <Esc>I#<Space>
                          \| inoremap <buffer> <Leader>h2 <Esc>I##<Space>
@@ -805,7 +846,8 @@ augroup END
 "}}}
 
 
-" Chef
+" Chef " {{{
+" a wrapper of the knife
 if executable('knife')
   let s:knife = {}
   function! s:knife.cookbook_upload(...) abort
@@ -856,7 +898,7 @@ if executable('knife')
     let cmd = ''
     if s:is_mac && executable('growlnotify')
       let cmd .= 'if [ $? -eq 0 ]; then echo SUCCESS; else echo FAILURE; fi | '
-      let cmd .= printf('growlnotify -n %s \"%s\"', a:app, a:title)
+      let cmd .= printf('growlnotify -n %s --image ~/Pictures/chef_logo.png \"%s\"', a:app, a:title)
     endif
     let cmd .= '; echo Press enter to close the pane.; read'
 
@@ -867,12 +909,11 @@ if executable('knife')
   command! -nargs=* KnifeCookbookUpload call s:knife.cookbook_upload(<f-args>)
   command! -nargs=+ KnifeDataBagFromFile call s:knife.data_bag_from_file(<f-args>)
 
-  nnoremap <Space>K :<C-u>KnifeCookbookUpload<Cr>
+  nnoremap [Space]K :<C-u>KnifeCookbookUpload<Cr>
 endif
 
-" Chef
+" Cookbook utilities
 let s:chef = {}
-
 function! s:chef.convert_attr_notation() abort
   if !search('\>', 'bcnW')
     return
@@ -902,7 +943,8 @@ function! s:chef.find_attr_pos()
   return pos[1] + 1
 endfunction
 command! ChefConvertAttrNotation call s:chef.convert_attr_notation()
-inoremap <silent> <C-y>x <Esc>:ChefConvertAttrNotation<Cr>
+inoremap <silent> <C-y>x <C-g>u<Esc>:ChefConvertAttrNotation<Cr>
+" }}}
 
 
 " light tmux integration " {{{
