@@ -245,7 +245,7 @@ setopt print_eight_bit
 setopt no_flow_control
 
 ## Command history configuration
-HISTFILE=~/.zsh_history
+HISTFILE=~/.zhistory
 HISTSIZE=20000
 SAVEHIST=100000
 
