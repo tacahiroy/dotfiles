@@ -20,6 +20,14 @@ function! s:which(cmd)
   endif
 endfunction
 
+" enough
+let s:is_mac = has('macunix') || has('mac') || system('uname | grep "^Darwin"') =~# "^Darwin"
+" 99.999% GNU/Linux
+let s:is_linux = !s:is_mac && has('unix')
+" just in case
+let s:is_windows = has('win32') || has('win64')
+
+
 " * vundle plugin management "{{{
 filetype off
 set runtimepath& runtimepath+=~/.vim/vundle.git
@@ -47,7 +55,6 @@ Bundle 'vim-ruby/vim-ruby'
 " Bundle 'DrawIt'
 Bundle 'DirDiff.vim'
 Bundle 'camelcasemotion'
-Bundle 'confluencewiki.vim'
 Bundle 'matchit.zip'
 
 " it seems this has ftdetect problem
@@ -113,7 +120,7 @@ map <Space> [Space]
     \ 'PrtHistory(1)':        ['<Down>'],
     \ 'CreateNewFile()':      ['<C-y>'],
     \ }
-  let g:ctrlp_extensions = ['line', 'buffertag', 'dir', 'mixed']
+  let g:ctrlp_extensions = ['line', 'buffertag', 'dir', 'mixed', 'funky']
 
   let dir = ['\.git$', '\.hg$', '\.svn$', '\.vimundo$', '\.cache/ctrlp',
         \    '\.rbenv/', '\.gem/', 'backup$', 'Downloads$', $TMPDIR]
@@ -213,12 +220,6 @@ endif
 filetype plugin indent on
 "}}}
 
-" enough
-let s:is_mac = has('macunix') || has('mac') || system('uname | grep "^Darwin"') =~# "^Darwin"
-" 99.999% GNU/Linux
-let s:is_linux = !s:is_mac && has('unix')
-" just in case
-let s:is_windows = has('win32') || has('win64')
 
 set cpo&vim
 
@@ -756,8 +757,9 @@ augroup Tacahiroy
   endfunction
   autocmd BufRead,BufNewFile *.md,*.mkd,*.markdown setlocal filetype=markdown
   autocmd FileType markdown
-        \  nnoremap <buffer> <Leader>it :<C-u>call <SID>insert_today_for_md_changelog()<Cr>
-        \| nnoremap <buffer> <Leader>ix i[x]<Space><Esc>
+        \  inoremap <buffer> <Leader>it <Esc>:<C-u>call <SID>insert_today_for_md_changelog()<Cr>:startinsert<Cr>
+        \| inoremap <buffer> <Leader>ix [x]<Space>
+  autocmd FileType markdown setlocal tabstop=4 shiftwidth=4
 
   autocmd FileType gitcommit setlocal spell
   autocmd FileType mail set spell
@@ -846,7 +848,7 @@ augroup END
 "}}}
 
 
-" Chef " {{{
+" * Chef " {{{
 " a wrapper of the knife
 if executable('knife')
   let s:knife = {}
@@ -947,7 +949,7 @@ inoremap <silent> <C-y>x <C-g>u<Esc>:ChefConvertAttrNotation<Cr>
 " }}}
 
 
-" light tmux integration " {{{
+" * tmux " {{{
 " reinvent the wheel?
 let s:tmux = {}
 let s:tmux.last_cmd = ''
