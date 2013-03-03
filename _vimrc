@@ -602,10 +602,8 @@ nnoremap <silent> [Space]P :pclose<Cr>
 " set t_kD=<Del>
 " inoremap <Del> <Bs>
 
-inoremap <silent> <Leader>date <C-R>=strftime('%Y-%m-%d')<Cr>
-inoremap <silent> <Leader>time <C-R>=strftime('%H:%M')<Cr>
 inoremap <silent> <Leader>fn <C-R>=@%<Cr>
-" inoremap <silent> <C-v> <Esc>:set paste<Cr>"+P:set nopaste<Cr>v`]
+inoremap <silent> <Leader>fN <C-R>=fnamemodify(@%, ':p')<Cr>
 
 " surround.vim can be used?
 inoremap <silent> <C-y>( <C-g>u(<Esc>ea)
@@ -686,8 +684,10 @@ augroup Tacahiroy
         \| endif
 
   autocmd FileType eruby*
-        \  inoremap <silent> <buffer> <Leader>e <C-g>u<%=  %><Esc>2hi
-        \| inoremap <silent> <buffer> <Leader>b <C-g>u<%-  -%><Esc>3hi
+        \  inoremap <silent> <buffer> <Leader>e <C-g>u<%=  %><Esc>F<Space>i
+        \| inoremap <silent> <buffer> <Leader>b <C-g>u<%-  -%><Esc>F<Space>i
+        \| inoremap <silent> <buffer> <Leader>d <C-g>u<%===  %><Esc>F<Space>i
+        \| setlocal makeprg=erubis\ $*\ %
 
   " autochdir emulation
   autocmd BufEnter * call s:auto_chdir(6)
@@ -708,11 +708,13 @@ augroup Tacahiroy
       endif
 
       let dir = '/'.join(dirs[0:idx], '/')
-      let files = ['Gemfile', 'Rakefile', 'README', 'README.md', 'README.mkd', 'README.markdown', 'README.rdoc']
-      for f in files
-        if filereadable(dir.'/'.f)
-          return dir
-        endif
+      let patterns = ['Gemfile', 'Rakefile', 'README*']
+      for pat in patterns
+        for f in split(glob(dir.'/'.pat))
+          if filereadable(dir.'/'.f)
+            return dir
+          endif
+        endfor
       endfor
       let i += 1
     endwhile
