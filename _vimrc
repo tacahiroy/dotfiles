@@ -5,6 +5,18 @@ scriptencoding utf-8
 
 let g:mapleader = ','
 
+" functions " {{{
+" * global
+function! Echohl(group, msg)
+  try
+    execute 'echohl ' . a:group
+    echomsg a:msg
+  finally
+    echohl NONE
+  endtry
+endfunction
+
+" * private
 function! s:system(cmd)
   let res = system(a:cmd)
   return { 'out': res, 'err': v:shell_error }
@@ -20,9 +32,27 @@ function! s:which(cmd)
   endif
 endfunction
 
+" shows tag information into command window
+function! s:preview_tag_lite(word)
+  let t = taglist('^' . a:word . '$')
+  let current = expand('%:t')
+
+  for item in t
+    if -1 < stridx(item.filename, current)
+      " [filename] tag definition
+      call Echohl('Search', printf('%-36s [%s]', item.filename, item.cmd))
+    else
+      echomsg printf('%-36s %s', '[' . substitute(item.filename, '\s\s*$', '', '') . ']', item.cmd)
+    endif
+  endfor
+endfunction
+command! -nargs=0 PreviewTagLite call s:preview_tag_lite(expand('<cword>'))
+"}}}
+
+
 " enough
 let s:is_mac = has('macunix') || has('mac') || system('uname | grep "^Darwin"') =~# "^Darwin"
-" 99.999% GNU/Linux
+" GNU/Linux only
 let s:is_linux = !s:is_mac && has('unix')
 " just in case
 let s:is_windows = has('win32') || has('win64')
@@ -39,8 +69,8 @@ Bundle 'glidenote/memolist.vim'
 Bundle 'godlygeek/tabular'
 Bundle 'jiangmiao/simple-javascript-indenter'
 Bundle 'kien/ctrlp.vim'
-Bundle 'ksauzz/haproxy.vim'
-Bundle 'mattn/zencoding-vim'
+" Bundle 'ksauzz/haproxy.vim'
+" Bundle 'mattn/zencoding-vim'
 Bundle 'msanders/snipmate.vim'
 Bundle 'scrooloose/nerdtree'
 Bundle 'scrooloose/syntastic'
@@ -126,8 +156,10 @@ map <Space> [Space]
         \    '\.rbenv/', '\.gem/', 'backup$', 'Downloads$', $TMPDIR]
   let g:ctrlp_custom_ignore = {
     \ 'dir': join(dir, '\|'),
-    \ 'file': '\v(\.exe\|\.so\|\.dll\|\.DS_Store\|\.db\|COMMIT_EDITMSG)$',
+    \ 'file': '\v(\.exe|\.so|\.dll|\.DS_Store|\.db|COMMIT_EDITMSG)$'
     \ }
+
+  let g:ctrlp_funky_ruby_chef_words = 1
 
   nnoremap [Space]fl :CtrlPBuffer<Cr>
   nnoremap [Space]fm :CtrlPMRU<Cr><F5>
@@ -140,6 +172,7 @@ map <Space> [Space]
   nnoremap [Space]f. :CtrlP .<Cr>
 
   nnoremap [Space]fu :CtrlPFunky<Cr>
+  nnoremap [Space]fU :execute 'CtrlPFunky ' . expand('<cword>')<Cr>
 
 " plug: nerdtree
   let NERDTreeShowBookmarks = 1
@@ -228,39 +261,10 @@ autocmd!
 set nocompatible
 set verbose=0
 
-" * functions "{{{
-function! Echohl(group, msg)
-  try
-    execute 'echohl ' . a:group
-    echomsg a:msg
-  finally
-    echohl NONE
-  endtry
-endfunction
-
-
-" shows tag information into command window
-function! s:preview_tag_lite(word)
-  let t = taglist('^' . a:word . '$')
-  let current = expand('%:t')
-
-  for item in t
-    if -1 < stridx(item.filename, current)
-      " [filename] tag definition
-      call Echohl('Search', printf('%-36s [%s]', item.filename, item.cmd))
-    else
-      echomsg printf('%-36s %s', '[' . substitute(item.filename, '\s\s*$', '', '') . ']', item.cmd)
-    endif
-  endfor
-endfunction
-command! -nargs=0 PreviewTagLite call s:preview_tag_lite(expand('<cword>'))
-"}}}
-
 
 " GUI menus is not necessary
 let did_install_default_menus = 1
 let did_install_syntax_menu = 1
-
 
 syntax enable
 filetype plugin indent on
@@ -279,7 +283,7 @@ set backspace=indent,eol,start
 set backup
 set backupext=.bac
 set backupdir=$DOTVIM/backups
-set backupskip& backupskip+=/tmp/*,/private/tmp/*,*.bac,COMMIT_EDITMSG,hg-editor-*.txt,svn-commit.[0-9]*.tmp
+set backupskip& backupskip+=/tmp/*,/private/tmp/*,*.bac,COMMIT_EDITMSG,hg-editor-*.txt,svn-commit.[0-9]*.tmp,knife-edit-*
 set cedit=
 set cmdheight=2
 set colorcolumn=80
@@ -288,7 +292,7 @@ set noequalalways
 set expandtab smarttab
 set fileencodings=ucs-bom,utf-8,iso-2022-jp,euc-jp,cp932
 set fileformats=unix,dos,mac
-set helplang=en,ja
+set helplang=en
 set hidden
 set history=10000
 set hlsearch
@@ -340,6 +344,7 @@ set swapfile directory=$DOTVIM/swaps
 set switchbuf=useopen,usetab
 set synmaxcol=300
 set tags=tags,./tags,**3/tags,tags;/Projects
+set timeout timeoutlen=1000
 set title
 set titlestring=Vim:\ %F\ %h%r%m
 set titlelen=255
@@ -349,7 +354,9 @@ set viminfo='64,<100,s10,n~/.viminfo
 set virtualedit=block,onemore
 set visualbell
 set wildignore=*.exe,*.dll,*.class,*.o,*.obj
-set wildignorecase
+if exists('+wildignorecase')
+  set wildignorecase
+endif
 set wildmenu
 set wildmode=longest:list,full
 set nowrapscan
@@ -451,7 +458,7 @@ cnoremap <C-o> <C-d>
 nnoremap s <Nop>
 nnoremap Q <Nop>
 nnoremap q <Nop>
-nnoremap <C-q> q
+nnoremap Q q
 
 nnoremap Y y$
 nnoremap j gj
@@ -587,7 +594,10 @@ nnoremap <silent> sj <C-w>j
 nnoremap <silent> sn :tabnext<Cr>
 nnoremap <silent> sp :tabprevious<Cr>
 
-" visual last pasted lines
+nnoremap gf gF
+nnoremap gF gf
+
+" do visual last pasted lines
 nnoremap sv `[v`]
 
 nnoremap <MiddleMouse> <Nop>
@@ -708,7 +718,7 @@ augroup Tacahiroy
       endif
 
       let dir = '/'.join(dirs[0:idx], '/')
-      let patterns = ['Gemfile', 'Rakefile', 'README*']
+      let patterns = ['Gemfile', 'Rakefile', 'README.*']
       for pat in patterns
         for f in split(glob(dir.'/'.pat))
           if filereadable(dir.'/'.f)
@@ -918,7 +928,7 @@ endif
 
 " Cookbook utilities
 let s:chef = {}
-function! s:chef.convert_attr_notation() abort
+function! s:chef.convert_attr_notation(colon) abort
   if !search('\>', 'bcnW')
     return
   endif
@@ -936,7 +946,13 @@ function! s:chef.convert_attr_notation() abort
   let r = matchstr(line, printf('\%%>%dc.*', ec))
   let attrs = split(matchstr(line, printf('\%%%dc.\+\%%%dc', sc - 1, ec + 1)), '\.')
 
-  let attr = attrs[0] . join(map(attrs[1:], '"[:".v:val."]"'), '')
+  if a:colon
+    let fmt = '"[:".v:val."]"'
+  else
+    let fmt = '"[\"".v:val."\"]"'
+  endif
+
+  let attr = attrs[0] . join(map(attrs[1:], fmt), '')
   call setline(lnum, l . attr . r)
   call setpos('.', [bufnbr, lnum, len(l . attr) + 1, 0])
   execute 'startinsert'
@@ -946,8 +962,9 @@ function! s:chef.find_attr_pos()
   let pos = searchpos('\(^\|\s\)', 'bnW')
   return pos[1] + 1
 endfunction
-command! ChefConvertAttrNotation call s:chef.convert_attr_notation()
-inoremap <silent> <C-y>x <C-g>u<Esc>:ChefConvertAttrNotation<Cr>
+command! -nargs=1 ChefConvertAttrNotation call s:chef.convert_attr_notation(<f-args>)
+inoremap <silent> <C-y>x <C-g>u<Esc>:ChefConvertAttrNotation 1<Cr>
+inoremap <silent> <C-y>X <C-g>u<Esc>:ChefConvertAttrNotation 0<Cr>
 " }}}
 
 
@@ -1021,6 +1038,7 @@ endif
 if filereadable(expand('~/.vimrc.local'))
   source ~/.vimrc.local
 endif
+
 
 " __END__ {{{
 " vim: fen fdm=marker ts=2 sts=2 sw=2
