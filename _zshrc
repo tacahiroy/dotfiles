@@ -266,6 +266,9 @@ setopt interactive_comments # comment after '#'
 ## Alias configuration# {{{
 # expand aliases before completing
 setopt complete_aliases # aliased ls needs if file/dir completions work
+# _expand_alias:
+zstyle ':completion:*:expand-alias:*' global true
+bindkey '^y' _expand_alias
 
 case "${OSTYPE}" in
   freebsd*|darwin*)
@@ -300,9 +303,17 @@ alias v='vim'
 alias vi='vim'
 alias vv='gvim'
 
+alias g='git'
+alias b='brew'
+alias bo='brew outdated'
+
 # Ruby
-alias renv='rbenv'
+alias re='rbenv'
+alias rver='rbenv versions'
 alias bdl='bundle'
+alias bux='bundle exec'
+
+alias pweb='python -m SimpleHTTPServer'
 
 # global
 alias -g K9='|xargs kill -9'
@@ -311,6 +322,10 @@ alias -g L='|$PAGER'
 alias -g G='|grep'
 alias -g W='|wc -l'
 alias -g EEE='--secret-file ~/.chef/encrypted_data_bag_secret'
+
+setopt complete_aliases
+
+
 # }}}
 
 ## terminal configurations # {{{
