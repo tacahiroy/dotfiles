@@ -24,7 +24,3 @@
 --regex-vbnet=/^[\t ]*(Public|Private|Friend|Protected|\b)?[\t ]*Structure[\t ]+([a-zA-Z0-9_]+)/\2/t,type/i
 --regex-vbnet=/^[\t ]*(Public|Private|Friend|Protected|\b)?[\t ]*Enum[\t ]+([a-zA-Z0-9_]+)/\2/e,enum/i
 
---langdef=howm
---langmap=howm:.howm
---regex-howm=/\|(.+@.+)\|/\1/f,function/
-
