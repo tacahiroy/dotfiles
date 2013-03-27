@@ -1,6 +1,6 @@
 " Language: Visual Basic
-" Description: visual basic filetype plugin
-" Maintainer: TaCahiroy
+" Description: Visual Basic filetype plugin
+" Maintainer: Tacahiroy
 " Last Change: 13-May-2010.
 
 if exists('b:did_vb_tacahiroy_ftplugin')
@@ -50,16 +50,11 @@ endif
 
 if ! exists("no_plugin_maps") && ! exists("no_vb_maps")
   nmap <buffer><F5> :Vbp<Cr>
-  map  <buffer> <silent> <Space>M :TyossCMod<Cr><Down>
-  map  <buffer> <silent> <Space>A :TyossCAdd<Cr><Down>
-  vmap <buffer> <silent> <Space>D :TyossCDel<Cr><Down>
 endif
 
 setlocal commentstring='%s
-let b:cms = "'"
 
 setlocal expandtab tabstop=4 shiftwidth=4 softtabstop=4
-compiler vb
 
 " monstermethod support
 " let g:mm_begin_vb = '^[\t ]*\%(\%(private\|protected\|friend\|public\)[\t ]\+\)\?' .
