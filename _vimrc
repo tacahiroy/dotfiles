@@ -68,6 +68,7 @@ Bundle 'avakhov/vim-yaml'
 Bundle 'glidenote/memolist.vim'
 Bundle 'godlygeek/tabular'
 Bundle 'jiangmiao/simple-javascript-indenter'
+Bundle 'jphustman/SQLUtilities'
 Bundle 'kien/ctrlp.vim'
 " Bundle 'ksauzz/haproxy.vim'
 " Bundle 'mattn/zencoding-vim'
@@ -85,6 +86,7 @@ Bundle 'vim-ruby/vim-ruby'
 " Bundle 'DrawIt'
 Bundle 'DirDiff.vim'
 Bundle 'camelcasemotion'
+Bundle 'dbext.vim'
 Bundle 'matchit.zip'
 
 " it seems this has ftdetect problem
@@ -573,9 +575,9 @@ nnoremap <Leader>s :<C-u>s/
 nnoremap <Leader>S :<C-u>%s/
 " only for Visual mode
 xnoremap <Leader>s :s/
-xnoremap <Leader>S :s/
 xnoremap s :s/
-xnoremap S :s/
+xnoremap <Leader>t :Tabular<Space>/
+xnoremap t :Tabular<Space>/
 
 if exists(':Tabularize')
   nnoremap <Leader>t :Tabularize /
@@ -685,6 +687,8 @@ augroup Tacahiroy
         \  if &buftype !~# '^\(quickfix\|help\|nofile\)$'
         \|    nnoremap <buffer> <Return> :<C-u>call append(line('.'), '')<Cr>
         \| endif
+
+  autocmd BufRead,BufNewFile *.cls,*.bas,*.dsr setlocal filetype=vb
 
   " Chef
   autocmd BufRead,BufNewFile *
@@ -883,6 +887,7 @@ if executable('knife')
       let cmd = printf('knife cookbook upload -o %s %s;', cb_path, join(cookbooks))
       let cmd .= s:notification('cookbook upload: ' . join(cookbooks), 'Chef')
 
+      call s:tmux.run("chef-client -Fdoc --color", 0, 1, 1)
       echomsg printf('%s: %s', mes, join(cookbooks))
       call s:tmux.run(cmd, 1, 1)
     else
@@ -985,7 +990,8 @@ endfunction
 function! s:tmux.run(cmd, ...)
   let split = get(a:, 1, 0)
   let run_in_vim = get(a:, 2, 0)
-  let is_control = (a:cmd =~# '^\^[a-zA-Z]$')
+  let no_enter = get(a:, 3, 0)
+  let is_control = (a:cmd =~# '^\^[a-zA-Z]$') || no_enter
 
   if !is_control
     let self.last_cmd = a:cmd
