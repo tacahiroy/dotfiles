@@ -1,6 +1,8 @@
 export LANG=ja_JP.UTF-8
 
-fpath=($HOME/.zsh/func /usr/local/Cellar/zsh-completions/0.7.0/share/zsh-completions $fpath)
+fpath=($HOME/.zsh/func \
+       /usr/local/Cellar/zsh-completions/0.7.0/share/zsh-completions(N-) \
+       $fpath)
 typeset -U fpath
 
 # tmux-powerline
@@ -51,6 +53,7 @@ fi
 typeset -U path
 path=(
   $HOME/bin(N-/)
+  $HOME/perl5/bin(N-/)
   /usr/local/bin(N-/)
   /usr/local/sbin(N-/)
   /usr/local/bin(N-/)
@@ -73,7 +76,7 @@ typeset -xT PERL5LIB perl5_lib
 typeset -U perl5_lib
 
 perl5_lib=(
-  $HOME/perl5(N-/)
+  $HOME/perl5/lib/perl5(N-/)
 )
 
 ## Python
@@ -81,6 +84,7 @@ typeset -xT PYTHONPATH python_path
 typeset -U python_path
 
 python_path=(
+/usr/lib/python2.7(N-/)
 /usr/local/lib/python2.7/site-packages(N-/)
 )
 

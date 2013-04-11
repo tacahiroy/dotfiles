@@ -306,6 +306,7 @@ alias vv='gvim'
 alias g='git'
 alias b='brew'
 alias bo='brew outdated'
+alias bup='brew update'
 
 # Ruby
 alias re='rbenv'
