@@ -5,6 +5,11 @@ scriptencoding utf-8
 
 let g:mapleader = ','
 
+autocmd!
+augroup Tacahiroy
+  autocmd!
+augroup END
+
 " functions " {{{
 " * global
 function! Echohl(group, msg)
@@ -68,7 +73,6 @@ Bundle 'avakhov/vim-yaml'
 Bundle 'glidenote/memolist.vim'
 Bundle 'godlygeek/tabular'
 Bundle 'jiangmiao/simple-javascript-indenter'
-Bundle 'jphustman/SQLUtilities'
 Bundle 'kien/ctrlp.vim'
 " Bundle 'ksauzz/haproxy.vim'
 " Bundle 'mattn/zencoding-vim'
@@ -86,8 +90,13 @@ Bundle 'vim-ruby/vim-ruby'
 " Bundle 'DrawIt'
 Bundle 'DirDiff.vim'
 Bundle 'camelcasemotion'
-Bundle 'dbext.vim'
 Bundle 'matchit.zip'
+augroup Tacahiroy
+  autocmd FileType sql*
+    \   Bundle 'Align'
+    \ | Bundle 'dbext.vim'
+    \ | Bundle 'jphustman/SQLUtilities'
+augroup END
 
 " it seems this has ftdetect problem
 " Bundle 'chrisbra/csv.vim'
@@ -233,6 +242,12 @@ map <Space> [Space]
   let g:bestfriend_is_debug = 0
   let g:bestfriend_display_limit = 15
   let g:bestfriend_observe_cursor_position = 1
+
+" plug: dbext.vim
+  let g:dbext_map_prefix = '<leader>d'
+
+" plug: sqlutilities.vim
+  let g:sqlutil_load_default_maps = 0
 " }}}
 
 if isdirectory($HOME . '/.vim')
@@ -255,10 +270,7 @@ endif
 filetype plugin indent on
 "}}}
 
-
 set cpo&vim
-
-autocmd!
 
 set nocompatible
 set verbose=0
@@ -675,8 +687,6 @@ endif
 " * autocmds "{{{
 autocmd User Rails nnoremap <buffer> [Space]r :<C-u>R
 augroup Tacahiroy
-  autocmd!
-
   autocmd BufReadPost * if !search('\S', 'cnw') | let &l:fileencoding = &encoding | endif
   " restore cursor position
   autocmd BufReadPost * if line("'\"") <= line('$') | execute "normal '\"" | endif
@@ -688,7 +698,7 @@ augroup Tacahiroy
         \|    nnoremap <buffer> <Return> :<C-u>call append(line('.'), '')<Cr>
         \| endif
 
-  autocmd BufRead,BufNewFile *.cls,*.bas,*.dsr setlocal filetype=vb
+  autocmd BufRead,BufNewFile *.frm,*.bas,*.cls,*.dsr setlocal filetype=vb
 
   " Chef
   autocmd BufRead,BufNewFile *
@@ -813,6 +823,7 @@ augroup Tacahiroy
   autocmd BufRead,BufNewFile knife-edit-*.js,*.json setlocal filetype=javascript.json
   autocmd FileType *json* setlocal makeprg=python\ -mjson.tool\ 2>&1\ %\ >\ /dev/null
                        \| setlocal errorformat=%m:\ line\ %l\ column\ %c\ %.%#
+  autocmd FileType *json* nnoremap <Leader>pp :%!json_xs -f json -t json-pretty<Cr>
 
   autocmd Filetype c setlocal tabstop=4 softtabstop=4 shiftwidth=4
   autocmd Filetype c compiler gcc
@@ -846,7 +857,7 @@ augroup Tacahiroy
 
   autocmd FileType xml nnoremap <silent> <buffer> <Tab> :call <SID>move_to_segment(0)<Cr>
   autocmd FileType xml nnoremap <silent> <buffer> <S-Tab> :call <SID>move_to_segment(1)<Cr>
-  autocmd FileType xml noremap  <silent> <buffer> <Leader>a :call <SID>run_tidy(80)<Cr>
+  autocmd FileType xml noremap  <silent> <buffer> <Leader>pp :call <SID>run_tidy(80)<Cr>
   autocmd BufRead,BufEnter *.xml set updatetime=1000
   autocmd BufLeave,BufWinLeave *.xml set updatetime&
 
