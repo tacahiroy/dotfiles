@@ -74,7 +74,6 @@ Bundle 'glidenote/memolist.vim'
 Bundle 'godlygeek/tabular'
 Bundle 'jiangmiao/simple-javascript-indenter'
 Bundle 'kien/ctrlp.vim'
-" Bundle 'ksauzz/haproxy.vim'
 " Bundle 'mattn/zencoding-vim'
 Bundle 'msanders/snipmate.vim'
 Bundle 'scrooloose/nerdtree'
@@ -91,12 +90,9 @@ Bundle 'vim-ruby/vim-ruby'
 Bundle 'DirDiff.vim'
 Bundle 'camelcasemotion'
 Bundle 'matchit.zip'
-augroup Tacahiroy
-  autocmd FileType sql*
-    \   Bundle 'Align'
-    \ | Bundle 'dbext.vim'
-    \ | Bundle 'jphustman/SQLUtilities'
-augroup END
+" Bundle 'Align'
+" Bundle 'dbext.vim'
+" Bundle 'jphustman/SQLUtilities'
 
 " it seems this has ftdetect problem
 " Bundle 'chrisbra/csv.vim'
@@ -699,6 +695,7 @@ augroup Tacahiroy
         \| endif
 
   autocmd BufRead,BufNewFile *.frm,*.bas,*.cls,*.dsr setlocal filetype=vb
+  autocmd FileType vb setlocal fileformat=dos
 
   " Chef
   autocmd BufRead,BufNewFile *
@@ -925,10 +922,11 @@ if executable('knife')
   endfunction
 
   function! s:notification(title, app)
+    let icon = $DOTVIM . '/images/chef_logo.png'
     let cmd = ''
     if s:is_mac && executable('growlnotify')
       let cmd .= 'if [ $? -eq 0 ]; then echo SUCCESS; else echo FAILURE; fi | '
-      let cmd .= printf('growlnotify -n %s --image ~/Pictures/chef_logo.png \"%s\"', a:app, a:title)
+      let cmd .= printf('growlnotify -n %s --image %s \"%s\"', a:app, icon, a:title)
     endif
     let cmd .= '; echo Press enter to close the pane.; read'
 
@@ -975,7 +973,8 @@ function! s:chef.convert_attr_notation(colon) abort
 endfunction
 
 function! s:chef.find_attr_pos()
-  let pos = searchpos('\(^\|\s\)', 'bnW')
+  " let pos = searchpos('\(^\|\s\)', 'bnW')
+  let pos = searchpos('\<\(node\|default\|normal\)\>', 'bnW')
   return pos[1] + 1
 endfunction
 command! -nargs=1 ChefConvertAttrNotation call s:chef.convert_attr_notation(<f-args>)
