@@ -185,6 +185,12 @@ map <Space> [Space]
   let NERDTreeShowBookmarks = 1
   nnoremap [Space]nt :<C-u>NERDTreeToggle<Cr>
   nnoremap [Space]nn :<C-u>NERDTreeFind<Cr>zz<C-w><C-w>
+  if s:is_mac
+    augroup Tacahiroy
+      autocmd FileType nerdtree nnoremap <buffer> <Leader>ql :<C-u>call NERDTreeQuickLook()<Cr>
+                            \| nnoremap <buffer> <Leader>qe :<C-u>call NERDTreeExecuteFile()<Cr>
+    augroup END
+  endif
 
 " plug: syntastic
   let g:syntastic_mode_map =
@@ -520,7 +526,7 @@ endfunction
 nnoremap <silent> qo :<C-u>silent call <SID>toggle_qf_list()<Cr>
 nnoremap <silent> qj :cnext<Cr>zz
 nnoremap <silent> qk :cprevious<Cr>zz
-nnoremap <silent> qf :cc<Cr>zz
+nnoremap <silent> qc :cc<Cr>zz
 
 nnoremap <silent> qn :bnext<Cr>
 nnoremap <silent> qp :bprevious<Cr>
