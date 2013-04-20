@@ -82,7 +82,7 @@
       <name>Option_R to Control</name>
       <identifier>private.deviceproductdef.apple</identifier>
       <device_only>DeviceVendor::Apple_Inc, DeviceProduct::Apple_Internal_keyboard_MBA,
-                  DeviceVendor::Apple_Inc, DeviceProduct::Apple_Internal_keyboard_MBP
+                   DeviceVendor::Apple_Inc, DeviceProduct::Apple_Internal_keyboard_MBP
       </device_only>
       <autogen>--KeyToKey-- KeyCode::OPTION_R, KeyCode::CONTROL_L</autogen>
     </item>
