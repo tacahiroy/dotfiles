@@ -65,11 +65,12 @@ let s:is_windows = has('win32') || has('win64')
 
 " * vundle plugin management "{{{
 filetype off
-set runtimepath& runtimepath+=~/.vim/vundle.git
+set runtimepath& runtimepath+=~/.vim/bundle/vundle.git
 call vundle#rc()
 
+Bundle 'gmarik/vundle'
 Bundle 'avakhov/vim-yaml'
-" Bundle 'bbommarito/vim-slim'
+Bundle 'slim-template/vim-slim'
 Bundle 'glidenote/memolist.vim'
 Bundle 'godlygeek/tabular'
 Bundle 'jiangmiao/simple-javascript-indenter'
@@ -90,9 +91,8 @@ Bundle 'vim-ruby/vim-ruby'
 Bundle 'DirDiff.vim'
 Bundle 'camelcasemotion'
 Bundle 'matchit.zip'
-" Bundle 'Align'
-" Bundle 'dbext.vim'
-" Bundle 'jphustman/SQLUtilities'
+Bundle 'Align'
+Bundle 'jphustman/SQLUtilities'
 
 " it seems this has ftdetect problem
 " Bundle 'chrisbra/csv.vim'
@@ -122,7 +122,7 @@ map <Space> [Space]
 
 " plug: ctrlp.vim
   let g:ctrlp_map = '[Space]ff'
-  let g:ctrlp_command = 'CtrlPRoot'
+  let g:ctrlp_cmd = 'CtrlPRoot'
   let g:ctrlp_switch_buffer = 'Et'
   let g:ctrlp_tabpage_position = 'ac'
   let g:ctrlp_working_path_mode = 'ra'
@@ -134,13 +134,13 @@ map <Space> [Space]
   let g:ctrlp_highlight_match = [1, 'Constant']
   let g:ctrlp_max_files = 12800
   let g:ctrlp_max_depth = 24
-  let g:ctrlp_dotfiles = 1
+  let g:ctrlp_show_hidden = 1
   let g:ctrlp_mruf_max = 1024
   let g:ctrlp_mruf_exclude = 'knife-edit-*.*'
 
   let g:ctrlp_user_command = {
     \ 'types': {
-      \ 1: ['.git/', 'cd %s && git ls-files'],
+      \ 1: ['.git/', 'cd %s && git ls-files . -co --exclude-standard'],
       \ 2: ['.hg/', 'hg --cwd %s locate -I .'],
       \ 3: ['.svn/', 'svn ls file://%s'],
     \ }
@@ -162,7 +162,7 @@ map <Space> [Space]
   let dir = ['\.git$', '\.hg$', '\.svn$', '\.vimundo$', '\.cache/ctrlp',
         \    '\.rbenv/', '\.gem/', 'backup$', 'Downloads$', $TMPDIR]
   let g:ctrlp_custom_ignore = {
-    \ 'dir': join(dir, '\|'),
+    \ 'dir': '\v[\/]'.join(dir, '|'),
     \ 'file': '\v(\.exe|\.so|\.dll|\.DS_Store|\.db|COMMIT_EDITMSG)$'
     \ }
 
@@ -175,8 +175,8 @@ map <Space> [Space]
   nnoremap [Space]fc :execute 'CtrlP ' . $chef . '/cookbooks/_default'<Cr>
   nnoremap [Space]fw :CtrlPCurFile<Cr>
   nnoremap [Space]fd :CtrlPCurWD<Cr>
+  nnoremap [Space]f. :CtrlPCurFile<Cr>
   nnoremap [Space]fr :CtrlPRTS<Cr>
-  nnoremap [Space]f. :CtrlP .<Cr>
 
   nnoremap [Space]fu :CtrlPFunky<Cr>
   nnoremap [Space]fU :execute 'CtrlPFunky ' . expand('<cword>')<Cr>
@@ -876,6 +876,22 @@ augroup Tacahiroy
   inoreabbr stating staging
 augroup END
 "}}}
+
+function! s:scratch(m)
+  let s:scratch_bufnbr = get(s:, 'scratch_bufnbr', 0)
+  if bufexists(s:scratch_bufnbr)
+    for i in range(tabpagenr('$'))
+      if index(tabpagebuflist(i + 1), s:scratch_bufnbr)
+        " jump to tab page and focus the buffer
+      endif
+    endfor
+    return
+  endif
+  tabedit +set\ buftype=nofile
+  let s:scratch_bufnbr = bufnr('%')
+  echom get(s:, 'scratch_bufnbr', 0)
+endfunction
+command! -nargs=? Scratch call s:scratch('')
 
 
 " * Chef " {{{
