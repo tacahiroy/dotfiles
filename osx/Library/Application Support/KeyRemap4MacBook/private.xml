@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <root>
+  <!-- Devices -->
   <devicevendordef>
     <vendorname>Topre_Corporation</vendorname>
     <vendorid>0x853</vendorid>
@@ -29,6 +30,14 @@
     <productname>Apple_Internal_keyboard_MBP</productname>
     <productid>0x245</productid>
   </deviceproductdef>
+
+  <!-- apps -->
+  <appdef>
+    <appname>Terminal</appname>
+    <equal>com.apple.Terminal</equal>
+    <equal>iTerm</equal>
+    <equal>com.googlecode.iterm2</equal>
+  </appdef>
 
   <item>
     <name>Topre Realforce</name>
@@ -85,6 +94,20 @@
                    DeviceVendor::Apple_Inc, DeviceProduct::Apple_Internal_keyboard_MBP
       </device_only>
       <autogen>--KeyToKey-- KeyCode::OPTION_R, KeyCode::CONTROL_L</autogen>
+    </item>
+  </item>
+
+  <!-- app specific -->
+  <item>
+    <name>App specific</name>
+    <item>
+      <name>Emulate MacUIM Vi co-operative mode</name>
+      <identifier>private.appdef.iterm</identifier>
+      <only>Terminal</only>
+      <autogen>--KeyToKey--
+        KeyCode::BRACKET_LEFT, ModifierFlag::CONTROL_L,
+        KeyCode::ESCAPE
+      </autogen>
     </item>
   </item>
 </root>
