@@ -502,7 +502,7 @@ function! s:redir(cmd)
   execute a:cmd
   redir END
 
-  return res
+  return substitute(res, '^\n\+', '', '')
 endfunction
 
 function! s:toggle_qf_list()
