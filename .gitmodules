@@ -1,4 +1,0 @@
-[submodule "_vim/vundle.git"]
-	path = _vim/vundle.git
-	url = https://github.com/gmarik/vundle.git
-	ignore = dirty
