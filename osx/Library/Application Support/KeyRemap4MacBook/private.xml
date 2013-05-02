@@ -39,6 +39,11 @@
     <equal>com.googlecode.iterm2</equal>
   </appdef>
 
+  <appdef>
+    <appname>Eclipse</appname>
+    <equal>org.eclipse.eclipse</equal>
+  </appdef>
+
   <item>
     <name>Topre Realforce</name>
     <item>
@@ -107,6 +112,16 @@
       <autogen>--KeyToKey--
         KeyCode::BRACKET_LEFT, ModifierFlag::CONTROL_L,
         KeyCode::ESCAPE
+      </autogen>
+    </item>
+
+    <item>
+      <name>Forward Delete</name>
+      <identifier>private.appdef.eclipse</identifier>
+      <only>Eclipse</only>
+      <autogen>--KeyToKey--
+        KeyCode::DELETE, VK_COMMAND,
+        KeyCode::FORWARD_DELETE
       </autogen>
     </item>
   </item>
