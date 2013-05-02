@@ -735,10 +735,10 @@ augroup Tacahiroy
       endif
 
       let dir = '/'.join(dirs[0:idx], '/')
-      let patterns = ['Gemfile', 'Rakefile', 'README.*']
+      let patterns = ['Gemfile', 'Rakefile', 'README*']
       for pat in patterns
         for f in split(glob(dir.'/'.pat))
-          if filereadable(dir.'/'.f)
+          if filereadable(f)
             return dir
           endif
         endfor
