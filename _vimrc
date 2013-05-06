@@ -69,8 +69,6 @@ set runtimepath& runtimepath+=~/.vim/bundle/vundle.git
 call vundle#rc()
 
 Bundle 'gmarik/vundle'
-Bundle 'avakhov/vim-yaml'
-Bundle 'slim-template/vim-slim'
 Bundle 'glidenote/memolist.vim'
 Bundle 'godlygeek/tabular'
 Bundle 'jiangmiao/simple-javascript-indenter'
@@ -86,13 +84,18 @@ Bundle 'tpope/vim-fugitive'
 Bundle 'tpope/vim-markdown'
 Bundle 'tpope/vim-surround'
 Bundle 'tyru/open-browser.vim'
+
+Bundle 'avakhov/vim-yaml'
+Bundle 'slim-template/vim-slim'
+Bundle 'sunaku/vim-ruby-minitest'
 Bundle 'vim-ruby/vim-ruby'
+
 " Bundle 'DrawIt'
 Bundle 'DirDiff.vim'
 Bundle 'camelcasemotion'
 Bundle 'matchit.zip'
-Bundle 'Align'
-Bundle 'jphustman/SQLUtilities'
+" Bundle 'Align'
+" Bundle 'jphustman/SQLUtilities'
 
 " it seems this has ftdetect problem
 " Bundle 'chrisbra/csv.vim'
@@ -175,7 +178,6 @@ map <Space> [Space]
   nnoremap [Space]fc :execute 'CtrlP ' . $chef . '/cookbooks/_default'<Cr>
   nnoremap [Space]fw :CtrlPCurFile<Cr>
   nnoremap [Space]fd :CtrlPCurWD<Cr>
-  nnoremap [Space]f. :CtrlPCurFile<Cr>
   nnoremap [Space]fr :CtrlPRTS<Cr>
 
   nnoremap [Space]fu :CtrlPFunky<Cr>
@@ -336,6 +338,7 @@ set pastetoggle=<F2>
 set previewheight=8
 set pumheight=24
 set scroll=0
+set scrolloff=5
 
 set shell&
 for sh in ['/usr/local/bin/zsh', '/usr/bin/zsh', '/bin/zsh', '/bin/bash']
@@ -591,7 +594,6 @@ nnoremap <Leader>S :<C-u>%s/
 xnoremap <Leader>s :s/
 xnoremap s :s/
 xnoremap <Leader>t :Tabular<Space>/
-xnoremap t :Tabular<Space>/
 
 if exists(':Tabularize')
   nnoremap <Leader>t :Tabularize /
@@ -915,9 +917,14 @@ if executable('knife')
       let cookbooks = filter(cookbooks, 'isdirectory(cb_path."/".v:val)')
       let mes = 'Uploading cookbook' . (1 < len(cookbooks) ? 's' : '')
       let cmd = printf('knife cookbook upload -o %s %s;', cb_path, join(cookbooks))
-      let cmd .= s:notification('cookbook upload: ' . join(cookbooks), 'Chef')
+      let cmd .= s:notification('cookbook upload: ' . join(cookbooks),
+                              \ 'Chef', $DOTVIM . '/images/chef_logo.png')
 
-      call s:tmux.run("chef-client -Fdoc --color", 0, 1, 1)
+      if s:tmux.is_running()
+        let cmd .= '; echo Press enter to close the pane.; read'
+        call s:tmux.run("chef-client -Fdoc --color", 0, 1, 1)
+      endif
+
       echomsg printf('%s: %s', mes, join(cookbooks))
       call s:tmux.run(cmd, 1, 1)
     else
@@ -943,14 +950,20 @@ if executable('knife')
     execute printf('!knife %s from file %s', a:what, join(a:000))
   endfunction
 
-  function! s:notification(title, app)
-    let icon = $DOTVIM . '/images/chef_logo.png'
+  function! s:notification(title, app, ...)
     let cmd = ''
+    let icon = get(a:, 1, '')
+
     if s:is_mac && executable('growlnotify')
       let cmd .= 'if [ $? -eq 0 ]; then echo SUCCESS; else echo FAILURE; fi | '
-      let cmd .= printf('growlnotify -n %s --image %s \"%s\"', a:app, icon, a:title)
+      let cmd .= printf('growlnotify -n %s ', a:app)
+
+      if !empty(icon)
+        let cmd .= '--image ' . icon . ' '
+      endif
+
+      let cmd .= printf('\"%s\"', a:title)
     endif
-    let cmd .= '; echo Press enter to close the pane.; read'
 
     return cmd
   endfunction
