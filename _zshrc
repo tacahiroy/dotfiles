@@ -304,14 +304,10 @@ alias vv='gvim'
 
 alias g='git'
 alias b='brew'
-alias bo='brew outdated'
-alias bup='brew update'
+alias buo='brew update && brew outdated'
 
 # Ruby
 alias re='rbenv'
-alias rver='rbenv versions'
-alias bdl='bundle'
-alias bux='bundle exec'
 
 alias pweb='python -m SimpleHTTPServer'
 
