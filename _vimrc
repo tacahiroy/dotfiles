@@ -474,6 +474,8 @@ cnoremap <C-b> <Left>
 cnoremap <C-d> <Del>
 cnoremap <C-o> <C-d>
 
+cnoremap w!! %!sudo tee > /dev/null %
+
 nnoremap s <Nop>
 nnoremap Q <Nop>
 nnoremap q <Nop>
