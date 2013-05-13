@@ -59,7 +59,7 @@ path=(
   /usr/local/sbin(N-/)
   /usr/local/bin(N-/)
   /usr/local/share/python(N-/)
-  /usr/local/Cellar/android-sdk/r18/platform-tools(N-/)
+  $HOME/Applications/adt-bundle/sdk/platform-tools(N-/)
   $path
 )
 
