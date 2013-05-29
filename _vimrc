@@ -4,6 +4,9 @@
 scriptencoding utf-8
 
 let g:mapleader = ','
+if $PATH !~# '/.rbenv/shims'
+  let $PATH = $HOME . '/.rbenv/shims:' . $PATH
+endif
 
 autocmd!
 augroup Tacahiroy
@@ -70,10 +73,12 @@ call vundle#rc()
 
 Bundle 'gmarik/vundle'
 Bundle 'glidenote/memolist.vim'
-Bundle 'godlygeek/tabular'
+Bundle 'xolox/vim-misc'
+Bundle 'xolox/vim-notes'
 Bundle 'jiangmiao/simple-javascript-indenter'
-Bundle 'kien/ctrlp.vim'
-" Bundle 'mattn/zencoding-vim'
+" Bundle 'kien/ctrlp.vim'
+Bundle 'mattn/zencoding-vim'
+Bundle 'godlygeek/tabular'
 Bundle 'msanders/snipmate.vim'
 Bundle 'scrooloose/nerdtree'
 Bundle 'scrooloose/syntastic'
@@ -84,12 +89,10 @@ Bundle 'tpope/vim-fugitive'
 Bundle 'tpope/vim-markdown'
 Bundle 'tpope/vim-surround'
 Bundle 'tyru/open-browser.vim'
-
 Bundle 'avakhov/vim-yaml'
 Bundle 'slim-template/vim-slim'
 Bundle 'sunaku/vim-ruby-minitest'
 Bundle 'vim-ruby/vim-ruby'
-
 " Bundle 'DrawIt'
 Bundle 'DirDiff.vim'
 Bundle 'camelcasemotion'
@@ -97,8 +100,6 @@ Bundle 'matchit.zip'
 " Bundle 'Align'
 " Bundle 'jphustman/SQLUtilities'
 
-" it seems this has ftdetect problem
-" Bundle 'chrisbra/csv.vim'
 
 " * altenative key definitions {{{
 nnoremap [Toggle] <Nop>
@@ -543,6 +544,11 @@ nnoremap <silent> [Toggle]c :let &clipboard =
       \ empty(&clipboard) ? 'unnamed,unnamedplus' : ''<Cr>
 nnoremap <silent> [Toggle]n :<C-u>setlocal relativenumber!<Cr>
 
+nnoremap gf <Nop>
+nnoremap gff :e <cfile><Cr>
+nnoremap gft :tabe <cfile><Cr>
+
+
 " open the current editing file's location using file manager
 function! s:open_with_filer(...)
   let cmd = s:get_filer_command()
@@ -881,22 +887,6 @@ augroup Tacahiroy
 augroup END
 "}}}
 
-function! s:scratch(m)
-  let s:scratch_bufnbr = get(s:, 'scratch_bufnbr', 0)
-  if bufexists(s:scratch_bufnbr)
-    for i in range(tabpagenr('$'))
-      if index(tabpagebuflist(i + 1), s:scratch_bufnbr)
-        " jump to tab page and focus the buffer
-      endif
-    endfor
-    return
-  endif
-  tabedit +set\ buftype=nofile
-  let s:scratch_bufnbr = bufnr('%')
-  echom get(s:, 'scratch_bufnbr', 0)
-endfunction
-command! -nargs=? Scratch call s:scratch('')
-
 
 " * Chef " {{{
 " a wrapper of the knife
@@ -922,7 +912,7 @@ if executable('knife')
       let cmd .= s:notification('cookbook upload: ' . join(cookbooks),
                               \ 'Chef', $DOTVIM . '/images/chef_logo.png')
 
-      if s:tmux.is_running()
+      if s:tmux.is_running() && has('gui_running')
         let cmd .= '; echo Press enter to close the pane.; read'
         call s:tmux.run("chef-client -Fdoc --color", 0, 1, 1)
       endif
@@ -1091,6 +1081,13 @@ endif
 if filereadable(expand('~/.vimrc.local'))
   source ~/.vimrc.local
 endif
+
+let g:ctrlp_preview_modes = ['files', 'mru files', 'tags']
+let g:ctrlp_preview_heights = {
+      \ 'files': 20,
+      \ 'mru files': 20,
+      \ 'tags': 10
+\ }
 
 
 " __END__ {{{
