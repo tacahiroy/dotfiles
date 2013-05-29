@@ -26,6 +26,8 @@
 	logs = log --stat
 	logc = log ORIG_HEAD.. --stat --no-merges
 	up = pull --rebase
+	hide = stash
+	unhide = stash pop
 
 [advice]
 	statusHints = false
