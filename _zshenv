@@ -6,6 +6,10 @@ fpath=(/usr/local/opt/zsh-completions/share/zsh-completions(N-) \
        $fpath)
 typeset -U fpath
 
+if [ -f $HOME/.zsh/func/utils.zsh ]; then
+  source $HOME/.zsh/func/utils.zsh
+fi
+
 # tmux-powerline
 case "${OSTYPE}" in
   freebsd*|darwin*)
@@ -37,7 +41,7 @@ export RBXOPT='-X19'
 # environment variables
 export proj=~/Projects/
 export fc=~/Projects/Fc/
-export chef=~/Projects/fc/chef.git/
+export chef=~$fc/chef.git/
 
 
 if [ -x $HOME/Applications/MacVim.app/Contents/MacOS/Vim ]; then
@@ -57,11 +61,16 @@ path=(
   $HOME/perl5/bin(N-/)
   /usr/local/bin(N-/)
   /usr/local/sbin(N-/)
-  /usr/local/bin(N-/)
   /usr/local/share/python(N-/)
   $HOME/Applications/adt-bundle/sdk/platform-tools(N-/)
   $path
 )
+
+# if [ -d ${HOME}/.rbenv  ] ; then
+#   # export PATH="${HOME}/.rbenv/bin:${HOME}/.rbenv/shims:${PATH}"
+#   # PATH=${HOME}/.rbenv/shims:${PATH}
+#   eval "$(rbenv init - zsh)"
+# fi
 
 ## Ruby
 typeset -xT RUBYLIB ruby_path
@@ -85,15 +94,11 @@ typeset -xT PYTHONPATH python_path
 typeset -U python_path
 
 python_path=(
-/usr/lib/python2.7(N-/)
-/usr/local/lib/python2.7/site-packages(N-/)
+  /usr/lib/python2.7(N-/)
+  /usr/local/lib/python2.7/site-packages(N-/)
 )
 
 export NODE_PATH=/usr/local/lib/node_modules
-
-if [[ -x `which rbenv` ]]; then
-  eval "$(rbenv init - zsh)"
-fi
 
 if [ -f ~/.zshrc.local ]; then
   source ~/.zshrc.local
