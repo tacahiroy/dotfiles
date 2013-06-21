@@ -33,10 +33,21 @@
 
   <!-- apps -->
   <appdef>
+    <appname>Finder</appname>
+    <equal>com.apple.finder</equal>
+  </appdef>
+
+  <appdef>
     <appname>Terminal</appname>
     <equal>com.apple.Terminal</equal>
     <equal>iTerm</equal>
     <equal>com.googlecode.iterm2</equal>
+  </appdef>
+
+  <appdef>
+    <appname>MacVim</appname>
+    <equal>org.vim.MacVim</equal>
+    <equal>MacVim</equal>
   </appdef>
 
   <appdef>
@@ -98,6 +109,7 @@
       <device_only>DeviceVendor::Apple_Inc, DeviceProduct::Apple_Internal_keyboard_MBA,
                    DeviceVendor::Apple_Inc, DeviceProduct::Apple_Internal_keyboard_MBP
       </device_only>
+      <not>Finder</not>
       <autogen>--KeyToKey-- KeyCode::OPTION_R, KeyCode::CONTROL_L</autogen>
     </item>
   </item>
