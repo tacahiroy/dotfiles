@@ -68,37 +68,42 @@ let s:is_windows = has('win32') || has('win64')
 
 " * vundle plugin management "{{{
 filetype off
-set runtimepath& runtimepath+=~/.vim/bundle/vundle.git
+set runtimepath& runtimepath+=~/.vim/bundle/vundle
 call vundle#rc()
 
 Bundle 'gmarik/vundle'
+
 Bundle 'glidenote/memolist.vim'
 Bundle 'xolox/vim-misc'
 Bundle 'xolox/vim-notes'
-Bundle 'jiangmiao/simple-javascript-indenter'
+
 " Bundle 'kien/ctrlp.vim'
-Bundle 'mattn/zencoding-vim'
+
 Bundle 'godlygeek/tabular'
-Bundle 'msanders/snipmate.vim'
-Bundle 'scrooloose/nerdtree'
-Bundle 'scrooloose/syntastic'
+Bundle 'tpope/vim-surround'
+
 Bundle 'sjl/gundo.vim'
+Bundle 'tpope/vim-fugitive'
+Bundle 'tyru/open-browser.vim'
+
+Bundle 'mattn/zencoding-vim'
+Bundle 'msanders/snipmate.vim'
+Bundle 'scrooloose/syntastic'
 Bundle 'tpope/vim-commentary'
 Bundle 'tpope/vim-endwise'
-Bundle 'tpope/vim-fugitive'
+Bundle 'scrooloose/nerdtree'
+
+Bundle 'jiangmiao/simple-javascript-indenter'
 Bundle 'tpope/vim-markdown'
-Bundle 'tpope/vim-surround'
-Bundle 'tyru/open-browser.vim'
 Bundle 'avakhov/vim-yaml'
 Bundle 'slim-template/vim-slim'
 Bundle 'sunaku/vim-ruby-minitest'
 Bundle 'vim-ruby/vim-ruby'
-" Bundle 'DrawIt'
+Bundle 'elixir-lang/vim-elixir'
+
 Bundle 'DirDiff.vim'
 Bundle 'camelcasemotion'
 Bundle 'matchit.zip'
-" Bundle 'Align'
-" Bundle 'jphustman/SQLUtilities'
 
 
 " * altenative key definitions {{{
@@ -176,7 +181,7 @@ map <Space> [Space]
   nnoremap [Space]fm :CtrlPMRU<Cr><F5>
   nnoremap [Space]li :CtrlPLine<Cr>
   nnoremap [Space]fk :CtrlPBookmarkDir<Cr>
-  nnoremap [Space]fc :execute 'CtrlP ' . $chef . '/cookbooks/_default'<Cr>
+  nnoremap [Space]fc :execute 'CtrlP ' . $chef . '/cookbooks'<Cr>
   nnoremap [Space]fw :CtrlPCurFile<Cr>
   nnoremap [Space]fd :CtrlPCurWD<Cr>
   nnoremap [Space]fr :CtrlPRTS<Cr>
@@ -475,7 +480,7 @@ cnoremap <C-b> <Left>
 cnoremap <C-d> <Del>
 cnoremap <C-o> <C-d>
 
-cnoremap w!! %!sudo tee > /dev/null %
+cnoremap W!! %!sudo tee > /dev/null %
 
 nnoremap s <Nop>
 nnoremap Q <Nop>
@@ -619,9 +624,6 @@ nnoremap <silent> sj <C-w>j
 
 nnoremap <silent> sn :tabnext<Cr>
 nnoremap <silent> sp :tabprevious<Cr>
-
-nnoremap gf gF
-nnoremap gF gf
 
 " do visual last pasted lines
 nnoremap sv `[v`]
@@ -918,6 +920,7 @@ if executable('knife')
       endif
 
       echomsg printf('%s: %s', mes, join(cookbooks))
+      " echomsg cmd
       call s:tmux.run(cmd, 1, 1)
     else
       echoerr 'no cookbooks are found.'
@@ -1082,7 +1085,7 @@ if filereadable(expand('~/.vimrc.local'))
   source ~/.vimrc.local
 endif
 
-let g:ctrlp_preview_modes = ['files', 'mru files', 'tags']
+let g:ctrlp_preview_enabled = ['files', 'mru files']
 let g:ctrlp_preview_heights = {
       \ 'files': 20,
       \ 'mru files': 20,
@@ -1092,4 +1095,3 @@ let g:ctrlp_preview_heights = {
 
 " __END__ {{{
 " vim: fen fdm=marker ts=2 sts=2 sw=2
-
