@@ -171,7 +171,7 @@ map <Space> [Space]
   let dir = ['\.git$', '\.hg$', '\.svn$', '\.vimundo$', '\.cache/ctrlp',
         \    '\.rbenv/', '\.gem/', 'backup$', 'Downloads$', $TMPDIR]
   let g:ctrlp_custom_ignore = {
-    \ 'dir': '\v[\/]'.join(dir, '|'),
+    \ 'dir': '\v[\/]' . join(dir, '|'),
     \ 'file': '\v(\.exe|\.so|\.dll|\.DS_Store|\.db|COMMIT_EDITMSG)$'
     \ }
 
@@ -191,12 +191,14 @@ map <Space> [Space]
 
 " plug: nerdtree
   let NERDTreeShowBookmarks = 1
-  nnoremap [Space]nt :<C-u>NERDTreeToggle<Cr>
-  nnoremap [Space]nn :<C-u>NERDTreeFind<Cr>zz<C-w><C-w>
+  nnoremap [Space]nt :NERDTreeToggle<Cr>
+  nnoremap [Space]nn :NERDTreeFind<Cr>zz<C-w><C-w>
+  nnoremap [Space]nc :execute 'NERDTree ' . $chef . '/cookbooks'<Cr>
+
   if s:is_mac
     augroup Tacahiroy
       autocmd FileType nerdtree nnoremap <buffer> <Leader>ql :<C-u>call NERDTreeQuickLook()<Cr>
-                            \| nnoremap <buffer> <Leader>qe :<C-u>call NERDTreeExecuteFile()<Cr>
+                             \| nnoremap <buffer> <Leader>qe :<C-u>call NERDTreeExecuteFile()<Cr>
     augroup END
   endif
 
@@ -268,7 +270,7 @@ else
 endif
 
 if isdirectory(expand('$DOTVIM/sandbox'))
-  let dirs = filter(split(glob($DOTVIM.'/sandbox/**/*')), 'isdirectory(v:val)')
+  let dirs = filter(split(glob($DOTVIM . '/sandbox/**/*')), 'isdirectory(v:val)')
   for d in dirs
     execute 'set runtimepath+=' . d
     if d =~# '/doc$'
@@ -277,7 +279,12 @@ if isdirectory(expand('$DOTVIM/sandbox'))
   endfor
 endif
 
-filetype plugin indent on
+" GUI menus is not necessary
+let did_install_default_menus = 1
+let did_install_syntax_menu = 1
+
+filetype plugin on
+syntax enable
 "}}}
 
 set cpo&vim
@@ -285,17 +292,8 @@ set cpo&vim
 set nocompatible
 set verbose=0
 
-
-" GUI menus is not necessary
-let did_install_default_menus = 1
-let did_install_syntax_menu = 1
-
-syntax enable
-filetype plugin indent on
-
 set encoding=utf-8
 set termencoding=utf-8
-
 
 " * options {{{
 set ambiwidth=double
@@ -436,7 +434,7 @@ set formatoptions& formatoptions+=mM formatoptions-=r
 
 let &statusline = '[#%n]%<%#SpecialKey#%f%* %m%r%h%w'
 let &statusline .= '%{&filetype}:'
-let &statusline .= '%{(&l:fileencoding != "" ? &l:fileencoding : &encoding).":".&fileformat}'
+let &statusline .= '%{(&l:fileencoding != "" ? &l:fileencoding : &encoding) . ":" . &fileformat}'
 let &statusline .= '(%{&expandtab ? "" : ">"}%{&l:tabstop}'
 let &statusline .= '%{search("\\t", "cnw") ? "!" : ""})'
 let &statusline .= '%{(empty(&mouse) ? "" : "m")}'
@@ -488,8 +486,6 @@ nnoremap q <Nop>
 nnoremap Q q
 
 nnoremap Y y$
-nnoremap j gj
-nnoremap k gk
 
 " Visual
 nnoremap vv <C-v>
@@ -648,6 +644,12 @@ inoremap <silent> <C-y>( <C-g>u(<Esc>ea)
 inoremap <silent> <C-y>{ <C-g>u{<Esc>ea}
 inoremap <silent> <C-y>[ <C-g>u[<Esc>ea]
 
+if s:is_mac
+  inoremap <D-v> <C-o>"*P
+  cnoremap <D-v> <C-R>*
+  vnoremap <D-c> "+y
+endif
+
 " search selected text
 vnoremap * y/<C-R>"<Cr>
 vnoremap < <gv
@@ -746,10 +748,10 @@ augroup Tacahiroy
         break
       endif
 
-      let dir = '/'.join(dirs[0:idx], '/')
+      let dir = '/' . join(dirs[0:idx], '/')
       let patterns = ['Gemfile', 'Rakefile', 'README*']
       for pat in patterns
-        for f in split(glob(dir.'/'.pat))
+        for f in split(glob(dir . '/' . pat))
           if filereadable(f)
             return dir
           endif
@@ -867,7 +869,7 @@ augroup Tacahiroy
   " only for the WinMerge document translation project
   function! s:move_to_segment(is_prev)
     let flag = a:is_prev ? 'b' : ''
-    call search('<\(para\|section\|term\)[^>]*>', 'esW'.flag)
+    call search('<\(para\|section\|term\)[^>]*>', 'esW' . flag)
   endfunction
 
   autocmd FileType xml nnoremap <silent> <buffer> <Tab> :call <SID>move_to_segment(0)<Cr>
@@ -908,7 +910,7 @@ if executable('knife')
     endif
 
     if 0 < len(cookbooks)
-      let cookbooks = filter(cookbooks, 'isdirectory(cb_path."/".v:val)')
+      let cookbooks = filter(cookbooks, 'isdirectory(cb_path . "/" . v:val)')
       let mes = 'Uploading cookbook' . (1 < len(cookbooks) ? 's' : '')
       let cmd = printf('knife cookbook upload -o %s %s;', cb_path, join(cookbooks))
       let cmd .= s:notification('cookbook upload: ' . join(cookbooks),
@@ -991,9 +993,9 @@ function! s:chef.convert_attr_notation(colon) abort
   let attrs = split(matchstr(line, printf('\%%%dc.\+\%%%dc', sc - 1, ec + 1)), '\.')
 
   if a:colon
-    let fmt = '"[:".v:val."]"'
+    let fmt = '"[:" . v:val . "]"'
   else
-    let fmt = '"[\"".v:val."\"]"'
+    let fmt = '"[\"" . v:val . "\"]"'
   endif
 
   let attr = attrs[0] . join(map(attrs[1:], fmt), '')
@@ -1085,12 +1087,10 @@ if filereadable(expand('~/.vimrc.local'))
   source ~/.vimrc.local
 endif
 
-let g:ctrlp_preview_enabled = ['files', 'mru files']
-let g:ctrlp_preview_heights = {
-      \ 'files': 20,
-      \ 'mru files': 20,
-      \ 'tags': 10
-\ }
+let g:ctrlp_preview_enabled = { 'files': 20,
+                              \ 'mru files': 30,
+                              \ 'tags': 10,
+                              \ 'funky': 10}
 
 
 " __END__ {{{
