@@ -1,5 +1,5 @@
 My configuration files.
 ===========
 
-Its are used on Linux/OS X.
+for Linux and OS X.
 
