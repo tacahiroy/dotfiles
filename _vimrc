@@ -77,7 +77,7 @@ Bundle 'glidenote/memolist.vim'
 Bundle 'xolox/vim-misc'
 Bundle 'xolox/vim-notes'
 
-" Bundle 'kien/ctrlp.vim'
+Bundle 'kien/ctrlp.vim'
 
 Bundle 'godlygeek/tabular'
 Bundle 'tpope/vim-surround'
@@ -280,7 +280,6 @@ if isdirectory(expand('$DOTVIM/sandbox'))
 endif
 
 " GUI menus is not necessary
-let did_install_default_menus = 1
 let did_install_syntax_menu = 1
 
 filetype plugin on
