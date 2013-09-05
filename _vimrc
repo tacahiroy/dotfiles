@@ -74,8 +74,6 @@ call vundle#rc()
 Bundle 'gmarik/vundle'
 
 Bundle 'glidenote/memolist.vim'
-Bundle 'xolox/vim-misc'
-Bundle 'xolox/vim-notes'
 
 Bundle 'kien/ctrlp.vim'
 
@@ -101,7 +99,6 @@ Bundle 'sunaku/vim-ruby-minitest'
 Bundle 'vim-ruby/vim-ruby'
 Bundle 'elixir-lang/vim-elixir'
 
-Bundle 'DirDiff.vim'
 Bundle 'camelcasemotion'
 Bundle 'matchit.zip'
 
@@ -188,6 +185,7 @@ map <Space> [Space]
 
   nnoremap [Space]fu :CtrlPFunky<Cr>
   nnoremap [Space]fU :execute 'CtrlPFunky ' . expand('<cword>')<Cr>
+  nnoremap [Space]fs :CtrlPSSH<Cr>
 
 " plug: nerdtree
   let NERDTreeShowBookmarks = 1
@@ -236,9 +234,6 @@ map <Space> [Space]
   sunmap B
   sunmap E
 
-" plug: vim-ref
-  let g:ref_refe_cmd = $HOME . '/Projects/wk/rubyrefm/refe-1_9_2'
-
 " plug: loga.vim
   let g:loga_executable = s:which('loga')
   let g:loga_enable_auto_lookup = 0
@@ -269,6 +264,7 @@ else
   let $DOTVIM = $HOME . '/vimfiles'
 endif
 
+" self pathogen: really simple-minded
 if isdirectory(expand('$DOTVIM/sandbox'))
   let dirs = filter(split(glob($DOTVIM . '/sandbox/**/*')), 'isdirectory(v:val)')
   for d in dirs
@@ -279,10 +275,10 @@ if isdirectory(expand('$DOTVIM/sandbox'))
   endfor
 endif
 
-" GUI menus is not necessary
+" to disalbe syntax GUI menu
 let did_install_syntax_menu = 1
 
-filetype plugin on
+filetype plugin indent on
 syntax enable
 "}}}
 
@@ -331,10 +327,9 @@ set lazyredraw
 set modeline
 set modelines=5
 set mouse=a
-if 702 < v:version
+set number
+if v:version > 702
   set relativenumber
-else
-  set number
 endif
 set nrformats=hex
 set pastetoggle=<F2>
@@ -511,6 +506,7 @@ function! s:redir(cmd)
   return substitute(res, '^\n\+', '', '')
 endfunction
 
+" show/hide quickfix window
 function! s:toggle_qf_list()
   let bufs = s:redir('buffers')
   let l = matchstr(split(bufs, '\n'), '[\t ]*\d\+[\t ]\+.\+[\t ]\+"\[Quickfix\ List\]"')
@@ -529,6 +525,23 @@ function! s:toggle_qf_list()
     endif
   endif
 endfunction
+
+" show/hide line number wisely
+function! s:toggle_line_number()
+  let NU = 'nu'
+  let RNU = 'rnu'
+
+  if &number || &relativenumber
+    " to be off
+    let b:prev = { 'nu': &number, 'rnu': &relativenumber }
+    let &nu = 0
+    let &rnu = 0
+  else
+    let &nu = get(b:prev, 'nu', 1)
+    let &rnu = get(b:prev, 'rnu', 1)
+  endif
+endfunction
+
 nnoremap <silent> qo :<C-u>silent call <SID>toggle_qf_list()<Cr>
 nnoremap <silent> qj :cnext<Cr>zz
 nnoremap <silent> qk :cprevious<Cr>zz
@@ -542,7 +555,7 @@ nnoremap <silent> [Toggle]p :set paste!<Cr>
 nnoremap <silent> [Toggle]l :set list!<Cr>
 nnoremap <silent> [Toggle]c :let &clipboard =
       \ empty(&clipboard) ? 'unnamed,unnamedplus' : ''<Cr>
-nnoremap <silent> [Toggle]n :<C-u>setlocal relativenumber!<Cr>
+nnoremap <silent> [Toggle]n :<C-u>silent call <SID>toggle_line_number()<Cr>
 
 nnoremap gf <Nop>
 nnoremap gff :e <cfile><Cr>
@@ -612,6 +625,9 @@ nnoremap <Leader>te :<C-u>tabe<Space>
 
 nnoremap <silent> <C-c> <Esc>:<C-u>nohlsearch<Cr>
 
+nnoremap <S-b> T<Space>
+
+" move around window
 nnoremap <silent> sh <C-w>h
 nnoremap <silent> sk <C-w>k
 nnoremap <silent> sl <C-w>l
@@ -620,7 +636,7 @@ nnoremap <silent> sj <C-w>j
 nnoremap <silent> sn :tabnext<Cr>
 nnoremap <silent> sp :tabprevious<Cr>
 
-" do visual last pasted lines
+" visual last pasted lines
 nnoremap sv `[v`]
 
 nnoremap <MiddleMouse> <Nop>
@@ -654,9 +670,7 @@ vnoremap * y/<C-R>"<Cr>
 vnoremap < <gv
 vnoremap > >gv
 
-vnoremap <Down> :call <SID>move_block('d')<Cr>==gv
-vnoremap <Up> :call <SID>move_block('u')<Cr>==gv
-
+" like Eclipse's Alt+Up/Down
 function! s:move_block(d) range
   let cnt = a:lastline - a:firstline
 
@@ -671,6 +685,11 @@ function! s:move_block(d) range
   execute printf('%d,%dmove%s%d', a:firstline, a:lastline, sign, cnt)
 endfunction
 
+vnoremap <Down> :call <SID>move_block('d')<Cr>==gv
+vnoremap <Up> :call <SID>move_block('u')<Cr>==gv
+
+
+" format HTML/XML
 if executable('tidyp')
   function! s:run_tidy(...) range
     " this code is not perfect.
@@ -798,6 +817,7 @@ augroup Tacahiroy
     call append(line('.') - 1, '----------')
   endfunction
   autocmd BufRead,BufNewFile *.md,*.mkd,*.markdown setlocal filetype=markdown
+
   autocmd FileType markdown
         \  inoremap <buffer> <Leader>it <Esc>:<C-u>call <SID>insert_today_for_md_changelog()<Cr>:startinsert<Cr>
         \| inoremap <buffer> <Leader>ix [x]<Space>
@@ -912,7 +932,7 @@ if executable('knife')
       let cookbooks = filter(cookbooks, 'isdirectory(cb_path . "/" . v:val)')
       let mes = 'Uploading cookbook' . (1 < len(cookbooks) ? 's' : '')
       let cmd = printf('knife cookbook upload -o %s %s;', cb_path, join(cookbooks))
-      let cmd .= s:notification('cookbook upload: ' . join(cookbooks),
+      let cmd .= s:notify('cookbook upload: ' . join(cookbooks),
                               \ 'Chef', $DOTVIM . '/images/chef_logo.png')
 
       if s:tmux.is_running() && has('gui_running')
@@ -946,7 +966,7 @@ if executable('knife')
     execute printf('!knife %s from file %s', a:what, join(a:000))
   endfunction
 
-  function! s:notification(title, app, ...)
+  function! s:notify(title, app, ...)
     let cmd = ''
     let icon = get(a:, 1, '')
 
@@ -1091,6 +1111,7 @@ let g:ctrlp_preview_enabled = { 'files': 20,
                               \ 'tags': 10,
                               \ 'funky': 10}
 
+let g:ctrlp_funky_sort_by_mru = 1
 
 " __END__ {{{
 " vim: fen fdm=marker ts=2 sts=2 sw=2
