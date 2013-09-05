@@ -42,44 +42,72 @@ esac # }}}
 #
 # settings for vcs prompt # {{{
 
-# http://d.hatena.ne.jp/yonchu/20120506/1336335973
-function _vcs_info() {
-  psvar=()
-  LANG=en_US.UTF-8 vcs_info
-  local _vcs_name _status _staged
-  if [ -n "$vcs_info_msg_0_" ]; then
-    _vcs_name=$(echo "$vcs_info_msg_0_" | cut -d , -f 1)
-    _staged=$(echo "$vcs_info_msg_0_" | cut -d , -f 2)
-    _status=$(_git_untracked_or_not_pushed $_staged)
-    _stash=$(_git_stash_count)
-    psvar[1]="${_vcs_name}"
-    psvar[2]="${_status}${_stash}"
-  fi
-}
+autoload -Uz vcs_info
 
-function _is_git_local_repo() {
-  return "$(git rev-parse --is-inside-work-tree 2> /dev/null)" = "true"
-}
+zstyle ':vcs_info:*' max-exports 3
 
-function _git_untracked_or_not_pushed() {
-  local git_status head remotes stagedstr
-  local staged_unstaged=$1 not_pushed="@" untracked="?"
+zstyle ':vcs_info:*' enable git svn hg
+zstyle ':vcs_info:*' formats "[%s:%b]%m"
+zstyle ':vcs_info:*' check-for-changes true
+zstyle ':vcs_info:*' actionformats '[%s:%b|%a]%u%c'
+zstyle ':vcs_info:svn:*' branchformat '%b:r%r'
 
-  # cwd is a Git's working copy or not
-  # if [ "$(git rev-parse --is-inside-work-tree 2> /dev/null)" = "true" ]; then
-  if [ _is_git_local_repo ]; then
-    git_status=$(git status -s 2> /dev/null)
-    # untracked file
+if is-at-least 4.3.10; then
+  zstyle ':vcs_info:git:*' check-for-changes true
+  zstyle ':vcs_info:git:*' stagedstr "+"
+  zstyle ':vcs_info:git:*' unstagedstr "*"
+fi
+
+psv1=''
+psv2=''
+if is-at-least 4.3.11; then
+# https://github.com/mollifier/config/blob/master/dot.zshrc
+  zstyle ':vcs_info:git+set-message:*' hooks \
+                                        git-hook-begin \
+                                        git-unstaged \
+                                        git-nopushed \
+                                        git-untracked \
+                                        git-stash-count
+
+  function +vi-git-hook-begin() {
+    if [[ "$(command git rev-parse --is-inside-work-tree 2> /dev/null)" != "true" ]]; then
+      return 1
+    fi
+    return 0
+  }
+
+  function +vi-git-untracked() {
+    local git_status
+
+    # cwd is a Git's working copy or not
+    git_status=$(command git status --porcelain 2> /dev/null)
+    # untracked files
     if ! echo "$git_status" | grep "^??" > /dev/null 2>&1; then
-      untracked=""
+      return 0
     fi
+    # hook_com[unstaged]+='?'
+    psv2+='?'
+  }
 
-    zstyle -s ":vcs_info:git:*" stagedstr stagedstr
+  function +vi-git-unstaged() {
+    local git_status
+
+    # cwd is a Git's working copy or not
+    git_status=$(git status --porcelain | sed 's/^ *//' 2> /dev/null)
+
     # find out staged file
-    if [ -n "$stagedstr" ] && ! printf "$staged_unstaged" | grep "$stagedstr" > /dev/null 2>&1 \
-        && echo "$git_status" | grep "^A" > /dev/null 2>&1; then
-      staged_unstaged=${stagedstr}
+    if echo "$git_status" | grep "^A" > /dev/null 2>&1; then
+      # hook_com[misc]+="+"
+      psv2+="+"
+    elif echo "$git_status" | grep "^M" > /dev/null 2>&1; then
+      psv2+="*"
+    else
+      return 0
     fi
+  }
+
+  function +vi-git-nopushed() {
+    local head remotes
 
     # HEAD's hash value
     head=$(git rev-parse --verify -q HEAD 2> /dev/null)
@@ -91,62 +119,52 @@ function _git_untracked_or_not_pushed() {
           # compare hash value HEAD and remote
           if [ "$head" = "$x" ]; then
             # already pushed
-            not_pushed=""
-            break
+            return 0
           fi
         done
       else
         # no remote
-        not_pushed=""
+        return 0
       fi
     else
       # HEAD doesn't exist
-      not_pushed=""
+      return 0
     fi
 
-    if [ -n "$staged_unstaged" -o -n "$untracked" -o -n "$not_pushed" ]; then
-      printf "${untracked}${staged_unstaged}${not_pushed}"
+    # hook_com[misc]+="@"
+    psv2+="@"
+  }
+
+  function +vi-git-stash-count() {
+    local count=0
+    count=$(command git stash list 2>&1 | wc -l | tr -d ' ')
+
+    if [ $count -eq 0 ]; then
+      return 0
     fi
-  fi
-  return 0
-}
+    # hook_com[misc]+="(${count})"
+    psv2+="(${count})"
+  }
+fi
 
-function _git_stash_count() {
-  local count=0
-  if [ _is_git_local_repo ]; then
-    count=$(git stash list 2>&1 | wc -l | tr -d ' ')
-  fi
-
-  if [ $count -eq 0 ]; then
-    return ''
+# http://d.hatena.ne.jp/yonchu/20120506/1336335973
+function _vcs_info() {
+  psvar=()
+  psv1=''
+  psv2=''
+  LANG=en_US.UTF-8 vcs_info
+  if [ -z "$vcs_info_msg_0_" ]; then
+    psvar[1]=''
   else
-    print "(${count})"
+    psvar[1]=${vcs_info_msg_0_}
+    psvar[2]=${psv2}
   fi
 }
-
 
 if [ -n $SSH_CONNECTION ]; then
-  if is-at-least 4.3.4; then
-    autoload -Uz vcs_info
-    zstyle ':vcs_info:*' enable git svn hg
-    zstyle ':vcs_info:*' check-for-changes true
-    zstyle ':vcs_info:*' formats '[%s:%b],%u%c'
-    zstyle ':vcs_info:*' actionformats '[%s:%b|%a],%u%c'
-    zstyle ':vcs_info:*' stagedstr "+"
-    zstyle ':vcs_info:*' unstagedstr "*"
-
-    add-zsh-hook precmd _vcs_info
-  fi
+  add-zsh-hook precmd _vcs_info
 fi
 # }}}
-
-# function _rbenv_info() {
-#   [[ ! -x `which rbenv` ]] || return
-#   psvar=()
-#   psvar[2]="($(rbenv global))"
-#   psvar[2]="($(rbenv local))"
-# }
-# add-zsh-hook precmd _rbenv_info
 
 autoload colors
 colors
@@ -162,7 +180,7 @@ case ${UID} in
       RPROMPT="%{${fg[blue]}%}%3v%{${reset_color}%}"
   ;;
 *)
-  PROMPT="%{${fg[red]}%}%/%{${reset_color}%}${fg[green]}%1v${reset_color}${fg[yellow]}%2v${reset_color}
+  PROMPT="%{${fg[red]}%}%/%{${reset_color}%}%{$fg[green]%}%1v%{$reset_color%}%{$fg[yellow]%}%2v%{$reset_color%}
 %% "
   PROMPT2="%{${fg[red]}%}%_%{${reset_color}%}%% "
   SPROMPT="%{${fg[red]}%}%r is correct? [n,y,a,e]:%{${reset_color}%}"
