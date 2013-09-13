@@ -106,7 +106,7 @@ Bundle 'Align'
 Bundle 'SQLUtilities'
 
 
-" * altenative key definitions {{{
+" * alternative key definitions {{{
 nnoremap [Toggle] <Nop>
 nmap <Leader><Leader> [Toggle]
 
@@ -281,7 +281,7 @@ if isdirectory(expand('$DOTVIM/sandbox'))
   endfor
 endif
 
-" to disalbe syntax GUI menu
+" Disable GUI /Syntax/ menu
 let did_install_syntax_menu = 1
 let did_install_default_menus = 1
 
