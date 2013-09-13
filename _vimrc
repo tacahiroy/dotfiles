@@ -102,6 +102,9 @@ Bundle 'elixir-lang/vim-elixir'
 Bundle 'camelcasemotion'
 Bundle 'matchit.zip'
 
+Bundle 'Align'
+Bundle 'SQLUtilities'
+
 
 " * altenative key definitions {{{
 nnoremap [Toggle] <Nop>
@@ -163,16 +166,18 @@ map <Space> [Space]
     \ 'PrtHistory(1)':        ['<Down>'],
     \ 'CreateNewFile()':      ['<C-y>'],
     \ }
-  let g:ctrlp_extensions = ['line', 'buffertag', 'dir', 'mixed', 'funky']
+  let g:ctrlp_extensions = ['line', 'buffertag', 'dir', 'mixed', 'funky', 'ssh']
 
-  let dir = ['\.git$', '\.hg$', '\.svn$', '\.vimundo$', '\.cache/ctrlp',
-        \    '\.rbenv/', '\.gem/', 'backup$', 'Downloads$', $TMPDIR]
+  let dir = ['\.git$', '\.hg$', '\.svn$', '\.vimundo$', '\.cache/ctrlp$',
+        \    '\.rbenv', '\.gem', 'backup', 'Downloads', 'Documents', $TMPDIR,
+        \    '/vendor/*/vendor']
   let g:ctrlp_custom_ignore = {
-    \ 'dir': '\v[\/]' . join(dir, '|'),
+    \ 'dir': '\v[\/]' . join(dir, '|') . '/',
     \ 'file': '\v(\.exe|\.so|\.dll|\.DS_Store|\.db|COMMIT_EDITMSG)$'
     \ }
 
   let g:ctrlp_funky_ruby_chef_words = 1
+  let g:ctrlp_funky_sort_by_mru = 0
 
   nnoremap [Space]fl :CtrlPBuffer<Cr>
   nnoremap [Space]fm :CtrlPMRU<Cr><F5>
@@ -180,11 +185,10 @@ map <Space> [Space]
   nnoremap [Space]fk :CtrlPBookmarkDir<Cr>
   nnoremap [Space]fc :execute 'CtrlP ' . $chef . '/cookbooks'<Cr>
   nnoremap [Space]fw :CtrlPCurFile<Cr>
-  nnoremap [Space]fd :CtrlPCurWD<Cr>
+  nnoremap [Space]f. :CtrlPCurWD<Cr>
   nnoremap [Space]fr :CtrlPRTS<Cr>
 
   nnoremap [Space]fu :CtrlPFunky<Cr>
-  nnoremap [Space]fU :execute 'CtrlPFunky ' . expand('<cword>')<Cr>
   nnoremap [Space]fs :CtrlPSSH<Cr>
 
 " plug: nerdtree
@@ -250,11 +254,13 @@ map <Space> [Space]
   let g:bestfriend_display_limit = 15
   let g:bestfriend_observe_cursor_position = 1
 
-" plug: dbext.vim
-  let g:dbext_map_prefix = '<leader>d'
-
 " plug: sqlutilities.vim
   let g:sqlutil_load_default_maps = 0
+  let g:sqlutil_align_comma = 1
+  let g:sqlutil_align_where = 1
+  let g:sqlutil_keyword_case = '\U'
+  " don't use menu
+  let g:sqlutil_default_menu_mode = 0
 " }}}
 
 if isdirectory($HOME . '/.vim')
@@ -277,6 +283,7 @@ endif
 
 " to disalbe syntax GUI menu
 let did_install_syntax_menu = 1
+let did_install_default_menus = 1
 
 filetype plugin indent on
 syntax enable
@@ -663,6 +670,7 @@ if s:is_mac
   inoremap <D-v> <C-o>"*P
   cnoremap <D-v> <C-R>*
   vnoremap <D-c> "+y
+  nnoremap <D-a> ggVG
 endif
 
 " search selected text
@@ -842,13 +850,6 @@ augroup Tacahiroy
 
   let g:loaded_sql_completion = 1
   autocmd FileType sql*,plsql setlocal tabstop=4 shiftwidth=4 softtabstop=4
-  autocmd FileType sql*,plsql nnoremap <buffer> <silent> <C-Return> :DBExecSQLUnderCursor<Cr>
-  autocmd FileType sql*,plsql vnoremap <buffer> <silent> <C-Return> :DBExecVisualSQL<Cr>
-
-  let g:sqlutil_align_comma = 1
-  let g:sqlutil_align_where = 1
-  let g:sqlutil_keyword_case = '\U'
-  let g:dbext_default_type = 'ORA'
 
   if executable('jsl')
     autocmd FileType javascript*,*html setlocal makeprg=jsl\ -conf\ \"$HOME/jsl.conf\"\ -nologo\ -nofilelisting\ -nosummary\ -nocontext\ -process\ %
@@ -1110,8 +1111,6 @@ let g:ctrlp_preview_enabled = { 'files': 20,
                               \ 'mru files': 30,
                               \ 'tags': 10,
                               \ 'funky': 10}
-
-let g:ctrlp_funky_sort_by_mru = 1
 
 " __END__ {{{
 " vim: fen fdm=marker ts=2 sts=2 sw=2
