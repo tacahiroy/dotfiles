@@ -1,5 +1,5 @@
 " $HOME/.vimrc
-" Author: Tacahiroy <tacahiroy\AT/gmail.com>
+" Author: tacahiroy <tacahiroy\AT/gmail.com>
 
 scriptencoding utf-8
 
@@ -8,6 +8,7 @@ if $PATH !~# '/.rbenv/shims'
   let $PATH = $HOME . '/.rbenv/shims:' . $PATH
 endif
 
+" Clear all autocmds in the default group
 autocmd!
 augroup Tacahiroy
   autocmd!
@@ -22,6 +23,26 @@ function! Echohl(group, msg)
   finally
     echohl NONE
   endtry
+endfunction
+
+" To realise where I am
+function! Gps()
+  return '(' . s:shorten_path(getcwd(), 25) . ')'
+endfunction
+
+" $HOME shown as tilde etc.
+function! s:shorten_path(path, ratio)
+  if !empty(&buftype)
+    return '-'
+  endif
+
+  let path = substitute(a:path, $HOME, '~', '')
+
+  if len(split(path, '/')) > 3
+    return join(split(path, '/')[-3:-1], '/')
+  else
+    return path
+  endif
 endfunction
 
 " * private
@@ -40,13 +61,13 @@ function! s:which(cmd)
   endif
 endfunction
 
-" shows tag information into command window
+" show tag information in the command window
 function! s:preview_tag_lite(word)
   let t = taglist('^' . a:word . '$')
   let current = expand('%:t')
 
   for item in t
-    if -1 < stridx(item.filename, current)
+    if stridx(item.filename, current) > -1
       " [filename] tag definition
       call Echohl('Search', printf('%-36s [%s]', item.filename, item.cmd))
     else
@@ -57,13 +78,25 @@ endfunction
 command! -nargs=0 PreviewTagLite call s:preview_tag_lite(expand('<cword>'))
 "}}}
 
-
 " enough
 let s:is_mac = has('macunix') || has('mac') || system('uname | grep "^Darwin"') =~# "^Darwin"
 " GNU/Linux only
 let s:is_linux = !s:is_mac && has('unix')
 " just in case
 let s:is_windows = has('win32') || has('win64')
+
+if isdirectory($HOME . '/.vim')
+  let $DOTVIM = $HOME . '/.vim'
+else
+  " MS Windows etc...
+  let $DOTVIM = $HOME . '/vimfiles'
+endif
+
+if has('vim_starting')
+  let g:auto_chdir_enabled = get(g:, 'auto_chdir_enabled', 1)
+  " syntax: vim.vim
+  let g:vimsyntax_noerror = 1
+endif
 
 
 " * vundle plugin management "{{{
@@ -84,7 +117,7 @@ Bundle 'sjl/gundo.vim'
 Bundle 'tpope/vim-fugitive'
 Bundle 'tyru/open-browser.vim'
 
-Bundle 'mattn/zencoding-vim'
+Bundle 'mattn/emmet-vim'
 Bundle 'msanders/snipmate.vim'
 Bundle 'scrooloose/syntastic'
 Bundle 'tpope/vim-commentary'
@@ -106,12 +139,33 @@ Bundle 'Align'
 Bundle 'SQLUtilities'
 
 
-" * alternative key definitions {{{
+" self pathogen: really simple-minded
+if isdirectory(expand('$DOTVIM/sandbox'))
+  let dirs = filter(split(glob($DOTVIM . '/sandbox/**/*')), 'isdirectory(v:val)')
+  for d in dirs
+    execute 'set runtimepath+=' . d
+    if d =~# '/doc$'
+      execute 'helptags ' . d
+    endif
+  endfor
+endif
+
+
+" Disable GUI /Syntax/ menu
+let did_install_syntax_menu = 1
+let did_install_default_menus = 1
+
+filetype plugin indent on
+syntax enable
+
+
+" * make prefix keys visible {{{
+" Toggle
 nnoremap [Toggle] <Nop>
 nmap <Leader><Leader> [Toggle]
-
+" Space
 noremap [Space] <Nop>
-map <Space> [Space]
+nmap <Space> [Space]
 " }}}
 
 " * plugin configurations {{{
@@ -262,32 +316,7 @@ map <Space> [Space]
   " don't use menu
   let g:sqlutil_default_menu_mode = 0
 " }}}
-
-if isdirectory($HOME . '/.vim')
-  let $DOTVIM = $HOME . '/.vim'
-else
-  " MS Windows etc...
-  let $DOTVIM = $HOME . '/vimfiles'
-endif
-
-" self pathogen: really simple-minded
-if isdirectory(expand('$DOTVIM/sandbox'))
-  let dirs = filter(split(glob($DOTVIM . '/sandbox/**/*')), 'isdirectory(v:val)')
-  for d in dirs
-    execute 'set runtimepath+=' . d
-    if d =~# '/doc$'
-      execute 'helptags ' . d
-    endif
-  endfor
-endif
-
-" Disable GUI /Syntax/ menu
-let did_install_syntax_menu = 1
-let did_install_default_menus = 1
-
-filetype plugin indent on
-syntax enable
-"}}}
+" }}}
 
 set cpo&vim
 
@@ -308,10 +337,10 @@ set backup
 set backupext=.bac
 set backupdir=$DOTVIM/backups
 set backupskip& backupskip+=/tmp/*,/private/tmp/*,*.bac,COMMIT_EDITMSG,hg-editor-*.txt,svn-commit.[0-9]*.tmp,knife-edit-*
-set cedit=
+set cedit=<C-x>
 set cmdheight=2
 set colorcolumn=80
-set cpo&vim cpoptions+=n
+set cpoptions+=n
 set noequalalways
 set expandtab smarttab
 set fileencodings=ucs-bom,utf-8,iso-2022-jp,euc-jp,cp932
@@ -342,16 +371,25 @@ set nrformats=hex
 set pastetoggle=<F2>
 set previewheight=8
 set pumheight=24
+" scroll half lines of window height
 set scroll=0
 set scrolloff=5
 
+" 99% zsh though
 set shell&
-for sh in ['/usr/local/bin/zsh', '/usr/bin/zsh', '/bin/zsh', '/bin/bash']
-  if executable(sh)
-    let &shell = sh
-    break
-  endif
-endfor
+if !s:is_windows
+  let path = ''
+  for bindir in [ '/usr/local/bin', '/usr/bin', '/bin' ]
+    for sh in [ 'zsh', 'bash', 'dash', 'sh' ]
+      let path = bindir . '/' . sh
+      if executable(path)
+        let &shell = path
+        break
+      endif
+    endfor
+    if &shell == path | break | endif
+  endfor
+endif
 
 set shellslash
 set shiftround
@@ -376,7 +414,7 @@ set tabstop=2 shiftwidth=2 softtabstop=2
 set updatetime=1000
 set viminfo='64,<100,s10,n~/.viminfo
 set virtualedit=block,onemore
-set visualbell
+set t_vb = visualbell
 set wildignore=*.exe,*.dll,*.class,*.o,*.obj
 if exists('+wildignorecase')
   set wildignorecase
@@ -394,7 +432,6 @@ if has('persistent_undo')
   augroup UndoFile
     autocmd!
     autocmd BufReadPre ~/* if empty(&key) | setlocal undofile | endif
-    " autocmd BufReadPre ~/* setlocal undofile
   augroup END
 endif
 
@@ -447,28 +484,10 @@ let &statusline .= ' %=%#Special#'
 let &statusline .= '%{Gps()}'
 let &statusline .= '%{(g:auto_chdir_enabled ? "e" : "d")}'
 let &statusline .= '%-12( %l/%LL,%c %)%P%*'
-
-function! s:shorten_path(path, ratio)
-  if !empty(&buftype)
-    return '-'
-  endif
-
-  let path = substitute(a:path, $HOME, '~', '')
-
-  if 3 < len(split(path, '/'))
-    return join(split(path, '/')[-3:-1], '/')
-  else
-    return path
-  endif
-endfunction
-
-function! Gps()
-  return '(' . s:shorten_path(getcwd(), 25) . ')'
-endfunction
 " }}}
 
 
-" * map "{{{
+" * mappings "{{{
 " Emacs rules!
 cnoremap <C-p> <Up>
 cnoremap <C-n> <Down>
@@ -484,13 +503,16 @@ cnoremap W!! %!sudo tee > /dev/null %
 nnoremap s <Nop>
 nnoremap Q <Nop>
 nnoremap q <Nop>
+" Q for macro
 nnoremap Q q
-
+" behave like C or D
 nnoremap Y y$
 
-" Visual
+" visual block
 nnoremap vv <C-v>
+" do visual current column to end-of-line without <NL>
 nnoremap vo vg_o
+" like V, but without <NL>
 nnoremap vO ^vg_o
 
 nnoremap <C-]> <C-]>zz
@@ -504,7 +526,7 @@ nnoremap : ;
 vnoremap ; :
 vnoremap : ;
 
-" quickfix
+" remove extra '\n' from the redir output
 function! s:redir(cmd)
   redir => res
   execute a:cmd
@@ -533,22 +555,7 @@ function! s:toggle_qf_list()
   endif
 endfunction
 
-" show/hide line number wisely
-function! s:toggle_line_number()
-  let NU = 'nu'
-  let RNU = 'rnu'
-
-  if &number || &relativenumber
-    " to be off
-    let b:prev = { 'nu': &number, 'rnu': &relativenumber }
-    let &nu = 0
-    let &rnu = 0
-  else
-    let &nu = get(b:prev, 'nu', 1)
-    let &rnu = get(b:prev, 'rnu', 1)
-  endif
-endfunction
-
+" quickfix related mappings
 nnoremap <silent> qo :<C-u>silent call <SID>toggle_qf_list()<Cr>
 nnoremap <silent> qj :cnext<Cr>zz
 nnoremap <silent> qk :cprevious<Cr>zz
@@ -556,6 +563,23 @@ nnoremap <silent> qc :cc<Cr>zz
 
 nnoremap <silent> qn :bnext<Cr>
 nnoremap <silent> qp :bprevious<Cr>
+
+" show/hide line number wisely
+function! s:toggle_line_number()
+  let NU = 'nu'
+  let RNU = 'rnu'
+
+  if &nu|| &rnu
+    " to be off
+    let b:prev = { 'nu': &nu, 'rnu': &rnu }
+    let &nu = 0
+    let &rnu = 0
+  else
+    " restore previous setting
+    let &nu = get(b:prev, 'nu', 1)
+    let &rnu = get(b:prev, 'rnu', 1)
+  endif
+endfunction
 
 nnoremap <silent> [Toggle]m :let &mouse = empty(&mouse) ? 'a' : ''<Cr>
 nnoremap <silent> [Toggle]p :set paste!<Cr>
@@ -565,24 +589,25 @@ nnoremap <silent> [Toggle]c :let &clipboard =
 nnoremap <silent> [Toggle]n :<C-u>silent call <SID>toggle_line_number()<Cr>
 
 nnoremap gf <Nop>
+" if <cfile> doesn't exist it'll be created
 nnoremap gff :e <cfile><Cr>
+" like gff, but open <cfile> in a tab
 nnoremap gft :tabe <cfile><Cr>
 
-
-" open the current editing file's location using file manager
-function! s:open_with_filer(...)
-  let cmd = s:get_filer_command()
-  let path = get(a:, 1, s:convert_path(expand('%:p:h')))
-
-  if empty(cmd)
-    call Echohl('Error', 'Your system is not supported.')
-    return
+" returns system specific filer command
+function! s:get_filer_command()
+  if s:is_mac
+    return 'open -a Finder'
+  elseif s:is_linux && has('gui_gnome')
+    return 'nautilus'
+  elseif s:is_windows
+    return 'start explorer'
+  else
+    return ''
   endif
-
-  execute printf('!%s %s', cmd, path)
 endfunction
-command! -nargs=? Filer call s:open_with_filer(<f-args>)
 
+" convert path separator: Windows <-> *nix
 function! s:convert_path(path)
   if s:is_windows
     return '"' . substitute(a:path, '/', '\', 'g') . '"'
@@ -591,17 +616,19 @@ function! s:convert_path(path)
   endif
 endfunction
 
-function! s:get_filer_command()
-  if s:is_mac
-    return 'open -a Finder'
-  elseif has('unix') && has('gui_gnome')
-    return 'nautilus'
-  elseif s:is_windows
-    return 'start explorer'
-  else
-    return ''
+" open the current file's location using file manager
+function! s:open_with_filer(...)
+  let cmd = s:get_filer_command()
+  let path = get(a:, 1, s:convert_path(expand('%:p:h')))
+
+  if empty(cmd)
+    call Echohl('Error', 'Your system is not supported yet.')
+    return
   endif
+
+  execute printf('!%s %s', cmd, path)
 endfunction
+command! -nargs=? Filer call s:open_with_filer(<f-args>)
 
 nnoremap [Space]w :<C-u>update<Cr>
 nnoremap [Space]q :<C-u>quit<Cr>
@@ -618,23 +645,18 @@ nnoremap [Space]S :<C-u>source %<Cr>:nohlsearch<Cr>
 nnoremap <Leader>g :<C-u>g/
 nnoremap <Leader>s :<C-u>s/
 nnoremap <Leader>S :<C-u>%s/
-" only for Visual mode
+" enter substitute mode in visual mode
 xnoremap <Leader>s :s/
 xnoremap s :s/
-xnoremap <Leader>t :Tabular<Space>/
 
-if exists(':Tabularize')
-  nnoremap <Leader>t :Tabularize /
-  xnoremap <Leader>t :Tabularize /
-endif
+nnoremap <Leader>t :Tabularize<Space>/
+xnoremap <Leader>t :Tabularize<Space>/
 
 nnoremap <Leader>te :<C-u>tabe<Space>
-
+" Clear search highlight
 nnoremap <silent> <C-c> <Esc>:<C-u>nohlsearch<Cr>
 
-nnoremap <S-b> T<Space>
-
-" move around window
+" move around windows
 nnoremap <silent> sh <C-w>h
 nnoremap <silent> sk <C-w>k
 nnoremap <silent> sl <C-w>l
@@ -643,37 +665,33 @@ nnoremap <silent> sj <C-w>j
 nnoremap <silent> sn :tabnext<Cr>
 nnoremap <silent> sp :tabprevious<Cr>
 
-" visual last pasted lines
+" visual last put lines: p or gp
 nnoremap sv `[v`]
 
 nnoremap <MiddleMouse> <Nop>
 nnoremap <2-MiddleMouse> <Nop>
-
-" preview tag
-nnoremap <silent> [Space]p <C-w>}
-nnoremap <silent> [Space]P :pclose<Cr>
 
 " Ctrl-H dispution
 " set t_kb=<Bs>
 " set t_kD=<Del>
 " inoremap <Del> <Bs>
 
+" insert current file name
 inoremap <silent> <Leader>fn <C-R>=@%<Cr>
+" insert current file name (absolute path)
 inoremap <silent> <Leader>fN <C-R>=fnamemodify(@%, ':p')<Cr>
 
-" surround.vim can be used?
+" surround.vim does like this?
 inoremap <silent> <C-y>( <C-g>u(<Esc>ea)
-inoremap <silent> <C-y>{ <C-g>u{<Esc>ea}
-inoremap <silent> <C-y>[ <C-g>u[<Esc>ea]
 
-if s:is_mac
+if s:is_mac && has('gui_running')
   inoremap <D-v> <C-o>"*P
   cnoremap <D-v> <C-R>*
   vnoremap <D-c> "+y
   nnoremap <D-a> ggVG
 endif
 
-" search selected text
+" search visual-ed text
 vnoremap * y/<C-R>"<Cr>
 vnoremap < <gv
 vnoremap > >gv
@@ -713,12 +731,6 @@ if executable('tidyp')
 endif
 "}}}
 
-
-if has('vim_starting')
-  let g:auto_chdir_enabled = get(g:, 'auto_chdir_enabled', 1)
-  " syntax: vim.vim
-  let g:vimsyntax_noerror = 1
-endif
 
 if has('multi_byte_ime') || has('xim')
   set iminsert=0 imsearch=0
@@ -789,7 +801,7 @@ augroup Tacahiroy
     return a:dir
   endfunction
 
-  function! s:auto_chdir(n)
+  function! s:auto_chdir(depth)
     if ! get(g:, 'auto_chdir_enabled', 1)
       return
     endif
@@ -799,7 +811,7 @@ augroup Tacahiroy
       return
     endif
 
-    let dir = s:get_project_root(expand('%:p:h'), a:n)
+    let dir = s:get_project_root(expand('%:p:h'), a:depth)
 
     execute 'lcd ' . escape(dir, ' ')
   endfunction
@@ -876,7 +888,7 @@ augroup Tacahiroy
                          \| inoremap <buffer> <Leader>a  <Esc>i[]()<C-o>F]
   autocmd FileType markdown set autoindent
 
-  " easy way
+  " simple markdown preview
   if executable('markdown')
     function! s:md_preview_by_browser(f)
       let tmp = '/tmp/vimmarkdown.html'
@@ -886,14 +898,6 @@ augroup Tacahiroy
     autocmd FileType markdown command! -buffer -nargs=0 MdPreview call s:md_preview_by_browser(expand('%'))
   endif
 
-  " only for the WinMerge document translation project
-  function! s:move_to_segment(is_prev)
-    let flag = a:is_prev ? 'b' : ''
-    call search('<\(para\|section\|term\)[^>]*>', 'esW' . flag)
-  endfunction
-
-  autocmd FileType xml nnoremap <silent> <buffer> <Tab> :call <SID>move_to_segment(0)<Cr>
-  autocmd FileType xml nnoremap <silent> <buffer> <S-Tab> :call <SID>move_to_segment(1)<Cr>
   autocmd FileType xml noremap  <silent> <buffer> <Leader>pp :call <SID>run_tidy(80)<Cr>
   autocmd BufRead,BufEnter *.xml set updatetime=1000
   autocmd BufLeave,BufWinLeave *.xml set updatetime&
@@ -901,7 +905,7 @@ augroup Tacahiroy
   autocmd BufRead,BufNewFile * syn match ExtraSpaces '[\t ]\+$'
         \| hi def link ExtraSpaces MatchParen
 
-  " typo correction
+  " wonderful typo correction system
   inoreabbr funciton function
   inoreabbr requrie require
   inoreabbr reuqire require
@@ -929,7 +933,7 @@ if executable('knife')
       call insert(cookbooks, m[2])
     endif
 
-    if 0 < len(cookbooks)
+    if len(cookbooks) > 0
       let cookbooks = filter(cookbooks, 'isdirectory(cb_path . "/" . v:val)')
       let mes = 'Uploading cookbook' . (1 < len(cookbooks) ? 's' : '')
       let cmd = printf('knife cookbook upload -o %s %s;', cb_path, join(cookbooks))
