@@ -25,6 +25,12 @@ task :mksymlink do
     ln_s src, dest
   end
 
+  src = File.expand_path("osx/Library/Application Support/KeyRemap4MacBook/private.xml")
+  dest = "#{ENV['HOME']}/Library/Application Support/KeyRemap4MacBook/private.xml"
+  unlink dest if File.symlink?(dest)
+  rm dest if File.exist?(dest)
+  ln_s src, dest
+
   Rake::Task[:mkunmanageddirs].invoke
 end
 
@@ -38,7 +44,7 @@ task :testmksymlink do
 end
 
 task :mkunmanageddirs do
-  %w(backups swaps).each do |d|
+  %w(sandbox backups swaps).each do |d|
     dest = "#{ENV['HOME']}/.vim/#{d}"
     mkdir "#{ENV['HOME']}/.vim/#{d}" unless File.exist?(dest)
   end
