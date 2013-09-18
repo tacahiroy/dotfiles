@@ -135,8 +135,8 @@ Bundle 'elixir-lang/vim-elixir'
 Bundle 'camelcasemotion'
 Bundle 'matchit.zip'
 
-Bundle 'Align'
-Bundle 'SQLUtilities'
+" Bundle 'Align'
+" Bundle 'SQLUtilities'
 
 
 " self pathogen: really simple-minded
@@ -165,7 +165,7 @@ nnoremap [Toggle] <Nop>
 nmap <Leader><Leader> [Toggle]
 " Space
 noremap [Space] <Nop>
-nmap <Space> [Space]
+map <Space> [Space]
 " }}}
 
 " * plugin configurations {{{
@@ -277,7 +277,7 @@ nmap <Space> [Space]
   let g:surround_{char2nr('K')} = "『\r』"
   let g:surround_{char2nr('e')} = "<%= \r %>"
   let g:surround_{char2nr('b')} = "<%- \r %>"
-  xmap c <Plug>VSurround
+  xmap s <Plug>VSurround
 
 " plug: openbrowser
   let g:netrw_nogx = 1
@@ -647,7 +647,6 @@ nnoremap <Leader>s :<C-u>s/
 nnoremap <Leader>S :<C-u>%s/
 " enter substitute mode in visual mode
 xnoremap <Leader>s :s/
-xnoremap s :s/
 
 nnoremap <Leader>t :Tabularize<Space>/
 xnoremap <Leader>t :Tabularize<Space>/
@@ -685,7 +684,7 @@ inoremap <silent> <Leader>fN <C-R>=fnamemodify(@%, ':p')<Cr>
 inoremap <silent> <C-y>( <C-g>u(<Esc>ea)
 
 if s:is_mac && has('gui_running')
-  inoremap <D-v> <C-o>"*P
+  inoremap <D-v> <Esc>"*P`]a
   cnoremap <D-v> <C-R>*
   vnoremap <D-c> "+y
   nnoremap <D-a> ggVG
