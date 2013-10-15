@@ -135,12 +135,14 @@ Bundle 'elixir-lang/vim-elixir'
 Bundle 'camelcasemotion'
 Bundle 'matchit.zip'
 
+Bundle 'chrisbra/csv.vim'
+
 " Bundle 'Align'
 " Bundle 'SQLUtilities'
 
 
 " self pathogen: really simple-minded
-if isdirectory(expand('$DOTVIM/sandbox'))
+if isdirectory($DOTVIM . '/sandbox')
   let dirs = filter(split(glob($DOTVIM . '/sandbox/**/*')), 'isdirectory(v:val)')
   for d in dirs
     execute 'set runtimepath+=' . d
@@ -232,6 +234,7 @@ map <Space> [Space]
 
   let g:ctrlp_funky_ruby_chef_words = 1
   let g:ctrlp_funky_sort_by_mru = 0
+  let g:ctrlp_ssh_keep_ctrlp_window = 1
 
   nnoremap [Space]fl :CtrlPBuffer<Cr>
   nnoremap [Space]fm :CtrlPMRU<Cr><F5>
@@ -270,6 +273,7 @@ map <Space> [Space]
 
 " plug: commentary.vim
   nmap [Space]c <Plug>CommentaryLine
+  nmap [Space]yc yy<Plug>CommentaryLine
   xmap [Space]c <Plug>Commentary
 
 " plug: surround.vim
@@ -320,7 +324,6 @@ map <Space> [Space]
 
 set cpo&vim
 
-set nocompatible
 set verbose=0
 
 set encoding=utf-8
@@ -684,7 +687,7 @@ inoremap <silent> <Leader>fN <C-R>=fnamemodify(@%, ':p')<Cr>
 inoremap <silent> <C-y>( <C-g>u(<Esc>ea)
 
 if s:is_mac && has('gui_running')
-  inoremap <D-v> <Esc>"*P`]a
+  inoremap <D-v> <Esc>"*p`]a
   cnoremap <D-v> <C-R>*
   vnoremap <D-c> "+y
   nnoremap <D-a> ggVG
@@ -926,7 +929,8 @@ if executable('knife')
     endif
 
     let cookbooks = [get(a:, 1, '')]
-    let m = matchlist(path, '^\(.\+/cookbooks/[^/]\+\)/\([^/]\+\)/')
+    echom path
+    let m = matchlist(path, '^\(.\+/cookbooks\)/\([^/]\+\)/')
     let cb_path = m[1]
     if index(cookbooks, m[2]) == -1
       call insert(cookbooks, m[2])
@@ -934,10 +938,9 @@ if executable('knife')
 
     if len(cookbooks) > 0
       let cookbooks = filter(cookbooks, 'isdirectory(cb_path . "/" . v:val)')
-      let mes = 'Uploading cookbook' . (1 < len(cookbooks) ? 's' : '')
+      let mes = 'Uploading cookbook' . (len(cookbooks) != 1 ? 's' : '')
       let cmd = printf('knife cookbook upload -o %s %s;', cb_path, join(cookbooks))
-      let cmd .= s:notify('cookbook upload: ' . join(cookbooks),
-                              \ 'Chef', $DOTVIM . '/images/chef_logo.png')
+      let cmd .= s:notify(join(cookbooks), 'Chef', $DOTVIM . '/images/chef_logo.png')
 
       if s:tmux.is_running() && has('gui_running')
         let cmd .= '; echo Press enter to close the pane.; read'
@@ -946,6 +949,8 @@ if executable('knife')
 
       echomsg printf('%s: %s', mes, join(cookbooks))
       " echomsg cmd
+      " rough :|
+      let cmd = "PATH=$HOME/.rbenv/shims:$PATH " . cmd
       call s:tmux.run(cmd, 1, 1)
     else
       echoerr 'no cookbooks are found.'
@@ -1109,11 +1114,6 @@ endif
 if filereadable(expand('~/.vimrc.local'))
   source ~/.vimrc.local
 endif
-
-let g:ctrlp_preview_enabled = { 'files': 20,
-                              \ 'mru files': 30,
-                              \ 'tags': 10,
-                              \ 'funky': 10}
 
 " __END__ {{{
 " vim: fen fdm=marker ts=2 sts=2 sw=2
