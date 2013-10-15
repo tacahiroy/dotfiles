@@ -26,8 +26,8 @@
 	logc = log ORIG_HEAD.. --stat --no-merges
 	up = pull --rebase
 	hide = stash
-	unhide = stash pop
-	staup = !git stash && git up
+	sup = !git stash && git up
+	spo = stash pop
 
 [advice]
 	statusHints = false
