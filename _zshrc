@@ -336,6 +336,7 @@ alias -g L='|$PAGER'
 alias -g G='|grep'
 alias -g W='|wc -l'
 alias -g EEE='--secret-file ~/.chef/encrypted_data_bag_secret'
+alias -g C='|pbcopy'
 
 setopt complete_aliases
 
