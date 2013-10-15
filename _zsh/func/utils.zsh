@@ -8,11 +8,13 @@ function weechat {
 }
 
 function tssh_tunnel() {
-  if tmux list-windows -F '#I:#W' | grep '^99:jp-3.tnl' 2>&1 >/dev/null; then
-    echo already listening port 8103
+  srv=${1:-${SS_SRV}}
+
+  if tmux list-windows -F '#I:#W' | grep "^99:${srv}.tnl" 2>&1 >/dev/null; then
+    echo listening port ${SS_PORT}
     return
   fi
-  tmux neww -k -n jp-3.tnl -t 99 'ssh -C2qTnN -D 8103 takahiro@jp-3'
-  tmux select-window -l
+  tmux neww -k -n ${srv}.tnl -t 99 "ssh -C2qTnN -D ${SS_PORT} ${SS_USER}@${srv}"
+  tmux last
 }
 

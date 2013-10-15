@@ -1,6 +1,0 @@
-export proj=~/Projects/
-export fc=~/Projects/Fc/
-export chef=~/Projects/Fc/chef.git/
-
-alias -g EEE='--secret-file ~/.chef/encrypted_data_bag_secret'
-
