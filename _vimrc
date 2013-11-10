@@ -118,6 +118,7 @@ Bundle 'tpope/vim-fugitive'
 Bundle 'tyru/open-browser.vim'
 
 Bundle 'mattn/emmet-vim'
+Bundle 'thinca/vim-quickrun'
 Bundle 'msanders/snipmate.vim'
 Bundle 'scrooloose/syntastic'
 Bundle 'tpope/vim-commentary'
@@ -225,7 +226,7 @@ map <Space> [Space]
   let g:ctrlp_extensions = ['line', 'buffertag', 'dir', 'mixed', 'funky', 'ssh']
 
   let dir = ['\.git$', '\.hg$', '\.svn$', '\.vimundo$', '\.cache/ctrlp$',
-        \    '\.rbenv', '\.gem', 'backup', 'Downloads', 'Documents', $TMPDIR,
+        \    '\.rbenv', '\.gem', 'backup', 'Documents', $TMPDIR,
         \    '/vendor/*/vendor']
   let g:ctrlp_custom_ignore = {
     \ 'dir': '\v[\/]' . join(dir, '|') . '/',
@@ -295,6 +296,10 @@ map <Space> [Space]
   sunmap W
   sunmap B
   sunmap E
+
+" plug: vim-quickrun
+  nmap <Space>r <Plug>(quickrun)
+  vmap <Space>r <Plug>(quickrun)
 
 " plug: loga.vim
   let g:loga_executable = s:which('loga')
@@ -944,7 +949,6 @@ if executable('knife')
 
       if s:tmux.is_running() && has('gui_running')
         let cmd .= '; echo Press enter to close the pane.; read'
-        call s:tmux.run("chef-client -Fdoc --color", 0, 1, 1)
       endif
 
       echomsg printf('%s: %s', mes, join(cookbooks))
