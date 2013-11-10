@@ -42,7 +42,7 @@ export RBXOPT='-X19'
 # environment variables
 export proj=~/Projects/
 export fc=~/Projects/Fc/
-export chef=~$fc/chef.git/
+export chef=~/Projects/Fc/chef.git
 
 
 if [ -x $HOME/Applications/MacVim.app/Contents/MacOS/Vim ]; then
@@ -78,6 +78,14 @@ ruby_path=(
   ./lib(N-/)
   $HOME/lib/ruby(N-/)
 )
+
+# # Python
+# typeset -xT PYTHONPATH python_path
+# typeset -U python_path
+
+# python_path=(
+#   /usr/local/lib/python3.3/site-packages(N-/)
+# )
 
 ## Perl
 typeset -xT PERL5LIB perl5_lib
