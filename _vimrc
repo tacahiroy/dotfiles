@@ -317,6 +317,9 @@ map <Space> [Space]
   let g:bestfriend_display_limit = 15
   let g:bestfriend_observe_cursor_position = 1
 
+" plug: csv.vim
+  let g:csv_nomap_space = 1
+
 " plug: sqlutilities.vim
   let g:sqlutil_load_default_maps = 0
   let g:sqlutil_align_comma = 1
@@ -656,8 +659,8 @@ nnoremap <Leader>S :<C-u>%s/
 " enter substitute mode in visual mode
 xnoremap <Leader>s :s/
 
-nnoremap <Leader>t :Tabularize<Space>/
-xnoremap <Leader>t :Tabularize<Space>/
+nnoremap <Leader>ta :Tabularize<Space>/
+xnoremap <Leader>ta :Tabularize<Space>/
 
 nnoremap <Leader>te :<C-u>tabe<Space>
 " Clear search highlight
@@ -924,9 +927,9 @@ augroup END
 
 
 " * Chef " {{{
-" a wrapper of the knife
+" a wrapper of the knife command
 if executable('knife')
-  let s:knife = {}
+  let s:knife = {} " knife {{{
   function! s:knife.cookbook_upload(...) abort
     let path = expand('%:p')
     if path !~# '/cookbooks/[^/]\+/.\+'
@@ -961,51 +964,55 @@ if executable('knife')
     endif
   endfunction
 
-  function! s:knife.data_bag_from_file(json, ...)
+  " Convert a Chef element name to dirname
+  " e.g. 'data_bags' -> 'data bag'
+  function! s:knife.dir2ele(dir)
+    return substitute(substitute(a:dir, '_', ' ', ''), 's$', '', '')
+  endfunction
+
+  function! s:knife.elename(path)
+    for v in [ 'data_bags', 'environments', 'roles' ]
+      if a:path =~# '/' . v . '/'
+        return v
+      endif
+    endfor
+  endfunction
+
+  function! s:knife.from_file(json, opts)
     let path = fnamemodify(expand(a:json), ':p')
-    if path !~# '/data_bags/'
-      call Echohl('WarningMsg', printf('%s is not a data bag file.', path))
+    let dirname = self.elename(path)
+    let ele = self.dir2ele(dirname)
+
+    if path !~# dirname
+      call Echohl('WarningMsg', printf('%s is not a ' . ele . ' file.', path))
       return
     endif
 
-    let bag_name = fnamemodify(path, ':p:h:t')
-    let opts = join(a:000)
-
-    call self.from_file('data bag', bag_name, bufname(a:json), opts)
-  endfunction
-
-  function! s:knife.from_file(what, ...)
-    echom printf('!knife %s from file %s', a:what, join(a:000))
-    execute printf('!knife %s from file %s', a:what, join(a:000))
-  endfunction
-
-  function! s:notify(title, app, ...)
-    let cmd = ''
-    let icon = get(a:, 1, '')
-
-    if s:is_mac && executable('growlnotify')
-      let cmd .= 'if [ $? -eq 0 ]; then echo SUCCESS; else echo FAILURE; fi | '
-      let cmd .= printf('growlnotify -n %s ', a:app)
-
-      if !empty(icon)
-        let cmd .= '--image ' . icon . ' '
+    if ele ==# 'data bag'
+      " BAG
+      let item = fnamemodify(path, ':p:h:t')
+      if empty(item)
+        call Echohl('WarningMsg', printf('cannot get BAG name from %s', path))
+        return
       endif
-
-      let cmd .= printf('\"%s\"', a:title)
+    else
+      let item = ''
     endif
 
-    return cmd
+    echom printf('!knife %s from file %s %s %s', ele, item, path, a:opts)
+    execute printf('!knife %s from file %s %s %s', ele, item, path, a:opts)
   endfunction
 
   " commands and maps
   command! -nargs=* KnifeCookbookUpload call s:knife.cookbook_upload(<f-args>)
-  command! -nargs=+ KnifeDataBagFromFile call s:knife.data_bag_from_file(<f-args>)
+  command! -nargs=+ KnifeFromFile call s:knife.from_file(<q-args>, <q-args>)
 
   nnoremap [Space]K :<C-u>KnifeCookbookUpload<Cr>
 endif
+" }}}
 
 " Cookbook utilities
-let s:chef = {}
+let s:chef = {} " {{{
 function! s:chef.convert_attr_notation(colon) abort
   if !search('\>', 'bcnW')
     return
@@ -1041,9 +1048,29 @@ function! s:chef.find_attr_pos()
   let pos = searchpos('\<\(node\|default\|normal\)\>', 'bnW')
   return pos[1] + 1
 endfunction
+
 command! -nargs=1 ChefConvertAttrNotation call s:chef.convert_attr_notation(<f-args>)
 inoremap <silent> <C-y>x <C-g>u<Esc>:ChefConvertAttrNotation 1<Cr>
 inoremap <silent> <C-y>X <C-g>u<Esc>:ChefConvertAttrNotation 0<Cr>
+" }}}
+
+" Notify using growlnotify
+function! s:notify(title, app, ...)
+  if ! (s:is_mac() && executable('growlnotify')) | return '' | endif
+
+  let icon = get(a:, 1, '')
+
+  let cmd .= 'if [ $? -eq 0 ]; then echo SUCCESS; else echo FAILURE; fi | '
+  let cmd .= printf('growlnotify -n %s ', a:app)
+
+  if !empty(icon)
+    let cmd .= '--image ' . icon . ' '
+  endif
+
+  let cmd .= printf('\"%s\"', a:title)
+
+  return cmd
+endfunction
 " }}}
 
 
