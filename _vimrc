@@ -98,7 +98,6 @@ if has('vim_starting')
   let g:vimsyntax_noerror = 1
 endif
 
-
 " * vundle plugin management "{{{
 filetype off
 set runtimepath& runtimepath+=~/.vim/bundle/vundle
@@ -140,7 +139,6 @@ Bundle 'chrisbra/csv.vim'
 
 " Bundle 'Align'
 " Bundle 'SQLUtilities'
-
 
 " self pathogen: really simple-minded
 if isdirectory($DOTVIM . '/sandbox')
@@ -950,7 +948,7 @@ if executable('knife')
       let cmd = printf('knife cookbook upload -o %s %s;', cb_path, join(cookbooks))
       let cmd .= s:notify(join(cookbooks), 'Chef', $DOTVIM . '/images/chef_logo.png')
 
-      if s:tmux.is_running() && has('gui_running')
+      if s:tmux.is_running()
         let cmd .= '; echo Press enter to close the pane.; read'
       endif
 
@@ -999,7 +997,7 @@ if executable('knife')
       let item = ''
     endif
 
-    echom printf('!knife %s from file %s %s %s', ele, item, path, a:opts)
+    " echom printf('!knife %s from file %s %s %s', ele, item, path, a:opts)
     execute printf('!knife %s from file %s %s %s', ele, item, path, a:opts)
   endfunction
 
@@ -1056,11 +1054,11 @@ inoremap <silent> <C-y>X <C-g>u<Esc>:ChefConvertAttrNotation 0<Cr>
 
 " Notify using growlnotify
 function! s:notify(title, app, ...)
-  if ! (s:is_mac() && executable('growlnotify')) | return '' | endif
+  if ! (s:is_mac && executable('growlnotify')) | return '' | endif
 
   let icon = get(a:, 1, '')
 
-  let cmd .= 'if [ $? -eq 0 ]; then echo SUCCESS; else echo FAILURE; fi | '
+  let cmd = 'if [ $? -eq 0 ]; then echo SUCCESS; else echo FAILURE; fi | '
   let cmd .= printf('growlnotify -n %s ', a:app)
 
   if !empty(icon)
