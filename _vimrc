@@ -573,12 +573,12 @@ nnoremap <silent> qc :cc<Cr>zz
 nnoremap <silent> qn :bnext<Cr>
 nnoremap <silent> qp :bprevious<Cr>
 
-" show/hide line number wisely
+" show/hide line number wisely: this needs Vim 7.3 or above
 function! s:toggle_line_number()
   let NU = 'nu'
   let RNU = 'rnu'
 
-  if &nu|| &rnu
+  if &nu || &rnu
     " to be off
     let b:prev = { 'nu': &nu, 'rnu': &rnu }
     let &nu = 0
