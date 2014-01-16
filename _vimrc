@@ -123,6 +123,7 @@ Bundle 'scrooloose/syntastic'
 Bundle 'tpope/vim-commentary'
 Bundle 'tpope/vim-endwise'
 Bundle 'scrooloose/nerdtree'
+Bundle 'chrisbra/csv.vim'
 
 Bundle 'jiangmiao/simple-javascript-indenter'
 Bundle 'tpope/vim-markdown'
@@ -131,11 +132,10 @@ Bundle 'slim-template/vim-slim'
 Bundle 'sunaku/vim-ruby-minitest'
 Bundle 'vim-ruby/vim-ruby'
 Bundle 'elixir-lang/vim-elixir'
-
 Bundle 'camelcasemotion'
 Bundle 'matchit.zip'
 
-Bundle 'chrisbra/csv.vim'
+Bundle 'jeroenbourgois/vim-actionscript'
 
 " Bundle 'Align'
 " Bundle 'SQLUtilities'
