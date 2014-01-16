@@ -328,7 +328,7 @@ alias buo='brew update && brew outdated'
 # Ruby
 alias re='rbenv'
 
-alias pyhttpd='python -m SimpleHTTPServer'
+alias phttpd='python -m SimpleHTTPServer'
 
 # global
 alias -g K9='|xargs kill -9'
