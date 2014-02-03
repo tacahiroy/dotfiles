@@ -131,6 +131,7 @@ Bundle 'avakhov/vim-yaml'
 Bundle 'slim-template/vim-slim'
 Bundle 'sunaku/vim-ruby-minitest'
 Bundle 'vim-ruby/vim-ruby'
+Bundle 'tpope/vim-rails'
 Bundle 'elixir-lang/vim-elixir'
 Bundle 'camelcasemotion'
 Bundle 'matchit.zip'
@@ -233,6 +234,7 @@ map <Space> [Space]
 
   let g:ctrlp_funky_ruby_chef_words = 1
   let g:ctrlp_funky_sort_by_mru = 0
+  let g:ctrlp_funky_syntax_highlight = 1
   let g:ctrlp_ssh_keep_ctrlp_window = 1
 
   nnoremap [Space]fl :CtrlPBuffer<Cr>
@@ -263,7 +265,7 @@ map <Space> [Space]
 " plug: syntastic
   let g:syntastic_mode_map =
         \ { 'mode': 'active',
-          \ 'active_filetypes': ['ruby', 'eruby', 'cucumber', 'perl', 'javascript', 'python', 'sh'],
+          \ 'active_filetypes': ['ruby', 'cucumber', 'perl', 'javascript', 'python', 'sh'],
           \ 'passive_filetypes': ['xml'] }
   let g:syntastic_enable_balloons = 0
   let g:syntastic_auto_loc_list = 2
@@ -434,7 +436,7 @@ set nowrapscan
 
 set matchpairs& matchpairs+=<:>
 " prevent highlighting a pair of parentheses and brackets
-let g:loaded_matchparen = 0
+let g:loaded_matchparen = 1
 
 if has('persistent_undo')
   set undodir=~/.vimundo
@@ -693,7 +695,7 @@ inoremap <silent> <Leader>fN <C-R>=fnamemodify(@%, ':p')<Cr>
 inoremap <silent> <C-y>( <C-g>u(<Esc>ea)
 
 if s:is_mac && has('gui_running')
-  inoremap <D-v> <Esc>"*p`]a
+  inoremap <silent> <D-v> <Esc>:let &paste=1<Cr>a<C-R>=@*<Cr><Esc>:let &paste=0<Cr>a
   cnoremap <D-v> <C-R>*
   vnoremap <D-c> "+y
   nnoremap <D-a> ggVG
