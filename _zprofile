@@ -3,3 +3,7 @@ if [ $SHLVL = 2 -a -d ${HOME}/.rbenv  ] ; then
   # PATH=${HOME}/.rbenv/shims:${PATH}
   eval "$(rbenv init - zsh)"
 fi
+
+if [ $SHLVL = 2 -a -d ${HOME}/.pyenv  ] ; then
+  if which pyenv > /dev/null; then eval "$(pyenv init -)"; fi
+fi
