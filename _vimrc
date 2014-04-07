@@ -688,8 +688,11 @@ nnoremap <2-MiddleMouse> <Nop>
 
 " insert current file name
 inoremap <silent> <Leader>fn <C-R>=@%<Cr>
+" copy current file name to @" register
+nnoremap <silent> <Leader>fn :let @" = @%<Cr>
 " insert current file name (absolute path)
 inoremap <silent> <Leader>fN <C-R>=fnamemodify(@%, ':p')<Cr>
+nnoremap <silent> <Leader>fN :let @" = fnamemodify(@%, ':p')<Cr>
 
 " surround.vim does like this?
 inoremap <silent> <C-y>( <C-g>u(<Esc>ea)
@@ -1054,10 +1057,20 @@ inoremap <silent> <C-y>x <C-g>u<Esc>:ChefConvertAttrNotation 1<Cr>
 inoremap <silent> <C-y>X <C-g>u<Esc>:ChefConvertAttrNotation 0<Cr>
 " }}}
 
-" Notify using growlnotify
+" Get cmd-line for notification
 function! s:notify(title, app, ...)
-  if ! (s:is_mac && executable('growlnotify')) | return '' | endif
+  if ! s:is_mac | return '' | endif
 
+  if executable('terminal-notifier')
+    return s:notification_center(a:title, a:app)
+  elseif executable('growlnotify')
+    return s:growlnotify(a:title, a:app, get(a:, 1, ''))
+  else
+    return ''
+  endif
+endfunction
+
+function! s:growlnotify(title, app, ...)
   let icon = get(a:, 1, '')
 
   let cmd = 'if [ $? -eq 0 ]; then echo SUCCESS; else echo FAILURE; fi | '
@@ -1069,6 +1082,12 @@ function! s:notify(title, app, ...)
 
   let cmd .= printf('\"%s\"', a:title)
 
+  return cmd
+endfunction
+
+function! s:notification_center(title, app)
+  let cmd = 'if [ $? -eq 0 ]; then echo SUCCESS; else echo FAILURE; fi | '
+  let cmd .= printf('terminal-notifier -title %s -subtitle %s', a:app, a:title)
   return cmd
 endfunction
 " }}}
