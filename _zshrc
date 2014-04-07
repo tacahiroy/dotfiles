@@ -310,8 +310,6 @@ alias lla='ls -la'
 alias ltr='ls -ltr'
 alias llh='ls -lh'
 
-alias fgrep='fgrep -nHr'
-
 alias du='du -h'
 alias df='df -h'
 alias su='su -l'
@@ -388,6 +386,8 @@ if [ $UID != 0 ]; then
     fi
   fi
 fi
+
+source ~/.zsh/vendor/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # __END__
 # vim: et ts=2 sts=2 sw=2

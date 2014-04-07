@@ -4,6 +4,7 @@ HISTFILE=~/.zhistory
 
 fpath=(/usr/local/opt/zsh-completions/share/zsh-completions/(N-/) \
        $HOME/.zsh/func \
+       $HOME/.zsh/vendor \
        $fpath)
 typeset -U fpath
 
@@ -84,7 +85,7 @@ ruby_path=(
 # typeset -U python_path
 
 # python_path=(
-#   /usr/local/lib/python3.3/site-packages(N-/)
+#   /usr/local/lib/python2.7/site-packages(N-/)
 # )
 
 ## Perl
