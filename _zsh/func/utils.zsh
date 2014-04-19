@@ -16,7 +16,7 @@ function tssh_tunnel() {
   fi
 
   if [ -x `which autossh` ]; then
-    tmux neww -k -n ${srv}.tnl -t 99 "autossh -M 18103 -f -C2qTnN -D ${SS_PORT} ${SS_USER}@${srv} ping -i 20 localhost"
+    autossh -M 18103 -f -C2qTnN -D ${SS_PORT} ${SS_USER}@${srv} ping -i 20 localhost
   else
     tmux neww -k -n ${srv}.tnl -t 99 "ssh -C2qTnN -D ${SS_PORT} ${SS_USER}@${srv}"
   fi
