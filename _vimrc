@@ -104,19 +104,12 @@ set runtimepath& runtimepath+=~/.vim/bundle/vundle
 call vundle#rc()
 
 Bundle 'gmarik/vundle'
-
-Bundle 'glidenote/memolist.vim'
-
 Bundle 'kien/ctrlp.vim'
-
-Bundle 'godlygeek/tabular'
 Bundle 'tpope/vim-surround'
-
+Bundle 'godlygeek/tabular'
 Bundle 'sjl/gundo.vim'
-Bundle 'tpope/vim-fugitive'
+Bundle 'glidenote/memolist.vim'
 Bundle 'tyru/open-browser.vim'
-
-Bundle 'mattn/emmet-vim'
 Bundle 'thinca/vim-quickrun'
 Bundle 'msanders/snipmate.vim'
 Bundle 'scrooloose/syntastic'
@@ -124,8 +117,11 @@ Bundle 'tpope/vim-commentary'
 Bundle 'tpope/vim-endwise'
 Bundle 'scrooloose/nerdtree'
 Bundle 'chrisbra/csv.vim'
-
+Bundle 'mattn/emmet-vim'
+Bundle 'othree/html5.vim'
+Bundle 'jelera/vim-javascript-syntax'
 Bundle 'jiangmiao/simple-javascript-indenter'
+Bundle 'jeroenbourgois/vim-actionscript'
 Bundle 'tpope/vim-markdown'
 Bundle 'avakhov/vim-yaml'
 Bundle 'slim-template/vim-slim'
@@ -135,8 +131,6 @@ Bundle 'tpope/vim-rails'
 Bundle 'elixir-lang/vim-elixir'
 Bundle 'camelcasemotion'
 Bundle 'matchit.zip'
-
-Bundle 'jeroenbourgois/vim-actionscript'
 
 " Bundle 'Align'
 " Bundle 'SQLUtilities'
@@ -681,11 +675,6 @@ nnoremap sv `[v`]
 nnoremap <MiddleMouse> <Nop>
 nnoremap <2-MiddleMouse> <Nop>
 
-" Ctrl-H dispution
-" set t_kb=<Bs>
-" set t_kD=<Del>
-" inoremap <Del> <Bs>
-
 " insert current file name
 inoremap <silent> <Leader>fn <C-R>=@%<Cr>
 " copy current file name to @" register
@@ -696,6 +685,7 @@ nnoremap <silent> <Leader>fN :let @" = fnamemodify(@%, ':p')<Cr>
 
 " surround.vim does like this?
 inoremap <silent> <C-y>( <C-g>u(<Esc>ea)
+inoremap <silent> <C-y><Space> <C-o><C-x>
 
 if s:is_mac && has('gui_running')
   inoremap <silent> <D-v> <Esc>:let &paste=1<Cr>a<C-R>=@*<Cr><Esc>:let &paste=0<Cr>a
