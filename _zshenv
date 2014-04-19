@@ -41,15 +41,14 @@ fi
 export RBXOPT='-X19'
 
 # environment variables
-export proj=~/Projects/
-export fc=~/Projects/Fc/
+export proj=~/Projects
+export fc=~/Projects/Fc
+export fsm=~/Projects/Fc/scm
 export chef=~/Projects/Fc/chef.git
 
 
-if [ -x $HOME/Applications/MacVim.app/Contents/MacOS/Vim ]; then
-  export EDITOR=$HOME/Applications/MacVim.app/Contents/MacOS/Vim
-elif [ -x /Applications/MacVim.app/Contents/MacOS/Vim ]; then
-  export EDITOR='/Applications/MacVim.app/Contents/MacOS/Vim'
+if [ -x /usr/local/opt/macvim/MacVim.app/Contents/MacOS/Vim ]; then
+  export EDITOR=/usr/local/opt/macvim/MacVim.app/Contents/MacOS/Vim
 else
   export EDITOR='/usr/bin/vim'
 fi
@@ -61,9 +60,10 @@ path=(
   $HOME/perl5/bin(N-/)
   /usr/local/bin(N-/)
   /usr/local/sbin(N-/)
-  $HOME/Applications/adt-bundle/sdk/platform-tools(N-/)
   $path
 )
+
+export ANDROID_HOME=/usr/local/opt/android-sdk
 
 # if [ -d ${HOME}/.rbenv  ] ; then
 #   # export PATH="${HOME}/.rbenv/bin:${HOME}/.rbenv/shims:${PATH}"

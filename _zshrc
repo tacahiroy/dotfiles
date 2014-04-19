@@ -325,6 +325,7 @@ alias buo='brew update && brew outdated'
 
 # Ruby
 alias re='rbenv'
+alias rgem='rbenv-gemset'
 
 alias phttpd='python -m SimpleHTTPServer'
 
