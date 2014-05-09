@@ -129,6 +129,9 @@ Bundle 'sunaku/vim-ruby-minitest'
 Bundle 'vim-ruby/vim-ruby'
 Bundle 'tpope/vim-rails'
 Bundle 'elixir-lang/vim-elixir'
+" colour schemes
+Bundle 'jpo/vim-railscasts-theme'
+" from vim-scripts repo
 Bundle 'camelcasemotion'
 Bundle 'matchit.zip'
 
@@ -475,7 +478,7 @@ colorscheme seashell
 
 set formatoptions& formatoptions+=mM formatoptions-=r
 
-let &statusline = '[#%n]%<%#SpecialKey#%f%* %m%r%h%w'
+let &statusline = '[#%n]%<%#Tag#%f%* %m%r%h%w'
 let &statusline .= '%{&filetype}:'
 let &statusline .= '%{(&l:fileencoding != "" ? &l:fileencoding : &encoding) . ":" . &fileformat}'
 let &statusline .= '(%{&expandtab ? "" : ">"}%{&l:tabstop}'
@@ -484,7 +487,6 @@ let &statusline .= '%{(empty(&mouse) ? "" : "m")}'
 let &statusline .= '%{(&list ? "l" : "")}'
 let &statusline .= '%{(empty(&clipboard) ? "" : "c")}'
 let &statusline .= '%{(&paste ? "p" : "")}'
-let &statusline .= '%#Function#%{fugitive#statusline()}%*'
 let &statusline .= ' %=%#Special#'
 let &statusline .= '%{Gps()}'
 let &statusline .= '%{(g:auto_chdir_enabled ? "e" : "d")}'
@@ -685,7 +687,7 @@ nnoremap <silent> <Leader>fN :let @" = fnamemodify(@%, ':p')<Cr>
 
 " surround.vim does like this?
 inoremap <silent> <C-y>( <C-g>u(<Esc>ea)
-inoremap <silent> <C-y><Space> <C-o><C-x>
+inoremap <silent> <C-y><Space> <C-x><C-o>
 
 if s:is_mac && has('gui_running')
   inoremap <silent> <D-v> <Esc>:let &paste=1<Cr>a<C-R>=@*<Cr><Esc>:let &paste=0<Cr>a
