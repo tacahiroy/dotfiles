@@ -1,8 +1,8 @@
 # weechat
 function tweechat {
-  if [ -x `which weechat-curses` ]; then
-    if ! (ps aux | grep '[w]eechat-curses' 2>&1 > /dev/null); then
-      tmux new-window -t ${WEECHAT_TMUX_WINNUM:-98} weechat-curses
+  if [ -x `which weechat` ]; then
+    if ! (ps aux | grep '[w]eechat' 2>&1 > /dev/null); then
+      tmux new-window -t ${WEECHAT_TMUX_WINNUM:-98} weechat
     fi
   fi
 }
@@ -19,7 +19,7 @@ function tssh_tunnel() {
     autossh -M 18103 -f -C2qTnN -D ${SS_PORT} ${SS_USER}@${srv} ping -i 20 localhost
   else
     tmux neww -k -n ${srv}.tnl -t 99 "ssh -C2qTnN -D ${SS_PORT} ${SS_USER}@${srv}"
+    tmux last
   fi
-  tmux last
 }
 
