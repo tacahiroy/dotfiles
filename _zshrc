@@ -332,7 +332,7 @@ alias phttpd='python -m SimpleHTTPServer'
 # global
 alias -g K9='|xargs kill -9'
 
-alias -g L='|$PAGER'
+alias -g L='|$PAGER -R'
 alias -g G='|grep'
 alias -g W='|wc -l'
 alias -g EEE='--secret-file ~/.chef/encrypted_data_bag_secret'
