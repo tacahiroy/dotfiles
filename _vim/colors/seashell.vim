@@ -36,7 +36,7 @@ if s:seashell_style == 'dark'
   hi   FoldColumn     guibg=gray10
 
   hi    FileName      gui=NONE             guibg=White        guifg=Blue
-  else
+else
   hi    Normal        guibg=seashell       ctermfg=Black
   hi    NonText       guibg=LavenderBlush  guifg=Gray30
   hi    LineNr        guibg=#ffdfe6        guifg=Gray30
