@@ -103,40 +103,41 @@ filetype off
 set runtimepath& runtimepath+=~/.vim/bundle/vundle
 call vundle#rc()
 
-Bundle 'gmarik/vundle'
-Bundle 'kien/ctrlp.vim'
-Bundle 'tpope/vim-surround'
-Bundle 'godlygeek/tabular'
-Bundle 'sjl/gundo.vim'
-Bundle 'glidenote/memolist.vim'
-Bundle 'tyru/open-browser.vim'
-Bundle 'thinca/vim-quickrun'
-Bundle 'msanders/snipmate.vim'
-Bundle 'scrooloose/syntastic'
-Bundle 'tpope/vim-commentary'
-Bundle 'tpope/vim-endwise'
-Bundle 'scrooloose/nerdtree'
-Bundle 'chrisbra/csv.vim'
-Bundle 'mattn/emmet-vim'
-Bundle 'othree/html5.vim'
-Bundle 'jelera/vim-javascript-syntax'
-Bundle 'jiangmiao/simple-javascript-indenter'
-Bundle 'jeroenbourgois/vim-actionscript'
-Bundle 'tpope/vim-markdown'
-Bundle 'avakhov/vim-yaml'
-Bundle 'slim-template/vim-slim'
-Bundle 'sunaku/vim-ruby-minitest'
-Bundle 'vim-ruby/vim-ruby'
-Bundle 'tpope/vim-rails'
-Bundle 'elixir-lang/vim-elixir'
+Plugin 'gmarik/vundle'
+Plugin 'kien/ctrlp.vim'
+Plugin 'tpope/vim-surround'
+Plugin 'godlygeek/tabular'
+Plugin 'sjl/gundo.vim'
+Plugin 'glidenote/memolist.vim'
+Plugin 'tyru/open-browser.vim'
+Plugin 'thinca/vim-quickrun'
+Plugin 'msanders/snipmate.vim'
+Plugin 'scrooloose/syntastic'
+Plugin 'tpope/vim-commentary'
+Plugin 'tpope/vim-endwise'
+Plugin 'scrooloose/nerdtree'
+Plugin 'chrisbra/csv.vim'
+Plugin 'mattn/emmet-vim'
+Plugin 'othree/html5.vim'
+Plugin 'jelera/vim-javascript-syntax'
+Plugin 'jiangmiao/simple-javascript-indenter'
+" Plugin 'jeroenbourgois/vim-actionscript'
+Plugin 'tpope/vim-markdown'
+Plugin 'avakhov/vim-yaml'
+Plugin 'slim-template/vim-slim'
+Plugin 'sunaku/vim-ruby-minitest'
+Plugin 'vim-ruby/vim-ruby'
+Plugin 'tpope/vim-rails'
+Plugin 'derekwyatt/vim-scala'
+Plugin 'elixir-lang/vim-elixir'
 " colour schemes
-Bundle 'jpo/vim-railscasts-theme'
+Plugin 'jpo/vim-railscasts-theme'
 " from vim-scripts repo
-Bundle 'camelcasemotion'
-Bundle 'matchit.zip'
+Plugin 'camelcasemotion'
+Plugin 'matchit.zip'
 
-" Bundle 'Align'
-" Bundle 'SQLUtilities'
+" Plugin 'Align'
+" Plugin 'SQLUtilities'
 
 " self pathogen: really simple-minded
 if isdirectory($DOTVIM . '/sandbox')
@@ -163,7 +164,7 @@ syntax enable
 nnoremap [Toggle] <Nop>
 nmap <Leader><Leader> [Toggle]
 " Space
-noremap [Space] <Nop>
+nnoremap [Space] <Nop>
 map <Space> [Space]
 " }}}
 
@@ -232,6 +233,9 @@ map <Space> [Space]
   let g:ctrlp_funky_ruby_chef_words = 1
   let g:ctrlp_funky_sort_by_mru = 0
   let g:ctrlp_funky_syntax_highlight = 1
+  let g:ctrlp_funky_debug = 1
+  let g:ctrlp_funky_use_cache = 1
+
   let g:ctrlp_ssh_keep_ctrlp_window = 1
 
   nnoremap [Space]fl :CtrlPBuffer<Cr>
@@ -270,9 +274,9 @@ map <Space> [Space]
   let g:syntastic_warning_symbol='⚠'
 
 " plug: commentary.vim
-  nmap [Space]c <Plug>CommentaryLine
-  nmap [Space]yc yy<Plug>CommentaryLine
-  xmap [Space]c <Plug>Commentary
+  nmap [Space]c gcc
+  nmap [Space]yc yygccp
+  xmap [Space]c gc
 
 " plug: surround.vim
   let g:surround_{char2nr('k')} = "「\r」"
@@ -387,15 +391,12 @@ set scrolloff=5
 set shell&
 if !s:is_windows
   let path = ''
-  for bindir in [ '/usr/local/bin', '/usr/bin', '/bin' ]
-    for sh in [ 'zsh', 'bash', 'dash', 'sh' ]
-      let path = bindir . '/' . sh
-      if executable(path)
-        let &shell = path
-        break
-      endif
-    endfor
-    if &shell == path | break | endif
+  for sh in [ 'zsh', 'bash', 'dash', 'sh' ]
+    let path = s:which(sh)
+    if executable(path)
+      let &shell = path
+      break
+    endif
   endfor
 endif
 
@@ -507,9 +508,11 @@ cnoremap <C-o> <C-d>
 
 cnoremap W!! %!sudo tee > /dev/null %
 
+nnoremap ZZ <Nop>
 nnoremap s <Nop>
 nnoremap Q <Nop>
 nnoremap q <Nop>
+
 " Q for macro
 nnoremap Q q
 " behave like C or D
@@ -660,7 +663,7 @@ xnoremap <Leader>ta :Tabularize<Space>/
 
 nnoremap <Leader>te :<C-u>tabe<Space>
 " Clear search highlight
-nnoremap <silent> <C-c> <Esc>:<C-u>nohlsearch<Cr>
+nnoremap <silent> <C-l> <Esc>:<C-u>nohlsearch<Cr><C-l>
 
 " move around windows
 nnoremap <silent> sh <C-w>h
@@ -890,7 +893,6 @@ augroup Tacahiroy
                          \| inoremap <buffer> <Leader>h4 <Esc>I####<Space>
                          \| inoremap <buffer> <Leader>h5 <Esc>I#####<Space>
                          \| inoremap <buffer> <Leader>hr <Esc>i- - -<Esc>^
-                         \| inoremap <buffer> <Leader>a  <Esc>i[]()<C-o>F]
   autocmd FileType markdown set autoindent
 
   " simple markdown preview
@@ -1151,7 +1153,6 @@ if s:tmux.is_installed()
   nnoremap <Leader>< :<C-u>TMPrevWindow<Cr>
 endif
 " }}}
-
 
 if filereadable(expand('~/.vimrc.local'))
   source ~/.vimrc.local
