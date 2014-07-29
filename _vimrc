@@ -100,7 +100,7 @@ endif
 
 " * vundle plugin management "{{{
 filetype off
-set runtimepath& runtimepath+=~/.vim/bundle/vundle
+set runtimepath& runtimepath+=~/.vim/bundle/Vundle.vim
 call vundle#rc()
 
 Plugin 'gmarik/vundle'
