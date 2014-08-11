@@ -101,7 +101,7 @@ set runtimepath& runtimepath+=~/.vim/bundle/Vundle.vim
 call vundle#rc()
 
 Plugin 'gmarik/Vundle.vim'
-Plugin 'kien/ctrlp.vim'
+Plugin 'ctrlpvim/ctrlp.vim', { 'name': 'ctrlp.vim' }
 Plugin 'tpope/vim-surround'
 Plugin 'godlygeek/tabular'
 Plugin 'sjl/gundo.vim'
@@ -119,6 +119,7 @@ Plugin 'othree/html5.vim'
 Plugin 'jelera/vim-javascript-syntax'
 Plugin 'jiangmiao/simple-javascript-indenter'
 " Plugin 'jeroenbourgois/vim-actionscript'
+" Plugin 'nathanaelkane/vim-indent-guides'
 Plugin 'tpope/vim-markdown'
 Plugin 'avakhov/vim-yaml'
 Plugin 'slim-template/vim-slim'
