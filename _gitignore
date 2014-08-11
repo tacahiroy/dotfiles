@@ -12,3 +12,5 @@
 .sw?
 tags
 .netrwhist
+.bundle/
+Gemfile.lock
