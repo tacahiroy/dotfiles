@@ -100,7 +100,7 @@ filetype off
 set runtimepath& runtimepath+=~/.vim/bundle/Vundle.vim
 call vundle#rc()
 
-Plugin 'gmarik/vundle'
+Plugin 'gmarik/Vundle.vim'
 Plugin 'kien/ctrlp.vim'
 Plugin 'tpope/vim-surround'
 Plugin 'godlygeek/tabular'
