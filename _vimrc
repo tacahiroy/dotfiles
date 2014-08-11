@@ -4,9 +4,6 @@
 scriptencoding utf-8
 
 let g:mapleader = ','
-if $PATH !~# '/.rbenv/shims'
-  let $PATH = $HOME . '/.rbenv/shims:' . $PATH
-endif
 
 " Clear all autocmds in the default group
 autocmd!
@@ -111,10 +108,10 @@ Plugin 'sjl/gundo.vim'
 Plugin 'glidenote/memolist.vim'
 Plugin 'tyru/open-browser.vim'
 Plugin 'thinca/vim-quickrun'
-Plugin 'msanders/snipmate.vim'
 Plugin 'scrooloose/syntastic'
 Plugin 'tpope/vim-commentary'
 Plugin 'tpope/vim-endwise'
+Plugin 'tpope/vim-bundler'
 Plugin 'scrooloose/nerdtree'
 Plugin 'chrisbra/csv.vim'
 Plugin 'mattn/emmet-vim'
@@ -130,6 +127,7 @@ Plugin 'vim-ruby/vim-ruby'
 Plugin 'tpope/vim-rails'
 Plugin 'derekwyatt/vim-scala'
 Plugin 'elixir-lang/vim-elixir'
+Plugin 'ekalinin/Dockerfile.vim'
 " colour schemes
 Plugin 'jpo/vim-railscasts-theme'
 " from vim-scripts repo
@@ -687,10 +685,6 @@ nnoremap <silent> <Leader>fn :let @" = @%<Cr>
 " insert current file name (absolute path)
 inoremap <silent> <Leader>fN <C-R>=fnamemodify(@%, ':p')<Cr>
 nnoremap <silent> <Leader>fN :let @" = fnamemodify(@%, ':p')<Cr>
-
-" surround.vim does like this?
-inoremap <silent> <C-y>( <C-g>u(<Esc>ea)
-inoremap <silent> <C-y><Space> <C-x><C-o>
 
 if s:is_mac && has('gui_running')
   inoremap <silent> <D-v> <Esc>:let &paste=1<Cr>a<C-R>=@*<Cr><Esc>:let &paste=0<Cr>a
