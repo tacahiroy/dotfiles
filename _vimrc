@@ -98,7 +98,7 @@ endif
 " * vundle plugin management "{{{
 filetype off
 set runtimepath& runtimepath+=~/.vim/bundle/Vundle.vim
-call vundle#rc()
+call vundle#begin()
 
 Plugin 'gmarik/Vundle.vim'
 Plugin 'ctrlpvim/ctrlp.vim', { 'name': 'ctrlp.vim' }
@@ -111,26 +111,20 @@ Plugin 'thinca/vim-quickrun'
 Plugin 'scrooloose/syntastic'
 Plugin 'tpope/vim-commentary'
 Plugin 'tpope/vim-endwise'
-Plugin 'tpope/vim-bundler'
 Plugin 'scrooloose/nerdtree'
 Plugin 'chrisbra/csv.vim'
-Plugin 'mattn/emmet-vim'
 Plugin 'othree/html5.vim'
 Plugin 'jelera/vim-javascript-syntax'
 Plugin 'jiangmiao/simple-javascript-indenter'
 " Plugin 'jeroenbourgois/vim-actionscript'
-" Plugin 'nathanaelkane/vim-indent-guides'
 Plugin 'tpope/vim-markdown'
 Plugin 'avakhov/vim-yaml'
 Plugin 'slim-template/vim-slim'
-Plugin 'sunaku/vim-ruby-minitest'
 Plugin 'vim-ruby/vim-ruby'
 Plugin 'tpope/vim-rails'
 Plugin 'derekwyatt/vim-scala'
 Plugin 'elixir-lang/vim-elixir'
 Plugin 'ekalinin/Dockerfile.vim'
-" colour schemes
-Plugin 'jpo/vim-railscasts-theme'
 " from vim-scripts repo
 Plugin 'camelcasemotion'
 Plugin 'matchit.zip'
@@ -149,11 +143,11 @@ if isdirectory($DOTVIM . '/sandbox')
   endfor
 endif
 
-
 " Disable GUI /Syntax/ menu
 let did_install_syntax_menu = 1
 let did_install_default_menus = 1
 
+call vundle#end()
 filetype plugin indent on
 syntax enable
 
