@@ -433,7 +433,7 @@ if has('persistent_undo')
   set undodir=~/.vimundo
   augroup UndoFile
     autocmd!
-    autocmd BufReadPre ~/* if empty(&key) | setlocal undofile | endif
+    autocmd BufReadPre ~/* setlocal undofile
   augroup END
 endif
 
@@ -823,7 +823,7 @@ augroup Tacahiroy
     autocmd!
     autocmd BufWritePre
           \ COMMIT_EDITMSG,*.bak,*.bac,knife-edit-*.js,?.* setlocal noundofile
-    autocmd BufWritePre * if !empty(&key) | setlocal noundofile | endif
+    autocmd BufWritePre * setlocal noundofile
   augroup END
 
   autocmd BufRead,BufNewFile *.ru,Gemfile,Guardfile setlocal filetype=ruby
