@@ -342,6 +342,10 @@ set backup
 set backupext=.bac
 set backupdir=$DOTVIM/backups
 set backupskip& backupskip+=/tmp/*,/private/tmp/*,*.bac,COMMIT_EDITMSG,hg-editor-*.txt,svn-commit.[0-9]*.tmp,knife-edit-*
+if exists('+breakindent')
+  set breakindent
+  set breakindentopt=sbr
+end
 set cedit=<C-x>
 set cmdheight=2
 set colorcolumn=80
