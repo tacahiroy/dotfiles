@@ -23,3 +23,30 @@ function tssh_tunnel() {
   fi
 }
 
+function peco-select-history() {
+  local tac
+  if which tac > /dev/null; then
+    tac="tac"
+  else
+    tac="tail -r"
+  fi
+  BUFFER=$(history -n 1 | \
+    eval $tac | \
+    peco --query "$LBUFFER")
+  CURSOR=$#BUFFER
+  zle clear-screen
+}
+zle -N peco-select-history
+bindkey '^r' peco-select-history
+
+function s() {
+  ssh $(awk '
+    tolower($1)=="host" {
+      for (i=2; i<=NF; i++) {
+        if ($i !~ "[*?]") {
+          print $i
+        }
+      }
+    }
+  ' ~/.ssh/config | sort | peco)
+}
