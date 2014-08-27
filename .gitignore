@@ -4,3 +4,4 @@ _vim/backups
 _vim/swaps
 _vim/sandbox
 _zsh/cache
+*.zwc
