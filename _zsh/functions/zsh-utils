@@ -1,12 +1,3 @@
-# weechat
-function tweechat {
-  if [ -x `which weechat` ]; then
-    if ! (ps aux | grep '[w]eechat' 2>&1 > /dev/null); then
-      tmux new-window -t ${WEECHAT_TMUX_WINNUM:-98} weechat
-    fi
-  fi
-}
-
 function tssh_tunnel() {
   srv=${1:-${SS_SRV}}
 
@@ -38,15 +29,3 @@ function peco-select-history() {
 }
 zle -N peco-select-history
 bindkey '^r' peco-select-history
-
-function s() {
-  ssh $(awk '
-    tolower($1)=="host" {
-      for (i=2; i<=NF; i++) {
-        if ($i !~ "[*?]") {
-          print $i
-        }
-      }
-    }
-  ' ~/.ssh/config | sort | peco)
-}

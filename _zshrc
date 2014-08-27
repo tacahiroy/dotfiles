@@ -386,7 +386,10 @@ if [ $UID != 0 ]; then
   fi
 fi
 
-source ~/.zsh/vendor/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+for z in ~/.zsh/vendor/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
+         ~/.zsh/functions/zsh-utils; do
+  source ${z}
+done
 
 # __END__
 # vim: et ts=2 sts=2 sw=2

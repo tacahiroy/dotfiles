@@ -2,15 +2,11 @@ export LANG=ja_JP.UTF-8
 
 HISTFILE=~/.zhistory
 
-fpath=(/usr/local/opt/zsh-completions/share/zsh-completions/(N-/) \
-       $HOME/.zsh/func \
-       $HOME/.zsh/vendor \
+fpath=(/usr/local/opt/zsh-completions/share/zsh-completions(N-/) \
+       $HOME/.zsh/func(N-/) \
+       $HOME/.zsh/vendor(N-/) \
        $fpath)
 typeset -U fpath
-
-if [ -f $HOME/.zsh/func/utils.zsh ]; then
-  source $HOME/.zsh/func/utils.zsh
-fi
 
 # tmux-powerline
 case "${OSTYPE}" in
