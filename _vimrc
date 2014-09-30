@@ -101,7 +101,7 @@ set runtimepath& runtimepath+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 
 Plugin 'gmarik/Vundle.vim'
-Plugin 'ctrlpvim/ctrlp.vim', { 'name': 'ctrlp.vim' }
+" Plugin 'ctrlpvim/ctrlp.vim', { 'name': 'ctrlp.vim' }
 Plugin 'tpope/vim-surround'
 Plugin 'godlygeek/tabular'
 Plugin 'sjl/gundo.vim'
@@ -129,8 +129,7 @@ Plugin 'ekalinin/Dockerfile.vim'
 Plugin 'camelcasemotion'
 Plugin 'matchit.zip'
 
-" Plugin 'Align'
-" Plugin 'SQLUtilities'
+
 
 " self pathogen: really simple-minded
 if isdirectory($DOTVIM . '/sandbox')
@@ -194,6 +193,8 @@ map <Space> [Space]
   let g:ctrlp_mruf_max = 1024
   let g:ctrlp_mruf_exclude = 'knife-edit-*.*'
 
+  let g:ctrlp_funky_matchtype = 'path'
+
   let g:ctrlp_user_command = {
     \ 'types': {
       \ 1: ['.git/', 'cd %s && git ls-files . -co --exclude-standard'],
@@ -223,11 +224,15 @@ map <Space> [Space]
     \ 'file': '\v(\.exe|\.so|\.dll|\.DS_Store|\.db|COMMIT_EDITMSG)$'
     \ }
 
+  let g:ctrlp_preview_enabled = 1
+
   let g:ctrlp_funky_ruby_chef_words = 1
   let g:ctrlp_funky_sort_by_mru = 0
   let g:ctrlp_funky_syntax_highlight = 1
   let g:ctrlp_funky_debug = 1
   let g:ctrlp_funky_use_cache = 1
+
+  let g:ctrlp_mruf_relative = 0
 
   let g:ctrlp_ssh_keep_ctrlp_window = 1
 
@@ -255,6 +260,16 @@ map <Space> [Space]
                              \| nnoremap <buffer> <Leader>qe :<C-u>call NERDTreeExecuteFile()<Cr>
     augroup END
   endif
+
+" plug: vim-quickrun
+  let g:quickrun_config = {
+        \    'perl': {
+              \ 'outputter': 'buffer',
+              \ 'runner': 'system',
+              \ 'cmdopt': '',
+              \ 'args': '-H 127.0.0.1 -P 8000'
+        \ }
+  \ }
 
 " plug: syntastic
   let g:syntastic_mode_map =
@@ -437,7 +452,7 @@ if has('persistent_undo')
   set undodir=~/.vimundo
   augroup UndoFile
     autocmd!
-    autocmd BufReadPre ~/* setlocal undofile
+    autocmd BufReadPre $HOME/* setlocal undofile
   augroup END
 endif
 
@@ -500,7 +515,6 @@ cnoremap <C-a> <Home>
 cnoremap <C-e> <End>
 cnoremap <C-f> <Right>
 cnoremap <C-b> <Left>
-cnoremap <C-d> <Del>
 cnoremap <C-o> <C-d>
 
 cnoremap W!! %!sudo tee > /dev/null %
@@ -827,7 +841,6 @@ augroup Tacahiroy
     autocmd!
     autocmd BufWritePre
           \ COMMIT_EDITMSG,*.bak,*.bac,knife-edit-*.js,?.* setlocal noundofile
-    autocmd BufWritePre * setlocal noundofile
   augroup END
 
   autocmd BufRead,BufNewFile *.ru,Gemfile,Guardfile setlocal filetype=ruby
