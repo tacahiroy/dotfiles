@@ -4,7 +4,7 @@
     "C-v": "peco.ScrollPageDown"
   },
   "Style": {
-    "Selected": ["on_green", "white"],
+    "Selected": ["on_white", "red"],
     "Query": ["black", "bold"]
   }
 }
