@@ -102,6 +102,7 @@ call vundle#begin()
 
 Plugin 'gmarik/Vundle.vim'
 " Plugin 'ctrlpvim/ctrlp.vim', { 'name': 'ctrlp.vim' }
+" Plugin 'tacahiroy/ctrlp-funky'
 Plugin 'tpope/vim-surround'
 Plugin 'godlygeek/tabular'
 Plugin 'sjl/gundo.vim'
@@ -157,7 +158,7 @@ nnoremap [Toggle] <Nop>
 nmap <Leader><Leader> [Toggle]
 " Space
 nnoremap [Space] <Nop>
-map <Space> [Space]
+nmap <Space> [Space]
 " }}}
 
 " * plugin configurations {{{
@@ -224,7 +225,7 @@ map <Space> [Space]
     \ 'file': '\v(\.exe|\.so|\.dll|\.DS_Store|\.db|COMMIT_EDITMSG)$'
     \ }
 
-  let g:ctrlp_preview_enabled = 1
+  let g:ctrlp_preview_enabled = 0
 
   let g:ctrlp_funky_ruby_chef_words = 1
   let g:ctrlp_funky_sort_by_mru = 0
@@ -239,7 +240,6 @@ map <Space> [Space]
   nnoremap [Space]fl :CtrlPBuffer<Cr>
   nnoremap [Space]fm :CtrlPMRU<Cr><F5>
   nnoremap [Space]li :CtrlPLine<Cr>
-  nnoremap [Space]fk :CtrlPBookmarkDir<Cr>
   nnoremap [Space]fc :execute 'CtrlP ' . $chef . '/cookbooks'<Cr>
   nnoremap [Space]fw :CtrlPCurFile<Cr>
   nnoremap [Space]f. :CtrlPCurWD<Cr>
@@ -309,22 +309,6 @@ map <Space> [Space]
 " plug: vim-quickrun
   nmap <Space>r <Plug>(quickrun)
   vmap <Space>r <Plug>(quickrun)
-
-" plug: loga.vim
-  let g:loga_executable = s:which('loga')
-  let g:loga_enable_auto_lookup = 0
-  let g:loga_delimiter = '=3'
-  map  [Space]a <Plug>(loga-lookup)
-  autocmd FileType logaling imap <buffer> <Leader>v <Plug>(loga-insert-delimiter)
-
-" plug: bestfriend.vim
-  let g:bestfriend_accept_path_pattern = '^~/\%(\..\+$\|.*Projects\)'
-  let g:bestfriend_ignore_path_pattern = '\(/a\+\.\w\+$\|/\.git/\|tags\|tags-.+\|NERD_tree_.\+$\)'
-  let g:bestfriend_is_sort_base_today = 0
-  let g:bestfriend_is_display_zero = 1
-  let g:bestfriend_is_debug = 0
-  let g:bestfriend_display_limit = 15
-  let g:bestfriend_observe_cursor_position = 1
 
 " plug: csv.vim
   let g:csv_nomap_space = 1
@@ -658,7 +642,7 @@ nnoremap [Space]Q :<C-u>quit!<Cr>
 
 nnoremap <C-h> :<C-u>h<Space>
 nnoremap s<Space> i<Space><Esc>
-
+ 
 " open .vimrc
 nnoremap [Space]_ :<C-u>execute (empty(expand('%')) && !&modified ? 'edit ' : 'tabedit ') . $MYVIMRC<Cr>
 nnoremap [Space]S :<C-u>source %<Cr>:nohlsearch<Cr>
@@ -817,7 +801,7 @@ augroup Tacahiroy
   endfunction
 
   function! s:auto_chdir(depth)
-    if ! get(g:, 'auto_chdir_enabled', 1)
+    if !get(g:, 'auto_chdir_enabled', 1)
       return
     endif
 
@@ -832,7 +816,7 @@ augroup Tacahiroy
   endfunction
 
   function! s:toggle_auto_chdir_mode()
-    let g:auto_chdir_enabled = ! get(g:, 'auto_chdir_enabled', 1)
+    let g:auto_chdir_enabled = !get(g:, 'auto_chdir_enabled', 1)
     call Echohl('Constant', 'AutoChdir: ' . (g:auto_chdir_enabled ? 'enabled' : 'disabled'))
   endfunction
   command! -nargs=0 -bang AutoChdirToggle call s:toggle_auto_chdir_mode()
@@ -858,7 +842,7 @@ augroup Tacahiroy
   autocmd FileType markdown setlocal tabstop=4 shiftwidth=4
 
   autocmd FileType gitcommit setlocal spell
-  autocmd FileType mail set spell
+  autocmd FileType mail setlocal spell
   autocmd FileType slim setlocal makeprg=slimrb\ -c\ %
 
   autocmd BufRead,BufNewFile *.applescript,*.scpt setfiletype applescript
@@ -874,7 +858,6 @@ augroup Tacahiroy
   autocmd FileType vim if &iskeyword !~# '&' | setlocal iskeyword+=& | endif
   autocmd FileType css,sass,scss,less setlocal omnifunc=csscomplete#CompleteCSS
 
-  let g:loaded_sql_completion = 1
   autocmd FileType sql*,plsql setlocal tabstop=4 shiftwidth=4 softtabstop=4
 
   if executable('jsl')
@@ -1059,7 +1042,7 @@ inoremap <silent> <C-y>X <C-g>u<Esc>:ChefConvertAttrNotation 0<Cr>
 
 " Get cmd-line for notification
 function! s:notify(title, app, ...)
-  if ! s:is_mac | return '' | endif
+  if !s:is_mac | return '' | endif
 
   if executable('terminal-notifier')
     return s:notification_center(a:title, a:app)
@@ -1163,6 +1146,5 @@ endif
 if filereadable(expand('~/.vimrc.local'))
   source ~/.vimrc.local
 endif
-
 " __END__ {{{
 " vim: fen fdm=marker ts=2 sts=2 sw=2
