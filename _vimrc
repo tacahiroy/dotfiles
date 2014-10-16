@@ -101,36 +101,34 @@ set runtimepath& runtimepath+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 
 Plugin 'gmarik/Vundle.vim'
-" Plugin 'ctrlpvim/ctrlp.vim', { 'name': 'ctrlp.vim' }
-" Plugin 'tacahiroy/ctrlp-funky'
-Plugin 'tpope/vim-surround'
-Plugin 'godlygeek/tabular'
-Plugin 'sjl/gundo.vim'
+Plugin 'avakhov/vim-yaml'
+Plugin 'chrisbra/csv.vim'
+Plugin 'derekwyatt/vim-scala'
+Plugin 'ekalinin/Dockerfile.vim'
+Plugin 'elixir-lang/vim-elixir'
 Plugin 'glidenote/memolist.vim'
-Plugin 'tyru/open-browser.vim'
-Plugin 'thinca/vim-quickrun'
+Plugin 'godlygeek/tabular'
+Plugin 'jelera/vim-javascript-syntax'
+Plugin 'jeroenbourgois/vim-actionscript'
+Plugin 'jiangmiao/simple-javascript-indenter'
+Plugin 'othree/html5.vim'
+Plugin 'scrooloose/nerdtree'
 Plugin 'scrooloose/syntastic'
+Plugin 'sjl/gundo.vim'
+Plugin 'slim-template/vim-slim'
+Plugin 'thinca/vim-quickrun'
 Plugin 'tpope/vim-commentary'
 Plugin 'tpope/vim-endwise'
-Plugin 'scrooloose/nerdtree'
-Plugin 'chrisbra/csv.vim'
-Plugin 'othree/html5.vim'
-Plugin 'jelera/vim-javascript-syntax'
-Plugin 'jiangmiao/simple-javascript-indenter'
-" Plugin 'jeroenbourgois/vim-actionscript'
 Plugin 'tpope/vim-markdown'
-Plugin 'avakhov/vim-yaml'
-Plugin 'slim-template/vim-slim'
-Plugin 'vim-ruby/vim-ruby'
 Plugin 'tpope/vim-rails'
-Plugin 'derekwyatt/vim-scala'
-Plugin 'elixir-lang/vim-elixir'
-Plugin 'ekalinin/Dockerfile.vim'
-" from vim-scripts repo
-Plugin 'camelcasemotion'
+Plugin 'tpope/vim-surround'
+Plugin 'tyru/open-browser.vim'
+Plugin 'vim-ruby/vim-ruby'
 Plugin 'matchit.zip'
-
-
+Plugin 'camelcasemotion'
+" ctrlp.vim
+Plugin 'ctrlpvim/ctrlp.vim', { 'name': 'ctrlp.vim' }
+Plugin 'tacahiroy/ctrlp-funky'
 
 " self pathogen: really simple-minded
 if isdirectory($DOTVIM . '/sandbox')
@@ -145,7 +143,7 @@ endif
 
 " Disable GUI /Syntax/ menu
 let did_install_syntax_menu = 1
-let did_install_default_menus = 1
+" let did_install_default_menus = 1
 
 call vundle#end()
 filetype plugin indent on
@@ -158,7 +156,7 @@ nnoremap [Toggle] <Nop>
 nmap <Leader><Leader> [Toggle]
 " Space
 nnoremap [Space] <Nop>
-nmap <Space> [Space]
+map <Space> [Space]
 " }}}
 
 " * plugin configurations {{{
@@ -261,16 +259,6 @@ nmap <Space> [Space]
     augroup END
   endif
 
-" plug: vim-quickrun
-  let g:quickrun_config = {
-        \    'perl': {
-              \ 'outputter': 'buffer',
-              \ 'runner': 'system',
-              \ 'cmdopt': '',
-              \ 'args': '-H 127.0.0.1 -P 8000'
-        \ }
-  \ }
-
 " plug: syntastic
   let g:syntastic_mode_map =
         \ { 'mode': 'active',
@@ -310,16 +298,18 @@ nmap <Space> [Space]
   nmap <Space>r <Plug>(quickrun)
   vmap <Space>r <Plug>(quickrun)
 
+  let g:quickrun_config = {
+        \    'perl': {
+              \ 'outputter': 'buffer',
+              \ 'runner': 'system',
+              \ 'cmdopt': '',
+              \ 'args': '-H 127.0.0.1 -P 8000'
+        \ }
+  \ }
+
 " plug: csv.vim
   let g:csv_nomap_space = 1
 
-" plug: sqlutilities.vim
-  let g:sqlutil_load_default_maps = 0
-  let g:sqlutil_align_comma = 1
-  let g:sqlutil_align_where = 1
-  let g:sqlutil_keyword_case = '\U'
-  " don't use menu
-  let g:sqlutil_default_menu_mode = 0
 " }}}
 " }}}
 
@@ -346,8 +336,10 @@ if exists('+breakindent')
   set breakindentopt=sbr
 end
 set cedit=<C-x>
+set clipboard=
 set cmdheight=2
-set colorcolumn=80
+" this makes scroll slower
+set colorcolumn=
 set cpoptions+=n
 set noequalalways
 set expandtab smarttab
@@ -481,9 +473,10 @@ let &statusline .= '%{(&l:fileencoding != "" ? &l:fileencoding : &encoding) . ":
 let &statusline .= '(%{&expandtab ? "" : ">"}%{&l:tabstop}'
 let &statusline .= '%{search("\\t", "cnw") ? "!" : ""})'
 let &statusline .= '%{(empty(&mouse) ? "" : "m")}'
-let &statusline .= '%{(&list ? "l" : "")}'
+let &statusline .= '%{(&list ? "L" : "")}'
 let &statusline .= '%{(empty(&clipboard) ? "" : "c")}'
 let &statusline .= '%{(&paste ? "p" : "")}'
+let &statusline .= '|%{&textwidth}'
 let &statusline .= ' %=%#Special#'
 let &statusline .= '%{Gps()}'
 let &statusline .= '%{(g:auto_chdir_enabled ? "e" : "d")}'
@@ -622,7 +615,7 @@ function! s:convert_path(path)
 endfunction
 
 " open the current file's location using file manager
-function! s:open_with_filer(...)
+function! s:open_with_file_manager(...)
   let cmd = s:get_filer_command()
   let path = get(a:, 1, s:convert_path(expand('%:p:h')))
 
@@ -633,7 +626,7 @@ function! s:open_with_filer(...)
 
   execute printf('!%s %s', cmd, path)
 endfunction
-command! -nargs=? Filer call s:open_with_filer(<f-args>)
+command! -nargs=? FileManager call s:open_with_file_manager(<f-args>)
 
 nnoremap [Space]w :<C-u>update<Cr>
 nnoremap [Space]q :<C-u>quit<Cr>
@@ -642,7 +635,7 @@ nnoremap [Space]Q :<C-u>quit!<Cr>
 
 nnoremap <C-h> :<C-u>h<Space>
 nnoremap s<Space> i<Space><Esc>
- 
+
 " open .vimrc
 nnoremap [Space]_ :<C-u>execute (empty(expand('%')) && !&modified ? 'edit ' : 'tabedit ') . $MYVIMRC<Cr>
 nnoremap [Space]S :<C-u>source %<Cr>:nohlsearch<Cr>
@@ -1146,5 +1139,6 @@ endif
 if filereadable(expand('~/.vimrc.local'))
   source ~/.vimrc.local
 endif
+
 " __END__ {{{
 " vim: fen fdm=marker ts=2 sts=2 sw=2
