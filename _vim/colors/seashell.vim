@@ -68,6 +68,6 @@ else
   hi   Folded         guibg=Pink guifg=DarkBlue ctermbg=LightRed ctermfg=DarkRed
 
   hi   FileName       gui=NONE guifg=DarkRed guibg=White
-  hi   ColorColumn    guibg=Grey90
+  hi   ColorColumn    guibg=#fde5fd cterm=NONE ctermbg=222 ctermfg=016
 endif
 
