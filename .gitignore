@@ -3,5 +3,6 @@ _vim/colors
 _vim/backups
 _vim/swaps
 _vim/sandbox
+_vim/spell
 _zsh/cache
 *.zwc
