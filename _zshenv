@@ -93,6 +93,7 @@ typeset -U perl5_lib
 perl5_lib=(
   $HOME/perl5/lib/perl5(N-/)
 )
+export PERL_MM_OPT=~/perl5/lib/perl5/local/lib.pm
 
 export DOCKER_HOST=tcp://127.0.0.1:2375
 
