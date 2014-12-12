@@ -1,6 +1,12 @@
 " $HOME/.vimrc
 " Author: tacahiroy <tacahiroy\AT/gmail.com>
 
+set cpo&vim
+set encoding=utf-8
+set termencoding=utf-8
+
+set verbose=0
+
 scriptencoding utf-8
 
 let g:mapleader = ','
@@ -102,20 +108,23 @@ call vundle#begin()
 
 Plugin 'gmarik/Vundle.vim'
 Plugin 'avakhov/vim-yaml'
+Plugin 'camelcasemotion'
 Plugin 'chrisbra/csv.vim'
 Plugin 'derekwyatt/vim-scala'
-Plugin 'ekalinin/Dockerfile.vim'
-Plugin 'elixir-lang/vim-elixir'
+" Plugin 'ekalinin/Dockerfile.vim'
+" Plugin 'elixir-lang/vim-elixir'
 Plugin 'glidenote/memolist.vim'
 Plugin 'godlygeek/tabular'
 Plugin 'jelera/vim-javascript-syntax'
-Plugin 'jeroenbourgois/vim-actionscript'
+" Plugin 'jeroenbourgois/vim-actionscript'
 Plugin 'jiangmiao/simple-javascript-indenter'
-Plugin 'othree/html5.vim'
+Plugin 'matchit.zip'
+" Plugin 'othree/html5.vim'
+Plugin 'rking/ag.vim'
 Plugin 'scrooloose/nerdtree'
 Plugin 'scrooloose/syntastic'
 Plugin 'sjl/gundo.vim'
-Plugin 'slim-template/vim-slim'
+" Plugin 'slim-template/vim-slim'
 Plugin 'thinca/vim-quickrun'
 Plugin 'tpope/vim-commentary'
 Plugin 'tpope/vim-endwise'
@@ -124,21 +133,23 @@ Plugin 'tpope/vim-rails'
 Plugin 'tpope/vim-surround'
 Plugin 'tyru/open-browser.vim'
 Plugin 'vim-ruby/vim-ruby'
-Plugin 'matchit.zip'
-Plugin 'camelcasemotion'
 " ctrlp.vim
-Plugin 'ctrlpvim/ctrlp.vim', { 'name': 'ctrlp.vim' }
-Plugin 'tacahiroy/ctrlp-funky'
+" Plugin 'ctrlpvim/ctrlp.vim', { 'name': 'ctrlp.vim' }
+" Plugin 'tacahiroy/ctrlp-funky'
 
-" self pathogen: really simple-minded
-if isdirectory($DOTVIM . '/sandbox')
-  let dirs = filter(split(glob($DOTVIM . '/sandbox/**/*')), 'isdirectory(v:val)')
-  for d in dirs
-    execute 'set runtimepath+=' . d
-    if d =~# '/doc$'
-      execute 'helptags ' . d
-    endif
-  endfor
+let s:self_pathogen = 1
+
+if s:self_pathogen
+  " self pathogen: really simple-minded
+  if isdirectory($DOTVIM . '/sandbox')
+    let dirs = filter(split(glob($DOTVIM . '/sandbox/**/*')), 'isdirectory(v:val)')
+    for d in dirs
+      execute 'set runtimepath+=' . d
+      if d =~# '/doc$'
+        execute 'helptags ' . d
+      endif
+    endfor
+  endif
 endif
 
 " Disable GUI /Syntax/ menu
@@ -228,7 +239,7 @@ map <Space> [Space]
   let g:ctrlp_funky_ruby_chef_words = 1
   let g:ctrlp_funky_sort_by_mru = 0
   let g:ctrlp_funky_syntax_highlight = 1
-  let g:ctrlp_funky_debug = 1
+  let g:ctrlp_funky_debug = 0
   let g:ctrlp_funky_use_cache = 1
 
   let g:ctrlp_mruf_relative = 0
@@ -245,6 +256,8 @@ map <Space> [Space]
 
   nnoremap [Space]fu :CtrlPFunky<Cr>
   nnoremap [Space]fs :CtrlPSSH<Cr>
+
+  nnoremap [Space]t :CtrlPBufTag<Cr>
 
 " plug: nerdtree
   let NERDTreeShowBookmarks = 1
@@ -312,13 +325,6 @@ map <Space> [Space]
 
 " }}}
 " }}}
-
-set cpo&vim
-
-set verbose=0
-
-set encoding=utf-8
-set termencoding=utf-8
 
 " * options {{{
 set ambiwidth=double
