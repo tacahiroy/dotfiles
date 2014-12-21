@@ -405,7 +405,7 @@ fi
 
 [[ -s `brew --prefix`/etc/autojump.sh ]] && . `brew --prefix`/etc/autojump.sh
 
-for z in ~/.zsh/vendor/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
+for z in /usr/local/opt/zsh-syntax-highlighting/share/zsh-syntax-highlighting \
          ~/.zsh/functions/zsh-utils; do
   . ${z}
 done
