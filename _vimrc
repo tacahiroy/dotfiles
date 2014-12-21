@@ -133,12 +133,12 @@ Plugin 'tpope/vim-rails'
 Plugin 'tpope/vim-surround'
 Plugin 'tyru/open-browser.vim'
 Plugin 'vim-ruby/vim-ruby'
-" ctrlp.vim
-" Plugin 'ctrlpvim/ctrlp.vim', { 'name': 'ctrlp.vim' }
-" Plugin 'tacahiroy/ctrlp-funky'
+
+if filereadable(expand('~/.vimrc.plugins'))
+  source ~/.vimrc.plugins
+endif
 
 let s:self_pathogen = 1
-
 if s:self_pathogen
   " self pathogen: really simple-minded
   if isdirectory($DOTVIM . '/sandbox')
