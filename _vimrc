@@ -469,7 +469,7 @@ endif
 
 set t_Co=256
 set background=light
-colorscheme seashell
+colorscheme sandbox
 
 set formatoptions& formatoptions+=mM formatoptions-=r
 
