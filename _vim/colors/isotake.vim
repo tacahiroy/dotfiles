@@ -1,6 +1,7 @@
 " Vim color file
-" Author:       Gerald S. Williams
-" Maintainer:   Tacahiroy <tacahiroy\AT/gmail.com>
+" Author:   Tacahiroy <tacahiroy\AT/gmail.com>
+" This is based on seashell.vim by Gerald S. Williams
+" http://www.vim.org/scripts/script.php?script_id=589
 
 " This is very reminiscent of a seashell. Good contrast, yet not too hard on
 " the eyes. BlackSea, it's opposite, has now been folded into this scheme.
@@ -11,7 +12,7 @@ if exists("syntax_on")
   syntax reset
 endif
 
-let g:colors_name = "seashell"
+let g:colors_name = "isotake"
 
 hi Cursor   gui=NONE guibg=Orange
 hi CursorIM gui=NONE guibg=#67db57
@@ -48,7 +49,7 @@ else
   hi    Comment       guifg=#339933        gui=Bold
   hi    Constant      guifg=DeepPink
   hi    PreProc       guifg=DarkMagenta
-  hi    StatusLine    gui=NONE             guibg=Orange       guifg=Black       cterm=NONE      ctermfg=White  ctermbg=DarkGreen
+  hi    StatusLine    gui=NONE             guibg=Orange       guifg=Black       cterm=NONE      ctermfg=16  ctermbg=253
   hi    StatusLineNC  gui=NONE             guibg=Gray
   hi    VertSplit     gui=NONE             guibg=Gray
   hi    Identifier    guifg=#006f6f
@@ -62,6 +63,8 @@ else
   hi    Pmenuthumb    guifg=#bed4f7
   hi    SignColor     guibg=Grey60
   hi    SignColumn    guibg=LightGrey      guifg=LightGrey
+
+  hi    TabLineSel    ctermbg=214 ctermfg=232
 
   hi   Visual         guibg=#ffd32e gui=NONE
 
