@@ -469,11 +469,11 @@ endif
 
 set t_Co=256
 set background=light
-colorscheme sandbox
+colorscheme isotake
 
 set formatoptions& formatoptions+=mM formatoptions-=r
 
-let &statusline = '[#%n]%<%#Tag#%f%* %m%r%h%w'
+let &statusline = '[#%n]%<%#Type#%f%* %m%r%h%w'
 let &statusline .= '%{&filetype}:'
 let &statusline .= '%{(&l:fileencoding != "" ? &l:fileencoding : &encoding) . ":" . &fileformat}'
 let &statusline .= '(%{&expandtab ? "" : ">"}%{&l:tabstop}'
@@ -483,7 +483,7 @@ let &statusline .= '%{(&list ? "L" : "")}'
 let &statusline .= '%{(empty(&clipboard) ? "" : "c")}'
 let &statusline .= '%{(&paste ? "p" : "")}'
 let &statusline .= '|%{&textwidth}'
-let &statusline .= ' %=%#Special#'
+let &statusline .= ' %=%#Comment#'
 let &statusline .= '%{Gps()}'
 let &statusline .= '%{(g:auto_chdir_enabled ? "e" : "d")}'
 let &statusline .= '%-12( %l/%LL,%c %)%P%*'
