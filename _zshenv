@@ -52,6 +52,7 @@ fi
 ## path
 typeset -U path
 path=(
+  ./bin
   $HOME/.rbenv/shims(N-/)
   $HOME/.pyenv/shims(N-/)
   $HOME/bin(N-/)
