@@ -1,10 +1,7 @@
-" Vim color file
+" Vim color file: isotake
 " Author:   Tacahiroy <tacahiroy\AT/gmail.com>
 " This is based on seashell.vim by Gerald S. Williams
 " http://www.vim.org/scripts/script.php?script_id=589
-
-" This is very reminiscent of a seashell. Good contrast, yet not too hard on
-" the eyes. BlackSea, it's opposite, has now been folded into this scheme.
 
 let s:seashell_style = &background
 hi clear
@@ -70,7 +67,8 @@ else
 
   hi   Folded         guibg=Pink guifg=DarkBlue ctermbg=LightRed ctermfg=DarkRed
 
-  hi   FileName       gui=NONE guifg=DarkRed guibg=White
+  hi   FileName       gui=NONE guifg=DarkRed guibg=White cterm=NONE ctermfg=199
+  " hi   StatusLineR    gui=NONE guifg=DarkBlue guibg=White cterm=NONE ctermfg=4
   hi   ColorColumn    guibg=#fde5fd cterm=NONE ctermbg=222 ctermfg=016
 endif
 

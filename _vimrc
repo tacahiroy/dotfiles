@@ -455,6 +455,11 @@ if has('gui_running')
     set guifont=Migu\ 1M\ Regular:h13
     set antialias
     set fuoptions& fuoptions+=maxhorz
+
+    inoremap <silent> <D-v> <Esc>:let &paste=1<Cr>a<C-R>=@*<Cr><Esc>:let &paste=0<Cr>a
+    cnoremap <D-v> <C-R>*
+    vnoremap <D-c> "+y
+    nnoremap <D-a> ggVG
   elseif s:is_linux
     set guifont=Migu\ 1M\ Regular\ 13
   else
@@ -473,7 +478,8 @@ colorscheme isotake
 
 set formatoptions& formatoptions+=mM formatoptions-=r
 
-let &statusline = '[#%n]%<%#Type#%f%* %m%r%h%w'
+" statusline config
+let &statusline = '[#%n]%<%#FileName#%f%* %m%r%h%w'
 let &statusline .= '%{&filetype}:'
 let &statusline .= '%{(&l:fileencoding != "" ? &l:fileencoding : &encoding) . ":" . &fileformat}'
 let &statusline .= '(%{&expandtab ? "" : ">"}%{&l:tabstop}'
@@ -489,9 +495,8 @@ let &statusline .= '%{(g:auto_chdir_enabled ? "e" : "d")}'
 let &statusline .= '%-12( %l/%LL,%c %)%P%*'
 " }}}
 
-
 " * mappings "{{{
-" Emacs rules!
+" Emacs rules!??
 cnoremap <C-p> <Up>
 cnoremap <C-n> <Down>
 cnoremap <C-a> <Home>
@@ -512,12 +517,14 @@ nnoremap Q q
 " behave like C or D
 nnoremap Y y$
 
-" visual block
+" * visual stuffs
 nnoremap vv <C-v>
 " do visual current column to end-of-line without <NL>
 nnoremap vo vg_o
 " like V, but without <NL>
 nnoremap vO ^vg_o
+" visual last put lines by p or gp
+nnoremap sv `[v`]
 
 nnoremap <C-]> <C-]>zz
 nnoremap <C-t> <C-t>zz
@@ -565,11 +572,13 @@ nnoremap <silent> qj :cnext<Cr>zz
 nnoremap <silent> qk :cprevious<Cr>zz
 nnoremap <silent> qc :cc<Cr>zz
 
+" buffer navigation
 nnoremap <silent> qn :bnext<Cr>
 nnoremap <silent> qp :bprevious<Cr>
 
 " show/hide line number wisely: this needs Vim 7.3 or above
 function! s:toggle_line_number()
+  if v:version <= 703 | return | endif
   let NU = 'nu'
   let RNU = 'rnu'
 
@@ -585,6 +594,7 @@ function! s:toggle_line_number()
   endif
 endfunction
 
+" toggle something
 nnoremap <silent> [Toggle]m :let &mouse = empty(&mouse) ? 'a' : ''<Cr>
 nnoremap <silent> [Toggle]p :set paste!<Cr>
 nnoremap <silent> [Toggle]l :set list!<Cr>
@@ -598,7 +608,7 @@ nnoremap gff :e <cfile><Cr>
 " like gff, but open <cfile> in a tab
 nnoremap gft :tabe <cfile><Cr>
 
-" returns system specific filer command
+" returns the command for system specific file manager
 function! s:get_filer_command()
   if s:is_mac
     return 'open -a Finder'
@@ -620,7 +630,7 @@ function! s:convert_path(path)
   endif
 endfunction
 
-" open the current file's location using file manager
+" open the current file's location using a file manager
 function! s:open_with_file_manager(...)
   let cmd = s:get_filer_command()
   let path = get(a:, 1, s:convert_path(expand('%:p:h')))
@@ -668,9 +678,6 @@ nnoremap <silent> sj <C-w>j
 nnoremap <silent> sn :tabnext<Cr>
 nnoremap <silent> sp :tabprevious<Cr>
 
-" visual last put lines: p or gp
-nnoremap sv `[v`]
-
 nnoremap <MiddleMouse> <Nop>
 nnoremap <2-MiddleMouse> <Nop>
 
@@ -681,13 +688,6 @@ nnoremap <silent> <Leader>fn :let @" = @%<Cr>
 " insert current file name (absolute path)
 inoremap <silent> <Leader>fN <C-R>=fnamemodify(@%, ':p')<Cr>
 nnoremap <silent> <Leader>fN :let @" = fnamemodify(@%, ':p')<Cr>
-
-if s:is_mac && has('gui_running')
-  inoremap <silent> <D-v> <Esc>:let &paste=1<Cr>a<C-R>=@*<Cr><Esc>:let &paste=0<Cr>a
-  cnoremap <D-v> <C-R>*
-  vnoremap <D-c> "+y
-  nnoremap <D-a> ggVG
-endif
 
 " search visual-ed text
 vnoremap * y/<C-R>"<Cr>
