@@ -897,16 +897,14 @@ augroup Tacahiroy
   autocmd BufRead,BufEnter *.xml set updatetime=1000
   autocmd BufLeave,BufWinLeave *.xml set updatetime&
 
-  autocmd BufRead,BufNewFile * syn match ExtraSpaces '[\t ]\+$'
-        \| hi def link ExtraSpaces MatchParen
-
-  " wonderful typo correction system
+  " amazing typo correction system yea?
   inoreabbr funciton function
+  inoreabbr passowrd password
   inoreabbr requrie require
   inoreabbr reuqire require
-  inoreabbr passowrd password
-  inoreabbr ture true
+  inoreabbr slect select
   inoreabbr stating staging
+  inoreabbr ture true
 augroup END
 "}}}
 
