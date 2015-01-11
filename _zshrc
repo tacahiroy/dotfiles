@@ -317,7 +317,6 @@ alias lv='lv -c'
 
 alias v='vim'
 alias vi='vim'
-alias vv='gvim'
 
 alias gi='git'
 alias g='git'
@@ -327,6 +326,7 @@ alias buo='brew update && brew outdated'
 # Ruby
 alias re='rbenv'
 alias rg='rbenv-gemset'
+alias knife='bundle exec knife'
 
 alias phttpd='python -m SimpleHTTPServer'
 
