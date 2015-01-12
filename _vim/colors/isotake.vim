@@ -65,7 +65,7 @@ else
 
   hi   Visual         guibg=#ffd32e gui=NONE
 
-  hi   Folded         guibg=Pink guifg=DarkBlue ctermbg=LightRed ctermfg=DarkRed
+  hi   Folded         guibg=Pink guifg=DarkBlue ctermbg=236 ctermfg=226
 
   hi   FileName       gui=NONE guifg=DarkRed guibg=White cterm=NONE ctermfg=199
   " hi   StatusLineR    gui=NONE guifg=DarkBlue guibg=White cterm=NONE ctermfg=4
