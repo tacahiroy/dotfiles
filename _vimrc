@@ -505,8 +505,10 @@ cnoremap <C-f> <Right>
 cnoremap <C-b> <Left>
 cnoremap <C-o> <C-d>
 
+" in case forgot to run vim w/o sudo
 cnoremap W!! %!sudo tee > /dev/null %
 
+" disable default mappings
 nnoremap ZZ <Nop>
 nnoremap s <Nop>
 nnoremap Q <Nop>
@@ -514,12 +516,12 @@ nnoremap q <Nop>
 
 " Q for macro
 nnoremap Q q
-" behave like C or D
+" behaves like C / D
 nnoremap Y y$
 
 " * visual stuffs
 nnoremap vv <C-v>
-" do visual current column to end-of-line without <NL>
+" do visual the current column to end-of-line without <NL>
 nnoremap vo vg_o
 " like V, but without <NL>
 nnoremap vO ^vg_o
@@ -572,16 +574,22 @@ nnoremap <silent> qj :cnext<Cr>zz
 nnoremap <silent> qk :cprevious<Cr>zz
 nnoremap <silent> qc :cc<Cr>zz
 
-" buffer navigation
+" buffer navigations
 nnoremap <silent> qn :bnext<Cr>
 nnoremap <silent> qp :bprevious<Cr>
+" tab navigations
+nnoremap <silent> sn :tabnext<Cr>
+nnoremap <silent> sp :tabprevious<Cr>
+
+" window navigations
+nnoremap <silent> sh <C-w>h
+nnoremap <silent> sk <C-w>k
+nnoremap <silent> sl <C-w>l
+nnoremap <silent> sj <C-w>j
 
 " show/hide line number wisely: this needs Vim 7.3 or above
 function! s:toggle_line_number()
   if v:version <= 703 | return | endif
-  let NU = 'nu'
-  let RNU = 'rnu'
-
   if &nu || &rnu
     " to be off
     let b:prev = { 'nu': &nu, 'rnu': &rnu }
@@ -594,7 +602,7 @@ function! s:toggle_line_number()
   endif
 endfunction
 
-" toggle something
+" mappings for toggle something
 nnoremap <silent> [Toggle]m :let &mouse = empty(&mouse) ? 'a' : ''<Cr>
 nnoremap <silent> [Toggle]p :set paste!<Cr>
 nnoremap <silent> [Toggle]l :set list!<Cr>
@@ -602,6 +610,7 @@ nnoremap <silent> [Toggle]c :let &clipboard =
       \ empty(&clipboard) ? 'unnamed,unnamedplus' : ''<Cr>
 nnoremap <silent> [Toggle]n :<C-u>silent call <SID>toggle_line_number()<Cr>
 
+" * makes gf better
 nnoremap gf <Nop>
 " if <cfile> doesn't exist it'll be created
 nnoremap gff :e <cfile><Cr>
@@ -644,40 +653,35 @@ function! s:open_with_file_manager(...)
 endfunction
 command! -nargs=? FileManager call s:open_with_file_manager(<f-args>)
 
+" save / quit
 nnoremap [Space]w :<C-u>update<Cr>
 nnoremap [Space]q :<C-u>quit<Cr>
 nnoremap [Space]W :<C-u>update!<Cr>
 nnoremap [Space]Q :<C-u>quit!<Cr>
 
+" help
 nnoremap <C-h> :<C-u>h<Space>
+" put a whitespace into under the cursor
 nnoremap s<Space> i<Space><Esc>
 
-" open .vimrc
+" opens .vimrc
 nnoremap [Space]_ :<C-u>execute (empty(expand('%')) && !&modified ? 'edit ' : 'tabedit ') . $MYVIMRC<Cr>
 nnoremap [Space]S :<C-u>source %<Cr>:nohlsearch<Cr>
 
+" global and substitutes
 nnoremap <Leader>g :<C-u>g/
 nnoremap <Leader>s :<C-u>s/
 nnoremap <Leader>S :<C-u>%s/
-" enter substitute mode in visual mode
 xnoremap <Leader>s :s/
 
 nnoremap <Leader>ta :Tabularize<Space>/
 xnoremap <Leader>ta :Tabularize<Space>/
 
 nnoremap <Leader>te :<C-u>tabe<Space>
-" Clear search highlight
+" clears search highlight
 nnoremap <silent> <C-l> <Esc>:<C-u>nohlsearch<Cr><C-l>
 
-" move around windows
-nnoremap <silent> sh <C-w>h
-nnoremap <silent> sk <C-w>k
-nnoremap <silent> sl <C-w>l
-nnoremap <silent> sj <C-w>j
-
-nnoremap <silent> sn :tabnext<Cr>
-nnoremap <silent> sp :tabprevious<Cr>
-
+" no mouse basically
 nnoremap <MiddleMouse> <Nop>
 nnoremap <2-MiddleMouse> <Nop>
 
@@ -691,6 +695,7 @@ nnoremap <silent> <Leader>fN :let @" = fnamemodify(@%, ':p')<Cr>
 
 " search visual-ed text
 vnoremap * y/<C-R>"<Cr>
+" prefer to dot
 vnoremap < <gv
 vnoremap > >gv
 
@@ -711,6 +716,15 @@ endfunction
 
 vnoremap <Down> :call <SID>move_block('d')<Cr>==gv
 vnoremap <Up> :call <SID>move_block('u')<Cr>==gv
+
+" amazing typo correction system yea?
+inoreabbr funciton function
+inoreabbr passowrd password
+inoreabbr requrie require
+inoreabbr reuqire require
+inoreabbr slect select
+inoreabbr stating staging
+inoreabbr ture true
 
 
 " format HTML/XML
@@ -750,7 +764,7 @@ augroup Tacahiroy
         \|    nnoremap <buffer> <Return> :<C-u>call append(line('.'), '')<Cr>
         \| endif
 
-  autocmd BufRead,BufNewFile *.frm,*.bas,*.cls,*.dsr setlocal filetype=vb
+  autocmd BufRead,BufNewFile *.frm,*.bas,*.cls,*.dsr set filetype=vb
   autocmd FileType vb setlocal fileformat=dos
 
   " Chef
@@ -826,27 +840,27 @@ augroup Tacahiroy
           \ COMMIT_EDITMSG,*.bak,*.bac,knife-edit-*.js,?.* setlocal noundofile
   augroup END
 
-  autocmd BufRead,BufNewFile *.ru,Gemfile,Guardfile setlocal filetype=ruby
-  autocmd BufRead,BufNewFile ?zshrc,?zshenv setlocal filetype=zsh
+  autocmd BufRead,BufNewFile *.ru,Gemfile,Guardfile set filetype=ruby
+  autocmd BufRead,BufNewFile ?zshrc,?zshenv set filetype=zsh
 
   function! s:insert_today_for_md_changelog()
     call append(line('.') - 1, strftime('%Y-%m-%d'))
     call append(line('.') - 1, '----------')
   endfunction
-  autocmd BufRead,BufNewFile *.md,*.mkd,*.markdown setlocal filetype=markdown
+  autocmd BufRead,BufNewFile *.md,*.mkd,*.markdown set filetype=markdown
 
   autocmd FileType markdown
-        \  inoremap <buffer> <Leader>it <Esc>:<C-u>call <SID>insert_today_for_md_changelog()<Cr>:startinsert<Cr>
-        \| inoremap <buffer> <Leader>ix [x]<Space>
+        \  inoremap <buffer> <Leader>tt <Esc>:<C-u>call <SID>insert_today_for_md_changelog()<Cr>:startinsert<Cr>
   autocmd FileType markdown setlocal tabstop=4 shiftwidth=4
 
   autocmd FileType gitcommit setlocal spell
   autocmd FileType mail setlocal spell
   autocmd FileType slim setlocal makeprg=slimrb\ -c\ %
 
-  autocmd BufRead,BufNewFile *.applescript,*.scpt setfiletype applescript
+  autocmd BufRead,BufNewFile *.applescript,*.scpt set filetype=applescript
   autocmd FileType applescript set commentstring=#\ %s
 
+  " map qq to close the window
   autocmd FileType help,qf,logaling,bestfriend,ref-* nnoremap <buffer> <silent> qq <C-w>c
   autocmd FileType javascript* set omnifunc=javascriptcomplete#CompleteJS
   autocmd FileType rspec
@@ -865,13 +879,13 @@ augroup Tacahiroy
   endif
 
   " Chef
-  autocmd BufRead,BufNewFile knife-edit-*.js,*.json setlocal filetype=javascript.json
+  autocmd BufRead,BufNewFile knife-edit-*.js,*.json set filetype=javascript.json
   autocmd FileType *json* setlocal makeprg=python\ -mjson.tool\ 2>&1\ %\ >\ /dev/null
                        \| setlocal errorformat=%m:\ line\ %l\ column\ %c\ %.%#
   autocmd FileType *json* nnoremap <Leader>pp :%!json_xs -f json -t json-pretty<Cr>
 
-  autocmd Filetype c setlocal tabstop=4 softtabstop=4 shiftwidth=4
-  autocmd Filetype c compiler gcc
+  autocmd FileType c setlocal tabstop=4 softtabstop=4 shiftwidth=4
+  autocmd FileType c compiler gcc
   autocmd FileType c setlocal makeprg=gcc\ -Wall\ %\ -o\ %:r.o
   autocmd FileType c nnoremap <buffer> [Space]m :<C-u>write<Cr>:make --std=c99<Cr>
 
@@ -896,21 +910,12 @@ augroup Tacahiroy
   autocmd FileType xml noremap  <silent> <buffer> <Leader>pp :call <SID>run_tidy(80)<Cr>
   autocmd BufRead,BufEnter *.xml set updatetime=1000
   autocmd BufLeave,BufWinLeave *.xml set updatetime&
-
-  " amazing typo correction system yea?
-  inoreabbr funciton function
-  inoreabbr passowrd password
-  inoreabbr requrie require
-  inoreabbr reuqire require
-  inoreabbr slect select
-  inoreabbr stating staging
-  inoreabbr ture true
 augroup END
 "}}}
 
 
 " * Chef " {{{
-" a wrapper of the knife command
+" a wrapper for the knife command
 if executable('knife')
   let s:knife = {} " knife {{{
   function! s:knife.cookbook_upload(...) abort
