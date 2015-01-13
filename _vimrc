@@ -1,5 +1,5 @@
 " $HOME/.vimrc
-" Author: tacahiroy <tacahiroy\AT/gmail.com>
+" Author: tacahiroy <tacahiroy@gmail.com>
 
 set cpo&vim
 set encoding=utf-8
