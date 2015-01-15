@@ -3,8 +3,8 @@ export LANG=ja_JP.UTF-8
 HISTFILE=~/.zhistory
 
 fpath=(/usr/local/opt/zsh-completions/share/zsh-completions/(N-/) \
-       $HOME/.zsh/functions \
-       $HOME/.zsh/vendor \
+       $HOME/.zsh/functions/*(N-) \
+       $HOME/.zsh/vendor/*(N-) \
        $fpath)
 typeset -U fpath
 
