@@ -128,6 +128,8 @@ Plugin 'tpope/vim-rails'
 Plugin 'tpope/vim-surround'
 Plugin 'tyru/open-browser.vim'
 Plugin 'vim-ruby/vim-ruby'
+Plugin 'tacahiroy/ctrlp-ssh'
+Plugin 'airblade/vim-gitgutter.git'
 
 if filereadable(expand('~/.vimrc.plugins'))
   source ~/.vimrc.plugins
@@ -219,7 +221,7 @@ map <Space> [Space]
     \ 'PrtHistory(1)':        ['<Down>'],
     \ 'CreateNewFile()':      ['<C-y>'],
     \ }
-  let g:ctrlp_extensions = ['line', 'buffertag', 'dir', 'mixed', 'funky', 'ssh']
+  let g:ctrlp_extensions = ['line', 'buffertag', 'dir', 'mixed']
 
   let dir = ['\.git$', '\.hg$', '\.svn$', '\.vimundo$', '\.cache/ctrlp$',
         \    '\.rbenv', '\.gem', 'backup', 'Documents', $TMPDIR,
