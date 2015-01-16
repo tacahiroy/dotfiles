@@ -58,6 +58,7 @@ if is-at-least 4.3.10; then
   zstyle ':vcs_info:git:*' unstagedstr "*"
 fi
 
+signs=''
 if is-at-least 4.3.11; then
 # https://github.com/mollifier/config/blob/master/dot.zshrc
   zstyle ':vcs_info:git+set-message:*' hooks \
@@ -84,7 +85,7 @@ if is-at-least 4.3.11; then
       return 0
     fi
     # hook_com[unstaged]+='?'
-    psv2+='?'
+    signs+='?'
   }
 
   function +vi-git-unstaged() {
@@ -96,9 +97,9 @@ if is-at-least 4.3.11; then
     # find out staged file
     if echo "$git_status" | grep "^A" > /dev/null 2>&1; then
       # hook_com[misc]+="+"
-      psv2+="+"
+      signs+="+"
     elif echo "$git_status" | grep "^M" > /dev/null 2>&1; then
-      psv2+="*"
+      signs+="*"
     else
       return 0
     fi
@@ -130,7 +131,7 @@ if is-at-least 4.3.11; then
     fi
 
     # hook_com[misc]+="@"
-    psv2+="@"
+    signs+="@"
   }
 
   function +vi-git-stash-count() {
@@ -141,19 +142,20 @@ if is-at-least 4.3.11; then
       return 0
     fi
     # hook_com[misc]+="(${count})"
-    psv2+="(${count})"
+    signs+="(${count})"
   }
 fi
 
 # http://d.hatena.ne.jp/yonchu/20120506/1336335973
 function _vcs_info() {
   psvar=()
+  signs=''
   LANG=en_US.UTF-8 vcs_info
   if [ -z "$vcs_info_msg_0_" ]; then
     psvar[1]=''
   else
     psvar[1]=${vcs_info_msg_0_}
-    psvar[2]=${psv2}
+    psvar[2]=${signs}
   fi
 }
 
