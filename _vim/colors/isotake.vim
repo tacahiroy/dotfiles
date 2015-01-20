@@ -28,7 +28,7 @@ if &background == 'light'
   hi  StatusLine    gui=NONE             guibg=Orange       guifg=Black       cterm=NONE      ctermfg=16    ctermbg=253
   hi  StatusLineNC  gui=NONE             guibg=Gray
   hi  VertSplit     gui=NONE             guibg=Gray
-  hi  Identifier    guifg=#006f6f
+  hi  Identifier    guifg=#006f6f        ctermfg=028
   hi  Statement     guifg=DarkRed        ctermfg=DarkRed
   hi  MatchParen    guibg=turquoise
   hi  Search        guibg=LightGreen     guifg=DarKRed      gui=NONE
