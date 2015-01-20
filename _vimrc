@@ -200,8 +200,6 @@ map <Space> [Space]
   let g:ctrlp_mruf_max = 1024
   let g:ctrlp_mruf_exclude = 'knife-edit-*.*'
 
-  let g:ctrlp_funky_matchtype = 'path'
-
   let g:ctrlp_user_command = {
     \ 'types': {
       \ 1: ['.git/', 'cd %s && git ls-files . -co --exclude-standard'],
@@ -233,11 +231,13 @@ map <Space> [Space]
 
   let g:ctrlp_preview_enabled = 0
 
-  let g:ctrlp_funky_ruby_chef_words = 1
+  let g:ctrlp_funky_debug = 0
+  let g:ctrlp_funky_use_cache = 0
+  let g:ctrlp_funky_matchtype = 'path'
   let g:ctrlp_funky_sort_by_mru = 0
   let g:ctrlp_funky_syntax_highlight = 1
-  let g:ctrlp_funky_debug = 0
-  let g:ctrlp_funky_use_cache = 1
+  let g:ctrlp_funky_ruby_chef_words = 1
+  let g:ctrlp_funky_all_buffers = 1
 
   let g:ctrlp_mruf_relative = 0
 
@@ -714,16 +714,6 @@ endfunction
 vnoremap <Down> :call <SID>move_block('d')<Cr>==gv
 vnoremap <Up> :call <SID>move_block('u')<Cr>==gv
 
-" amazing typo correction system yea?
-inoreabbr funciton function
-inoreabbr passowrd password
-inoreabbr requrie require
-inoreabbr reuqire require
-inoreabbr slect select
-inoreabbr stating staging
-inoreabbr ture true
-
-
 " format HTML/XML
 if executable('tidyp')
   function! s:run_tidy(...) range
@@ -878,7 +868,7 @@ augroup Tacahiroy
   " Chef
   autocmd BufRead,BufNewFile knife-edit-*.js,*.json set filetype=javascript.json
   autocmd FileType *json* setlocal makeprg=python\ -mjson.tool\ 2>&1\ %\ >\ /dev/null
-                       \| setlocal errorformat=%m:\ line\ %l\ column\ %c\ %.%#
+  autocmd FileType *json* setlocal errorformat=%m:\ line\ %l\ column\ %c\ %.%#
   autocmd FileType *json* nnoremap <Leader>pp :%!json_xs -f json -t json-pretty<Cr>
 
   autocmd FileType c setlocal tabstop=4 softtabstop=4 shiftwidth=4
@@ -887,11 +877,10 @@ augroup Tacahiroy
   autocmd FileType c nnoremap <buffer> [Space]m :<C-u>write<Cr>:make --std=c99<Cr>
 
   autocmd FileType markdown inoremap <buffer> <Leader>h1 <Esc>I#<Space>
-                         \| inoremap <buffer> <Leader>h2 <Esc>I##<Space>
-                         \| inoremap <buffer> <Leader>h3 <Esc>I###<Space>
-                         \| inoremap <buffer> <Leader>h4 <Esc>I####<Space>
-                         \| inoremap <buffer> <Leader>h5 <Esc>I#####<Space>
-                         \| inoremap <buffer> <Leader>hr <Esc>i- - -<Esc>^
+  autocmd FileType markdown inoremap <buffer> <Leader>h2 <Esc>I##<Space>
+  autocmd FileType markdown inoremap <buffer> <Leader>h3 <Esc>I###<Space>
+  autocmd FileType markdown inoremap <buffer> <Leader>h4 <Esc>I####<Space>
+  autocmd FileType markdown inoremap <buffer> <Leader>h5 <Esc>I#####<Space>
   autocmd FileType markdown set autoindent
 
   " simple markdown preview
