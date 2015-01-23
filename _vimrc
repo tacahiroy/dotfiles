@@ -149,9 +149,11 @@ if s:self_pathogen
   endif
 endif
 
-" Disable GUI /Syntax/ menu
-let did_install_syntax_menu = 1
-" let did_install_default_menus = 1
+if has('gui_running')
+  " Disable GUI /Syntax/ menu
+  let did_install_syntax_menu = 1
+  " let did_install_default_menus = 1
+endif
 
 call vundle#end()
 filetype plugin indent on
