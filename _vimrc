@@ -109,27 +109,24 @@ call vundle#begin()
 Plugin 'gmarik/Vundle.vim'
 Plugin 'avakhov/vim-yaml'
 Plugin 'camelcasemotion'
-Plugin 'chrisbra/csv.vim'
-Plugin 'derekwyatt/vim-scala'
 Plugin 'glidenote/memolist.vim'
 Plugin 'godlygeek/tabular'
 Plugin 'jelera/vim-javascript-syntax'
 Plugin 'jiangmiao/simple-javascript-indenter'
 Plugin 'matchit.zip'
 Plugin 'rking/ag.vim'
-Plugin 'scrooloose/nerdtree'
-Plugin 'scrooloose/syntastic'
-Plugin 'sjl/gundo.vim'
 Plugin 'thinca/vim-quickrun'
 Plugin 'tpope/vim-commentary'
 Plugin 'tpope/vim-endwise'
 Plugin 'tpope/vim-markdown'
-Plugin 'tpope/vim-rails'
 Plugin 'tpope/vim-surround'
 Plugin 'tyru/open-browser.vim'
 Plugin 'vim-ruby/vim-ruby'
-Plugin 'tacahiroy/ctrlp-ssh'
 Plugin 'airblade/vim-gitgutter.git'
+Plugin 'ctrlpvim/ctrlp.vim'
+Plugin 'JazzCore/ctrlp-cmatcher'
+Plugin 'tacahiroy/ctrlp-funky'
+Plugin 'tacahiroy/ctrlp-ssh'
 
 if filereadable(expand('~/.vimrc.plugins'))
   source ~/.vimrc.plugins
@@ -147,12 +144,6 @@ if s:self_pathogen
       endif
     endfor
   endif
-endif
-
-if has('gui_running')
-  " Disable GUI /Syntax/ menu
-  let did_install_syntax_menu = 1
-  " let did_install_default_menus = 1
 endif
 
 call vundle#end()
@@ -202,13 +193,32 @@ map <Space> [Space]
   let g:ctrlp_mruf_max = 1024
   let g:ctrlp_mruf_exclude = 'knife-edit-*.*'
 
+  let ctrlp_ignores = [ '.git', '.hg', '.svn', '.cache', '.dropbox.cache', '.dropbox',
+                      \ 'VMs', 'VirtualBox VMs',
+                      \ '.npm', 'node-gyp', 'node_modules', '.cpanm', '.gradle', '.rbx', '.rbenv', '.gem', '.pyenv', '.sbt',
+                      \ '.ivy2', '.vimundo', '.android', '.bestfriend', 'vendor',
+                      \ 'Library/', '.doc\?$', '.pptx\?$', '.xlsx\?$', '.jpg', '.png$', '.gif$', '.flac$', '.mp3$', '.DS_Store' ]
+
+  let ag_ignore = ''
+  if exists('ctrlp_ignores') && !empty(ctrlp_ignores)
+    let ag_ignore = join(map(ctrlp_ignores, "\"--ignore \" . '\"' . v:val . '\"'"))
+  endif
+
   let g:ctrlp_user_command = {
     \ 'types': {
       \ 1: ['.git/', 'cd %s && git ls-files . -co --exclude-standard'],
       \ 2: ['.hg/', 'hg --cwd %s locate -I .'],
-      \ 3: ['.svn/', 'svn ls file://%s'],
-    \ }
+      \ 3: ['.svn/', 'svn ls file://%s']
+    \ },
+    \ 'fallback': 'ag %s -i --nocolor --nogroup ' . ag_ignore . ' --hidden -g ""'
   \ }
+
+  if &runtimepath =~# 'ctrlp-cmatcher,'
+    let g:ctrlp_match_func = { 'match' : 'matcher#cmatch' }
+  endif
+
+  " Set delay to prevent extra search
+  let g:ctrlp_lazy_update = 120
 
   let g:ctrlp_prompt_mappings = {
     \ 'AcceptSelection("e")': ['<Cr>'],
@@ -221,7 +231,7 @@ map <Space> [Space]
     \ 'PrtHistory(1)':        ['<Down>'],
     \ 'CreateNewFile()':      ['<C-y>'],
     \ }
-  let g:ctrlp_extensions = ['line', 'buffertag', 'dir', 'mixed']
+  let g:ctrlp_extensions = ['line', 'buffertag', 'dir', 'mixed', 'funky']
 
   let dir = ['\.git$', '\.hg$', '\.svn$', '\.vimundo$', '\.cache/ctrlp$',
         \    '\.rbenv', '\.gem', 'backup', 'Documents', $TMPDIR,
@@ -231,51 +241,38 @@ map <Space> [Space]
     \ 'file': '\v(\.exe|\.so|\.dll|\.DS_Store|\.db|COMMIT_EDITMSG)$'
     \ }
 
-  let g:ctrlp_preview_enabled = 0
+  let g:ctrlp_mruf_tilde_homedir = 1
 
-  let g:ctrlp_funky_debug = 0
+  " let g:ctrlp_open_single_match = [ 'funky', 'buffers', 'buffer tags' ]
+
+  let g:ctrlp_funky_debug = 1
   let g:ctrlp_funky_use_cache = 0
   let g:ctrlp_funky_matchtype = 'path'
-  let g:ctrlp_funky_sort_by_mru = 0
+  let g:ctrlp_funky_sort_by_mru = 1
   let g:ctrlp_funky_syntax_highlight = 1
   let g:ctrlp_funky_ruby_chef_words = 1
-  let g:ctrlp_funky_all_buffers = 1
+  let g:ctrlp_funky_multi_buffers = 0
 
-  let g:ctrlp_mruf_relative = 0
-
-  let g:ctrlp_ssh_keep_ctrlp_window = 1
+  let g:ctrlp_ssh_keep_ctrlp_window = 0
 
   nnoremap [Space]fl :CtrlPBuffer<Cr>
   nnoremap [Space]fm :CtrlPMRU<Cr><F5>
-  nnoremap [Space]li :CtrlPLine<Cr>
-  nnoremap [Space]fc :execute 'CtrlP ' . $chef . '/cookbooks'<Cr>
-  nnoremap [Space]fw :CtrlPCurFile<Cr>
-  nnoremap [Space]f. :CtrlPCurWD<Cr>
+  nnoremap [Space]fi :CtrlPLine<Cr>
+  nnoremap [Space]f. :CtrlPCurFile<Cr>
   nnoremap [Space]fr :CtrlPRTS<Cr>
 
   nnoremap [Space]fu :CtrlPFunky<Cr>
+  nnoremap [Space]uu :exe 'CtrlPFunky ' . fnameescape(expand('<cword>'))<Cr>
   nnoremap [Space]fs :CtrlPSSH<Cr>
 
   nnoremap [Space]t :CtrlPBufTag<Cr>
 
-" plug: nerdtree
-  let NERDTreeShowBookmarks = 1
-  nnoremap [Space]nt :NERDTreeToggle<Cr>
-  nnoremap [Space]nn :NERDTreeFind<Cr>zz<C-w><C-w>
-  nnoremap [Space]nc :execute 'NERDTree ' . $chef . '/cookbooks'<Cr>
-
-  if s:is_mac
-    augroup Tacahiroy
-      autocmd FileType nerdtree nnoremap <buffer> <Leader>ql :<C-u>call NERDTreeQuickLook()<Cr>
-                             \| nnoremap <buffer> <Leader>qe :<C-u>call NERDTreeExecuteFile()<Cr>
-    augroup END
-  endif
-
 " plug: syntastic
   let g:syntastic_mode_map =
         \ { 'mode': 'active',
-          \ 'active_filetypes': ['ruby', 'cucumber', 'perl', 'javascript', 'python', 'sh'],
+          \ 'active_filetypes': ['ruby', 'cucumber', 'perl', 'python', 'sh'],
           \ 'passive_filetypes': ['xml'] }
+  let g:syntastic_ruby_checkers = ['rubocop']
   let g:syntastic_enable_balloons = 0
   let g:syntastic_auto_loc_list = 2
   let g:syntastic_error_symbol='✗'
@@ -291,6 +288,7 @@ map <Space> [Space]
   let g:surround_{char2nr('K')} = "『\r』"
   let g:surround_{char2nr('e')} = "<%= \r %>"
   let g:surround_{char2nr('b')} = "<%- \r %>"
+  
   xmap s <Plug>VSurround
 
 " plug: openbrowser
@@ -319,9 +317,8 @@ map <Space> [Space]
         \ }
   \ }
 
-" plug: csv.vim
-  let g:csv_nomap_space = 1
-
+" plug: gitgutter 
+  let g:gitgutter_enabled = 0
 " }}}
 " }}}
 
@@ -382,16 +379,12 @@ set scrolloff=5
 
 " 99% zsh though
 set shell&
-if !s:is_windows
-  let path = ''
-  for sh in [ 'zsh', 'bash', 'dash', 'sh' ]
-    let path = s:which(sh)
-    if executable(path)
-      let &shell = path
-      break
-    endif
-  endfor
+if s:is_mac
+  let &shell = '/usr/local/bin/zsh'
+else
+  let &shell = '/usr/bin/zsh'
 endif
+
 
 set shellslash
 set shiftround
@@ -435,40 +428,6 @@ if has('persistent_undo')
     autocmd!
     autocmd BufReadPre $HOME/* setlocal undofile
   augroup END
-endif
-
-" gVim specific
-if has('gui_running')
-  set columns=132
-  set guioptions=aeciM
-  set guitablabel=%N)\ %f
-  set lines=100
-  set mousehide
-  set nomousefocus
-
-  if &guioptions =~# 'M'
-    let &guioptions = substitute(&guioptions, '[mT]', '', 'g')
-  endif
-
-  if s:is_mac
-    set guifont=Migu\ 1M\ Regular:h13
-    set antialias
-    set fuoptions& fuoptions+=maxhorz
-
-    inoremap <silent> <D-v> <Esc>:let &paste=1<Cr>a<C-R>=@*<Cr><Esc>:let &paste=0<Cr>a
-    cnoremap <D-v> <C-R>*
-    vnoremap <D-c> "+y
-    nnoremap <D-a> ggVG
-  elseif s:is_linux
-    set guifont=Migu\ 1M\ Regular\ 13
-  else
-    " Windows
-    set guifont=M+1VM+IPAG_circle:h10:cDEFAULT
-  endif
-
-  if has('printer')
-    let &printfont = &guifont
-  endif
 endif
 
 set t_Co=256
@@ -533,10 +492,20 @@ nnoremap <C-t> <C-t>zz
 nnoremap * *N
 nnoremap # #N
 
-nnoremap ; :
+nnoremap ; :<C-u>
 nnoremap : ;
 vnoremap ; :
 vnoremap : ;
+
+nnoremap j gj
+nnoremap k gk
+
+nnoremap <silent> <Return> :<C-u>call <SID>insert_line()<Cr>
+function! s:insert_line()
+  if &buftype !~# '\(quickfix\|help\|nofile\)'
+    call append(line('.'), '')
+  endif
+endfunction
 
 " remove extra '\n' from the redir output
 function! s:redir(cmd)
@@ -605,8 +574,7 @@ endfunction
 nnoremap <silent> [Toggle]m :let &mouse = empty(&mouse) ? 'a' : ''<Cr>
 nnoremap <silent> [Toggle]p :set paste!<Cr>
 nnoremap <silent> [Toggle]l :set list!<Cr>
-nnoremap <silent> [Toggle]c :let &clipboard =
-      \ empty(&clipboard) ? 'unnamed,unnamedplus' : ''<Cr>
+nnoremap <silent> [Toggle]c :let &clipboard = empty(&clipboard) ? 'unnamed,unnamedplus' : ''<Cr>
 nnoremap <silent> [Toggle]n :<C-u>silent call <SID>toggle_line_number()<Cr>
 
 " * makes gf better
@@ -713,8 +681,8 @@ function! s:move_block(d) range
   execute printf('%d,%dmove%s%d', a:firstline, a:lastline, sign, cnt)
 endfunction
 
-vnoremap <Down> :call <SID>move_block('d')<Cr>==gv
-vnoremap <Up> :call <SID>move_block('u')<Cr>==gv
+vnoremap <C-n> :call <SID>move_block('d')<Cr>==gv
+vnoremap <C-p> :call <SID>move_block('u')<Cr>==gv
 
 " format HTML/XML
 if executable('tidyp')
@@ -748,26 +716,27 @@ augroup Tacahiroy
   " prevent auto comment insertion when 'o' pressed
   autocmd BufEnter * setlocal formatoptions-=o
 
-  autocmd FileType *
-        \  if &buftype !~# '^\(quickfix\|help\|nofile\)$'
-        \|    nnoremap <buffer> <Return> :<C-u>call append(line('.'), '')<Cr>
-        \| endif
+  "my ftdetects
+  autocmd BufRead,BufNewFile *.ru,Gemfile,Guardfile set filetype=ruby
+  autocmd BufRead,BufNewFile ?zshrc,?zshenv set filetype=zsh
+  autocmd BufRead,BufNewFile *.as set filetype=actionscript
+  autocmd BufRead,BufNewFile *.gradle set filetype=groovy
 
+  " Visual Basic
   autocmd BufRead,BufNewFile *.frm,*.bas,*.cls,*.dsr set filetype=vb
   autocmd FileType vb setlocal fileformat=dos
 
   " Chef
-  autocmd BufRead,BufNewFile *
+  autocmd BufRead,BufNewFile *.rb
         \  if expand('%:p:h') =~# '.*/cookbooks/.*'
         \|   setlocal makeprg=foodcritic\ $*\ %
         \|   setlocal errorformat=%m:\ %f:%l
         \| endif
 
-  autocmd FileType eruby*
-        \  inoremap <silent> <buffer> <Leader>e <C-g>u<%=  %><Esc>F<Space>i
-        \| inoremap <silent> <buffer> <Leader>b <C-g>u<%-  -%><Esc>F<Space>i
-        \| inoremap <silent> <buffer> <Leader>d <C-g>u<%===  %><Esc>F<Space>i
-        \| setlocal makeprg=erubis\ $*\ %
+  autocmd FileType eruby* inoremap <silent> <buffer> <Leader>e <C-g>u<%=  %><Esc>F<Space>i
+  autocmd FileType eruby* inoremap <silent> <buffer> <Leader>b <C-g>u<%-  -%><Esc>F<Space>i
+  autocmd FileType eruby* inoremap <silent> <buffer> <Leader>d <C-g>u<%===  %><Esc>F<Space>i
+  autocmd FileType eruby* setlocal makeprg=erubis\ $*\ %
 
   " autochdir emulation
   autocmd BufEnter * call s:auto_chdir(6)
@@ -829,18 +798,20 @@ augroup Tacahiroy
           \ COMMIT_EDITMSG,*.bak,*.bac,knife-edit-*.js,?.* setlocal noundofile
   augroup END
 
-  autocmd BufRead,BufNewFile *.ru,Gemfile,Guardfile set filetype=ruby
-  autocmd BufRead,BufNewFile ?zshrc,?zshenv set filetype=zsh
-
   function! s:insert_today_for_md_changelog()
     call append(line('.') - 1, strftime('%Y-%m-%d'))
     call append(line('.') - 1, '----------')
   endfunction
   autocmd BufRead,BufNewFile *.md,*.mkd,*.markdown set filetype=markdown
 
-  autocmd FileType markdown
-        \  inoremap <buffer> <Leader>tt <Esc>:<C-u>call <SID>insert_today_for_md_changelog()<Cr>:startinsert<Cr>
+  autocmd FileType markdown inoremap <buffer> <Leader>tt <Esc>:<C-u>call <SID>insert_today_for_md_changelog()<Cr>:startinsert<Cr>
+  autocmd FileType markdown set autoindent
   autocmd FileType markdown setlocal tabstop=4 shiftwidth=4
+  autocmd FileType markdown inoremap <buffer> <Leader>h1 <Esc>I#<Space>
+  autocmd FileType markdown inoremap <buffer> <Leader>h2 <Esc>I##<Space>
+  autocmd FileType markdown inoremap <buffer> <Leader>h3 <Esc>I###<Space>
+  autocmd FileType markdown inoremap <buffer> <Leader>h4 <Esc>I####<Space>
+  autocmd FileType markdown inoremap <buffer> <Leader>h5 <Esc>I#####<Space>
 
   autocmd FileType gitcommit setlocal spell
   autocmd FileType mail setlocal spell
@@ -851,10 +822,8 @@ augroup Tacahiroy
 
   " map qq to close the window
   autocmd FileType help,qf,logaling,bestfriend,ref-* nnoremap <buffer> <silent> qq <C-w>c
-  autocmd FileType javascript* set omnifunc=javascriptcomplete#CompleteJS
-  autocmd FileType rspec
-        \  compiler rspec
-        \| set omnifunc=rubycomplete#Complete
+  autocmd FileType rspec compiler rspec
+  autocmd FileType rspec set omnifunc=rubycomplete#Complete
   autocmd FileType *ruby,rspec :execute 'setlocal iskeyword+=' . char2nr('?')
   autocmd FileType python setlocal tabstop=4 shiftwidth=4 softtabstop=4
   autocmd FileType vim if &iskeyword !~# '&' | setlocal iskeyword+=& | endif
@@ -862,6 +831,12 @@ augroup Tacahiroy
 
   autocmd FileType sql*,plsql setlocal tabstop=4 shiftwidth=4 softtabstop=4
 
+  " Java
+  autocmd FileType java setlocal tabstop=4 shiftwidth=4 softtabstop=4
+  let java_highlight_java_lang_ids = 1
+  let java_highlight_java_io = 1
+
+  autocmd FileType javascript* set omnifunc=javascriptcomplete#CompleteJS
   if executable('jsl')
     autocmd FileType javascript*,*html setlocal makeprg=jsl\ -conf\ \"$HOME/jsl.conf\"\ -nologo\ -nofilelisting\ -nosummary\ -nocontext\ -process\ %
     autocmd FileType javascript*,*html setlocal errorformat=%f(%l):\ %m
@@ -878,13 +853,6 @@ augroup Tacahiroy
   autocmd FileType c setlocal makeprg=gcc\ -Wall\ %\ -o\ %:r.o
   autocmd FileType c nnoremap <buffer> [Space]m :<C-u>write<Cr>:make --std=c99<Cr>
 
-  autocmd FileType markdown inoremap <buffer> <Leader>h1 <Esc>I#<Space>
-  autocmd FileType markdown inoremap <buffer> <Leader>h2 <Esc>I##<Space>
-  autocmd FileType markdown inoremap <buffer> <Leader>h3 <Esc>I###<Space>
-  autocmd FileType markdown inoremap <buffer> <Leader>h4 <Esc>I####<Space>
-  autocmd FileType markdown inoremap <buffer> <Leader>h5 <Esc>I#####<Space>
-  autocmd FileType markdown set autoindent
-
   " simple markdown preview
   if executable('markdown')
     function! s:md_preview_by_browser(f)
@@ -894,10 +862,6 @@ augroup Tacahiroy
     endfunction
     autocmd FileType markdown command! -buffer -nargs=0 MdPreview call s:md_preview_by_browser(expand('%'))
   endif
-
-  autocmd FileType xml noremap  <silent> <buffer> <Leader>pp :call <SID>run_tidy(80)<Cr>
-  autocmd BufRead,BufEnter *.xml set updatetime=1000
-  autocmd BufLeave,BufWinLeave *.xml set updatetime&
 augroup END
 "}}}
 
@@ -1066,75 +1030,46 @@ endfunction
 " }}}
 
 
-" * tmux " {{{
-" reinvent the wheel?
-let s:tmux = {}
-let s:tmux.last_cmd = ''
-
-function! s:tmux.is_installed()
-  return !empty(s:which('which tmux'))
-endfunction
-
-function! s:tmux.is_running()
-  let r = s:system('tmux ls -F "#{session_name}:#{session_attached}" | grep :1')
-  return r.err == 0
-endfunction
-
-function! s:tmux.run(cmd, ...)
-  let split = get(a:, 1, 0)
-  let run_in_vim = get(a:, 2, 0)
-  let no_enter = get(a:, 3, 0)
-  let is_control = (a:cmd =~# '^\^[a-zA-Z]$') || no_enter
-
-  if !is_control
-    let self.last_cmd = a:cmd
-  endif
-
-  if self.is_running()
-    if split
-      let res = s:system(printf('tmux splitw -v "%s"', a:cmd))
-      if res.err
-        echomsg res.out
-      endif
-    else
-      let enter = (is_control ? '' : 'Enter')
-      call s:system(printf('`tmux send "%s" %s`', a:cmd, enter))
-    endif
-  elseif run_in_vim
-    execute '!' . a:cmd
-  else
-    call Echohl('ErrorMsg', 'ERR: tmux is not running')
-    return
-  endif
-endfunction
-
-function! s:tmux.operate(cmd)
-  if self.is_running()
-    call s:system(printf('`tmux "%s"`', a:cmd))
-  else
-    call Echohl('ErrorMsg', 'ERR: tmux is not running')
-    return
-  endif
-endfunction
-
-if s:tmux.is_installed()
-  command! -nargs=+ TMRun call s:tmux.run(<q-args>)
-  command! -nargs=0 TMInt call s:tmux.run('^C')
-  command! -nargs=0 TMClear call s:tmux.run('^L')
-  command! -nargs=0 TMRunAgain echo s:tmux.last_cmd | call s:tmux.run(s:tmux.last_cmd)
-  command! -nargs=0 TMNextWindow call s:tmux.operate('next-window')
-  command! -nargs=0 TMPrevWindow call s:tmux.operate('previous-window')
-
-  nnoremap <Leader>r :<C-u>TMRun<Space>
-  nnoremap <Leader>! :<C-u>TMRunAgain<Cr>
-  nnoremap <Leader>c :<C-u>TMInt<Cr>
-  nnoremap <Leader>> :<C-u>TMNextWindow<Cr>
-  nnoremap <Leader>< :<C-u>TMPrevWindow<Cr>
-endif
-" }}}
-
 if filereadable(expand('~/.vimrc.local'))
   source ~/.vimrc.local
+endif
+
+" gVim specific
+if has('gui_running')
+  set columns=132
+  set guioptions=aeciM
+  set guitablabel=%N)\ %f
+  set lines=100
+  set mousehide
+  set nomousefocus
+
+  " Disable GUI /Syntax/ menu
+  let did_install_syntax_menu = 1
+  " let did_install_default_menus = 1
+
+  if &guioptions =~# 'M'
+    let &guioptions = substitute(&guioptions, '[mT]', '', 'g')
+  endif
+
+  if s:is_mac
+    set guifont=Migu\ 1M\ Regular:h13
+    set antialias
+    set fuoptions& fuoptions+=maxhorz
+
+    inoremap <silent> <D-v> <Esc>:let &paste=1<Cr>a<C-R>=@*<Cr><Esc>:let &paste=0<Cr>a
+    cnoremap <D-v> <C-R>*
+    vnoremap <D-c> "+y
+    nnoremap <D-a> ggVG
+  elseif s:is_linux
+    set guifont=Migu\ 1M\ Regular\ 13
+  else
+    " Windows
+    set guifont=M+1VM+IPAG_circle:h10:cDEFAULT
+  endif
+
+  if has('printer')
+    let &printfont = &guifont
+  endif
 endif
 
 " __END__ {{{
