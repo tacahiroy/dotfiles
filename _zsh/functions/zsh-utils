@@ -1,17 +1,24 @@
 function tssh_tunnel() {
   [ ! -x `which tmux` ] && return
 
-  srv=${1:-${SS_SRV}}
+  if [ $# -ne 3 ]; then
+    echo USAGE: $0 SRV PORT USER
+    return
+  fi
 
-  if tmux list-windows -F '#I:#W' | grep "^99:${srv}.tnl" 2>&1 >/dev/null; then
-    echo listening port ${SS_PORT}
+  srv=$1
+  port=$2
+  user=$3
+
+  if tmux list-windows -F '#I:#W' | grep ":${srv}.tnl" 2>&1 >/dev/null; then
+    echo listening port ${port}
     return
   fi
 
   if [ -x `which autossh` ]; then
-    autossh -M 18103 -f -C2qTnN -D ${SS_PORT} ${SS_USER}@${srv} ping -i 20 localhost
+    autossh -M 1${port} -f -C2qTnN -D ${port} ${user}@${srv} ping -i 20 localhost
   else
-    tmux neww -k -n ${srv}.tnl -t 99 "ssh -C2qTnN -D ${SS_PORT} ${SS_USER}@${srv}"
+    tmux neww -k -n ${srv}.tnl "ssh -C2qTnN -D ${port} ${user}@${srv}"
     tmux last
   fi
 }
