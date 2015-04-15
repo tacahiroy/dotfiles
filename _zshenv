@@ -39,14 +39,14 @@ export RBXOPT='-X19'
 # environment variables
 export proj=~/Projects
 export fc=~/Projects/Fc
-export fsm=~/Projects/Fc/scm
+export g=~/git
 export chef=~/Projects/Fc/chef.git
 
 
 if [ -x /usr/local/opt/macvim/MacVim.app/Contents/MacOS/Vim ]; then
-  export EDITOR=/usr/local/opt/macvim/MacVim.app/Contents/MacOS/Vim
+  export EDITOR=`brew --prefix macvim`/MacVim.app/Contents/MacOS/Vim
 else
-  export EDITOR='/usr/bin/vim'
+  export EDITOR='vim'
 fi
 
 ## path
@@ -54,7 +54,6 @@ typeset -U path
 path=(
   ./bin
   $HOME/.rbenv/shims(N-/)
-  $HOME/.pyenv/shims(N-/)
   $HOME/bin(N-/)
   $HOME/perl5/bin(N-/)
   /usr/local/bin(N-/)
@@ -63,12 +62,6 @@ path=(
 )
 
 export ANDROID_HOME=/usr/local/opt/android-sdk
-
-# if [ -d ${HOME}/.rbenv  ] ; then
-#   # export PATH="${HOME}/.rbenv/bin:${HOME}/.rbenv/shims:${PATH}"
-#   # PATH=${HOME}/.rbenv/shims:${PATH}
-#   eval "$(rbenv init - zsh)"
-# fi
 
 ## Ruby
 typeset -xT RUBYLIB ruby_path
@@ -79,13 +72,14 @@ ruby_path=(
   $HOME/lib/ruby(N-/)
 )
 
-# # Python
-# typeset -xT PYTHONPATH python_path
-# typeset -U python_path
+# Python
+typeset -xT PYTHONPATH python_path
+typeset -U python_path
 
-# python_path=(
-#   /usr/local/lib/python2.7/site-packages(N-/)
-# )
+python_path=(
+  /usr/local/lib/python2.7/site-packages(N-/)
+  /usr/local/opt/mitmproxy/libexec/lib/python2.7/site-packages(N-/)
+)
 
 ## Perl
 typeset -xT PERL5LIB perl5_lib
