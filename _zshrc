@@ -298,15 +298,14 @@ case "${OSTYPE}" in
 esac
 
 alias where='command -v'
-# alias j='jobs -l'
 
 alias sl='ls'
-
 alias la='ls -a'
 alias ll='ls -l'
 alias lla='ls -la'
 alias ltr='ls -ltr'
 alias llh='ls -lh'
+alias rm='nocorrect rm'
 
 alias du='du -h'
 alias df='df -h'
@@ -318,15 +317,15 @@ alias vi='vim'
 
 alias gi='git'
 alias g='git'
+alias gu='git up'
 alias bb='brew'
 alias buo='brew update && brew outdated'
 
 # Ruby
 alias re='rbenv'
-alias rg='rbenv-gemset'
-alias knife='bundle exec knife'
 
 alias phttpd='python -m SimpleHTTPServer'
+alias pyttpd='python -m SimpleHTTPServer'
 
 # global
 alias -g K9='|xargs kill -9'
@@ -371,21 +370,23 @@ function cdup() {
 zle -N cdup
 bindkey '^\^' cdup
 
-function peco-select-history() {
-  local tac
-  if which tac > /dev/null; then
-    tac="tac"
-  else
-    tac="tail -r"
-  fi
-  BUFFER=$(history -n 1 | \
-    eval $tac | \
-    peco --query "$LBUFFER")
-  CURSOR=$#BUFFER
-  zle clear-screen
-}
-zle -N peco-select-history
-bindkey '^r' peco-select-history
+if which peco 2>&1 >/dev/null; then
+  function peco-select-history() {
+    local tac
+    if which tac > /dev/null; then
+      tac="tac"
+    else
+      tac="tail -r"
+    fi
+    BUFFER=$(history -n 1 | \
+      eval $tac | \
+      peco --query "$LBUFFER")
+    CURSOR=$#BUFFER
+    zle clear-screen
+  }
+  zle -N peco-select-history
+  bindkey '^r' peco-select-history
+fi
 # }}}
 
 ## Completion configuration
@@ -403,7 +404,7 @@ fi
 
 if [[ -x `which brew` ]]; then
   BREW_PREFIX=`brew --prefix`
-  [[ -s ${BREW_PREFIX}/etc/autojump.zsh ]] && . ${BREW_PREFIX}/etc/autojump.zsh
+  [[ -s ${BREW_PREFIX}/etc/autojump.sh ]] && . ${BREW_PREFIX}/etc/autojump.sh
 
   for z in ${BREW_PREFIX}/opt/zsh-syntax-highlighting/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
           ~/.zsh/functions/zsh-utils; do
