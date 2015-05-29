@@ -16,9 +16,9 @@ function tssh_tunnel() {
   fi
 
   if [ -x `which autossh` ]; then
-    autossh -M 1${port} -f -C2qTnN -D ${port} ${user}@${srv} ping -i 20 localhost
+    autossh -M 1${port} -f -C2qTnN -c blowfish-cbc,arcfour -D ${port} ${user}@${srv} ping -i 20 localhost
   else
-    tmux neww -k -n ${srv}.tnl "ssh -C2qTnN -D ${port} ${user}@${srv}"
+    tmux neww -k -n ${srv}.tnl "ssh -C2qTnN -c blowfish-cbc,arcfour -D ${port} ${user}@${srv}"
     tmux last
   fi
 }

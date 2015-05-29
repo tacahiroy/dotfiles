@@ -219,7 +219,7 @@ setopt nolistbeep
 
 # for dir completion. added '/'
 setopt auto_param_slash
-# add '/'
+# add postfix '/' to a directory if completion worked
 setopt mark_dirs
 
 setopt complete_in_word
@@ -237,9 +237,6 @@ bindkey -M menuselect 'k' vi-up-line-or-history
 bindkey -M menuselect 'l' vi-forward-char
 
 ## Keybind configuration
-#
-# emacs like keybind (e.x. Ctrl-a goes to head of a line and Ctrl-e goes
-# to end of it)
 if [ -n $SSH_CLIENT ]; then
   bindkey -v
 else
@@ -321,10 +318,13 @@ alias gu='git up'
 alias bb='brew'
 alias buo='brew update && brew outdated'
 
+alias netlisten='lsof -nP -iTCP -sTCP:LISTEN'
+alias netestab='lsof -nP -iTCP -sTCP:ESTABLISHED'
+alias netestablished=netestab
+
 # Ruby
 alias re='rbenv'
 
-alias phttpd='python -m SimpleHTTPServer'
 alias pyttpd='python -m SimpleHTTPServer'
 
 # global

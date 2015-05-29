@@ -107,14 +107,12 @@ set runtimepath& runtimepath+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 
 Plugin 'gmarik/Vundle.vim'
-Plugin 'avakhov/vim-yaml'
 Plugin 'camelcasemotion'
 Plugin 'glidenote/memolist.vim'
 Plugin 'godlygeek/tabular'
 Plugin 'jelera/vim-javascript-syntax'
 Plugin 'jiangmiao/simple-javascript-indenter'
 Plugin 'matchit.zip'
-Plugin 'rking/ag.vim'
 Plugin 'thinca/vim-quickrun'
 Plugin 'tpope/vim-commentary'
 Plugin 'tpope/vim-endwise'
@@ -122,11 +120,11 @@ Plugin 'tpope/vim-markdown'
 Plugin 'tpope/vim-surround'
 Plugin 'tyru/open-browser.vim'
 Plugin 'vim-ruby/vim-ruby'
-Plugin 'airblade/vim-gitgutter.git'
 Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'JazzCore/ctrlp-cmatcher'
 Plugin 'tacahiroy/ctrlp-funky'
 Plugin 'tacahiroy/ctrlp-ssh'
+Plugin 'kien/rainbow_parentheses.vim'
 
 if filereadable(expand('~/.vimrc.plugins'))
   source ~/.vimrc.plugins
@@ -157,7 +155,7 @@ nnoremap [Toggle] <Nop>
 nmap <Leader><Leader> [Toggle]
 " Space
 nnoremap [Space] <Nop>
-map <Space> [Space]
+nmap <Space> [Space]
 " }}}
 
 " * plugin configurations {{{
@@ -193,11 +191,11 @@ map <Space> [Space]
   let g:ctrlp_mruf_max = 1024
   let g:ctrlp_mruf_exclude = 'knife-edit-*.*'
 
-  let ctrlp_ignores = [ '.git', '.hg', '.svn', '.cache', '.dropbox.cache', '.dropbox',
+  let ctrlp_ignores = [ '.*/', '.hg', '.svn', '.cache', '.dropbox.cache', '.dropbox', '.chef',
                       \ 'VMs', 'VirtualBox VMs',
                       \ '.npm', 'node-gyp', 'node_modules', '.cpanm', '.gradle', '.rbx', '.rbenv', '.gem', '.pyenv', '.sbt',
                       \ '.ivy2', '.vimundo', '.android', '.bestfriend', 'vendor',
-                      \ 'Library/', '.doc\?$', '.pptx\?$', '.xlsx\?$', '.jpg', '.png$', '.gif$', '.flac$', '.mp3$', '.DS_Store' ]
+                      \ 'Library/', '.doc\?$', '.pptx\?$', '.xlsx\?$', '.jpg$', '.png$', '.gif$', '.flac$', '.mp3$', '.DS_Store' ]
 
   let ag_ignore = ''
   if exists('ctrlp_ignores') && !empty(ctrlp_ignores)
@@ -206,7 +204,7 @@ map <Space> [Space]
 
   let g:ctrlp_user_command = {
     \ 'types': {
-      \ 1: ['.git/', 'cd %s && git ls-files . -co --exclude-standard'],
+      \ 1: ['.git/', 'cd %s && git ls-files . -co --exclude-standard | grep -v "\.\(png\|jpg\)"'],
       \ 2: ['.hg/', 'hg --cwd %s locate -I .'],
       \ 3: ['.svn/', 'svn ls file://%s']
     \ },
@@ -245,10 +243,10 @@ map <Space> [Space]
 
   " let g:ctrlp_open_single_match = [ 'funky', 'buffers', 'buffer tags' ]
 
-  let g:ctrlp_funky_debug = 1
-  let g:ctrlp_funky_use_cache = 0
+  let g:ctrlp_funky_debug = 0
+  let g:ctrlp_funky_use_cache = 1
   let g:ctrlp_funky_matchtype = 'path'
-  let g:ctrlp_funky_sort_by_mru = 1
+  let g:ctrlp_funky_sort_by_mru = 0
   let g:ctrlp_funky_syntax_highlight = 1
   let g:ctrlp_funky_ruby_chef_words = 1
   let g:ctrlp_funky_multi_buffers = 0
@@ -258,21 +256,54 @@ map <Space> [Space]
   nnoremap [Space]fl :CtrlPBuffer<Cr>
   nnoremap [Space]fm :CtrlPMRU<Cr><F5>
   nnoremap [Space]fi :CtrlPLine<Cr>
-  nnoremap [Space]f. :CtrlPCurFile<Cr>
+  nnoremap [Space]f. :CtrlPCurWD<Cr>
+  nnoremap [Space]f, :CtrlPCurFile<Cr>
   nnoremap [Space]fr :CtrlPRTS<Cr>
 
   nnoremap [Space]fu :CtrlPFunky<Cr>
   nnoremap [Space]uu :exe 'CtrlPFunky ' . fnameescape(expand('<cword>'))<Cr>
   nnoremap [Space]fs :CtrlPSSH<Cr>
 
-  nnoremap [Space]t :CtrlPBufTag<Cr>
+  " nnoremap [Space]t :CtrlPBufTag<Cr>
+  nnoremap [Space]t :CtrlPTag<Cr>
+
+" plug: kien/rainbow_parentheses
+  augroup Tacahiroy
+    autocmd VimEnter * RainbowParenthesesToggle
+    " autocmd Syntax * RainbowParenthesesLoadRound
+    " autocmd Syntax * RainbowParenthesesLoadSquare
+    autocmd Syntax * RainbowParenthesesLoadBraces
+  augroup END
+  let g:rbpt_colorpairs = [
+    \ ['brown',       'RoyalBlue3'],
+    \ ['Darkblue',    'SeaGreen3'],
+    \ ['darkgray',    'DarkOrchid3'],
+    \ ['darkgreen',   'firebrick3'],
+    \ ['darkcyan',    'RoyalBlue3'],
+    \ ['darkred',     'SeaGreen3'],
+    \ ['darkmagenta', 'DarkOrchid3'],
+    \ ['brown',       'firebrick3'],
+    \ ['gray',        'RoyalBlue3'],
+    \ ['black',       'SeaGreen3'],
+    \ ['darkmagenta', 'DarkOrchid3'],
+    \ ['Darkblue',    'firebrick3'],
+    \ ['darkgreen',   'RoyalBlue3'],
+    \ ['darkcyan',    'SeaGreen3'],
+    \ ['darkred',     'DarkOrchid3'],
+    \ ['red',         'firebrick3'],
+  \ ]
+
+" plug: Valloric/YouCompleteMe
+  let g:ycm_collect_identifiers_from_comments_and_strings = 1
+  let g:ycm_seed_identifiers_with_syntax = 1
+  let g:ycm_complete_in_comments = 1
 
 " plug: syntastic
   let g:syntastic_mode_map =
         \ { 'mode': 'active',
           \ 'active_filetypes': ['ruby', 'cucumber', 'perl', 'python', 'sh'],
           \ 'passive_filetypes': ['xml'] }
-  let g:syntastic_ruby_checkers = ['rubocop']
+  " let g:syntastic_ruby_checkers = ['rubocop']
   let g:syntastic_enable_balloons = 0
   let g:syntastic_auto_loc_list = 2
   let g:syntastic_error_symbol='✗'
@@ -628,6 +659,7 @@ nnoremap [Space]Q :<C-u>quit!<Cr>
 
 " help
 nnoremap <C-h> :<C-u>h<Space>
+nnoremap <C-\> :<C-u>h<Space>
 " put a whitespace into under the cursor
 nnoremap s<Space> i<Space><Esc>
 
@@ -800,7 +832,7 @@ augroup Tacahiroy
 
   function! s:insert_today_for_md_changelog()
     call append(line('.') - 1, strftime('%Y-%m-%d'))
-    call append(line('.') - 1, '----------')
+    call append(line('.') - 1, repeat('=', 10))
   endfunction
   autocmd BufRead,BufNewFile *.md,*.mkd,*.markdown set filetype=markdown
 
@@ -1052,7 +1084,7 @@ if has('gui_running')
   endif
 
   if s:is_mac
-    set guifont=Migu\ 1M\ Regular:h13
+    set guifont=Myrica\ monospace:h14
     set antialias
     set fuoptions& fuoptions+=maxhorz
 
