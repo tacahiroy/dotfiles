@@ -1,5 +1,5 @@
 " $HOME/.vimrc
-" Author: tacahiroy <tacahiroy@gmail.com>
+" Author: Takahiro Yoshihara <tacahiroy@gmail.com>
 
 set cpo&vim
 set encoding=utf-8
@@ -16,6 +16,7 @@ autocmd!
 augroup Tacahiroy
   autocmd!
 augroup END
+
 
 " functions " {{{
 " * global
@@ -101,30 +102,34 @@ if has('vim_starting')
   let g:vimsyntax_noerror = 1
 endif
 
+
 " * vundle plugin management "{{{
 filetype off
 set runtimepath& runtimepath+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 
 Plugin 'gmarik/Vundle.vim'
+
+Plugin 'JazzCore/ctrlp-cmatcher'
+Plugin 'Valloric/YouCompleteMe'
 Plugin 'camelcasemotion'
+Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'glidenote/memolist.vim'
 Plugin 'godlygeek/tabular'
 Plugin 'jelera/vim-javascript-syntax'
 Plugin 'jiangmiao/simple-javascript-indenter'
+Plugin 'kien/rainbow_parentheses.vim'
 Plugin 'matchit.zip'
+Plugin 'tacahiroy/ctrlp-funky'
+Plugin 'tacahiroy/ctrlp-ssh'
 Plugin 'thinca/vim-quickrun'
 Plugin 'tpope/vim-commentary'
+Plugin 'tpope/vim-dispatch'
 Plugin 'tpope/vim-endwise'
-Plugin 'tpope/vim-markdown'
 Plugin 'tpope/vim-surround'
 Plugin 'tyru/open-browser.vim'
 Plugin 'vim-ruby/vim-ruby'
-Plugin 'ctrlpvim/ctrlp.vim'
-Plugin 'JazzCore/ctrlp-cmatcher'
-Plugin 'tacahiroy/ctrlp-funky'
-Plugin 'tacahiroy/ctrlp-ssh'
-Plugin 'kien/rainbow_parentheses.vim'
+" Plugin 'plasticboy/vim-markdown'
 
 if filereadable(expand('~/.vimrc.plugins'))
   source ~/.vimrc.plugins
@@ -155,7 +160,7 @@ nnoremap [Toggle] <Nop>
 nmap <Leader><Leader> [Toggle]
 " Space
 nnoremap [Space] <Nop>
-nmap <Space> [Space]
+map <Space> [Space]
 " }}}
 
 " * plugin configurations {{{
@@ -290,7 +295,7 @@ nmap <Space> [Space]
     \ ['darkgreen',   'RoyalBlue3'],
     \ ['darkcyan',    'SeaGreen3'],
     \ ['darkred',     'DarkOrchid3'],
-    \ ['red',         'firebrick3'],
+    \ ['red',         'Darkblue'],
   \ ]
 
 " plug: Valloric/YouCompleteMe
@@ -324,8 +329,9 @@ nmap <Space> [Space]
 
 " plug: openbrowser
   let g:netrw_nogx = 1
-  nmap gx <Plug>(openbrowser-smart-search)
-  vmap gx <Plug>(openbrowser-smart-search)
+  " nmap gx <Plug>(openbrowser-smart-search)
+  " vmap gx <Plug>(openbrowser-smart-search)
+	nmap gx <Plug>(openbrowser-open)
 
 " plug: camelcasemotion
   map <silent> W <plug>CamelCaseMotion_w
@@ -478,10 +484,10 @@ let &statusline .= '%{(&list ? "L" : "")}'
 let &statusline .= '%{(empty(&clipboard) ? "" : "c")}'
 let &statusline .= '%{(&paste ? "p" : "")}'
 let &statusline .= '|%{&textwidth}'
-let &statusline .= ' %=%#Comment#'
+let &statusline .= ' %=%#Title#'
 let &statusline .= '%{Gps()}'
 let &statusline .= '%{(g:auto_chdir_enabled ? "e" : "d")}'
-let &statusline .= '%-12( %l/%LL,%c %)%P%*'
+let &statusline .= '%-12( %#Statement#%l%#Title#/%LL,%c %)%P%*'
 " }}}
 
 " * mappings "{{{
@@ -657,8 +663,14 @@ nnoremap [Space]q :<C-u>quit<Cr>
 nnoremap [Space]W :<C-u>update!<Cr>
 nnoremap [Space]Q :<C-u>quit!<Cr>
 
+" copy to clipboard
+nnoremap <silent> [Space]a :<C-u>let @* = @"<Cr>
+
+
 " help
+" why <C-h> doesn't work in neovim
 nnoremap <C-h> :<C-u>h<Space>
+nnoremap <BS> :<C-u>h<Space>
 nnoremap <C-\> :<C-u>h<Space>
 " put a whitespace into under the cursor
 nnoremap s<Space> i<Space><Esc>
@@ -754,10 +766,6 @@ augroup Tacahiroy
   autocmd BufRead,BufNewFile *.as set filetype=actionscript
   autocmd BufRead,BufNewFile *.gradle set filetype=groovy
 
-  " Visual Basic
-  autocmd BufRead,BufNewFile *.frm,*.bas,*.cls,*.dsr set filetype=vb
-  autocmd FileType vb setlocal fileformat=dos
-
   " Chef
   autocmd BufRead,BufNewFile *.rb
         \  if expand('%:p:h') =~# '.*/cookbooks/.*'
@@ -765,10 +773,16 @@ augroup Tacahiroy
         \|   setlocal errorformat=%m:\ %f:%l
         \| endif
 
+  autocmd FileType ruby inoremap <silent> <buffer> {{ #{}<C-o><Left>
+
   autocmd FileType eruby* inoremap <silent> <buffer> <Leader>e <C-g>u<%=  %><Esc>F<Space>i
   autocmd FileType eruby* inoremap <silent> <buffer> <Leader>b <C-g>u<%-  -%><Esc>F<Space>i
   autocmd FileType eruby* inoremap <silent> <buffer> <Leader>d <C-g>u<%===  %><Esc>F<Space>i
   autocmd FileType eruby* setlocal makeprg=erubis\ $*\ %
+
+  " Visual Basic
+  autocmd BufRead,BufNewFile *.frm,*.bas,*.cls,*.dsr set filetype=vb
+  autocmd FileType vb setlocal fileformat=dos
 
   " autochdir emulation
   autocmd BufEnter * call s:auto_chdir(6)
@@ -894,6 +908,10 @@ augroup Tacahiroy
     endfunction
     autocmd FileType markdown command! -buffer -nargs=0 MdPreview call s:md_preview_by_browser(expand('%'))
   endif
+
+  " I know this shouldn't be here
+  autocmd InsertEnter * hi StatusLine guibg=Orange ctermbg=LightMagenta
+  autocmd InsertLeave * hi StatusLine guibg=SkyBlue ctermbg=LightCyan
 augroup END
 "}}}
 
@@ -1084,7 +1102,8 @@ if has('gui_running')
   endif
 
   if s:is_mac
-    set guifont=Myrica\ monospace:h14
+    set guifont=MyricaM\ monospace:h14
+    set linespace=1
     set antialias
     set fuoptions& fuoptions+=maxhorz
 
