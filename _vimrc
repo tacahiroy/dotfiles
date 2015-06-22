@@ -129,7 +129,6 @@ Plugin 'tpope/vim-endwise'
 Plugin 'tpope/vim-surround'
 Plugin 'tyru/open-browser.vim'
 Plugin 'vim-ruby/vim-ruby'
-" Plugin 'plasticboy/vim-markdown'
 
 if filereadable(expand('~/.vimrc.plugins'))
   source ~/.vimrc.plugins

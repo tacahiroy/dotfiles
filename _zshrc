@@ -304,7 +304,11 @@ alias ltr='ls -ltr'
 alias llh='ls -lh'
 alias rm='nocorrect rm'
 
-alias du='du -h'
+if `which gdu 2>&1 > /dev/null`; then
+  alias du="`which gdu`"
+else
+  alias du='du -h'
+fi
 alias df='df -h'
 alias su='su -l'
 alias lv='lv -c'
@@ -407,7 +411,8 @@ if [[ -x `which brew` ]]; then
   [[ -s ${BREW_PREFIX}/etc/autojump.sh ]] && . ${BREW_PREFIX}/etc/autojump.sh
 
   for z in ${BREW_PREFIX}/opt/zsh-syntax-highlighting/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
-          ~/.zsh/functions/zsh-utils; do
+           ${BREW_PREFIX}/awscli/share/zsh/site-functions/_aws \
+           ~/.zsh/functions/zsh-utils; do
     [[ -s ${z} ]] && . ${z}
   done
 fi
