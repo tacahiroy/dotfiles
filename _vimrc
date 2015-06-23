@@ -103,54 +103,34 @@ if has('vim_starting')
 endif
 
 
-" * vundle plugin management "{{{
-filetype off
-set runtimepath& runtimepath+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
+" * plugin management "{{{
+call plug#begin($DOTVIM . '/plugged')
 
-Plugin 'gmarik/Vundle.vim'
-
-Plugin 'JazzCore/ctrlp-cmatcher'
-Plugin 'Valloric/YouCompleteMe'
-Plugin 'camelcasemotion'
-Plugin 'ctrlpvim/ctrlp.vim'
-Plugin 'glidenote/memolist.vim'
-Plugin 'godlygeek/tabular'
-Plugin 'jelera/vim-javascript-syntax'
-Plugin 'jiangmiao/simple-javascript-indenter'
-Plugin 'kien/rainbow_parentheses.vim'
-Plugin 'matchit.zip'
-Plugin 'tacahiroy/ctrlp-funky'
-Plugin 'tacahiroy/ctrlp-ssh'
-Plugin 'thinca/vim-quickrun'
-Plugin 'tpope/vim-commentary'
-Plugin 'tpope/vim-dispatch'
-Plugin 'tpope/vim-endwise'
-Plugin 'tpope/vim-surround'
-Plugin 'tyru/open-browser.vim'
-Plugin 'vim-ruby/vim-ruby'
+Plug 'JazzCore/ctrlp-cmatcher'
+Plug 'Valloric/YouCompleteMe', { 'do': './install.sh' }
+Plug 'camelcasemotion'
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'glidenote/memolist.vim'
+Plug 'godlygeek/tabular'
+Plug 'jelera/vim-javascript-syntax', { 'for': ['javascript', 'json'] }
+Plug 'jeroenbourgois/vim-actionscript'
+Plug 'jiangmiao/simple-javascript-indenter', { 'for': ['javascript', 'json'] }
+Plug 'kien/rainbow_parentheses.vim'
+Plug 'matchit.zip'
+Plug 'tacahiroy/ctrlp-funky'
+Plug 'tacahiroy/ctrlp-ssh', { 'on': 'CtrlPSSH' }
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-endwise'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-surround'
+Plug 'tyru/open-browser.vim'
+Plug 'vim-ruby/vim-ruby', { 'for': ['ruby'] }
 
 if filereadable(expand('~/.vimrc.plugins'))
   source ~/.vimrc.plugins
 endif
 
-let s:self_pathogen = 1
-if s:self_pathogen
-  " self pathogen: really simple-minded
-  if isdirectory($DOTVIM . '/sandbox')
-    let dirs = filter(split(glob($DOTVIM . '/sandbox/**/*')), 'isdirectory(v:val)')
-    for d in dirs
-      execute 'set runtimepath+=' . d
-      if d =~# '/doc$'
-        execute 'helptags ' . d
-      endif
-    endfor
-  endif
-endif
-
-call vundle#end()
-filetype plugin indent on
-syntax enable
+call plug#end()
 
 
 " * make prefix keys visible {{{
@@ -274,9 +254,9 @@ map <Space> [Space]
 " plug: kien/rainbow_parentheses
   augroup Tacahiroy
     autocmd VimEnter * RainbowParenthesesToggle
-    " autocmd Syntax * RainbowParenthesesLoadRound
-    " autocmd Syntax * RainbowParenthesesLoadSquare
     autocmd Syntax * RainbowParenthesesLoadBraces
+    autocmd Syntax * RainbowParenthesesLoadRound
+    " autocmd Syntax * RainbowParenthesesLoadSquare
   augroup END
   let g:rbpt_colorpairs = [
     \ ['brown',       'RoyalBlue3'],
