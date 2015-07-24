@@ -48,7 +48,7 @@ if &background == 'light'
   hi  vimGroup      gui=NONE
   hi  vimGroupName  gui=NONE
 else
-  hi  Normal        guibg=#010b36        guifg=Grey80        ctermfg=White
+  hi  Normal        guibg=#010b36        guifg=Grey80        ctermfg=7
   hi  NonText       guifg=LavenderBlush  ctermfg=LightMagenta
   hi  DiffDelete    guibg=DarkRed        guifg=Black           ctermbg=DarkRed   ctermfg=White
   hi  DiffAdd       guibg=DarkGreen      ctermbg=DarkGreen     ctermfg=White
