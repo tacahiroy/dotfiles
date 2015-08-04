@@ -12,22 +12,25 @@
 	excludesfile = ~/.gitignore
 
 [alias]
-	ci = commit
-	co = checkout
-	s = status -sb
-	st = status
-	d = diff
-	dc = diff --cached
-	b = branch
-	l = log
-	logo = log --pretty=oneline --abbrev-commit
-	logg = log --graph --pretty=oneline --abbrev-commit
-	logs = log --stat
-	logc = log ORIG_HEAD.. --stat --no-merges
-	up = pull --rebase
+	b    = branch
+	ci   = commit
+	co   = checkout
+	d    = diff
+	dc   = diff --cached
 	hide = stash
-	sup = !git stash && git up
-	spo = stash pop
+	l    = log
+	logc = log ORIG_HEAD.. --stat --no-merges
+	logg = log --graph --pretty= oneline --abbrev-commit
+	logo = log --pretty= oneline --abbrev-commit
+	logs = log --stat
+	ra   = rebase --abort
+	rc   = rebase --continue
+	ri   = rebase -i
+	s    = status -sb
+	spo  = stash pop
+	st   = status
+	sup  = !git stash && git up
+	up   = pull --rebase
 
 [advice]
 	statusHints = false
