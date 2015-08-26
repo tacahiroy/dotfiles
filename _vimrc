@@ -107,6 +107,7 @@ endif
 call plug#begin($DOTVIM . '/plugged')
 
 Plug 'JazzCore/ctrlp-cmatcher'
+Plug 'nixprime/cpsm'
 Plug 'Valloric/YouCompleteMe', { 'do': './install.sh' }
 Plug 'camelcasemotion'
 Plug 'ctrlpvim/ctrlp.vim'
@@ -195,8 +196,10 @@ map <Space> [Space]
     \ 'fallback': 'ag %s -i --nocolor --nogroup ' . ag_ignore . ' --hidden -g ""'
   \ }
 
-  if &runtimepath =~# 'ctrlp-cmatcher,'
-    let g:ctrlp_match_func = { 'match' : 'matcher#cmatch' }
+  if &runtimepath =~# 'cpsm'
+    let g:ctrlp_match_func = { 'match': 'cpsm#CtrlPMatch' }
+  elseif &runtimepath =~# 'ctrlp-cmatcher'
+    let g:ctrlp_match_func = { 'match': 'matcher#cmatch' }
   endif
 
   " Set delay to prevent extra search
@@ -310,7 +313,7 @@ map <Space> [Space]
   let g:netrw_nogx = 1
   " nmap gx <Plug>(openbrowser-smart-search)
   " vmap gx <Plug>(openbrowser-smart-search)
-	nmap gx <Plug>(openbrowser-open)
+  nmap gx <Plug>(openbrowser-open)
 
 " plug: camelcasemotion
   map <silent> W <plug>CamelCaseMotion_w
