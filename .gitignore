@@ -7,3 +7,4 @@ _vim/spell
 _zsh/cache
 _zsh/vendor
 *.zwc
+*.old
