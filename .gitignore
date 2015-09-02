@@ -8,3 +8,4 @@ _zsh/cache
 _zsh/vendor
 *.zwc
 *.old
+_vim/autoload/plug.*
