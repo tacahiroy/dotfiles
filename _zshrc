@@ -288,6 +288,7 @@ case "${OSTYPE}" in
     alias vim="$EDITOR "$@""
     alias gvim="$EDITOR -g "$@""
     alias ls='gls -F --color'
+    alias o='open'
     ;;
   *)
     alias ls='ls -F --color'
