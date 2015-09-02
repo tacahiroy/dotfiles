@@ -30,8 +30,12 @@ function! Echohl(group, msg)
 endfunction
 
 " To realise where I am
-function! Gps()
+function! Cwd()
   return '(' . s:shorten_path(getcwd(), 25) . ')'
+endfunction
+
+function! Monstermethod()
+  return monstermethod#search()
 endfunction
 
 " $HOME shown as tilde etc.
@@ -97,35 +101,42 @@ else
 endif
 
 if has('vim_starting')
-  let g:auto_chdir_enabled = get(g:, 'auto_chdir_enabled', 1)
+  let g:auto_chdir_enabled = 0
   " syntax: vim.vim
   let g:vimsyntax_noerror = 1
 endif
 
+let s:ctrlp_matcher = 'ctrlp-cmatcher'
 
 " * plugin management "{{{
-call plug#begin($DOTVIM . '/plugged')
+call plug#begin($HOME . '/plugins.vim')
 
-Plug 'JazzCore/ctrlp-cmatcher'
+if s:ctrlp_matcher ==# 'ctrlp-cmatcher'
+Plug 'JazzCore/ctrlp-cmatcher', { 'do': './install.sh' }
+elseif s:ctrlp_matcher ==# 'cpsm'
 Plug 'nixprime/cpsm'
+endif
 Plug 'Valloric/YouCompleteMe', { 'do': './install.sh' }
 Plug 'camelcasemotion'
-Plug 'ctrlpvim/ctrlp.vim'
-Plug 'glidenote/memolist.vim'
-Plug 'godlygeek/tabular'
+Plug 'glidenote/memolist.vim', { 'on': [ 'MemoList', 'MemoNew', 'MemoGrep' ] }
+Plug 'godlygeek/tabular', { 'on': 'Tabularize' }
 Plug 'jelera/vim-javascript-syntax', { 'for': ['javascript', 'json'] }
 Plug 'jeroenbourgois/vim-actionscript'
 Plug 'jiangmiao/simple-javascript-indenter', { 'for': ['javascript', 'json'] }
 Plug 'kien/rainbow_parentheses.vim'
 Plug 'matchit.zip'
-Plug 'tacahiroy/ctrlp-funky'
-Plug 'tacahiroy/ctrlp-ssh', { 'on': 'CtrlPSSH' }
 Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-dispatch', { 'on': 'Dispatch' }
 Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 Plug 'tyru/open-browser.vim'
 Plug 'vim-ruby/vim-ruby', { 'for': ['ruby'] }
+
+Plug '~/Projects/vim/ctrlp.vim'
+Plug '~/Projects/vim/ctrlp-funky'
+Plug '~/Projects/vim/ctrlp-ssh', { 'on': 'CtrlPSSH' }
+Plug '~/Projects/vim/vim-monstermethod'
 
 if filereadable(expand('~/.vimrc.plugins'))
   source ~/.vimrc.plugins
@@ -236,7 +247,7 @@ map <Space> [Space]
   let g:ctrlp_funky_sort_by_mru = 0
   let g:ctrlp_funky_syntax_highlight = 1
   let g:ctrlp_funky_ruby_chef_words = 1
-  let g:ctrlp_funky_multi_buffers = 0
+  let g:ctrlp_funky_multi_buffers = 1
 
   let g:ctrlp_ssh_keep_ctrlp_window = 0
 
@@ -251,8 +262,9 @@ map <Space> [Space]
   nnoremap [Space]uu :exe 'CtrlPFunky ' . fnameescape(expand('<cword>'))<Cr>
   nnoremap [Space]fs :CtrlPSSH<Cr>
 
-  " nnoremap [Space]t :CtrlPBufTag<Cr>
   nnoremap [Space]t :CtrlPTag<Cr>
+
+" plug: vim-monstermethod
 
 " plug: kien/rainbow_parentheses
   augroup Tacahiroy
@@ -275,8 +287,8 @@ map <Space> [Space]
     \ ['darkmagenta', 'DarkOrchid3'],
     \ ['Darkblue',    'firebrick3'],
     \ ['darkgreen',   'RoyalBlue3'],
-    \ ['darkcyan',    'SeaGreen3'],
     \ ['darkred',     'DarkOrchid3'],
+    \ ['darkcyan',    'SeaGreen3'],
     \ ['red',         'Darkblue'],
   \ ]
 
@@ -404,10 +416,9 @@ else
   let &shell = '/usr/bin/zsh'
 endif
 
-
 set shellslash
 set shiftround
-let &showbreak = "\u279e  "
+" let &showbreak = "\u279e  "
 set showcmd
 set showfulltag
 set showmatch matchtime=1
@@ -466,8 +477,11 @@ let &statusline .= '%{(&list ? "L" : "")}'
 let &statusline .= '%{(empty(&clipboard) ? "" : "c")}'
 let &statusline .= '%{(&paste ? "p" : "")}'
 let &statusline .= '|%{&textwidth}'
-let &statusline .= ' %=%#Title#'
-let &statusline .= '%{Gps()}'
+let &statusline .= ' %=%#Structure#'
+let &statusline .= '%{Monstermethod()}'
+let &statusline .= '|'
+let &statusline .= '%#Title#'
+let &statusline .= '%{Cwd()}'
 let &statusline .= '%{(g:auto_chdir_enabled ? "e" : "d")}'
 let &statusline .= '%-12( %#Statement#%l%#Title#/%LL,%c %)%P%*'
 " }}}
@@ -861,6 +875,8 @@ augroup Tacahiroy
 
   " Java
   autocmd FileType java setlocal tabstop=4 shiftwidth=4 softtabstop=4
+	" just for now
+  autocmd FileType java setlocal noexpandtab
   let java_highlight_java_lang_ids = 1
   let java_highlight_java_io = 1
 
@@ -1104,6 +1120,7 @@ if has('gui_running')
     let &printfont = &guifont
   endif
 endif
+
 
 " __END__ {{{
 " vim: fen fdm=marker ts=2 sts=2 sw=2
