@@ -56,6 +56,7 @@ path=(
   $HOME/.rbenv/shims(N-/)
   $HOME/bin(N-/)
   $HOME/perl5/bin(N-/)
+  $HOME/.local/bin(N-/)
   /usr/local/bin(N-/)
   /usr/local/sbin(N-/)
   $path
