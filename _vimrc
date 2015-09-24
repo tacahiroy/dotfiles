@@ -116,13 +116,16 @@ Plug 'JazzCore/ctrlp-cmatcher', { 'do': './install.sh' }
 elseif s:ctrlp_matcher ==# 'cpsm'
 Plug 'nixprime/cpsm'
 endif
+if has('patch-7.3.598')
 Plug 'Valloric/YouCompleteMe', { 'do': './install.sh' }
+endif
 Plug 'camelcasemotion'
 Plug 'glidenote/memolist.vim', { 'on': [ 'MemoList', 'MemoNew', 'MemoGrep' ] }
 Plug 'godlygeek/tabular', { 'on': 'Tabularize' }
 Plug 'jelera/vim-javascript-syntax', { 'for': ['javascript', 'json'] }
-Plug 'jeroenbourgois/vim-actionscript'
+Plug 'jeroenbourgois/vim-actionscript', { 'for': 'actionscript' }
 Plug 'jiangmiao/simple-javascript-indenter', { 'for': ['javascript', 'json'] }
+Plug 'justinmk/vim-dirvish'
 Plug 'kien/rainbow_parentheses.vim'
 Plug 'matchit.zip'
 Plug 'tpope/vim-commentary'
@@ -132,11 +135,13 @@ Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 Plug 'tyru/open-browser.vim'
 Plug 'vim-ruby/vim-ruby', { 'for': ['ruby'] }
+Plug 'tsaleh/vim-align',  { 'on': ['SQLUFormatter', 'SQLUFormatStmt'] } | Plug 'SQLUtilities', { 'for': ['sql', 'sqloracle'] }
 
 Plug '~/Projects/vim/ctrlp.vim'
 Plug '~/Projects/vim/ctrlp-funky'
 Plug '~/Projects/vim/ctrlp-ssh', { 'on': 'CtrlPSSH' }
 Plug '~/Projects/vim/vim-monstermethod'
+Plug '~/Projects/vim/vim-colors-monotone'
 
 if filereadable(expand('~/.vimrc.plugins'))
   source ~/.vimrc.plugins
@@ -350,6 +355,11 @@ map <Space> [Space]
 
 " plug: gitgutter 
   let g:gitgutter_enabled = 0
+
+" plug: SQLUtilities
+  let g:sqlutil_keyword_case = '\U'
+  let g:sqlutil_align_comma = 1
+  let g:sqlutil_align_where = 1
 " }}}
 " }}}
 
@@ -849,11 +859,11 @@ augroup Tacahiroy
   autocmd FileType markdown inoremap <buffer> <Leader>tt <Esc>:<C-u>call <SID>insert_today_for_md_changelog()<Cr>:startinsert<Cr>
   autocmd FileType markdown set autoindent
   autocmd FileType markdown setlocal tabstop=4 shiftwidth=4
-  autocmd FileType markdown inoremap <buffer> <Leader>h1 <Esc>I#<Space>
-  autocmd FileType markdown inoremap <buffer> <Leader>h2 <Esc>I##<Space>
-  autocmd FileType markdown inoremap <buffer> <Leader>h3 <Esc>I###<Space>
-  autocmd FileType markdown inoremap <buffer> <Leader>h4 <Esc>I####<Space>
-  autocmd FileType markdown inoremap <buffer> <Leader>h5 <Esc>I#####<Space>
+  autocmd FileType markdown inoremap <buffer> <Leader>h1 #<Space>
+  autocmd FileType markdown inoremap <buffer> <Leader>h2 ##<Space>
+  autocmd FileType markdown inoremap <buffer> <Leader>h3 ###<Space>
+  autocmd FileType markdown inoremap <buffer> <Leader>h4 ####<Space>
+  autocmd FileType markdown inoremap <buffer> <Leader>h5 #####<Space>
 
   autocmd FileType gitcommit setlocal spell
   autocmd FileType mail setlocal spell
