@@ -289,6 +289,10 @@ case "${OSTYPE}" in
     alias gvim="$EDITOR -g "$@""
     alias ls='gls -F --color'
     alias o='open'
+    alias oo='open .'
+    if `which gdu 2>&1 > /dev/null`; then
+      alias du="`which gdu`"
+    fi
     ;;
   *)
     alias ls='ls -F --color'
@@ -304,43 +308,28 @@ alias lla='ls -la'
 alias ltr='ls -ltr'
 alias llh='ls -lh'
 alias rm='nocorrect rm'
-
-if `which gdu 2>&1 > /dev/null`; then
-  alias du="`which gdu`"
-else
-  alias du='du -h'
-fi
 alias df='df -h'
 alias su='su -l'
-alias lv='lv -c'
-
 alias v='vim'
 alias vi='vim'
-
 alias gi='git'
 alias g='git'
 alias gu='git up'
 alias bb='brew'
 alias buo='brew update && brew outdated'
-
 alias netlisten='lsof -nP -iTCP -sTCP:LISTEN'
 alias netestab='lsof -nP -iTCP -sTCP:ESTABLISHED'
 alias netestablished=netestab
-
-# Ruby
-alias re='rbenv'
-
 alias pyttpd='python -m SimpleHTTPServer'
+alias re='rbenv'
+alias sortn='sort -n'
 
 # global
 alias -g K9='|xargs kill -9'
-
 alias -g L='|$PAGER -R'
-alias -g EEE='--secret-file ~/.chef/encrypted_data_bag_secret'
 alias -g C='|pbcopy'
 
 setopt complete_aliases
-
 
 # }}}
 
