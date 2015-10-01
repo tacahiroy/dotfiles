@@ -33,21 +33,14 @@ else
   export PAGER='less'
 fi
 
-# Rubinius
-export RBXOPT='-X19'
-
-# environment variables
-export proj=~/Projects
-export fc=~/Projects/Fc
-export g=~/git
-export chef=~/Projects/Fc/chef.git
-
 
 if [ -x /usr/local/opt/macvim/MacVim.app/Contents/MacOS/Vim ]; then
   export EDITOR=`brew --prefix macvim`/MacVim.app/Contents/MacOS/Vim
 else
   export EDITOR='vim'
 fi
+
+export GOPATH=$HOME/golang
 
 ## path
 typeset -U path
@@ -59,6 +52,7 @@ path=(
   $HOME/.local/bin(N-/)
   /usr/local/bin(N-/)
   /usr/local/sbin(N-/)
+  $GOPATH/bin(N-/)
   $path
 )
 
