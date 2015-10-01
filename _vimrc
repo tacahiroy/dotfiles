@@ -117,29 +117,32 @@ elseif s:ctrlp_matcher ==# 'cpsm'
 Plug 'nixprime/cpsm'
 endif
 if has('patch-7.3.598')
-Plug 'Valloric/YouCompleteMe', { 'do': './install.sh' }
+Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer --gocode-completer' }
 endif
 Plug 'camelcasemotion'
-Plug 'glidenote/memolist.vim', { 'on': [ 'MemoList', 'MemoNew', 'MemoGrep' ] }
-Plug 'godlygeek/tabular', { 'on': 'Tabularize' }
-Plug 'jelera/vim-javascript-syntax', { 'for': ['javascript', 'json'] }
+Plug 'davidhalter/jedi-vim',            { 'for': 'python', 'do': 'pip install jedi' }
+Plug 'fatih/vim-go',                    { 'for': 'go' }
+Plug 'glidenote/memolist.vim',          { 'on': [ 'MemoList', 'MemoNew', 'MemoGrep' ] }
+Plug 'godlygeek/tabular',               { 'on': 'Tabularize' }
+Plug 'pangloss/vim-javascript',         { 'for': 'javascript' }
 Plug 'jeroenbourgois/vim-actionscript', { 'for': 'actionscript' }
-Plug 'jiangmiao/simple-javascript-indenter', { 'for': ['javascript', 'json'] }
+Plug 'jiangmiao/auto-pairs'
 Plug 'justinmk/vim-dirvish'
 Plug 'kien/rainbow_parentheses.vim'
 Plug 'matchit.zip'
+Plug 'rust-lang/rust.vim'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-dispatch', { 'on': 'Dispatch' }
 Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 Plug 'tyru/open-browser.vim'
-Plug 'vim-ruby/vim-ruby', { 'for': ['ruby'] }
+Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
 Plug 'tsaleh/vim-align',  { 'on': ['SQLUFormatter', 'SQLUFormatStmt'] } | Plug 'SQLUtilities', { 'for': ['sql', 'sqloracle'] }
 
 Plug '~/Projects/vim/ctrlp.vim'
 Plug '~/Projects/vim/ctrlp-funky'
-Plug '~/Projects/vim/ctrlp-ssh', { 'on': 'CtrlPSSH' }
+Plug '~/Projects/vim/ctrlp-ssh',   { 'on': 'CtrlPSSH' }
 Plug '~/Projects/vim/vim-monstermethod'
 Plug '~/Projects/vim/vim-colors-monotone'
 
@@ -247,7 +250,7 @@ map <Space> [Space]
   " let g:ctrlp_open_single_match = [ 'funky', 'buffers', 'buffer tags' ]
 
   let g:ctrlp_funky_debug = 0
-  let g:ctrlp_funky_use_cache = 1
+  let g:ctrlp_funky_use_cache = 0
   let g:ctrlp_funky_matchtype = 'path'
   let g:ctrlp_funky_sort_by_mru = 0
   let g:ctrlp_funky_syntax_highlight = 1
@@ -269,7 +272,8 @@ map <Space> [Space]
 
   nnoremap [Space]t :CtrlPTag<Cr>
 
-" plug: vim-monstermethod
+" plug: jedi-vim
+let g:jedi#auto_vim_configuration = 0
 
 " plug: kien/rainbow_parentheses
   augroup Tacahiroy
@@ -676,7 +680,6 @@ nnoremap <silent> [Space]a :<C-u>let @* = @"<Cr>
 " help
 " why <C-h> doesn't work in neovim
 nnoremap <C-h> :<C-u>h<Space>
-nnoremap <BS> :<C-u>h<Space>
 nnoremap <C-\> :<C-u>h<Space>
 " put a whitespace into under the cursor
 nnoremap s<Space> i<Space><Esc>
@@ -778,8 +781,6 @@ augroup Tacahiroy
         \|   setlocal makeprg=foodcritic\ $*\ %
         \|   setlocal errorformat=%m:\ %f:%l
         \| endif
-
-  autocmd FileType ruby inoremap <silent> <buffer> {{ #{}<C-o><Left>
 
   autocmd FileType eruby* inoremap <silent> <buffer> <Leader>e <C-g>u<%=  %><Esc>F<Space>i
   autocmd FileType eruby* inoremap <silent> <buffer> <Leader>b <C-g>u<%-  -%><Esc>F<Space>i
@@ -1130,7 +1131,6 @@ if has('gui_running')
     let &printfont = &guifont
   endif
 endif
-
 
 " __END__ {{{
 " vim: fen fdm=marker ts=2 sts=2 sw=2
