@@ -2,9 +2,11 @@
 " Author: Takahiro Yoshihara <tacahiroy@gmail.com>
 
 set cpo&vim
-set encoding=utf-8
-set termencoding=utf-8
 
+if has('vim_starting')
+  set encoding=utf-8
+endif
+set termencoding=utf-8
 set verbose=0
 
 scriptencoding utf-8
@@ -119,18 +121,18 @@ endif
 if has('patch-7.3.598')
 Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer --gocode-completer' }
 endif
+Plug 'Raimondi/delimitMate'
 Plug 'camelcasemotion'
 Plug 'davidhalter/jedi-vim',            { 'for': 'python', 'do': 'pip install jedi' }
-Plug 'fatih/vim-go',                    { 'for': 'go' }
+Plug 'fatih/vim-go'
 Plug 'glidenote/memolist.vim',          { 'on': [ 'MemoList', 'MemoNew', 'MemoGrep' ] }
 Plug 'godlygeek/tabular',               { 'on': 'Tabularize' }
 Plug 'pangloss/vim-javascript',         { 'for': 'javascript' }
 Plug 'jeroenbourgois/vim-actionscript', { 'for': 'actionscript' }
-Plug 'jiangmiao/auto-pairs'
 Plug 'justinmk/vim-dirvish'
 Plug 'kien/rainbow_parentheses.vim'
 Plug 'matchit.zip'
-Plug 'rust-lang/rust.vim'
+Plug 'rust-lang/rust.vim', { 'for': 'rust' }
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-dispatch', { 'on': 'Dispatch' }
 Plug 'tpope/vim-endwise'
@@ -140,11 +142,10 @@ Plug 'tyru/open-browser.vim'
 Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
 Plug 'tsaleh/vim-align',  { 'on': ['SQLUFormatter', 'SQLUFormatStmt'] } | Plug 'SQLUtilities', { 'for': ['sql', 'sqloracle'] }
 
-Plug '~/Projects/vim/ctrlp.vim'
-Plug '~/Projects/vim/ctrlp-funky'
-Plug '~/Projects/vim/ctrlp-ssh',   { 'on': 'CtrlPSSH' }
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'tacahiroy/ctrlp-ssh',   { 'on': 'CtrlPSSH' }
+Plug 'tacahiroy/ctrlp-funky'
 Plug '~/Projects/vim/vim-monstermethod'
-Plug '~/Projects/vim/vim-colors-monotone'
 
 if filereadable(expand('~/.vimrc.plugins'))
   source ~/.vimrc.plugins
@@ -193,7 +194,8 @@ map <Space> [Space]
   let g:ctrlp_max_depth = 24
   let g:ctrlp_show_hidden = 1
   let g:ctrlp_mruf_max = 1024
-  let g:ctrlp_mruf_exclude = 'knife-edit-*.*'
+  let g:ctrlp_mruf_tilde_homedir = 1
+  let g:ctrlp_mruf_exclude = 'knife-edit-*.*\|COMMIT_EDITMSG\|a.rb\|a.py'
 
   let ctrlp_ignores = [ '.*/', '.hg', '.svn', '.cache', '.dropbox.cache', '.dropbox', '.chef',
                       \ 'VMs', 'VirtualBox VMs',
@@ -245,10 +247,6 @@ map <Space> [Space]
     \ 'file': '\v(\.exe|\.so|\.dll|\.DS_Store|\.db|COMMIT_EDITMSG)$'
     \ }
 
-  let g:ctrlp_mruf_tilde_homedir = 1
-
-  " let g:ctrlp_open_single_match = [ 'funky', 'buffers', 'buffer tags' ]
-
   let g:ctrlp_funky_debug = 0
   let g:ctrlp_funky_use_cache = 0
   let g:ctrlp_funky_matchtype = 'path'
@@ -282,6 +280,7 @@ let g:jedi#auto_vim_configuration = 0
     autocmd Syntax * RainbowParenthesesLoadRound
     " autocmd Syntax * RainbowParenthesesLoadSquare
   augroup END
+
   let g:rbpt_colorpairs = [
     \ ['brown',       'RoyalBlue3'],
     \ ['Darkblue',    'SeaGreen3'],
@@ -357,9 +356,6 @@ let g:jedi#auto_vim_configuration = 0
         \ }
   \ }
 
-" plug: gitgutter 
-  let g:gitgutter_enabled = 0
-
 " plug: SQLUtilities
   let g:sqlutil_keyword_case = '\U'
   let g:sqlutil_align_comma = 1
@@ -404,7 +400,7 @@ set keywordprg=:help
 set linebreak
 set linespace=0
 set nolist
-set listchars=tab:>-,trail:-,extends:>,precedes:<
+set listchars=tab:^\ ,trail:-,extends:>,precedes:<
 set laststatus=2
 set lazyredraw
 set modeline
@@ -491,9 +487,12 @@ let &statusline .= '%{(&list ? "L" : "")}'
 let &statusline .= '%{(empty(&clipboard) ? "" : "c")}'
 let &statusline .= '%{(&paste ? "p" : "")}'
 let &statusline .= '|%{&textwidth}'
+let &statusline .= '%#Type#'
+let &statusline .= '%{fugitive#statusline()}'
+let &statusline .= '%*'
 let &statusline .= ' %=%#Structure#'
 let &statusline .= '%{Monstermethod()}'
-let &statusline .= '|'
+let &statusline .= ' '
 let &statusline .= '%#Title#'
 let &statusline .= '%{Cwd()}'
 let &statusline .= '%{(g:auto_chdir_enabled ? "e" : "d")}'
@@ -706,36 +705,27 @@ nnoremap <MiddleMouse> <Nop>
 nnoremap <2-MiddleMouse> <Nop>
 
 " insert current file name
-inoremap <silent> <Leader>fn <C-R>=@%<Cr>
+inoremap <silent> <Leader>fn <C-R>=expand('%:t')<Cr>
 " copy current file name to @" register
-nnoremap <silent> <Leader>fn :let @" = @%<Cr>
+nnoremap <silent> <Leader>fn :let @" = expand('%:t')<Cr>
 " insert current file name (absolute path)
 inoremap <silent> <Leader>fN <C-R>=fnamemodify(@%, ':p')<Cr>
 nnoremap <silent> <Leader>fN :let @" = fnamemodify(@%, ':p')<Cr>
 
+inoremap <Leader>a <Cr><Esc>O
+
 " search visual-ed text
 vnoremap * y/<C-R>"<Cr>
-" prefer to dot
 vnoremap < <gv
 vnoremap > >gv
 
 " like Eclipse's Alt+Up/Down
 function! s:move_block(d) range
-  let cnt = a:lastline - a:firstline
-
-  if a:d is# 'u'
-    let sign = '-'
-    let cnt = 2
-  else
-    let sign = '+'
-    let cnt += 1
-  endif
-
+  let [sign, cnt] = a:d is# 'u' ? ['-', 2] : ['+', a:lastline-a:firstline+1]
   execute printf('%d,%dmove%s%d', a:firstline, a:lastline, sign, cnt)
 endfunction
-
-vnoremap <C-n> :call <SID>move_block('d')<Cr>==gv
 vnoremap <C-p> :call <SID>move_block('u')<Cr>==gv
+vnoremap <C-n> :call <SID>move_block('d')<Cr>==gv
 
 " format HTML/XML
 if executable('tidyp')
@@ -758,7 +748,6 @@ if has('multi_byte_ime') || has('xim')
   set iminsert=0 imsearch=0
   inoremap <silent> <Esc> <Esc>:<C-u>set iminsert=0<Cr>
 endif
-
 
 " * autocmds "{{{
 autocmd User Rails nnoremap <buffer> [Space]r :<C-u>R
@@ -886,7 +875,7 @@ augroup Tacahiroy
 
   " Java
   autocmd FileType java setlocal tabstop=4 shiftwidth=4 softtabstop=4
-	" just for now
+  " just for now
   autocmd FileType java setlocal noexpandtab
   let java_highlight_java_lang_ids = 1
   let java_highlight_java_io = 1
