@@ -122,29 +122,31 @@ if has('patch-7.3.598')
 Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer --gocode-completer' }
 endif
 Plug 'Raimondi/delimitMate'
+Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
 Plug 'camelcasemotion'
-Plug 'davidhalter/jedi-vim',            { 'for': 'python', 'do': 'pip install jedi' }
-Plug 'fatih/vim-go'
+Plug 'davidhalter/jedi-vim',            { 'for': 'python', 'do': 'sudo pip install jedi' }
+Plug 'fatih/vim-go', { 'for': 'go' }
 Plug 'glidenote/memolist.vim',          { 'on': [ 'MemoList', 'MemoNew', 'MemoGrep' ] }
 Plug 'godlygeek/tabular',               { 'on': 'Tabularize' }
-Plug 'pangloss/vim-javascript',         { 'for': 'javascript' }
 Plug 'jeroenbourgois/vim-actionscript', { 'for': 'actionscript' }
 Plug 'justinmk/vim-dirvish'
 Plug 'kien/rainbow_parentheses.vim'
 Plug 'matchit.zip'
+Plug 'pangloss/vim-javascript',         { 'for': 'javascript' }
 Plug 'rust-lang/rust.vim', { 'for': 'rust' }
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-dispatch', { 'on': 'Dispatch' }
 Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
+Plug 'tsaleh/vim-align',  { 'on': ['SQLUFormatter', 'SQLUFormatStmt'] } | Plug 'SQLUtilities', { 'for': ['sql', 'sqloracle'] }
 Plug 'tyru/open-browser.vim'
 Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
-Plug 'tsaleh/vim-align',  { 'on': ['SQLUFormatter', 'SQLUFormatStmt'] } | Plug 'SQLUtilities', { 'for': ['sql', 'sqloracle'] }
 
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'tacahiroy/ctrlp-ssh',   { 'on': 'CtrlPSSH' }
-Plug 'tacahiroy/ctrlp-funky'
+" Plug 'tacahiroy/ctrlp-funky'
+Plug '~/Projects/vim/ctrlp-funky'
 Plug '~/Projects/vim/vim-monstermethod'
 
 if filereadable(expand('~/.vimrc.plugins'))
@@ -248,12 +250,11 @@ map <Space> [Space]
     \ }
 
   let g:ctrlp_funky_debug = 0
-  let g:ctrlp_funky_use_cache = 0
+  let g:ctrlp_funky_use_cache = 1
   let g:ctrlp_funky_matchtype = 'path'
   let g:ctrlp_funky_sort_by_mru = 0
   let g:ctrlp_funky_syntax_highlight = 1
   let g:ctrlp_funky_ruby_chef_words = 1
-  let g:ctrlp_funky_multi_buffers = 1
 
   let g:ctrlp_ssh_keep_ctrlp_window = 0
 
@@ -265,6 +266,7 @@ map <Space> [Space]
   nnoremap [Space]fr :CtrlPRTS<Cr>
 
   nnoremap [Space]fu :CtrlPFunky<Cr>
+  nnoremap [Space]F  :CtrlPFunkyDeep<Cr>
   nnoremap [Space]uu :exe 'CtrlPFunky ' . fnameescape(expand('<cword>'))<Cr>
   nnoremap [Space]fs :CtrlPSSH<Cr>
 
@@ -305,16 +307,10 @@ let g:jedi#auto_vim_configuration = 0
   let g:ycm_seed_identifiers_with_syntax = 1
   let g:ycm_complete_in_comments = 1
 
-" plug: syntastic
-  let g:syntastic_mode_map =
-        \ { 'mode': 'active',
-          \ 'active_filetypes': ['ruby', 'cucumber', 'perl', 'python', 'sh'],
-          \ 'passive_filetypes': ['xml'] }
-  " let g:syntastic_ruby_checkers = ['rubocop']
-  let g:syntastic_enable_balloons = 0
-  let g:syntastic_auto_loc_list = 2
-  let g:syntastic_error_symbol='✗'
-  let g:syntastic_warning_symbol='⚠'
+" plug: UltiSnips
+  let g:UltiSnipsExpandTrigger = '<C-y>'
+  let g:UltiSnipsJumpForwardTrigger = '<C-f>'
+  let g:UltiSnipsJumpBackwardTrigger = '<C-b>'
 
 " plug: commentary.vim
   nmap [Space]c gcc
@@ -360,6 +356,14 @@ let g:jedi#auto_vim_configuration = 0
   let g:sqlutil_keyword_case = '\U'
   let g:sqlutil_align_comma = 1
   let g:sqlutil_align_where = 1
+
+" plug: delimiteMate
+  let delimitMate_expand_space = 1
+  let delimitMate_expand_cr = 1
+  let delimitMate_matchpairs = "(:),[:],{:}"
+  augroup Tacahiroy
+    autocmd FileType html,xml,eruby let b:delimitMate_matchpairs = &matchpairs
+  augroup END
 " }}}
 " }}}
 
@@ -677,8 +681,6 @@ nnoremap <silent> [Space]a :<C-u>let @* = @"<Cr>
 
 
 " help
-" why <C-h> doesn't work in neovim
-nnoremap <C-h> :<C-u>h<Space>
 nnoremap <C-\> :<C-u>h<Space>
 " put a whitespace into under the cursor
 nnoremap s<Space> i<Space><Esc>
@@ -914,170 +916,6 @@ augroup END
 "}}}
 
 
-" * Chef " {{{
-" a wrapper for the knife command
-if executable('knife')
-  let s:knife = {} " knife {{{
-  function! s:knife.cookbook_upload(...) abort
-    let path = expand('%:p')
-    if path !~# '/cookbooks/[^/]\+/.\+'
-      return
-    endif
-
-    let cookbooks = [get(a:, 1, '')]
-    echom path
-    let m = matchlist(path, '^\(.\+/cookbooks\)/\([^/]\+\)/')
-    let cb_path = m[1]
-    if index(cookbooks, m[2]) == -1
-      call insert(cookbooks, m[2])
-    endif
-
-    if len(cookbooks) > 0
-      let cookbooks = filter(cookbooks, 'isdirectory(cb_path . "/" . v:val)')
-      let mes = 'Uploading cookbook' . (len(cookbooks) != 1 ? 's' : '')
-      let cmd = printf('knife cookbook upload -o %s %s;', cb_path, join(cookbooks))
-      let cmd .= s:notify(join(cookbooks), 'Chef', $DOTVIM . '/images/chef_logo.png')
-
-      if s:tmux.is_running()
-        let cmd .= '; echo Press enter to close the pane.; read'
-      endif
-
-      echomsg printf('%s: %s', mes, join(cookbooks))
-      " echomsg cmd
-      " rough :|
-      let cmd = "PATH=$HOME/.rbenv/shims:$PATH " . cmd
-      call s:tmux.run(cmd, 1, 1)
-    else
-      echoerr 'no cookbooks are found.'
-    endif
-  endfunction
-
-  " Convert a Chef element name to dirname
-  " e.g. 'data_bags' -> 'data bag'
-  function! s:knife.dir2ele(dir)
-    return substitute(substitute(a:dir, '_', ' ', ''), 's$', '', '')
-  endfunction
-
-  function! s:knife.elename(path)
-    for v in [ 'data_bags', 'environments', 'roles' ]
-      if a:path =~# '/' . v . '/'
-        return v
-      endif
-    endfor
-  endfunction
-
-  function! s:knife.from_file(json, opts)
-    let path = fnamemodify(expand(a:json), ':p')
-    let dirname = self.elename(path)
-    let ele = self.dir2ele(dirname)
-
-    if path !~# dirname
-      call Echohl('WarningMsg', printf('%s is not a ' . ele . ' file.', path))
-      return
-    endif
-
-    if ele ==# 'data bag'
-      " BAG
-      let item = fnamemodify(path, ':p:h:t')
-      if empty(item)
-        call Echohl('WarningMsg', printf('cannot get BAG name from %s', path))
-        return
-      endif
-    else
-      let item = ''
-    endif
-
-    " echom printf('!knife %s from file %s %s %s', ele, item, path, a:opts)
-    execute printf('!knife %s from file %s %s %s', ele, item, path, a:opts)
-  endfunction
-
-  " commands and maps
-  command! -nargs=* KnifeCookbookUpload call s:knife.cookbook_upload(<f-args>)
-  command! -nargs=+ KnifeFromFile call s:knife.from_file(<q-args>, <q-args>)
-
-  nnoremap [Space]K :<C-u>KnifeCookbookUpload<Cr>
-endif
-" }}}
-
-" Cookbook utilities
-let s:chef = {} " {{{
-function! s:chef.convert_attr_notation(colon) abort
-  if !search('\>', 'bcnW')
-    return
-  endif
-
-  let [bufnbr, lnum, col, offset] = getpos('.')
-  let line = getline(lnum)
-
-  if match(line, '\.') == -1
-    return
-  endif
-
-  let sc = self.find_attr_pos()
-  let ec = col
-  let l = matchstr(line, printf('.*\%%<%dc', sc))
-  let r = matchstr(line, printf('\%%>%dc.*', ec))
-  let attrs = split(matchstr(line, printf('\%%%dc.\+\%%%dc', sc - 1, ec + 1)), '\.')
-
-  if a:colon
-    let fmt = '"[:" . v:val . "]"'
-  else
-    let fmt = '"[\"" . v:val . "\"]"'
-  endif
-
-  let attr = attrs[0] . join(map(attrs[1:], fmt), '')
-  call setline(lnum, l . attr . r)
-  call setpos('.', [bufnbr, lnum, len(l . attr) + 1, 0])
-  execute 'startinsert'
-endfunction
-
-function! s:chef.find_attr_pos()
-  " let pos = searchpos('\(^\|\s\)', 'bnW')
-  let pos = searchpos('\<\(node\|default\|normal\)\>', 'bnW')
-  return pos[1] + 1
-endfunction
-
-command! -nargs=1 ChefConvertAttrNotation call s:chef.convert_attr_notation(<f-args>)
-inoremap <silent> <C-y>x <C-g>u<Esc>:ChefConvertAttrNotation 1<Cr>
-inoremap <silent> <C-y>X <C-g>u<Esc>:ChefConvertAttrNotation 0<Cr>
-" }}}
-
-" Get cmd-line for notification
-function! s:notify(title, app, ...)
-  if !s:is_mac | return '' | endif
-
-  if executable('terminal-notifier')
-    return s:notification_center(a:title, a:app)
-  elseif executable('growlnotify')
-    return s:growlnotify(a:title, a:app, get(a:, 1, ''))
-  else
-    return ''
-  endif
-endfunction
-
-function! s:growlnotify(title, app, ...)
-  let icon = get(a:, 1, '')
-
-  let cmd = 'if [ $? -eq 0 ]; then echo SUCCESS; else echo FAILURE; fi | '
-  let cmd .= printf('growlnotify -n %s ', a:app)
-
-  if !empty(icon)
-    let cmd .= '--image ' . icon . ' '
-  endif
-
-  let cmd .= printf('\"%s\"', a:title)
-
-  return cmd
-endfunction
-
-function! s:notification_center(title, app)
-  let cmd = 'if [ $? -eq 0 ]; then echo SUCCESS; else echo FAILURE; fi | '
-  let cmd .= printf('terminal-notifier -title %s -subtitle %s', a:app, a:title)
-  return cmd
-endfunction
-" }}}
-
-
 if filereadable(expand('~/.vimrc.local'))
   source ~/.vimrc.local
 endif
@@ -1123,3 +961,4 @@ endif
 
 " __END__ {{{
 " vim: fen fdm=marker ts=2 sts=2 sw=2
+
