@@ -2,6 +2,22 @@ export LANG=ja_JP.UTF-8
 
 HISTFILE=~/.zhistory
 
+export GOPATH=$HOME/golang
+
+## path
+typeset -U path
+path=(
+  ./bin
+  $HOME/.rbenv/shims(N-/)
+  $HOME/bin(N-/)
+  $HOME/perl5/bin(N-/)
+  $HOME/.local/bin(N-/)
+  /usr/local/bin(N-/)
+  /usr/local/sbin(N-/)
+  $GOPATH/bin(N-/)
+  $path
+)
+
 fpath=(/usr/local/opt/zsh-completions/share/zsh-completions/(N-/) \
        $HOME/.zsh/functions/*(N-) \
        $HOME/.zsh/vendor/*(N-) \
@@ -25,36 +41,15 @@ export USE_PATCHED_FONT="false"
 #
 # export LANG=ja_JP.UTF-8
 export TERM=xterm-256color
-# colourize
-if [[ -x `which lv` ]]; then
-  export PAGER='lv'
-  export LV='-c'
-else
-  export PAGER='less'
-fi
-
+export PAGER='less'
 
 if [ -x /usr/local/opt/macvim/MacVim.app/Contents/MacOS/Vim ]; then
   export EDITOR=`brew --prefix macvim`/MacVim.app/Contents/MacOS/Vim
+elif [ -x /usr/local/bin/vim ]; then
+  export EDITOR=/usr/local/bin/vim
 else
-  export EDITOR='vim'
+  export EDITOR=vim
 fi
-
-export GOPATH=$HOME/golang
-
-## path
-typeset -U path
-path=(
-  ./bin
-  $HOME/.rbenv/shims(N-/)
-  $HOME/bin(N-/)
-  $HOME/perl5/bin(N-/)
-  $HOME/.local/bin(N-/)
-  /usr/local/bin(N-/)
-  /usr/local/sbin(N-/)
-  $GOPATH/bin(N-/)
-  $path
-)
 
 export ANDROID_HOME=/usr/local/opt/android-sdk
 
