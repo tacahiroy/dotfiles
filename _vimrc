@@ -109,6 +109,7 @@ if has('vim_starting')
 endif
 
 let s:ctrlp_matcher = 'ctrlp-cmatcher'
+" let s:ctrlp_matcher = 'cpsm'
 
 " * plugin management "{{{
 call plug#begin($HOME . '/plugins.vim')
@@ -124,9 +125,9 @@ endif
 Plug 'Raimondi/delimitMate'
 Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
 Plug 'camelcasemotion'
-Plug 'davidhalter/jedi-vim',            { 'for': 'python', 'do': 'sudo pip install jedi' }
+Plug 'davidhalter/jedi-vim',            { 'for': 'python', 'do': 'pip install jedi' }
 Plug 'fatih/vim-go', { 'for': 'go' }
-Plug 'glidenote/memolist.vim',          { 'on': [ 'MemoList', 'MemoNew', 'MemoGrep' ] }
+Plug 'glidenote/memolist.vim',          { 'on': ['MemoList', 'MemoNew', 'MemoGrep'] }
 Plug 'godlygeek/tabular',               { 'on': 'Tabularize' }
 Plug 'jeroenbourgois/vim-actionscript', { 'for': 'actionscript' }
 Plug 'justinmk/vim-dirvish'
@@ -146,6 +147,7 @@ Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'tacahiroy/ctrlp-ssh',   { 'on': 'CtrlPSSH' }
 " Plug 'tacahiroy/ctrlp-funky'
+" Plug '~/Projects/vim/ctrlp.vim'
 Plug '~/Projects/vim/ctrlp-funky'
 Plug '~/Projects/vim/vim-monstermethod'
 
