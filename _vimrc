@@ -61,16 +61,6 @@ function! s:system(cmd)
   return { 'out': res, 'err': v:shell_error }
 endfunction
 
-" which + chop
-function! s:which(cmd)
-  let res = s:system('which ' . a:cmd)
-  if res.err
-    return ''
-  else
-    return substitute(res.out, '\n$', '', '')
-  endif
-endfunction
-
 " show tag information in the command window
 function! s:preview_tag_lite(word)
   let t = taglist('^' . a:word . '$')
@@ -144,10 +134,9 @@ Plug 'tsaleh/vim-align',  { 'on': ['SQLUFormatter', 'SQLUFormatStmt'] } | Plug '
 Plug 'tyru/open-browser.vim'
 Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
 
-Plug 'ctrlpvim/ctrlp.vim'
-Plug 'tacahiroy/ctrlp-ssh',   { 'on': 'CtrlPSSH' }
+" Plug 'ctrlpvim/ctrlp.vim'
 " Plug 'tacahiroy/ctrlp-funky'
-" Plug '~/Projects/vim/ctrlp.vim'
+Plug '~/Projects/vim/ctrlp.vim'
 Plug '~/Projects/vim/ctrlp-funky'
 Plug '~/Projects/vim/vim-monstermethod'
 
@@ -199,18 +188,7 @@ map <Space> [Space]
   let g:ctrlp_show_hidden = 1
   let g:ctrlp_mruf_max = 1024
   let g:ctrlp_mruf_tilde_homedir = 1
-  let g:ctrlp_mruf_exclude = 'knife-edit-*.*\|COMMIT_EDITMSG\|a.rb\|a.py'
-
-  let ctrlp_ignores = [ '.*/', '.hg', '.svn', '.cache', '.dropbox.cache', '.dropbox', '.chef',
-                      \ 'VMs', 'VirtualBox VMs',
-                      \ '.npm', 'node-gyp', 'node_modules', '.cpanm', '.gradle', '.rbx', '.rbenv', '.gem', '.pyenv', '.sbt',
-                      \ '.ivy2', '.vimundo', '.android', '.bestfriend', 'vendor',
-                      \ 'Library/', '.doc\?$', '.pptx\?$', '.xlsx\?$', '.jpg$', '.png$', '.gif$', '.flac$', '.mp3$', '.DS_Store' ]
-
-  let ag_ignore = ''
-  if exists('ctrlp_ignores') && !empty(ctrlp_ignores)
-    let ag_ignore = join(map(ctrlp_ignores, "\"--ignore \" . '\"' . v:val . '\"'"))
-  endif
+  let g:ctrlp_mruf_exclude = 'knife-edit-*.*\|COMMIT_EDITMSG\|a.*'
 
   let g:ctrlp_user_command = {
     \ 'types': {
@@ -218,7 +196,7 @@ map <Space> [Space]
       \ 2: ['.hg/', 'hg --cwd %s locate -I .'],
       \ 3: ['.svn/', 'svn ls file://%s']
     \ },
-    \ 'fallback': 'ag %s -i --nocolor --nogroup ' . ag_ignore . ' --hidden -g ""'
+    \ 'fallback': 'ag %s -i --nocolor --nogroup -p ~/.agignore --hidden -g ""',
   \ }
 
   if &runtimepath =~# 'cpsm'
@@ -275,15 +253,17 @@ map <Space> [Space]
   nnoremap [Space]t :CtrlPTag<Cr>
 
 " plug: jedi-vim
-let g:jedi#auto_vim_configuration = 0
+  let g:jedi#auto_vim_configuration = 0
 
 " plug: kien/rainbow_parentheses
-  augroup Tacahiroy
-    autocmd VimEnter * RainbowParenthesesToggle
-    autocmd Syntax * RainbowParenthesesLoadBraces
-    autocmd Syntax * RainbowParenthesesLoadRound
-    " autocmd Syntax * RainbowParenthesesLoadSquare
-  augroup END
+  if &runtimepath =~# 'rainbow_parentheses.vim'
+    augroup Tacahiroy
+      autocmd VimEnter * RainbowParenthesesToggle
+      autocmd Syntax * RainbowParenthesesLoadBraces
+      autocmd Syntax * RainbowParenthesesLoadRound
+      " autocmd Syntax * RainbowParenthesesLoadSquare
+    augroup END
+  endif
 
   let g:rbpt_colorpairs = [
     \ ['brown',       'RoyalBlue3'],
@@ -297,10 +277,10 @@ let g:jedi#auto_vim_configuration = 0
     \ ['gray',        'RoyalBlue3'],
     \ ['black',       'SeaGreen3'],
     \ ['darkmagenta', 'DarkOrchid3'],
-    \ ['Darkblue',    'firebrick3'],
     \ ['darkgreen',   'RoyalBlue3'],
     \ ['darkred',     'DarkOrchid3'],
     \ ['darkcyan',    'SeaGreen3'],
+    \ ['Darkblue',    'firebrick3'],
     \ ['red',         'Darkblue'],
   \ ]
 
@@ -340,19 +320,6 @@ let g:jedi#auto_vim_configuration = 0
   sunmap W
   sunmap B
   sunmap E
-
-" plug: vim-quickrun
-  nmap <Space>r <Plug>(quickrun)
-  vmap <Space>r <Plug>(quickrun)
-
-  let g:quickrun_config = {
-        \    'perl': {
-              \ 'outputter': 'buffer',
-              \ 'runner': 'system',
-              \ 'cmdopt': '',
-              \ 'args': '-H 127.0.0.1 -P 8000'
-        \ }
-  \ }
 
 " plug: SQLUtilities
   let g:sqlutil_keyword_case = '\U'
@@ -424,13 +391,13 @@ set pumheight=24
 set scroll=0
 set scrolloff=5
 
-" 99% zsh though
 set shell&
-if s:is_mac
-  let &shell = '/usr/local/bin/zsh'
-else
-  let &shell = '/usr/bin/zsh'
-endif
+for s in ['/usr/local/bin/zsh', '/bin/zsh', '/bin/bash', '/bin/sh']
+  if executable(s)
+    let &shell = s
+    break
+  endif
+endfor
 
 set shellslash
 set shiftround
@@ -518,7 +485,7 @@ cnoremap <C-o> <C-d>
 " in case forgot to run vim w/o sudo
 cnoremap W!! %!sudo tee > /dev/null %
 
-" disable default mappings
+" disable dangerous? mappings
 nnoremap ZZ <Nop>
 nnoremap s <Nop>
 nnoremap Q <Nop>
@@ -531,7 +498,7 @@ nnoremap Y y$
 
 " * visual stuffs
 nnoremap vv <C-v>
-" do visual the current column to end-of-line without <NL>
+" visual the current column to end-of-line without <NL>
 nnoremap vo vg_o
 " like V, but without <NL>
 nnoremap vO ^vg_o
@@ -552,10 +519,10 @@ vnoremap : ;
 nnoremap j gj
 nnoremap k gk
 
-nnoremap <silent> <Return> :<C-u>call <SID>insert_line()<Cr>
-function! s:insert_line()
-  if &buftype !~# '\(quickfix\|help\|nofile\)'
-    call append(line('.'), '')
+nnoremap <silent> <Return> :<C-u>call <SID>insert_blank_line()<Cr>
+function! s:insert_blank_line()
+  if !&readonly && &buftype !~# '\(quickfix\|help\|nofile\)'
+    silent! call append(line('.'), '')
   endif
 endfunction
 
@@ -963,4 +930,3 @@ endif
 
 " __END__ {{{
 " vim: fen fdm=marker ts=2 sts=2 sw=2
-
