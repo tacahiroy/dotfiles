@@ -79,8 +79,6 @@ perl5_lib=(
 )
 export PERL_MM_OPT=~/perl5/lib/perl5/local/lib.pm
 
-export DOCKER_HOST=tcp://127.0.0.1:2375
-
 if [ -f ~/.zshrc.local ]; then
   source ~/.zshrc.local
 fi
