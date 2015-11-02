@@ -119,18 +119,15 @@ Plug 'davidhalter/jedi-vim',            { 'for': 'python', 'do': 'pip install je
 Plug 'fatih/vim-go', { 'for': 'go' }
 Plug 'glidenote/memolist.vim',          { 'on': ['MemoList', 'MemoNew', 'MemoGrep'] }
 Plug 'godlygeek/tabular',               { 'on': 'Tabularize' }
-Plug 'jeroenbourgois/vim-actionscript', { 'for': 'actionscript' }
 Plug 'justinmk/vim-dirvish'
 Plug 'kien/rainbow_parentheses.vim'
 Plug 'matchit.zip'
-Plug 'pangloss/vim-javascript',         { 'for': 'javascript' }
 Plug 'rust-lang/rust.vim', { 'for': 'rust' }
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-dispatch', { 'on': 'Dispatch' }
 Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
-Plug 'tsaleh/vim-align',  { 'on': ['SQLUFormatter', 'SQLUFormatStmt'] } | Plug 'SQLUtilities', { 'for': ['sql', 'sqloracle'] }
 Plug 'tyru/open-browser.vim'
 Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
 
