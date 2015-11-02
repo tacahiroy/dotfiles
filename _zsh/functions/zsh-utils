@@ -22,3 +22,16 @@ function tssh_tunnel() {
     tmux last
   fi
 }
+
+
+function docker_init() {
+  # Docker
+  if [ -x `which docker-machine` ]; then
+    if docker-machine ls | grep Running 2>&1 > /dev/null; then
+      e=$(docker-machine ls | grep -v '^NAME' | awk '{ print $1 }')
+      vars=$(docker-machine env $e)
+      echo $vars
+      eval $vars
+    fi
+  fi
+}
