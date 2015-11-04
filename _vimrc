@@ -131,9 +131,9 @@ Plug 'tpope/vim-surround'
 Plug 'tyru/open-browser.vim'
 Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
 
-" Plug 'ctrlpvim/ctrlp.vim'
+Plug 'ctrlpvim/ctrlp.vim'
 " Plug 'tacahiroy/ctrlp-funky'
-Plug '~/Projects/vim/ctrlp.vim'
+" Plug '~/Projects/vim/ctrlp.vim'
 Plug '~/Projects/vim/ctrlp-funky'
 Plug '~/Projects/vim/vim-monstermethod'
 
@@ -244,7 +244,7 @@ map <Space> [Space]
 
   nnoremap [Space]fu :CtrlPFunky<Cr>
   nnoremap [Space]F  :CtrlPFunkyDeep<Cr>
-  nnoremap [Space]uu :exe 'CtrlPFunky ' . fnameescape(expand('<cword>'))<Cr>
+  nnoremap [Space]uu :execute 'CtrlPFunky ' . fnameescape(expand('<cword>'))<Cr>
   nnoremap [Space]fs :CtrlPSSH<Cr>
 
   nnoremap [Space]t :CtrlPTag<Cr>
@@ -718,7 +718,6 @@ if has('multi_byte_ime') || has('xim')
 endif
 
 " * autocmds "{{{
-autocmd User Rails nnoremap <buffer> [Space]r :<C-u>R
 augroup Tacahiroy
   autocmd BufReadPost * if !search('\S', 'cnw') | let &l:fileencoding = &encoding | endif
   " restore cursor position
@@ -825,7 +824,6 @@ augroup Tacahiroy
 
   autocmd FileType gitcommit setlocal spell
   autocmd FileType mail setlocal spell
-  autocmd FileType slim setlocal makeprg=slimrb\ -c\ %
 
   autocmd BufRead,BufNewFile *.applescript,*.scpt set filetype=applescript
   autocmd FileType applescript set commentstring=#\ %s
@@ -834,12 +832,12 @@ augroup Tacahiroy
   autocmd FileType help,qf,logaling,bestfriend,ref-* nnoremap <buffer> <silent> qq <C-w>c
   autocmd FileType rspec compiler rspec
   autocmd FileType rspec set omnifunc=rubycomplete#Complete
-  autocmd FileType *ruby,rspec :execute 'setlocal iskeyword+=' . char2nr('?')
+  autocmd FileType ruby,eruby,rspec :execute 'setlocal iskeyword+=' . char2nr('?')
   autocmd FileType python setlocal tabstop=4 shiftwidth=4 softtabstop=4
   autocmd FileType vim if &iskeyword !~# '&' | setlocal iskeyword+=& | endif
   autocmd FileType css,sass,scss,less setlocal omnifunc=csscomplete#CompleteCSS
 
-  autocmd FileType sql*,plsql setlocal tabstop=4 shiftwidth=4 softtabstop=4
+  autocmd FileType sql setlocal tabstop=4 shiftwidth=4 softtabstop=4
 
   " Java
   autocmd FileType java setlocal tabstop=4 shiftwidth=4 softtabstop=4
@@ -848,17 +846,17 @@ augroup Tacahiroy
   let java_highlight_java_lang_ids = 1
   let java_highlight_java_io = 1
 
-  autocmd FileType javascript* set omnifunc=javascriptcomplete#CompleteJS
+  autocmd FileType javascript,javascript.json set omnifunc=javascriptcomplete#CompleteJS
   if executable('jsl')
-    autocmd FileType javascript*,*html setlocal makeprg=jsl\ -conf\ \"$HOME/jsl.conf\"\ -nologo\ -nofilelisting\ -nosummary\ -nocontext\ -process\ %
-    autocmd FileType javascript*,*html setlocal errorformat=%f(%l):\ %m
+    autocmd FileType javascript,html setlocal makeprg=jsl\ -conf\ \"$HOME/jsl.conf\"\ -nologo\ -nofilelisting\ -nosummary\ -nocontext\ -process\ %
+    autocmd FileType javascript,html setlocal errorformat=%f(%l):\ %m
   endif
 
   " Chef
   autocmd BufRead,BufNewFile knife-edit-*.js,*.json set filetype=javascript.json
-  autocmd FileType *json* setlocal makeprg=python\ -mjson.tool\ 2>&1\ %\ >\ /dev/null
-  autocmd FileType *json* setlocal errorformat=%m:\ line\ %l\ column\ %c\ %.%#
-  autocmd FileType *json* nnoremap <Leader>pp :%!json_xs -f json -t json-pretty<Cr>
+  autocmd FileType json setlocal makeprg=python\ -mjson.tool\ 2>&1\ %\ >\ /dev/null
+  autocmd FileType json setlocal errorformat=%m:\ line\ %l\ column\ %c\ %.%#
+  autocmd FileType json nnoremap <Leader>pp :%!json_xs -f json -t json-pretty<Cr>
 
   autocmd FileType c setlocal tabstop=4 softtabstop=4 shiftwidth=4
   autocmd FileType c compiler gcc
