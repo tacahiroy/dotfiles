@@ -186,7 +186,7 @@ map <Space> [Space]
   let g:ctrlp_show_hidden = 1
   let g:ctrlp_mruf_max = 1024
   let g:ctrlp_mruf_tilde_homedir = 1
-  let g:ctrlp_mruf_exclude = 'knife-edit-*.*\|COMMIT_EDITMSG\|a.*'
+  let g:ctrlp_mruf_exclude = 'knife-edit-*.*\|COMMIT_EDITMSG'
 
   let g:ctrlp_user_command = {
     \ 'types': {
