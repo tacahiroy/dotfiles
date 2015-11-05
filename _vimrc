@@ -130,6 +130,7 @@ Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 Plug 'tyru/open-browser.vim'
 Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
+Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java' }
 
 Plug 'ctrlpvim/ctrlp.vim'
 " Plug 'tacahiroy/ctrlp-funky'
@@ -841,8 +842,7 @@ augroup Tacahiroy
 
   " Java
   autocmd FileType java setlocal tabstop=4 shiftwidth=4 softtabstop=4
-  " just for now
-  autocmd FileType java setlocal noexpandtab
+  autocmd FileType java setlocal omnifunc=javacomplete#Complete
   let java_highlight_java_lang_ids = 1
   let java_highlight_java_io = 1
 
