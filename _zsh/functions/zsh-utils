@@ -35,3 +35,16 @@ function docker_init() {
     fi
   fi
 }
+
+function u() {
+  [ $# -lt 1 ] && exit
+
+  case "${OSTYPE}" in
+    freebsd*|darwin*)
+      date -r $1 +'%Y-%m-%d %H:%M:%S'
+      ;;
+    *)
+      date -d @$1 +'%Y-%m-%d %H:%M:%S'
+      ;;
+  esac
+}
