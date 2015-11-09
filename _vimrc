@@ -133,10 +133,7 @@ Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
 Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java' }
 
 Plug 'ctrlpvim/ctrlp.vim'
-" Plug 'tacahiroy/ctrlp-funky'
-" Plug '~/Projects/vim/ctrlp.vim'
-Plug '~/Projects/vim/ctrlp-funky'
-Plug '~/Projects/vim/vim-monstermethod'
+" Plug 'tacahiroy/ctrlp-funky', { 'branch': 'add-project-search-mode' }
 
 if filereadable(expand('~/.vimrc.plugins'))
   source ~/.vimrc.plugins
@@ -462,7 +459,7 @@ let &statusline .= '%#Type#'
 let &statusline .= '%{fugitive#statusline()}'
 let &statusline .= '%*'
 let &statusline .= ' %=%#Structure#'
-let &statusline .= '%{Monstermethod()}'
+" let &statusline .= '%{Monstermethod()}'
 let &statusline .= ' '
 let &statusline .= '%#Title#'
 let &statusline .= '%{Cwd()}'
