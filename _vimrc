@@ -113,13 +113,11 @@ if has('patch-7.3.598')
 Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer --gocode-completer' }
 endif
 Plug 'Raimondi/delimitMate'
-Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
 Plug 'camelcasemotion'
 Plug 'davidhalter/jedi-vim',            { 'for': 'python', 'do': 'pip install jedi' }
 Plug 'fatih/vim-go', { 'for': 'go' }
 Plug 'glidenote/memolist.vim',          { 'on': ['MemoList', 'MemoNew', 'MemoGrep'] }
 Plug 'godlygeek/tabular',               { 'on': 'Tabularize' }
-Plug 'justinmk/vim-dirvish'
 Plug 'kien/rainbow_parentheses.vim'
 Plug 'matchit.zip'
 Plug 'rust-lang/rust.vim', { 'for': 'rust' }
@@ -184,6 +182,8 @@ map <Space> [Space]
   let g:ctrlp_mruf_max = 1024
   let g:ctrlp_mruf_tilde_homedir = 1
   let g:ctrlp_mruf_exclude = 'knife-edit-*.*\|COMMIT_EDITMSG'
+
+  " let g:ctrlp_brief_prompt = 1
 
   let g:ctrlp_user_command = {
     \ 'types': {
