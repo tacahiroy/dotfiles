@@ -99,7 +99,7 @@ if has('vim_starting')
 endif
 
 let s:ctrlp_matcher = 'ctrlp-cmatcher'
-" let s:ctrlp_matcher = 'cpsm'
+let s:ctrlp_matcher = 'cpsm'
 
 " * plugin management "{{{
 call plug#begin($HOME . '/plugins.vim')
@@ -131,7 +131,8 @@ Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
 Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java' }
 
 Plug 'ctrlpvim/ctrlp.vim'
-" Plug 'tacahiroy/ctrlp-funky', { 'branch': 'add-project-search-mode' }
+Plug 'tacahiroy/ctrlp-funky' ", { 'branch': 'add-project-search-mode' }
+Plug 'tacahiroy/vim-colors-isotake'
 
 if filereadable(expand('~/.vimrc.plugins'))
   source ~/.vimrc.plugins
@@ -183,7 +184,7 @@ map <Space> [Space]
   let g:ctrlp_mruf_tilde_homedir = 1
   let g:ctrlp_mruf_exclude = 'knife-edit-*.*\|COMMIT_EDITMSG'
 
-  " let g:ctrlp_brief_prompt = 1
+  let g:ctrlp_brief_prompt = 1
 
   let g:ctrlp_user_command = {
     \ 'types': {
