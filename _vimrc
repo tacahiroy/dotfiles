@@ -91,7 +91,7 @@ else
   " MS Windows etc...
   let $DOTVIM = $HOME . '/vimfiles'
 endif
-
+"{{{
 if has('vim_starting')
   let g:auto_chdir_enabled = 0
   " syntax: vim.vim
@@ -99,7 +99,7 @@ if has('vim_starting')
 endif
 
 let s:ctrlp_matcher = 'ctrlp-cmatcher'
-let s:ctrlp_matcher = 'cpsm'
+" let s:ctrlp_matcher = 'cpsm'
 
 " * plugin management "{{{
 call plug#begin($HOME . '/plugins.vim')
@@ -110,17 +110,19 @@ elseif s:ctrlp_matcher ==# 'cpsm'
 Plug 'nixprime/cpsm'
 endif
 if has('patch-7.3.598')
-Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer --gocode-completer' }
+" Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer --gocode-completer' }
 endif
 Plug 'Raimondi/delimitMate'
+Plug 'honza/vim-snippets' | Plug 'SirVer/ultisnips'
+Plug 'ajh17/VimCompletesMe'
+Plug 'airblade/vim-gitgutter'
 Plug 'camelcasemotion'
-Plug 'davidhalter/jedi-vim',            { 'for': 'python', 'do': 'pip install jedi' }
-Plug 'fatih/vim-go', { 'for': 'go' }
-Plug 'glidenote/memolist.vim',          { 'on': ['MemoList', 'MemoNew', 'MemoGrep'] }
-Plug 'godlygeek/tabular',               { 'on': 'Tabularize' }
+Plug 'davidhalter/jedi-vim',   { 'for': 'python', 'do': 'pip install jedi' }
+Plug 'fatih/vim-go',           { 'for': 'go' }
+Plug 'glidenote/memolist.vim', { 'on': ['MemoList', 'MemoNew', 'MemoGrep'] }
+Plug 'godlygeek/tabular',      { 'on': 'Tabularize' }
 Plug 'kien/rainbow_parentheses.vim'
 Plug 'matchit.zip'
-Plug 'rust-lang/rust.vim', { 'for': 'rust' }
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-dispatch', { 'on': 'Dispatch' }
 Plug 'tpope/vim-endwise'
@@ -129,10 +131,11 @@ Plug 'tpope/vim-surround'
 Plug 'tyru/open-browser.vim'
 Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
 Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java' }
+Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
 
-Plug 'ctrlpvim/ctrlp.vim'
-Plug 'tacahiroy/ctrlp-funky' ", { 'branch': 'add-project-search-mode' }
-Plug 'tacahiroy/vim-colors-isotake'
+" Plug 'ctrlpvim/ctrlp.vim'
+Plug 'tacahiroy/ctrlp-funky'
+" Plug 'tacahiroy/vim-colors-isotake'
 
 if filereadable(expand('~/.vimrc.plugins'))
   source ~/.vimrc.plugins
@@ -167,22 +170,24 @@ map <Space> [Space]
 
 " plug: ctrlp.vim
   let g:ctrlp_map = '[Space]ff'
-  let g:ctrlp_cmd = 'CtrlPRoot'
+  let g:ctrlp_cmd = 'CtrlP'
   let g:ctrlp_switch_buffer = 'Et'
   let g:ctrlp_tabpage_position = 'ac'
   let g:ctrlp_working_path_mode = 'ra'
   let g:ctrlp_match_window_bottom = 1
   let g:ctrlp_match_window_reversed = 0
-  let g:ctrlp_max_height = 16
+  let g:ctrlp_max_height = 20
   let g:ctrlp_clear_cache_on_exit = 0
   let g:ctrlp_follow_symlinks = 1
-  let g:ctrlp_highlight_match = [1, 'Constant']
+  " let g:ctrlp_highlight_match = [1, 'Constant']
   let g:ctrlp_max_files = 12800
-  let g:ctrlp_max_depth = 24
+  let g:ctrlp_max_depth = 10
   let g:ctrlp_show_hidden = 1
   let g:ctrlp_mruf_max = 1024
   let g:ctrlp_mruf_tilde_homedir = 1
   let g:ctrlp_mruf_exclude = 'knife-edit-*.*\|COMMIT_EDITMSG'
+  let g:ctrlp_mruf_default_order = 1
+  let g:ctrlp_path_nolim = 1
 
   let g:ctrlp_brief_prompt = 1
 
@@ -215,7 +220,7 @@ map <Space> [Space]
     \ 'PrtHistory(1)':        ['<Down>'],
     \ 'CreateNewFile()':      ['<C-y>'],
     \ }
-  let g:ctrlp_extensions = ['line', 'buffertag', 'dir', 'mixed', 'funky']
+  let g:ctrlp_extensions = ['line', 'dir' ]
 
   let dir = ['\.git$', '\.hg$', '\.svn$', '\.vimundo$', '\.cache/ctrlp$',
         \    '\.rbenv', '\.gem', 'backup', 'Documents', $TMPDIR,
@@ -225,12 +230,15 @@ map <Space> [Space]
     \ 'file': '\v(\.exe|\.so|\.dll|\.DS_Store|\.db|COMMIT_EDITMSG)$'
     \ }
 
+" plug: ctrlp-funky
   let g:ctrlp_funky_debug = 0
   let g:ctrlp_funky_use_cache = 1
   let g:ctrlp_funky_matchtype = 'path'
   let g:ctrlp_funky_sort_by_mru = 0
   let g:ctrlp_funky_syntax_highlight = 1
   let g:ctrlp_funky_ruby_chef_words = 1
+
+  let g:ctrlp_funky_nudists = [ 'php', 'ruby' ]
 
   let g:ctrlp_ssh_keep_ctrlp_window = 0
 
@@ -330,7 +338,7 @@ map <Space> [Space]
     autocmd FileType html,xml,eruby let b:delimitMate_matchpairs = &matchpairs
   augroup END
 " }}}
-" }}}
+" }}}"}}}
 
 " * options {{{
 set ambiwidth=double
@@ -352,6 +360,7 @@ set clipboard=
 set cmdheight=2
 " this makes scroll slower
 set colorcolumn=
+set completeopt& completeopt+=longest
 set cpoptions+=n
 set noequalalways
 set expandtab smarttab
@@ -375,10 +384,6 @@ set lazyredraw
 set modeline
 set modelines=5
 set mouse=a
-set number
-if v:version > 702
-  set relativenumber
-endif
 set nrformats=hex
 set pastetoggle=<F2>
 set previewheight=8
@@ -573,6 +578,9 @@ nnoremap <silent> sj <C-w>j
 " show/hide line number wisely: this needs Vim 7.3 or above
 function! s:toggle_line_number()
   if v:version <= 703 | return | endif
+
+  let b:prev = get(b:, 'prev', {})
+
   if &nu || &rnu
     " to be off
     let b:prev = { 'nu': &nu, 'rnu': &rnu }
@@ -589,8 +597,8 @@ endfunction
 nnoremap <silent> [Toggle]m :let &mouse = empty(&mouse) ? 'a' : ''<Cr>
 nnoremap <silent> [Toggle]p :set paste!<Cr>
 nnoremap <silent> [Toggle]l :set list!<Cr>
-nnoremap <silent> [Toggle]c :let &clipboard = empty(&clipboard) ? 'unnamed,unnamedplus' : ''<Cr>
 nnoremap <silent> [Toggle]n :<C-u>silent call <SID>toggle_line_number()<Cr>
+nnoremap <silent> [Toggle]r :set relativenumber!<Cr>
 
 " * makes gf better
 nnoremap gf <Nop>
@@ -656,6 +664,7 @@ nnoremap [Space]S :<C-u>source %<Cr>:nohlsearch<Cr>
 
 " global and substitutes
 nnoremap <Leader>g :<C-u>g/
+nnoremap <Leader>v :<C-u>v/
 nnoremap <Leader>s :<C-u>s/
 nnoremap <Leader>S :<C-u>%s/
 xnoremap <Leader>s :s/
@@ -679,7 +688,10 @@ nnoremap <silent> <Leader>fn :let @" = expand('%:t')<Cr>
 inoremap <silent> <Leader>fN <C-R>=fnamemodify(@%, ':p')<Cr>
 nnoremap <silent> <Leader>fN :let @" = fnamemodify(@%, ':p')<Cr>
 
-inoremap <Leader>a <Cr><Esc>O
+" inoremap <expr> <Cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<Cr>"
+
+" Copy absolute path to current file to clipboard
+command! -nargs=? CopyCurrentFilePath2CB let @* = fnamemodify(@%, ':p')
 
 " search visual-ed text
 vnoremap * y/<C-R>"<Cr>
@@ -695,7 +707,7 @@ vnoremap <C-p> :call <SID>move_block('u')<Cr>==gv
 vnoremap <C-n> :call <SID>move_block('d')<Cr>==gv
 
 " format HTML/XML
-if executable('tidyp')
+if executable('tidy')
   function! s:run_tidy(...) range
     " this code is not perfect.
     " tidy's Character encoding option and Vim's fileencoding/encoding is not a pair
@@ -703,7 +715,7 @@ if executable('tidyp')
     let enc = &l:fileencoding ? &l:fileencoding : &encoding
     let enc = substitute(enc, '-', '', 'g')
 
-    silent execute printf('%d,%d!tidyp -xml -i -%s -wrap %d -q -asxml', a:firstline, a:lastline, enc, eval(col))
+    silent execute printf('%d,%d!tidy -xml -i -%s -wrap %d -q -asxml', a:firstline, a:lastline, enc, eval(col))
   endfunction
 
   command! -nargs=? -range Tidy <line1>,<line2>call s:run_tidy(<args>)
