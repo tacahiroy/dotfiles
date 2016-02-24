@@ -19,7 +19,6 @@ augroup Tacahiroy
   autocmd!
 augroup END
 
-
 " functions " {{{
 " * global
 function! Echohl(group, msg)
@@ -79,11 +78,11 @@ command! -nargs=0 PreviewTagLite call s:preview_tag_lite(expand('<cword>'))
 "}}}
 
 " enough
-let s:is_mac = has('macunix') || has('mac') || system('uname | grep "^Darwin"') =~# "^Darwin"
+let s:is_mac = has('macunix') || has('mac')
 " GNU/Linux only
 let s:is_linux = !s:is_mac && has('unix')
 " just in case
-let s:is_windows = has('win32') || has('win64')
+let s:is_windows = !(s:is_mac || s:is_linux) && has('win32') || has('win64')
 
 if isdirectory($HOME . '/.vim')
   let $DOTVIM = $HOME . '/.vim'
@@ -91,30 +90,37 @@ else
   " MS Windows etc...
   let $DOTVIM = $HOME . '/vimfiles'
 endif
-"{{{
+
 if has('vim_starting')
   let g:auto_chdir_enabled = 0
   " syntax: vim.vim
   let g:vimsyntax_noerror = 1
 endif
 
+" Toggle
+nnoremap [Toggle] <Nop>
+nmap <Leader><Leader> [Toggle]
+" Space
+nnoremap [Space] <Nop>
+map <Space> [Space]
+
 let s:ctrlp_matcher = 'ctrlp-cmatcher'
-" let s:ctrlp_matcher = 'cpsm'
 
 " * plugin management "{{{
 call plug#begin($HOME . '/plugins.vim')
 
 if s:ctrlp_matcher ==# 'ctrlp-cmatcher'
-Plug 'JazzCore/ctrlp-cmatcher', { 'do': './install.sh' }
+  Plug 'JazzCore/ctrlp-cmatcher', { 'do': './install.sh' }
 elseif s:ctrlp_matcher ==# 'cpsm'
-Plug 'nixprime/cpsm'
+  Plug 'nixprime/cpsm'
 endif
+
 if has('patch-7.3.598')
-" Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer --gocode-completer' }
+  Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer --gocode-completer' }
 endif
 Plug 'Raimondi/delimitMate'
 Plug 'honza/vim-snippets' | Plug 'SirVer/ultisnips'
-Plug 'ajh17/VimCompletesMe'
+" Plug 'ajh17/VimCompletesMe'
 Plug 'airblade/vim-gitgutter'
 Plug 'camelcasemotion'
 Plug 'davidhalter/jedi-vim',   { 'for': 'python', 'do': 'pip install jedi' }
@@ -132,9 +138,11 @@ Plug 'tyru/open-browser.vim'
 Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
 Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java' }
 Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
+Plug 'thinca/vim-quickrun'
+Plug 'scrooloose/syntastic'
 
 " Plug 'ctrlpvim/ctrlp.vim'
-Plug 'tacahiroy/ctrlp-funky'
+" Plug 'tacahiroy/ctrlp-funky'
 " Plug 'tacahiroy/vim-colors-isotake'
 
 if filereadable(expand('~/.vimrc.plugins'))
@@ -142,16 +150,6 @@ if filereadable(expand('~/.vimrc.plugins'))
 endif
 
 call plug#end()
-
-
-" * make prefix keys visible {{{
-" Toggle
-nnoremap [Toggle] <Nop>
-nmap <Leader><Leader> [Toggle]
-" Space
-nnoremap [Space] <Nop>
-map <Space> [Space]
-" }}}
 
 " * plugin configurations {{{
 " plug: memolist
@@ -187,7 +185,7 @@ map <Space> [Space]
   let g:ctrlp_mruf_tilde_homedir = 1
   let g:ctrlp_mruf_exclude = 'knife-edit-*.*\|COMMIT_EDITMSG'
   let g:ctrlp_mruf_default_order = 1
-  let g:ctrlp_path_nolim = 1
+  let g:ctrlp_path_nolim = 0
 
   let g:ctrlp_brief_prompt = 1
 
@@ -220,25 +218,25 @@ map <Space> [Space]
     \ 'PrtHistory(1)':        ['<Down>'],
     \ 'CreateNewFile()':      ['<C-y>'],
     \ }
-  let g:ctrlp_extensions = ['line', 'dir' ]
+  let g:ctrlp_extensions = ['line', 'dir', 'funky']
 
   let dir = ['\.git$', '\.hg$', '\.svn$', '\.vimundo$', '\.cache/ctrlp$',
         \    '\.rbenv', '\.gem', 'backup', 'Documents', $TMPDIR,
-        \    '/vendor/*/vendor']
+        \    'vendor']
   let g:ctrlp_custom_ignore = {
     \ 'dir': '\v[\/]' . join(dir, '|') . '/',
     \ 'file': '\v(\.exe|\.so|\.dll|\.DS_Store|\.db|COMMIT_EDITMSG)$'
     \ }
 
 " plug: ctrlp-funky
-  let g:ctrlp_funky_debug = 0
+  let g:ctrlp_funky_debug = 1
   let g:ctrlp_funky_use_cache = 1
   let g:ctrlp_funky_matchtype = 'path'
   let g:ctrlp_funky_sort_by_mru = 0
   let g:ctrlp_funky_syntax_highlight = 1
   let g:ctrlp_funky_ruby_chef_words = 1
 
-  let g:ctrlp_funky_nudists = [ 'php', 'ruby' ]
+  let g:ctrlp_funky_nudists = ['php', 'ruby']
 
   let g:ctrlp_ssh_keep_ctrlp_window = 0
 
@@ -312,10 +310,9 @@ map <Space> [Space]
   xmap s <Plug>VSurround
 
 " plug: openbrowser
-  let g:netrw_nogx = 1
-  " nmap gx <Plug>(openbrowser-smart-search)
+  " let g:netrw_nogx = 1
   " vmap gx <Plug>(openbrowser-smart-search)
-  nmap gx <Plug>(openbrowser-open)
+  " nmap gx <Plug>(openbrowser-open)
 
 " plug: camelcasemotion
   map <silent> W <plug>CamelCaseMotion_w
@@ -334,11 +331,22 @@ map <Space> [Space]
   let delimitMate_expand_space = 1
   let delimitMate_expand_cr = 1
   let delimitMate_matchpairs = "(:),[:],{:}"
+
   augroup Tacahiroy
     autocmd FileType html,xml,eruby let b:delimitMate_matchpairs = &matchpairs
   augroup END
+
+" plug: quickrun
+  if &runtimepath =~# 'vim-quickrun'
+    nnoremap [Space]r :<C-u>QuickRun<Cr>
+  endif
+
+  let g:syntastic_always_populate_loc_list = 1
+  let g:syntastic_auto_loc_list = 1
+  let g:syntastic_check_on_open = 1
+  let g:syntastic_check_on_wq = 0
 " }}}
-" }}}"}}}
+" }}}
 
 " * options {{{
 set ambiwidth=double
@@ -420,7 +428,7 @@ set title
 set titlestring=Vim:\ %F\ %h%r%m
 set titlelen=255
 set tabstop=2 shiftwidth=2 softtabstop=2
-set updatetime=1000
+set updatetime=2000
 set viminfo='64,<100,s10,n~/.viminfo
 set virtualedit=block,onemore
 set t_vb = visualbell
@@ -464,8 +472,12 @@ let &statusline .= '|%{&textwidth}'
 let &statusline .= '%#Type#'
 let &statusline .= '%{fugitive#statusline()}'
 let &statusline .= '%*'
+let &statusline .= '%#WarningMsg#'
+let &statusline .= '%{SyntasticStatuslineFlag()}'
+let &statusline .= '%*'
+" right
 let &statusline .= ' %=%#Structure#'
-" let &statusline .= '%{Monstermethod()}'
+let &statusline .= '%{Monstermethod()}'
 let &statusline .= ' '
 let &statusline .= '%#Title#'
 let &statusline .= '%{Cwd()}'
