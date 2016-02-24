@@ -732,6 +732,37 @@ if executable('tidy')
 
   command! -nargs=? -range Tidy <line1>,<line2>call s:run_tidy(<args>)
 endif
+
+if has('ruby')
+ruby << EOR
+  require "uri"
+
+  def encode(line1, line2)
+    line1.upto(line2).each do |ln|
+      b = Vim::Buffer.current
+      b[ln] = URI.encode b[ln]
+    end
+  end
+
+  def decode(line1, line2)
+    line1.upto(line2).each do |ln|
+      b = Vim::Buffer.current
+      b[ln] = URI.decode b[ln]
+    end
+  end
+EOR
+
+  function! s:encodeURI() range
+    ruby encode(Vim::evaluate('a:firstline'), Vim::evaluate('a:lastline'))
+  endfunction
+
+  function! s:decodeURI() range
+    ruby decode(Vim::evaluate('a:firstline'), Vim::evaluate('a:lastline'))
+  endfunction
+
+  command! -nargs=0 -range EncodeURI <line1>,<line2>call s:encodeURI()
+  command! -nargs=0 -range DecodeURI <line1>,<line2>call s:decodeURI()
+endif
 "}}}
 
 
