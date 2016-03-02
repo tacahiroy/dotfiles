@@ -116,11 +116,11 @@ elseif s:ctrlp_matcher ==# 'cpsm'
 endif
 
 if has('patch-7.3.598')
-  Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer --gocode-completer' }
+  " Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer --gocode-completer' }
 endif
 Plug 'Raimondi/delimitMate'
 Plug 'honza/vim-snippets' | Plug 'SirVer/ultisnips'
-" Plug 'ajh17/VimCompletesMe'
+Plug 'ajh17/VimCompletesMe'
 Plug 'airblade/vim-gitgutter'
 Plug 'camelcasemotion'
 Plug 'davidhalter/jedi-vim',   { 'for': 'python', 'do': 'pip install jedi' }
@@ -134,14 +134,14 @@ Plug 'tpope/vim-dispatch', { 'on': 'Dispatch' }
 Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
-Plug 'tyru/open-browser.vim'
+" Plug 'tyru/open-browser.vim'
 Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
 Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java' }
 Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
 Plug 'thinca/vim-quickrun'
-Plug 'scrooloose/syntastic'
+" Plug 'scrooloose/syntastic'
 
-" Plug 'ctrlpvim/ctrlp.vim'
+Plug 'ctrlpvim/ctrlp.vim'
 " Plug 'tacahiroy/ctrlp-funky'
 " Plug 'tacahiroy/vim-colors-isotake'
 
@@ -150,6 +150,7 @@ if filereadable(expand('~/.vimrc.plugins'))
 endif
 
 call plug#end()
+" }}}
 
 " * plugin configurations {{{
 " plug: memolist
@@ -260,7 +261,7 @@ call plug#end()
 " plug: kien/rainbow_parentheses
   if &runtimepath =~# 'rainbow_parentheses.vim'
     augroup Tacahiroy
-      autocmd VimEnter * RainbowParenthesesToggle
+      " autocmd VimEnter * RainbowParenthesesToggle
       autocmd Syntax * RainbowParenthesesLoadBraces
       autocmd Syntax * RainbowParenthesesLoadRound
       " autocmd Syntax * RainbowParenthesesLoadSquare
@@ -309,11 +310,6 @@ call plug#end()
   
   xmap s <Plug>VSurround
 
-" plug: openbrowser
-  " let g:netrw_nogx = 1
-  " vmap gx <Plug>(openbrowser-smart-search)
-  " nmap gx <Plug>(openbrowser-open)
-
 " plug: camelcasemotion
   map <silent> W <plug>CamelCaseMotion_w
   map <silent> B <plug>CamelCaseMotion_b
@@ -341,11 +337,11 @@ call plug#end()
     nnoremap [Space]r :<C-u>QuickRun<Cr>
   endif
 
+" plug: Syntastic
   let g:syntastic_always_populate_loc_list = 1
   let g:syntastic_auto_loc_list = 1
   let g:syntastic_check_on_open = 1
   let g:syntastic_check_on_wq = 0
-" }}}
 " }}}
 
 " * options {{{
@@ -472,9 +468,11 @@ let &statusline .= '|%{&textwidth}'
 let &statusline .= '%#Type#'
 let &statusline .= '%{fugitive#statusline()}'
 let &statusline .= '%*'
-let &statusline .= '%#WarningMsg#'
-let &statusline .= '%{SyntasticStatuslineFlag()}'
-let &statusline .= '%*'
+if &runtimepath =~# 'syntastic'
+  let &statusline .= '%#WarningMsg#'
+  let &statusline .= '%{SyntasticStatuslineFlag()}'
+  let &statusline .= '%*'
+endif
 " right
 let &statusline .= ' %=%#Structure#'
 let &statusline .= '%{Monstermethod()}'
@@ -704,6 +702,7 @@ nnoremap <silent> <Leader>fN :let @" = fnamemodify(@%, ':p')<Cr>
 
 " Copy absolute path to current file to clipboard
 command! -nargs=? CopyCurrentFilePath2CB let @* = fnamemodify(@%, ':p')
+command! -nargs=? AbsolutePath echomsg fnamemodify(@%, ':p')
 
 " search visual-ed text
 vnoremap * y/<C-R>"<Cr>
@@ -732,8 +731,9 @@ if executable('tidy')
 
   command! -nargs=? -range Tidy <line1>,<line2>call s:run_tidy(<args>)
 endif
+"}}}
 
-if has('ruby')
+if has('ruby') "{{{
 ruby << EOR
   require "uri"
 
@@ -752,19 +752,38 @@ ruby << EOR
   end
 EOR
 
-  function! s:encodeURI() range
+  function! s:encode_uri() range
     ruby encode(Vim::evaluate('a:firstline'), Vim::evaluate('a:lastline'))
   endfunction
 
-  function! s:decodeURI() range
+  function! s:decode_uri() range
     ruby decode(Vim::evaluate('a:firstline'), Vim::evaluate('a:lastline'))
   endfunction
 
-  command! -nargs=0 -range EncodeURI <line1>,<line2>call s:encodeURI()
-  command! -nargs=0 -range DecodeURI <line1>,<line2>call s:decodeURI()
-endif
-"}}}
+  command! -nargs=0 -range EncodeURI <line1>,<line2>call s:encode_uri()
+  command! -nargs=0 -range DecodeURI <line1>,<line2>call s:decode_uri()
+endif "}}}
 
+if has('python') "{{{
+python << EOF
+import sqlparse
+from vim import *
+def format_sql(firstline, lastline):
+  buf = vim.current.buffer
+  lines = ''.join(vim.eval('getline(%d, %d)' % (firstline + 1, lastline + 1)))
+
+  sql = sqlparse.format(lines, reindent=True, keyword_case='upper')
+  for l in range(firstline, lastline + 1):
+      del buf[l-1]
+  buf.append(sql.split("\n"), firstline)
+EOF
+
+function! s:format_sql() range
+  python format_sql(firstline=int(vim.eval('a:firstline'))-1, lastline=int(vim.eval('a:lastline'))-1)
+endfunction
+
+command! -nargs=? -range FormatSQL <line1>,<line2>call s:format_sql()
+endif "}}}
 
 if has('multi_byte_ime') || has('xim')
   set iminsert=0 imsearch=0
