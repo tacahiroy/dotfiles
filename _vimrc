@@ -116,11 +116,13 @@ elseif s:ctrlp_matcher ==# 'cpsm'
 endif
 
 if has('patch-7.3.598')
-  " Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer --gocode-completer' }
+  Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer --gocode-completer --racer-completer' }
 endif
 Plug 'Raimondi/delimitMate'
-Plug 'honza/vim-snippets' | Plug 'SirVer/ultisnips'
-Plug 'ajh17/VimCompletesMe'
+if has('patch-7.4.314')
+  Plug 'honza/vim-snippets' | Plug 'SirVer/ultisnips'
+endif
+" Plug 'ajh17/VimCompletesMe'
 Plug 'airblade/vim-gitgutter'
 Plug 'camelcasemotion'
 Plug 'davidhalter/jedi-vim',   { 'for': 'python', 'do': 'pip install jedi' }
@@ -173,20 +175,21 @@ call plug#end()
   let g:ctrlp_switch_buffer = 'Et'
   let g:ctrlp_tabpage_position = 'ac'
   let g:ctrlp_working_path_mode = 'ra'
-  let g:ctrlp_match_window_bottom = 1
+  let g:ctrlp_match_window_bottom = 0
   let g:ctrlp_match_window_reversed = 0
   let g:ctrlp_max_height = 20
   let g:ctrlp_clear_cache_on_exit = 0
   let g:ctrlp_follow_symlinks = 1
-  " let g:ctrlp_highlight_match = [1, 'Constant']
-  let g:ctrlp_max_files = 12800
-  let g:ctrlp_max_depth = 10
-  let g:ctrlp_show_hidden = 1
+  let g:ctrlp_max_files = 1024
+  let g:ctrlp_max_depth = 5
+  let g:ctrlp_show_hidden = 0
   let g:ctrlp_mruf_max = 1024
   let g:ctrlp_mruf_tilde_homedir = 1
   let g:ctrlp_mruf_exclude = 'knife-edit-*.*\|COMMIT_EDITMSG'
   let g:ctrlp_mruf_default_order = 1
   let g:ctrlp_path_nolim = 0
+  " Set delay to prevent extra search
+  let g:ctrlp_lazy_update = 200
 
   let g:ctrlp_brief_prompt = 1
 
@@ -204,9 +207,6 @@ call plug#end()
   elseif &runtimepath =~# 'ctrlp-cmatcher'
     let g:ctrlp_match_func = { 'match': 'matcher#cmatch' }
   endif
-
-  " Set delay to prevent extra search
-  let g:ctrlp_lazy_update = 120
 
   let g:ctrlp_prompt_mappings = {
     \ 'AcceptSelection("e")': ['<Cr>'],
@@ -230,12 +230,12 @@ call plug#end()
     \ }
 
 " plug: ctrlp-funky
-  let g:ctrlp_funky_debug = 1
+  let g:ctrlp_funky_debug = 0
   let g:ctrlp_funky_use_cache = 1
   let g:ctrlp_funky_matchtype = 'path'
   let g:ctrlp_funky_sort_by_mru = 0
   let g:ctrlp_funky_syntax_highlight = 1
-  let g:ctrlp_funky_ruby_chef_words = 1
+  let g:ctrlp_funky_ruby_chef_words = 0
 
   let g:ctrlp_funky_nudists = ['php', 'ruby']
 
@@ -291,6 +291,7 @@ call plug#end()
   let g:ycm_collect_identifiers_from_comments_and_strings = 1
   let g:ycm_seed_identifiers_with_syntax = 1
   let g:ycm_complete_in_comments = 1
+  let g:ycm_rust_src_path = '/usr/local/src/rust-1.7.0/src'
 
 " plug: UltiSnips
   let g:UltiSnipsExpandTrigger = '<C-y>'
@@ -317,11 +318,6 @@ call plug#end()
   sunmap W
   sunmap B
   sunmap E
-
-" plug: SQLUtilities
-  let g:sqlutil_keyword_case = '\U'
-  let g:sqlutil_align_comma = 1
-  let g:sqlutil_align_where = 1
 
 " plug: delimiteMate
   let delimitMate_expand_space = 1
@@ -455,7 +451,7 @@ colorscheme isotake
 set formatoptions& formatoptions+=mM formatoptions-=r
 
 " statusline config
-let &statusline = '[#%n]%<%#FileName#%f%* %m%r%h%w'
+let &statusline = '#%n %<%t%*|%m%r%h%w'
 let &statusline .= '%{&filetype}:'
 let &statusline .= '%{(&l:fileencoding != "" ? &l:fileencoding : &encoding) . ":" . &fileformat}'
 let &statusline .= '(%{&expandtab ? "" : ">"}%{&l:tabstop}'
@@ -474,9 +470,10 @@ if &runtimepath =~# 'syntastic'
   let &statusline .= '%*'
 endif
 " right
-let &statusline .= ' %=%#Structure#'
-let &statusline .= '%{Monstermethod()}'
-let &statusline .= ' '
+let &statusline .= ' %='
+" let &statusline .= '%#Structure#'
+" let &statusline .= '%{Monstermethod()}'
+" let &statusline .= ' '
 let &statusline .= '%#Title#'
 let &statusline .= '%{Cwd()}'
 let &statusline .= '%{(g:auto_chdir_enabled ? "e" : "d")}'
@@ -701,8 +698,9 @@ nnoremap <silent> <Leader>fN :let @" = fnamemodify(@%, ':p')<Cr>
 " inoremap <expr> <Cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<Cr>"
 
 " Copy absolute path to current file to clipboard
-command! -nargs=? CopyCurrentFilePath2CB let @* = fnamemodify(@%, ':p')
-command! -nargs=? AbsolutePath echomsg fnamemodify(@%, ':p')
+command! -nargs=0 CopyCurrentFilePath2CB let @* = fnamemodify(@%, ':p')
+command! -nargs=0 AbsolutePath echomsg fnamemodify(@%, ':p')
+command! -nargs=0 RelativePath echomsg substitute(fnamemodify(@%, ':p'), getcwd() . '/', '', '')
 
 " search visual-ed text
 vnoremap * y/<C-R>"<Cr>
