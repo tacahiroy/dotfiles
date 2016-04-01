@@ -1,8 +1,8 @@
 export LANG=ja_JP.UTF-8
 
-HISTFILE=~/.zhistory
-
 export GOPATH=$HOME/golang
+export CARGO_PATH=$HOME/.cargo
+export RUST_SRC_PATH=/usr/local/src/rust-1.7.0/src
 
 ## path
 typeset -U path
@@ -15,6 +15,7 @@ path=(
   /usr/local/bin(N-/)
   /usr/local/sbin(N-/)
   $GOPATH/bin(N-/)
+  $CARGO_PATH/bin(N-/)
   $path
 )
 

@@ -2,6 +2,9 @@
 
 autoload -Uz is-at-least
 
+[ -f ~/.zsh/zshrc.antigen ] && . ~/.zsh/zshrc.antigen
+[ -f ~/.zsh/zshrc.vcs_prompt ] && . ~/.zsh/zshrc.vcs_prompt
+
 if is-at-least 4.3.10; then
   autoload -Uz add-zsh-hook
 fi
@@ -35,162 +38,6 @@ kterm*|xterm*)
     'di=34' 'ln=35' 'so=32' 'ex=31' 'bd=46;34' 'cd=43;34'
   ;;
 esac # }}}
-
-## Default shell configuration
-#
-# set prompt
-#
-# settings for vcs prompt # {{{
-
-autoload -Uz vcs_info
-
-zstyle ':vcs_info:*' max-exports 3
-
-zstyle ':vcs_info:*' enable git svn hg
-zstyle ':vcs_info:*' formats '[%s:%b]%m'
-zstyle ':vcs_info:*' actionformats '[%s:%b|%a]%u%c'
-zstyle ':vcs_info:*' check-for-changes true
-zstyle ':vcs_info:svn:*' branchformat '%b:r%r'
-
-if is-at-least 4.3.10; then
-  zstyle ':vcs_info:git:*' check-for-changes true
-  zstyle ':vcs_info:git:*' stagedstr "+"
-  zstyle ':vcs_info:git:*' unstagedstr "*"
-fi
-
-signs=''
-if is-at-least 4.3.11; then
-# https://github.com/mollifier/config/blob/master/dot.zshrc
-  zstyle ':vcs_info:git+set-message:*' hooks \
-                                        git-hook-begin \
-                                        git-unstaged \
-                                        git-nopushed \
-                                        git-untracked \
-                                        git-stash-count
-
-  function +vi-git-hook-begin() {
-    if [[ "$(command git rev-parse --is-inside-work-tree 2> /dev/null)" != "true" ]]; then
-      return 1
-    fi
-    return 0
-  }
-
-  function +vi-git-untracked() {
-    local git_status
-
-    # cwd is a Git's working copy or not
-    git_status=$(command git status --porcelain 2> /dev/null)
-    # untracked files
-    if ! echo "$git_status" | grep "^??" > /dev/null 2>&1; then
-      return 0
-    fi
-    # hook_com[unstaged]+='?'
-    signs+='?'
-  }
-
-  function +vi-git-unstaged() {
-    local git_status
-
-    # cwd is a Git's working copy or not
-    git_status=$(git status --porcelain | sed 's/^ *//' 2> /dev/null)
-
-    # find out staged file
-    if echo "$git_status" | grep "^A" > /dev/null 2>&1; then
-      # hook_com[misc]+="+"
-      signs+="+"
-    elif echo "$git_status" | grep "^M" > /dev/null 2>&1; then
-      signs+="*"
-    else
-      return 0
-    fi
-  }
-
-  function +vi-git-nopushed() {
-    local head remotes
-
-    # HEAD's hash value
-    head=$(git rev-parse --verify -q HEAD 2> /dev/null)
-    if [ $? -eq 0 ]; then
-      # get remote's hash value as an array
-      remotes=($(git rev-parse --remotes 2> /dev/null))
-      if [ "$remotes[*]" ]; then
-        for x in ${remotes[@]}; do
-          # compare hash value HEAD and remote
-          if [ "$head" = "$x" ]; then
-            # already pushed
-            return 0
-          fi
-        done
-      else
-        # no remote
-        return 0
-      fi
-    else
-      # HEAD doesn't exist
-      return 0
-    fi
-
-    # hook_com[misc]+="@"
-    signs+="@"
-  }
-
-  function +vi-git-stash-count() {
-    local count=0
-    count=$(command git stash list 2>&1 | wc -l | tr -d ' ')
-
-    if [ $count -eq 0 ]; then
-      return 0
-    fi
-    # hook_com[misc]+="(${count})"
-    signs+="(${count})"
-  }
-fi
-
-# http://d.hatena.ne.jp/yonchu/20120506/1336335973
-function _vcs_info() {
-  psvar=()
-  signs=''
-  LANG=en_US.UTF-8 vcs_info
-  if [ -z "$vcs_info_msg_0_" ]; then
-    psvar[1]=''
-  else
-    psvar[1]=${vcs_info_msg_0_}
-    psvar[2]=${signs}
-  fi
-}
-
-if [ -n $SSH_CONNECTION ]; then
-  add-zsh-hook precmd _vcs_info
-fi
-# }}}
-
-autoload -Uz colors
-colors
-case ${UID} in
-0)
-  PROMPT="%B%{${fg[red]}%}%/ ${fg[green]}#%{${reset_color}%}%b "
-  PROMPT2="%B%{${fg[red]}%}%_#%{${reset_color}%}%b "
-  SPROMPT="%B%{${fg[red]}%}%r is correct? [n,y,a,e]:%{${reset_color}%}%b "
-  [ -n "${REMOTEHOST}${SSH_CONNECTION}" ] &&
-    PROMPT="%{${fg[cyan]}%}%n%{${reset_color}%}@%{${fg[yellow]}%}%m%{${reset_color}%}:${PROMPT}"
-
-  [ -n "${SSH_CONNECTION}" ] &&
-      PROMPT="%{${fg[blue]}%}%3v%{${reset_color}%}"
-  ;;
-*)
-  PROMPT="%{${fg[red]}%}%/%{${reset_color}%}%{$fg[green]%}%1v%{$reset_color%}%{$fg[yellow]%}%2v%{$reset_color%}
-%% "
-  PROMPT2="%{${fg[red]}%}%_%{${reset_color}%}%% "
-  SPROMPT="%{${fg[red]}%}%r is correct? [n,y,a,e]:%{${reset_color}%}"
-
-  # RPROMPT="%{${fg[red]}%}%3v%{${reset_color}%}"
-  [ -n "${SSH_CONNECTION}" ] &&
-      RPROMPT="%{${fg[blue]}%}%3v%{${reset_color}%}"
-
-  [ -n "${REMOTEHOST}${SSH_CONNECTION}" ] &&
-      PROMPT="%{${fg[magenta]}%}%n%{${reset_color}%}@%{${fg[yellow]}%}%m%{${reset_color}%}:${PROMPT}"
-  ;;
-esac
 
 setopt promptsubst
 
@@ -236,12 +83,8 @@ bindkey -M menuselect 'j' vi-down-line-or-history
 bindkey -M menuselect 'k' vi-up-line-or-history
 bindkey -M menuselect 'l' vi-forward-char
 
-## Keybind configuration
-if [ -n $SSH_CLIENT ]; then
-  bindkey -v
-else
-  bindkey -e
-fi
+autoload -Uz colors
+colors
 
 # historical backward/forward search with linehead string binded to ^P/^N
 autoload history-search-end
@@ -258,13 +101,9 @@ setopt print_eight_bit
 setopt no_flow_control
 
 ## Command history configuration
+HISTFILE=~/.zhistory
 HISTSIZE=100000
 SAVEHIST=100000
-
-# if [ $UID = 0 ]; then
-#   unset HISTFILE
-#   SAVEHIST=0
-# fi
 
 setopt hist_ignore_space # not save history, starts from space
 setopt hist_ignore_all_dups
@@ -385,25 +224,53 @@ if which peco 2>&1 >/dev/null; then
 fi
 # }}}
 
+autoload zmv
+
+# autoload predict-on
+# predict-on
+
 ## Completion configuration
 autoload -Uz compinit
 compinit
+
+case ${UID} in
+0)
+  PROMPT="%B%{${fg[red]}%}%/ ${fg[green]}#%{${reset_color}%}%b "
+  PROMPT2="%B%{${fg[red]}%}%_#%{${reset_color}%}%b "
+  SPROMPT="%B%{${fg[red]}%}%r is correct? [n,y,a,e]:%{${reset_color}%}%b "
+  [ -n "${REMOTEHOST}${SSH_CONNECTION}" ] &&
+    PROMPT="%{${fg[cyan]}%}%n%{${reset_color}%}@%{${fg[yellow]}%}%m%{${reset_color}%}:${PROMPT}"
+
+  [ -n "${SSH_CONNECTION}" ] &&
+      PROMPT="%{${fg[blue]}%}%3v%{${reset_color}%}"
+  ;;
+*)
+  PROMPT="%{${fg[red]}%}%/%{${reset_color}%}%{$fg[green]%}%1v%{$reset_color%}%{$fg[yellow]%}%2v%{$reset_color%}
+%% "
+  PROMPT2="%{${fg[red]}%}%_%{${reset_color}%}%% "
+  SPROMPT="%{${fg[red]}%}%r is correct? [n,y,a,e]:%{${reset_color}%}"
+
+  [ -n "${SSH_CONNECTION}" ] &&
+      RPROMPT="%{${fg[blue]}%}%3v%{${reset_color}%}"
+
+  [ -n "${REMOTEHOST}${SSH_CONNECTION}" ] &&
+      PROMPT="%{${fg[magenta]}%}%n%{${reset_color}%}@%{${fg[yellow]}%}%m%{${reset_color}%}:${PROMPT}"
+  ;;
+esac
 
 ## tmux
 if [ $UID != 0 ]; then
   if [ -z $SSH_CLIENT ]; then
     if [[ -x `which tmux` && $SHLVL = 1 ]]; then
-      tmux attach || tmux new-session -s default
+      tmux attach || tmux new-session -s def
     fi
   fi
 fi
 
 if [[ -x `which brew` ]]; then
   BREW_PREFIX=`brew --prefix`
-  [[ -s ${BREW_PREFIX}/etc/autojump.sh ]] && . ${BREW_PREFIX}/etc/autojump.sh
 
-  for z in ${BREW_PREFIX}/opt/zsh-syntax-highlighting/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
-           ${BREW_PREFIX}/awscli/share/zsh/site-functions/_aws \
+  for z in ${BREW_PREFIX}/opt/awscli/share/zsh/site-functions/_aws \
            ~/.zsh/functions/zsh-utils; do
     [[ -s ${z} ]] && . ${z}
   done
