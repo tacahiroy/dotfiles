@@ -3,7 +3,7 @@
 autoload -Uz is-at-least
 
 [ -f ~/.zsh/zshrc.antigen ] && . ~/.zsh/zshrc.antigen
-[ -f ~/.zsh/zshrc.vcs_prompt ] && . ~/.zsh/zshrc.vcs_prompt
+# [ -f ~/.zsh/zshrc.vcs_prompt ] && . ~/.zsh/zshrc.vcs_prompt
 
 if is-at-least 4.3.10; then
   autoload -Uz add-zsh-hook
@@ -205,7 +205,7 @@ function cdup() {
 zle -N cdup
 bindkey '^\^' cdup
 
-if which peco 2>&1 >/dev/null; then
+if [[ -x `which peco 2>&1 >/dev/null` ]]; then
   function peco-select-history() {
     local tac
     if which tac > /dev/null; then
