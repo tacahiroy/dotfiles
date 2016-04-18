@@ -35,8 +35,8 @@ function! Cwd()
   return '(' . s:shorten_path(getcwd(), 25) . ')'
 endfunction
 
-function! Monstermethod()
-  return monstermethod#search()
+function! s:has_plugin(plugin)
+  return &runtimepath =~# a:plugin
 endfunction
 
 " $HOME shown as tilde etc.
@@ -59,22 +59,6 @@ function! s:system(cmd)
   let res = system(a:cmd)
   return { 'out': res, 'err': v:shell_error }
 endfunction
-
-" show tag information in the command window
-function! s:preview_tag_lite(word)
-  let t = taglist('^' . a:word . '$')
-  let current = expand('%:t')
-
-  for item in t
-    if stridx(item.filename, current) > -1
-      " [filename] tag definition
-      call Echohl('Search', printf('%-36s [%s]', item.filename, item.cmd))
-    else
-      echomsg printf('%-36s %s', '[' . substitute(item.filename, '\s\s*$', '', '') . ']', item.cmd)
-    endif
-  endfor
-endfunction
-command! -nargs=0 PreviewTagLite call s:preview_tag_lite(expand('<cword>'))
 "}}}
 
 " enough
@@ -118,29 +102,29 @@ endif
 if has('patch-7.3.598')
   Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer --gocode-completer --racer-completer' }
 endif
-Plug 'Raimondi/delimitMate'
 if has('patch-7.4.314')
   Plug 'honza/vim-snippets' | Plug 'SirVer/ultisnips'
 endif
+Plug 'Raimondi/delimitMate'
 " Plug 'ajh17/VimCompletesMe'
-Plug 'airblade/vim-gitgutter'
+Plug 'airblade/vim-gitgutter',        { 'on': [ 'GitGutter' ] }
 Plug 'camelcasemotion'
-Plug 'davidhalter/jedi-vim',   { 'for': 'python', 'do': 'pip install jedi' }
-Plug 'fatih/vim-go',           { 'for': 'go' }
-Plug 'glidenote/memolist.vim', { 'on': ['MemoList', 'MemoNew', 'MemoGrep'] }
-Plug 'godlygeek/tabular',      { 'on': 'Tabularize' }
-Plug 'kien/rainbow_parentheses.vim'
+Plug 'davidhalter/jedi-vim',          { 'for': 'python', 'do': 'pip install jedi' }
+Plug 'fatih/vim-go',                  { 'for': 'go' }
+Plug 'glidenote/memolist.vim',        { 'on': ['MemoList', 'MemoNew', 'MemoGrep'] }
+Plug 'godlygeek/tabular',             { 'on': 'Tabularize' }
+Plug 'kien/rainbow_parentheses.vim',  { 'on': [ 'RainbowParenthesesActivate', 'RainbowParenthesesToggle' ] }
 Plug 'matchit.zip'
 Plug 'tpope/vim-commentary'
-Plug 'tpope/vim-dispatch', { 'on': 'Dispatch' }
+Plug 'tpope/vim-dispatch',            { 'on': 'Dispatch' }
 Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 " Plug 'tyru/open-browser.vim'
-Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
+Plug 'vim-ruby/vim-ruby',             { 'for': 'ruby' }
 Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java' }
-Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
-Plug 'thinca/vim-quickrun'
+Plug 'pangloss/vim-javascript',       { 'for': 'javascript' }
+Plug 'thinca/vim-quickrun',           { 'on': [ 'QuickRun' ] }
 " Plug 'scrooloose/syntastic'
 
 Plug 'ctrlpvim/ctrlp.vim'
@@ -175,7 +159,7 @@ call plug#end()
   let g:ctrlp_switch_buffer = 'Et'
   let g:ctrlp_tabpage_position = 'ac'
   let g:ctrlp_working_path_mode = 'ra'
-  let g:ctrlp_match_window_bottom = 0
+  let g:ctrlp_match_window_bottom = 1
   let g:ctrlp_match_window_reversed = 0
   let g:ctrlp_max_height = 20
   let g:ctrlp_clear_cache_on_exit = 0
@@ -199,12 +183,12 @@ call plug#end()
       \ 2: ['.hg/', 'hg --cwd %s locate -I .'],
       \ 3: ['.svn/', 'svn ls file://%s']
     \ },
-    \ 'fallback': 'ag %s -i --nocolor --nogroup -p ~/.agignore --hidden -g ""',
+    \ 'fallback': 'ag %s -i --nocolor --nogroup -p ~/.agignore -g ""',
   \ }
 
-  if &runtimepath =~# 'cpsm'
+  if s:has_plugin('cpsm')
     let g:ctrlp_match_func = { 'match': 'cpsm#CtrlPMatch' }
-  elseif &runtimepath =~# 'ctrlp-cmatcher'
+  elseif s:has_plugin('ctrlp-cmatcher')
     let g:ctrlp_match_func = { 'match': 'matcher#cmatch' }
   endif
 
@@ -219,7 +203,7 @@ call plug#end()
     \ 'PrtHistory(1)':        ['<Down>'],
     \ 'CreateNewFile()':      ['<C-y>'],
     \ }
-  let g:ctrlp_extensions = ['line', 'dir', 'funky']
+  let g:ctrlp_extensions = ['line', 'dir']
 
   let dir = ['\.git$', '\.hg$', '\.svn$', '\.vimundo$', '\.cache/ctrlp$',
         \    '\.rbenv', '\.gem', 'backup', 'Documents', $TMPDIR,
@@ -259,7 +243,7 @@ call plug#end()
   let g:jedi#auto_vim_configuration = 0
 
 " plug: kien/rainbow_parentheses
-  if &runtimepath =~# 'rainbow_parentheses.vim'
+  if s:has_plugin('rainbow_parentheses.vim')
     augroup Tacahiroy
       " autocmd VimEnter * RainbowParenthesesToggle
       autocmd Syntax * RainbowParenthesesLoadBraces
@@ -329,7 +313,7 @@ call plug#end()
   augroup END
 
 " plug: quickrun
-  if &runtimepath =~# 'vim-quickrun'
+  if s:has_plugin('vim-quickrun')
     nnoremap [Space]r :<C-u>QuickRun<Cr>
   endif
 
@@ -464,16 +448,18 @@ let &statusline .= '|%{&textwidth}'
 let &statusline .= '%#Type#'
 let &statusline .= '%{fugitive#statusline()}'
 let &statusline .= '%*'
-if &runtimepath =~# 'syntastic'
+if s:has_plugin('syntastic')
   let &statusline .= '%#WarningMsg#'
   let &statusline .= '%{SyntasticStatuslineFlag()}'
   let &statusline .= '%*'
 endif
-" right
+" right side from here
 let &statusline .= ' %='
-" let &statusline .= '%#Structure#'
-" let &statusline .= '%{Monstermethod()}'
-" let &statusline .= ' '
+if s:has_plugin('monstermethod')
+  let &statusline .= '%#Structure#'
+  let &statusline .= '%{monstermethod#search()}'
+  let &statusline .= ' '
+endif
 let &statusline .= '%#Title#'
 let &statusline .= '%{Cwd()}'
 let &statusline .= '%{(g:auto_chdir_enabled ? "e" : "d")}'
