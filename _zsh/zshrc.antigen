@@ -1,0 +1,18 @@
+#! /bin/zsh
+
+source ~/.zsh/functions/antigen.zsh
+
+antigen bundle git
+antigen bundle autojump
+antigen bundle brew
+antigen bundle zsh-users/zsh-syntax-highlighting
+antigen bundle zsh-users/zsh-completions
+antigen bundle zsh-users/zsh-autosuggestions
+# antigen bundle git-prompt
+antigen bundle olivierverdier/zsh-git-prompt zshrc.sh
+
+antigen apply
+
+# zsh-autosuggestions
+bindkey '^X' autosuggest-execute
+bindkey '^F' autosuggest-accept
