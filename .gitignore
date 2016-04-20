@@ -6,6 +6,7 @@ _vim/sandbox
 _vim/spell
 _zsh/cache
 _zsh/vendor
+_zsh/functions/antigen.zsh
 *.zwc
 *.old
 _vim/autoload/plug.*
