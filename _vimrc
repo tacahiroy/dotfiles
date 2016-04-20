@@ -128,8 +128,8 @@ Plug 'thinca/vim-quickrun',           { 'on': [ 'QuickRun' ] }
 " Plug 'scrooloose/syntastic'
 
 Plug 'ctrlpvim/ctrlp.vim'
-" Plug 'tacahiroy/ctrlp-funky'
-" Plug 'tacahiroy/vim-colors-isotake'
+Plug 'tacahiroy/ctrlp-funky'
+Plug 'tacahiroy/vim-colors-isotake'
 
 if filereadable(expand('~/.vimrc.plugins'))
   source ~/.vimrc.plugins
