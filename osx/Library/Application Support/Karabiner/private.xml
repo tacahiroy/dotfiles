@@ -55,12 +55,18 @@
     <equal>org.eclipse.eclipse</equal>
   </appdef>
 
+  <appdef>
+    <appname>MSRdc</appname>
+    <equal>com.microsoft.rdc.mac</equal>
+  </appdef>
+
   <item>
     <name>Topre Realforce</name>
     <item>
       <name>Swap Options and Commands</name>
       <identifier>private.deviceproductdef.topre.swap_option_and_command</identifier>
       <device_only>DeviceVendor::Topre_Corporation</device_only>
+      <not>MSRdc</not>
       <autogen>--KeyToKey-- KeyCode::OPTION_L, KeyCode::COMMAND_L</autogen>
       <autogen>--KeyToKey-- KeyCode::COMMAND_L, KeyCode::OPTION_L</autogen>
       <autogen>--KeyToKey-- KeyCode::OPTION_R, KeyCode::COMMAND_R</autogen>
@@ -83,6 +89,14 @@
       <autogen>--KeyToConsumer-- KeyCode::F13, ConsumerKeyCode::VOLUME_MUTE</autogen>
       <autogen>--KeyToConsumer-- KeyCode::PC_SCROLLLOCK, ConsumerKeyCode::VOLUME_DOWN</autogen>
       <autogen>--KeyToConsumer-- KeyCode::PC_PAUSE, ConsumerKeyCode::VOLUME_UP</autogen>
+    </item>
+
+    <item>
+      <name>Apply Brightness Controls</name>
+      <identifier>private.deviceproductdef.topre.apply_brightness_controls</identifier>
+      <device_only>DeviceVendor::Topre_Corporation</device_only>
+      <autogen>--KeyToConsumer-- KeyCode::F1, ModifierFlag::OPTION_L, ConsumerKeyCode::BRIGHTNESS_DOWN</autogen>
+      <autogen>--KeyToConsumer-- KeyCode::F2, ModifierFlag::OPTION_L, ConsumerKeyCode::BRIGHTNESS_UP</autogen>
     </item>
 
     <item>
