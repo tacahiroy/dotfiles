@@ -9,6 +9,17 @@ if is-at-least 4.3.10; then
   autoload -Uz add-zsh-hook
 fi
 
+# set terminal title including current directory # {{{
+#
+case "${TERM}" in
+kterm*|xterm*|screen*)
+  export LSCOLORS=exfxcxdxbxegedabagacad
+  export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
+  zstyle ':completion:*' list-colors \
+    'di=34' 'ln=35' 'so=32' 'ex=31' 'bd=46;34' 'cd=43;34'
+  ;;
+esac # }}}
+
 ## ignore case for completion
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 zstyle ':completion:*:default' menu select=2
@@ -27,17 +38,6 @@ WORDCHARS=${WORDCHARS:s,/,,}
 # stty erase '^H'
 stty intr '^C'
 stty susp '^Z'
-
-# set terminal title including current directory # {{{
-#
-case "${TERM}" in
-kterm*|xterm*)
-  export LSCOLORS=exfxcxdxbxegedabagacad
-  export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
-  zstyle ':completion:*' list-colors \
-    'di=34' 'ln=35' 'so=32' 'ex=31' 'bd=46;34' 'cd=43;34'
-  ;;
-esac # }}}
 
 setopt promptsubst
 
@@ -262,7 +262,7 @@ esac
 if [ $UID != 0 ]; then
   if [ -z $SSH_CLIENT ]; then
     if [[ -x `which tmux` && $SHLVL = 1 ]]; then
-      tmux attach || tmux new-session -s def
+      tmux attach || tmux -2 new-session -s def
     fi
   fi
 fi
