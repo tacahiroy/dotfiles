@@ -130,6 +130,7 @@ Plug 'thinca/vim-quickrun',           { 'on': [ 'QuickRun' ] }
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'tacahiroy/ctrlp-funky'
 Plug 'tacahiroy/vim-colors-isotake'
+" Plug 'nathanaelkane/vim-indent-guides'
 
 if filereadable(expand('~/.vimrc.plugins'))
   source ~/.vimrc.plugins
@@ -203,7 +204,6 @@ call plug#end()
     \ 'PrtHistory(1)':        ['<Down>'],
     \ 'CreateNewFile()':      ['<C-y>'],
     \ }
-  let g:ctrlp_extensions = ['line', 'dir']
 
   let dir = ['\.git$', '\.hg$', '\.svn$', '\.vimundo$', '\.cache/ctrlp$',
         \    '\.rbenv', '\.gem', 'backup', 'Documents', $TMPDIR,
@@ -309,6 +309,7 @@ call plug#end()
   let delimitMate_matchpairs = "(:),[:],{:}"
 
   augroup Tacahiroy
+    autocmd FileType markdown let b:delimitMate_quotes = "\" '"
     autocmd FileType html,xml,eruby let b:delimitMate_matchpairs = &matchpairs
   augroup END
 
