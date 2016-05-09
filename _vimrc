@@ -59,6 +59,39 @@ function! s:system(cmd)
   let res = system(a:cmd)
   return { 'out': res, 'err': v:shell_error }
 endfunction
+
+function! s:append_blank_line()
+  silent! call append(line('.'), '')
+endfunction
+
+" remove extra '\n' from the redir output
+function! s:redir(cmd)
+  redir => res
+  execute a:cmd
+  redir END
+
+  return substitute(res, '^\n\+', '', '')
+endfunction
+
+" show/hide quickfix window
+function! s:toggle_qf_list()
+  let bufs = s:redir('buffers')
+  let l = matchstr(split(bufs, '\n'), '[\t ]*\d\+[\t ]\+.\+[\t ]\+"\[Quickfix\ List\]"')
+
+  let winnr = -1
+  if !empty(l)
+    let bufnbr = matchstr(l, '[\t ]*\zs\d\+\ze[\t ]\+')
+    let winnr = bufwinnr(str2nr(bufnbr, 10))
+  endif
+
+  if !empty(getqflist())
+    if winnr == -1
+      copen
+    else
+      cclose
+    endif
+  endif
+endfunction
 "}}}
 
 " enough
@@ -170,12 +203,11 @@ call plug#end()
   let g:ctrlp_show_hidden = 0
   let g:ctrlp_mruf_max = 1024
   let g:ctrlp_mruf_tilde_homedir = 1
-  let g:ctrlp_mruf_exclude = 'knife-edit-*.*\|COMMIT_EDITMSG'
+  let g:ctrlp_mruf_exclude = 'COMMIT_EDITMSG'
   let g:ctrlp_mruf_default_order = 1
   let g:ctrlp_path_nolim = 0
   " Set delay to prevent extra search
   let g:ctrlp_lazy_update = 200
-
   let g:ctrlp_brief_prompt = 1
 
   let g:ctrlp_user_command = {
@@ -231,13 +263,12 @@ call plug#end()
   nnoremap [Space]f. :CtrlPCurWD<Cr>
   nnoremap [Space]f, :CtrlPCurFile<Cr>
   nnoremap [Space]fr :CtrlPRTS<Cr>
+  nnoremap [Space]t  :CtrlPTag<Cr>
+  nnoremap [Space]fq :CtrlPQuickfix<Cr>
 
   nnoremap [Space]fu :CtrlPFunky<Cr>
-  nnoremap [Space]F  :CtrlPFunkyDeep<Cr>
   nnoremap [Space]uu :execute 'CtrlPFunky ' . fnameescape(expand('<cword>'))<Cr>
   nnoremap [Space]fs :CtrlPSSH<Cr>
-
-  nnoremap [Space]t :CtrlPTag<Cr>
 
 " plug: jedi-vim
   let g:jedi#auto_vim_configuration = 0
@@ -351,6 +382,9 @@ set noequalalways
 set expandtab smarttab
 set fileencodings=ucs-bom,utf-8,iso-2022-jp,euc-jp,cp932
 set fileformats=unix,dos,mac
+if executable('ag')
+  let grepprg = system('which ag') . ' --nocolor --nogroup -p ~/.agignore'
+endif
 set helplang=en
 set hidden
 set history=10000
@@ -514,46 +548,10 @@ vnoremap : ;
 nnoremap j gj
 nnoremap k gk
 
-nnoremap <silent> <Return> :<C-u>call <SID>insert_blank_line()<Cr>
-function! s:insert_blank_line()
-  if !&readonly && &buftype !~# '\(quickfix\|help\|nofile\)'
-    silent! call append(line('.'), '')
-  endif
-endfunction
-
-" remove extra '\n' from the redir output
-function! s:redir(cmd)
-  redir => res
-  execute a:cmd
-  redir END
-
-  return substitute(res, '^\n\+', '', '')
-endfunction
-
-" show/hide quickfix window
-function! s:toggle_qf_list()
-  let bufs = s:redir('buffers')
-  let l = matchstr(split(bufs, '\n'), '[\t ]*\d\+[\t ]\+.\+[\t ]\+"\[Quickfix\ List\]"')
-
-  let winnr = -1
-  if !empty(l)
-    let bufnbr = matchstr(l, '[\t ]*\zs\d\+\ze[\t ]\+')
-    let winnr = bufwinnr(str2nr(bufnbr, 10))
-  endif
-
-  if !empty(getqflist())
-    if winnr == -1
-      copen
-    else
-      cclose
-    endif
-  endif
-endfunction
-
 " quickfix related mappings
 nnoremap <silent> qo :<C-u>silent call <SID>toggle_qf_list()<Cr>
-nnoremap <silent> qj :cnext<Cr>zz
-nnoremap <silent> qk :cprevious<Cr>zz
+nnoremap <silent> [q :cprevious<Cr>zz
+nnoremap <silent> ]q :cnext<Cr>zz
 nnoremap <silent> qc :cc<Cr>zz
 
 " buffer navigations
@@ -568,6 +566,8 @@ nnoremap <silent> sh <C-w>h
 nnoremap <silent> sk <C-w>k
 nnoremap <silent> sl <C-w>l
 nnoremap <silent> sj <C-w>j
+
+nnoremap <silent> <Return> :<C-u>call <SID>append_blank_line()<Cr>
 
 " show/hide line number wisely: this needs Vim 7.3 or above
 function! s:toggle_line_number()
@@ -784,10 +784,10 @@ augroup Tacahiroy
   autocmd BufEnter * setlocal formatoptions-=o
 
   "my ftdetects
-  autocmd BufRead,BufNewFile *.ru,Gemfile,Guardfile set filetype=ruby
+  autocmd BufRead,BufNewFile *.ru,Gemfile,Guardfile,Sporkfile set filetype=ruby
   autocmd BufRead,BufNewFile ?zshrc,?zshenv set filetype=zsh
-  autocmd BufRead,BufNewFile *.as set filetype=actionscript
-  autocmd BufRead,BufNewFile *.gradle set filetype=groovy
+  autocmd BufRead,BufNewFile *
+        \ if &readonly || !&modifiable | nnoremap <buffer> <Return> <Return> | endif
 
   " Chef
   autocmd BufRead,BufNewFile *.rb
@@ -803,7 +803,7 @@ augroup Tacahiroy
 
   " Visual Basic
   autocmd BufRead,BufNewFile *.frm,*.bas,*.cls,*.dsr set filetype=vb
-  autocmd FileType vb setlocal fileformat=dos
+  autocmd FileType vb setlocal fileformat=dos fileencoding=cp932
 
   " autochdir emulation
   autocmd BufEnter * call s:auto_chdir(6)
@@ -886,8 +886,8 @@ augroup Tacahiroy
   autocmd BufRead,BufNewFile *.applescript,*.scpt set filetype=applescript
   autocmd FileType applescript set commentstring=#\ %s
 
-  " map qq to close the window
   autocmd FileType help,qf,logaling,bestfriend,ref-* nnoremap <buffer> <silent> qq <C-w>c
+
   autocmd FileType rspec compiler rspec
   autocmd FileType rspec set omnifunc=rubycomplete#Complete
   autocmd FileType ruby,eruby,rspec :execute 'setlocal iskeyword+=' . char2nr('?')
