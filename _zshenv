@@ -43,8 +43,15 @@ export USE_PATCHED_FONT="false"
 # LANG
 #
 # export LANG=ja_JP.UTF-8
-export TERM=xterm-256color
+# export TERM=xterm-256color
+if [ -n ${TMUX} ]; then
+  export TERM=screen-256color
+else
+  export TERM=xter-256color
+fi
+
 export PAGER='less'
+export LESS='-R -g'
 
 if [ -x /usr/local/bin/vim ]; then
   export EDITOR=/usr/local/bin/vim
