@@ -275,15 +275,6 @@ case ${UID} in
   ;;
 esac
 
-## tmux
-if [ $UID != 0 ]; then
-  if [ -z $SSH_CLIENT ]; then
-    if [[ -x `which tmux` && $SHLVL = 1 ]]; then
-      tmux attach || tmux -2 new-session -s def
-    fi
-  fi
-fi
-
 if [[ -x `which brew` ]]; then
   BREW_PREFIX=`brew --prefix`
 
