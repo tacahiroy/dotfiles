@@ -801,6 +801,9 @@ augroup Tacahiroy
   autocmd FileType eruby* inoremap <silent> <buffer> <Leader>d <C-g>u<%===  %><Esc>F<Space>i
   autocmd FileType eruby* setlocal makeprg=erubis\ $*\ %
 
+  " ShellScript
+  autocmd FileType sh,zsh setlocal tabstop=4 softtabstop=4 shiftwidth=4 expandtab
+
   " Visual Basic
   autocmd BufRead,BufNewFile *.frm,*.bas,*.cls,*.dsr set filetype=vb
   autocmd FileType vb setlocal fileformat=dos fileencoding=cp932
