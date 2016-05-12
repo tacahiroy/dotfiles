@@ -205,7 +205,7 @@ function cdup() {
 zle -N cdup
 bindkey '^\^' cdup
 
-if [[ -x `which peco 2>&1 >/dev/null` ]]; then
+if [ -x `which peco 2>&1 >/dev/null` ]; then
   function peco-select-history() {
     local tac
     if which tac > /dev/null; then
@@ -219,8 +219,25 @@ if [[ -x `which peco 2>&1 >/dev/null` ]]; then
     CURSOR=$#BUFFER
     zle clear-screen
   }
+
+  function peco-select-ctrlpvim-mru() {
+    local ctrlp_mrufile=$HOME/.cache/ctrlp/mru/cache.txt
+    local _file
+    if [ -f $ctrlp_mrufile ]; then
+      _file=$(cat $ctrlp_mrufile | peco --query "$LBUFFER")
+      if [ -n ${_file} -a -f ${_file} ]; then
+        BUFFER="$EDITOR ${_file}"
+        CURSOR=$#BUFFER
+        zle clear-screen
+      fi
+    fi
+  }
+
   zle -N peco-select-history
   bindkey '^r' peco-select-history
+
+  zle -N peco-select-ctrlpvim-mru
+  bindkey '^t' peco-select-ctrlpvim-mru
 fi
 # }}}
 
