@@ -467,6 +467,9 @@ set t_Co=256
 set background=light
 colorscheme isotake
 
+filetype plugin indent on
+syntax on
+
 set formatoptions& formatoptions+=mM formatoptions-=r
 
 " statusline config
@@ -972,7 +975,7 @@ if has('gui_running')
     vnoremap <D-c> "+y
     nnoremap <D-a> ggVG
   elseif s:is_linux
-    set guifont=Migu\ 1M\ Regular\ 13
+    set guifont=MigMix\ 1M\ 12
   else
     " Windows
     set guifont=M+1VM+IPAG_circle:h10:cDEFAULT
