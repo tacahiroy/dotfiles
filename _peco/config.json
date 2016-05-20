@@ -6,6 +6,6 @@
   "Style": {
     "Selected": ["black", "on_white"],
     "Query": ["black", "bold"],
-    "Matched": ["red", "bold"]
+    "Matched": ["magenta", "bold"]
   }
 }
