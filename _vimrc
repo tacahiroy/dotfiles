@@ -133,7 +133,11 @@ elseif s:ctrlp_matcher ==# 'cpsm'
 endif
 
 if has('patch-7.3.598')
-  Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer --gocode-completer --racer-completer' }
+  let ycmopts = ['--clang-completer']
+  if executable('gocode') | call add(ycmopts, '--gocode-completer') | endif
+  if executable('racer') | call add(ycmopts, '--racer-completer') | endif
+
+  Plug 'Valloric/YouCompleteMe', { 'do': './install.py ' . join(ycmopts, ' ') }
 endif
 if has('patch-7.4.314')
   Plug 'honza/vim-snippets' | Plug 'SirVer/ultisnips'
@@ -307,6 +311,7 @@ call plug#end()
   let g:ycm_seed_identifiers_with_syntax = 1
   let g:ycm_complete_in_comments = 1
   let g:ycm_rust_src_path = '/usr/local/src/rust-1.7.0/src'
+  let g:ycm_path_to_python_interpreter = '/usr/bin/python2'
 
 " plug: UltiSnips
   let g:UltiSnipsExpandTrigger = '<C-y>'
@@ -358,6 +363,7 @@ call plug#end()
 
 " * options {{{
 set ambiwidth=double
+set belloff=esc
 set noautoindent
 set nocindent
 set nosmartindent
@@ -443,6 +449,7 @@ set updatetime=2000
 set viminfo='64,<100,s10,n~/.viminfo
 set virtualedit=block,onemore
 set t_vb = visualbell
+
 set wildignore=*.exe,*.dll,*.class,*.o,*.obj
 if exists('+wildignorecase')
   set wildignorecase
@@ -976,6 +983,7 @@ if has('gui_running')
     nnoremap <D-a> ggVG
   elseif s:is_linux
     set guifont=MigMix\ 1M\ 12
+    inoremap <silent> <M-v> <Esc>:let &paste=1<Cr>a<C-R>=@*<Cr><Esc>:let &paste=0<Cr>a
   else
     " Windows
     set guifont=M+1VM+IPAG_circle:h10:cDEFAULT
