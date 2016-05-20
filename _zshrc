@@ -9,6 +9,13 @@ if is-at-least 4.3.10; then
   autoload -Uz add-zsh-hook
 fi
 
+bindkey -v
+
+# zsh-autosuggestions
+bindkey '^G' autosuggest-execute
+bindkey '^F' autosuggest-accept
+export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8'
+
 # set terminal title including current directory # {{{
 #
 case "${TERM}" in
@@ -213,7 +220,7 @@ if [ -x `which peco 2>&1 >/dev/null` ]; then
     else
       tac="tail -r"
     fi
-    BUFFER=$(history -n 1 | \
+    BUFFER=$(fc -nl 1 | \
       eval $tac | \
       peco --query "$LBUFFER")
     CURSOR=$#BUFFER
