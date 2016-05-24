@@ -121,29 +121,31 @@ nmap <Leader><Leader> [Toggle]
 nnoremap [Space] <Nop>
 map <Space> [Space]
 
-let s:ctrlp_matcher = 'ctrlp-cmatcher'
+" let s:ctrlp_matcher = 'ctrlp-cmatcher'
+let s:ctrlp_matcher = 'cpsm'
 
 " * plugin management "{{{
 call plug#begin($HOME . '/plugins.vim')
 
 if s:ctrlp_matcher ==# 'ctrlp-cmatcher'
   Plug 'JazzCore/ctrlp-cmatcher', { 'do': './install.sh' }
+  let g:ctrlp_match_func = { 'match': 'matcher#cmatch' }
 elseif s:ctrlp_matcher ==# 'cpsm'
   Plug 'nixprime/cpsm'
+  let g:cpsm_highlight_mode = 'detailed'
+  let g:ctrlp_match_func = { 'match': 'cpsm#CtrlPMatch' }
 endif
 
 if has('patch-7.3.598')
   let ycmopts = ['--clang-completer']
   if executable('gocode') | call add(ycmopts, '--gocode-completer') | endif
   if executable('racer') | call add(ycmopts, '--racer-completer') | endif
-
   Plug 'Valloric/YouCompleteMe', { 'do': './install.py ' . join(ycmopts, ' ') }
 endif
 if has('patch-7.4.314')
   Plug 'honza/vim-snippets' | Plug 'SirVer/ultisnips'
 endif
 Plug 'Raimondi/delimitMate'
-" Plug 'ajh17/VimCompletesMe'
 Plug 'airblade/vim-gitgutter',        { 'on': [ 'GitGutter' ] }
 Plug 'camelcasemotion'
 Plug 'davidhalter/jedi-vim',          { 'for': 'python', 'do': 'pip install jedi' }
@@ -157,7 +159,6 @@ Plug 'tpope/vim-dispatch',            { 'on': 'Dispatch' }
 Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
-" Plug 'tyru/open-browser.vim'
 Plug 'vim-ruby/vim-ruby',             { 'for': 'ruby' }
 Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java' }
 Plug 'pangloss/vim-javascript',       { 'for': 'javascript' }
@@ -222,12 +223,6 @@ call plug#end()
     \ },
     \ 'fallback': 'ag %s -i --nocolor --nogroup -p ~/.agignore -g ""',
   \ }
-
-  if s:has_plugin('cpsm')
-    let g:ctrlp_match_func = { 'match': 'cpsm#CtrlPMatch' }
-  elseif s:has_plugin('ctrlp-cmatcher')
-    let g:ctrlp_match_func = { 'match': 'matcher#cmatch' }
-  endif
 
   let g:ctrlp_prompt_mappings = {
     \ 'AcceptSelection("e")': ['<Cr>'],
@@ -363,7 +358,7 @@ call plug#end()
 
 " * options {{{
 set ambiwidth=double
-set belloff=esc
+set belloff=all
 set noautoindent
 set nocindent
 set nosmartindent
