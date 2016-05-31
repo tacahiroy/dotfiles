@@ -137,6 +137,12 @@ case "${OSTYPE}" in
     alias ls='gls -F --color'
     alias o='open'
     alias oo='open .'
+    alias bb='brew'
+    alias buo='brew update && brew outdated'
+    alias netlisten='lsof -nP -iTCP -sTCP:LISTEN'
+    alias netestab='lsof -nP -iTCP -sTCP:ESTABLISHED'
+    alias -g C='|pbcopy'
+
     if `which gdu 2>&1 > /dev/null`; then
       alias du="`which gdu`"
     fi
@@ -162,10 +168,6 @@ alias vi='vim'
 alias gi='git'
 alias g='git'
 alias gu='git up'
-alias bb='brew'
-alias buo='brew update && brew outdated'
-alias netlisten='lsof -nP -iTCP -sTCP:LISTEN'
-alias netestab='lsof -nP -iTCP -sTCP:ESTABLISHED'
 alias netestablished=netestab
 alias pyttpd='python -m SimpleHTTPServer'
 alias rbttpd='ruby -run -e httpd . -p 8000'
@@ -175,7 +177,6 @@ alias sortn='sort -n'
 # global
 alias -g K9='|xargs kill -9'
 alias -g L='|$PAGER -R'
-alias -g C='|pbcopy'
 
 setopt complete_aliases
 
