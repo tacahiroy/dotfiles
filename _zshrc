@@ -270,7 +270,7 @@ case ${UID} in
       PROMPT="%{${fg[blue]}%}%3v%{${reset_color}%}"
   ;;
 *)
-  PROMPT="%{${fg[red]}%}%/%{${reset_color}%}%{$fg[green]%}%1v%{$reset_color%}%{$fg[yellow]%}%2v%{$reset_color%}
+  PROMPT="%{${fg[green]}%}%/%{${reset_color}%}%{$fg[green]%}%{$reset_color%}%{$fg[yellow]%}%2v%{$reset_color%}
 %% "
   PROMPT2="%{${fg[red]}%}%_%{${reset_color}%}%% "
   SPROMPT="%{${fg[red]}%}%r is correct? [n,y,a,e]:%{${reset_color}%}"
