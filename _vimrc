@@ -96,7 +96,6 @@ endfunction
 
 " enough
 let s:is_mac = has('macunix') || has('mac')
-" GNU/Linux only
 let s:is_linux = !s:is_mac && has('unix')
 " just in case
 let s:is_windows = !(s:is_mac || s:is_linux) && has('win32') || has('win64')
@@ -121,19 +120,16 @@ nmap <Leader><Leader> [Toggle]
 nnoremap [Space] <Nop>
 map <Space> [Space]
 
-" let s:ctrlp_matcher = 'ctrlp-cmatcher'
-let s:ctrlp_matcher = 'cpsm'
-
 " * plugin management "{{{
 call plug#begin($HOME . '/plugins.vim')
 
-if s:ctrlp_matcher ==# 'ctrlp-cmatcher'
-  Plug 'JazzCore/ctrlp-cmatcher', { 'do': './install.sh' }
-  let g:ctrlp_match_func = { 'match': 'matcher#cmatch' }
-elseif s:ctrlp_matcher ==# 'cpsm'
+if has('+python')
   Plug 'nixprime/cpsm'
   let g:cpsm_highlight_mode = 'detailed'
   let g:ctrlp_match_func = { 'match': 'cpsm#CtrlPMatch' }
+else
+  Plug 'JazzCore/ctrlp-cmatcher', { 'do': './install.sh' }
+  let g:ctrlp_match_func = { 'match': 'matcher#cmatch' }
 endif
 
 if has('patch-7.3.598')
@@ -146,29 +142,28 @@ if has('patch-7.4.314')
   Plug 'honza/vim-snippets' | Plug 'SirVer/ultisnips'
 endif
 Plug 'Raimondi/delimitMate'
-Plug 'airblade/vim-gitgutter',        { 'on': [ 'GitGutter' ] }
+Plug 'airblade/vim-gitgutter',        { 'on': ['GitGutter'] }
 Plug 'camelcasemotion'
 Plug 'davidhalter/jedi-vim',          { 'for': 'python', 'do': 'pip install jedi' }
 Plug 'fatih/vim-go',                  { 'for': 'go' }
 Plug 'glidenote/memolist.vim',        { 'on': ['MemoList', 'MemoNew', 'MemoGrep'] }
 Plug 'godlygeek/tabular',             { 'on': 'Tabularize' }
-Plug 'kien/rainbow_parentheses.vim',  { 'on': [ 'RainbowParenthesesActivate', 'RainbowParenthesesToggle' ] }
+Plug 'kien/rainbow_parentheses.vim',  { 'on': ['RainbowParenthesesActivate', 'RainbowParenthesesToggle'] }
 Plug 'matchit.zip'
 Plug 'tpope/vim-commentary'
-Plug 'tpope/vim-dispatch',            { 'on': 'Dispatch' }
-Plug 'tpope/vim-endwise'
+Plug 'tpope/vim-dispatch', { 'on': 'Dispatch' }
+Plug 'tpope/vim-endwise',  { 'for': ['ruby', 'sh', 'zsh', 'vim', 'snippets', 'elixir'] }
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 Plug 'vim-ruby/vim-ruby',             { 'for': 'ruby' }
-Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java' }
-Plug 'pangloss/vim-javascript',       { 'for': 'javascript' }
-Plug 'thinca/vim-quickrun',           { 'on': [ 'QuickRun' ] }
+" Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java' }
+" Plug 'pangloss/vim-javascript',       { 'for': 'javascript' }
+Plug 'thinca/vim-quickrun',           { 'on': ['QuickRun'] }
 " Plug 'scrooloose/syntastic'
 
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'tacahiroy/ctrlp-funky'
 Plug 'tacahiroy/vim-colors-isotake'
-" Plug 'nathanaelkane/vim-indent-guides'
 
 if filereadable(expand('~/.vimrc.plugins'))
   source ~/.vimrc.plugins
@@ -188,12 +183,10 @@ call plug#end()
   let g:memolist_vimfiler = 0
 
   nnoremap [Space]mc :MemoNew<Cr>
-  nnoremap [Space]mg :MemoGrep<Cr>
-  nnoremap [Space]mL :MemoList<Cr>
   nnoremap [Space]ml :execute 'CtrlP ' . g:memolist_path<Cr><F5>
 
 " plug: ctrlp.vim
-  let g:ctrlp_map = '[Space]ff'
+  let g:ctrlp_map = '<Space>e'
   let g:ctrlp_cmd = 'CtrlP'
   let g:ctrlp_switch_buffer = 'Et'
   let g:ctrlp_tabpage_position = 'ac'
@@ -519,7 +512,7 @@ cnoremap <C-o> <C-d>
 " in case forgot to run vim w/o sudo
 cnoremap W!! %!sudo tee > /dev/null %
 
-" disable dangerous? mappings
+" disable dangerous mappings
 nnoremap ZZ <Nop>
 nnoremap s <Nop>
 nnoremap Q <Nop>
@@ -649,8 +642,11 @@ nnoremap [Space]W :<C-u>update!<Cr>
 nnoremap [Space]Q :<C-u>quit!<Cr>
 
 " copy to clipboard
-nnoremap <silent> [Space]a :<C-u>let @* = @"<Cr>
-
+if has('xterm_clipboard')
+  nnoremap <silent> [Space]a :<C-u>let @+ = @"<Cr>
+else
+  nnoremap <silent> [Space]a :<C-u>let @* = @"<Cr>
+endif
 
 " help
 nnoremap <C-\> :<C-u>h<Space>
@@ -978,7 +974,8 @@ if has('gui_running')
     nnoremap <D-a> ggVG
   elseif s:is_linux
     set guifont=MigMix\ 1M\ 12
-    inoremap <silent> <M-v> <Esc>:let &paste=1<Cr>a<C-R>=@*<Cr><Esc>:let &paste=0<Cr>a
+    vnoremap <silent> <M-c> "+y
+    inoremap <silent> <M-v> <Esc>:let &paste=1<Cr>a<C-R>=@+<Cr><Esc>:let &paste=0<Cr>a
   else
     " Windows
     set guifont=M+1VM+IPAG_circle:h10:cDEFAULT
