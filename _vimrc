@@ -160,6 +160,7 @@ Plug 'vim-ruby/vim-ruby',             { 'for': 'ruby' }
 " Plug 'pangloss/vim-javascript',       { 'for': 'javascript' }
 Plug 'thinca/vim-quickrun',           { 'on': ['QuickRun'] }
 " Plug 'scrooloose/syntastic'
+Plug 'dag/vim-fish'
 
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'tacahiroy/ctrlp-funky'
