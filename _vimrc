@@ -55,11 +55,6 @@ function! s:shorten_path(path, ratio)
 endfunction
 
 " * private
-function! s:system(cmd)
-  let res = system(a:cmd)
-  return { 'out': res, 'err': v:shell_error }
-endfunction
-
 function! s:append_blank_line()
   silent! call append(line('.'), '')
 endfunction
@@ -159,7 +154,6 @@ Plug 'vim-ruby/vim-ruby',             { 'for': 'ruby' }
 " Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java' }
 " Plug 'pangloss/vim-javascript',       { 'for': 'javascript' }
 Plug 'thinca/vim-quickrun',           { 'on': ['QuickRun'] }
-" Plug 'scrooloose/syntastic'
 Plug 'dag/vim-fish'
 
 Plug 'ctrlpvim/ctrlp.vim'
@@ -217,6 +211,12 @@ call plug#end()
     \ },
     \ 'fallback': 'ag %s -i --nocolor --nogroup -p ~/.agignore -g ""',
   \ }
+
+  if s:has_plugin('cpsm')
+    let g:ctrlp_match_func = { 'match': 'cpsm#CtrlPMatch' }
+  elseif s:has_plugin('ctrlp-cmatcher')
+    let g:ctrlp_match_func = { 'match': 'matcher#cmatch' }
+  endif
 
   let g:ctrlp_prompt_mappings = {
     \ 'AcceptSelection("e")': ['<Cr>'],
