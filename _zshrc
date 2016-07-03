@@ -234,7 +234,7 @@ if [ -x `which peco 2>&1 >/dev/null` ]; then
     if [ -f $ctrlp_mrufile ]; then
       _file=$(cat $ctrlp_mrufile | peco --query "$LBUFFER")
       if [ -n "${_file}" ]; then
-        BUFFER="$EDITOR ${_file}"
+        BUFFER="$EDITOR \"${_file}\""
         CURSOR=$#BUFFER
         zle clear-screen
       fi
