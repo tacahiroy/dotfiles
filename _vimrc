@@ -128,7 +128,7 @@ else
 endif
 
 if has('patch-7.3.598')
-  let ycmopts = ['--clang-completer']
+  let ycmopts = []
   if executable('gocode') | call add(ycmopts, '--gocode-completer') | endif
   if executable('racer') | call add(ycmopts, '--racer-completer') | endif
   Plug 'Valloric/YouCompleteMe', { 'do': './install.py ' . join(ycmopts, ' ') }
@@ -808,6 +808,8 @@ augroup Tacahiroy
   " Visual Basic
   autocmd BufRead,BufNewFile *.frm,*.bas,*.cls,*.dsr set filetype=vb
   autocmd FileType vb setlocal fileformat=dos fileencoding=cp932
+
+  autocmd FileType make set list
 
   " autochdir emulation
   autocmd BufEnter * call s:auto_chdir(6)

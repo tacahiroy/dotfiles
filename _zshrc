@@ -142,6 +142,7 @@ case "${OSTYPE}" in
     alias netlisten='lsof -nP -iTCP -sTCP:LISTEN'
     alias netestab='lsof -nP -iTCP -sTCP:ESTABLISHED'
     alias -g C='|pbcopy'
+    alias netestablished=netestab
 
     if `which gdu 2>&1 > /dev/null`; then
       alias du="`which gdu`"
@@ -165,10 +166,11 @@ alias df='df -h'
 alias su='su -l'
 alias v='vim'
 alias vi='vim'
+alias git='LC_ALL=en_US.UTF-8 git'
 alias gi='git'
 alias g='git'
 alias gu='git up'
-alias netestablished=netestab
+alias gl='git log'
 alias pyttpd='python -m SimpleHTTPServer'
 alias rbttpd='ruby -run -e httpd . -p 8000'
 alias re='rbenv'
@@ -233,8 +235,8 @@ if [ -x `which peco 2>&1 >/dev/null` ]; then
     local _file
     if [ -f $ctrlp_mrufile ]; then
       _file=$(cat $ctrlp_mrufile | peco --query "$LBUFFER")
-      if [ -n "${_file}" ]; then
-        BUFFER="$EDITOR \"${_file}\""
+      if [ -n "${_file}" -a -f "${_file}" ]; then
+        BUFFER="$EDITOR ${_file}"
         CURSOR=$#BUFFER
         zle clear-screen
       fi

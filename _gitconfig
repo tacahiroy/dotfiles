@@ -7,13 +7,14 @@
 	status = auto
 	interactive = auto
 [core]
-	editor = $EDITOR
-	pager = $PAGER
+	editor = ${EDITOR:-vim}
+	pager = ${PAGER:-less}
 	excludesfile = ~/.gitignore
 
 [alias]
 	b    = branch
 	ci   = commit
+	ca   = commit --amend
 	co   = checkout
 	d    = diff
 	dc   = diff --cached
@@ -32,14 +33,23 @@
 	sup  = !git stash && git up
 	up   = pull --rebase
 
-[advice]
-	statusHints = false
+[pager]
+	log  = (perl ~/bin/diff-highlight 2>/dev/null || cat) | ${PAGER:-less}
+	show = (perl ~/bin/diff-highlight 2>/dev/null || cat) | ${PAGER:-less}
+	diff = (perl ~/bin/diff-highlight 2>/dev/null || cat) | ${PAGER:-less}
+
+[interactive]
+	diffFilter = (diff-highlight 2>/dev/null || cat)
+[diff]
+	compactionHeuristic = true
+	mnemonicprefix = true
 
 [push]
 	default = simple
-[help]
-	autocorrect = 1
-[diff]
-	mnemonicprefix = true
+
 [credential]
 	helper = cache
+[advice]
+	statusHints = false
+[help]
+	autocorrect = 1
