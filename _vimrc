@@ -975,7 +975,7 @@ if has('gui_running')
     vnoremap <D-c> "+y
     nnoremap <D-a> ggVG
   elseif s:is_linux
-    set guifont=MigMix\ 1M\ 12
+    set guifont=MigMix\ 2M\ 12
     vnoremap <silent> <M-c> "+y
     inoremap <silent> <M-v> <Esc>:let &paste=1<Cr>a<C-R>=@+<Cr><Esc>:let &paste=0<Cr>a
   else
