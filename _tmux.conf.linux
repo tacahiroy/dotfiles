@@ -132,10 +132,10 @@ set -g status-left-style 'fg=black,bg=brightgreen'
 set -g status-right-style 'fg=black,bg=colour15'
 
 set -g status-left-length 60
-set -g status-left "#(~/Projects/tmux-powerline/powerline.sh left)"
+set -g status-left "#(~/proj/tmux-powerline/powerline.sh left)"
 
 set -g status-right-length 90
-set -g status-right "#(~/Projects/tmux-powerline/powerline.sh right)"
+set -g status-right "#(~/proj/tmux-powerline/powerline.sh right)"
 
 setw -g set-titles on
 setw -g set-titles-string "#W@#H"
