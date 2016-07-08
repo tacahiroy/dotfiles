@@ -233,8 +233,8 @@ if [ -x $(which peco 2>&1 >/dev/null) ]; then
   function peco-select-ctrlpvim-mru() {
     local ctrlp_mrufile=$HOME/.cache/ctrlp/mru/cache.txt
     local _file
-    if [ -f $ctrlp_mrufile ]; then
-      _file=$(cat $ctrlp_mrufile | peco --query "$LBUFFER")
+    if [ -f "${ctrlp_mrufile}" ]; then
+      _file=$(cat "${ctrlp_mrufile}" | peco --query "$LBUFFER")
       if [ -n "${_file}" -a -f "${_file}" ]; then
         BUFFER="$EDITOR ${_file}"
         CURSOR=$#BUFFER
@@ -242,6 +242,30 @@ if [ -x $(which peco 2>&1 >/dev/null) ]; then
       fi
     fi
   }
+
+  function peco-ssh() {
+    local _khost=$(grep -o '^\S\+' ~/.ssh/known_hosts | tr -d '[]' | tr ',' '\n' | sort)
+    local _chost=$(grep '^Host ' ~/.ssh/config | sed 's/^Host //' | grep -v '\*\|?' | tr ' ' '\n' | sort)
+
+    if [ -z "${_khost}" -a -z "${_chost}" ]; then
+      return
+    fi
+
+    local _host=$(echo "${_khost}\n${_chost}" | peco)
+
+    if [ -z "${_host}" ]; then
+      return
+    fi
+
+    if [ -n "${_host}" -a -n "${TMUX}" ]; then
+      eval "tmux neww -n ${_host} 'ssh ${_host}'"
+    else
+      eval "ssh ${_host}"
+    fi
+  }
+
+  zle -N peco-ssh
+  bindkey '^n' peco-ssh
 
   zle -N peco-select-history
   bindkey '^r' peco-select-history
