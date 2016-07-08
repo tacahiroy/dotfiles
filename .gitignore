@@ -1,11 +1,14 @@
-_vim/bundle
-_vim/plugged
+_vim/autoload/plug.*
 _vim/backups
+_vim/plugged
 _vim/sandbox
 _vim/spell
+_vim/swaps
+_vim/.netrwhist
+
 _zsh/cache
 _zsh/vendor
 _zsh/functions/antigen.zsh
 *.zwc
+
 *.old
-_vim/autoload/plug.*
