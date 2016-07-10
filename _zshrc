@@ -144,8 +144,8 @@ case "${OSTYPE}" in
     alias -g C='|pbcopy'
     alias netestablished=netestab
 
-    if `which gdu 2>&1 > /dev/null`; then
-      alias du="`which gdu`"
+    if $(which gdu 2>&1 > /dev/null); then
+      alias du="$(which gdu)"
     fi
     ;;
   *)
@@ -215,7 +215,7 @@ function cdup() {
 zle -N cdup
 bindkey '^\^' cdup
 
-if [ -x `which peco 2>&1 >/dev/null` ]; then
+if [ -x $(which peco 2>&1 >/dev/null) ]; then
   function peco-select-history() {
     local tac
     if which tac > /dev/null; then
@@ -285,8 +285,8 @@ case ${UID} in
   ;;
 esac
 
-if [[ -x `which brew` ]]; then
-  BREW_PREFIX=`brew --prefix`
+if [[ -x $(which brew) ]]; then
+  BREW_PREFIX=$(brew --prefix)
 
   for z in ${BREW_PREFIX}/opt/awscli/share/zsh/site-functions/_aws \
            ~/.zsh/functions/zsh-utils; do
