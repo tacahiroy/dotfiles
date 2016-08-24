@@ -118,7 +118,7 @@ map <Space> [Space]
 " * plugin management "{{{
 call plug#begin($HOME . '/plugins.vim')
 
-if has('+python')
+if 0 && has('python')
   Plug 'nixprime/cpsm'
   let g:cpsm_highlight_mode = 'detailed'
   let g:ctrlp_match_func = { 'match': 'cpsm#CtrlPMatch' }
@@ -154,11 +154,12 @@ Plug 'vim-ruby/vim-ruby',             { 'for': 'ruby' }
 " Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java' }
 " Plug 'pangloss/vim-javascript',       { 'for': 'javascript' }
 Plug 'thinca/vim-quickrun',           { 'on': ['QuickRun'] }
-Plug 'dag/vim-fish'
 
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'tacahiroy/ctrlp-funky'
 Plug 'tacahiroy/vim-colors-isotake'
+Plug 'justinmk/vim-dirvish'
+Plug 'metakirby5/codi.vim'
 
 if filereadable(expand('~/.vimrc.plugins'))
   source ~/.vimrc.plugins
@@ -935,10 +936,6 @@ augroup Tacahiroy
     endfunction
     autocmd FileType markdown command! -buffer -nargs=0 MdPreview call s:md_preview_by_browser(expand('%'))
   endif
-
-  " I know this shouldn't be here
-  autocmd InsertEnter * hi StatusLine guibg=Orange ctermbg=LightMagenta
-  autocmd InsertLeave * hi StatusLine guibg=SkyBlue ctermbg=LightCyan
 augroup END
 "}}}
 
@@ -975,7 +972,7 @@ if has('gui_running')
     vnoremap <D-c> "+y
     nnoremap <D-a> ggVG
   elseif s:is_linux
-    set guifont=MigMix\ 2M\ 12
+    set guifont=Rounded\ M+\ 2m\ 12
     vnoremap <silent> <M-c> "+y
     inoremap <silent> <M-v> <Esc>:let &paste=1<Cr>a<C-R>=@+<Cr><Esc>:let &paste=0<Cr>a
   else
