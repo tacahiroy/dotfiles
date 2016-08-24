@@ -11,7 +11,6 @@ set -g default-terminal screen-256color
 
 bind s split-window -v -c '#{pane_current_path}'
 bind v split-window -h -c '#{pane_current_path}'
-bind | split-window 'exec pry'
 bind C new-window -c '#{pane_current_path}'
 
 # resize panes like vim
@@ -79,6 +78,7 @@ set -s escape-time 0
 
 set -g terminal-overrides 'screen-256color:Tc:smcup@:rmcup@'
 set -g history-limit 10240
+set -g history-file ~/.tmux_history
 set -g base-index 1
 set -g pane-base-index 1
 
@@ -88,22 +88,27 @@ setw -g xterm-keys on
 setw -g mode-keys vi
 setw -g status-keys emacs
 
-setw -g automatic-rename on
+setw -g allow-rename off
+setw -g automatic-rename yes
 
 # mouse
 setw -g mouse on
 
-bind -n WheelUpPane if-shell -F -t = "#{mouse_any_flag}" "send-keys -M" "if -Ft= '#{pane_in_mode}' 'send-keys -M' 'copy-mode -e'"
+# bind -n WheelUpPane if-shell -F -t = "#{mouse_any_flag}" "send-keys -M" "if -Ft= '#{pane_in_mode}' 'send-keys -M' 'copy-mode -e'"
+bind -T root WheelUpPane   if-shell -F -t = "#{alternate_on}" "send-keys -M" "select-pane -t =; copy-mode -e; send-keys -M"
 
 # window mode
-setw -g mode-style 'fg=black,bg=green'
+setw -g mode-style 'fg=black,bg=colour220'
 
 unbind-key S
 bind-key S split-window 'tmux lsw -F "#I:#W" | peco | cut -d':' -f 1 | xargs tmux select-window -t'
 
+set -g focus-events on
+
 # message
 setw -g message-style 'bg=brightcyan'
 setw -g message-style 'fg=black'
+
 
 # pane divider
 set -g pane-border-style 'fg=white'
@@ -116,7 +121,7 @@ set -g pane-active-border-style 'fg=green'
 # status
 set -g status on
 set -g status-position top
-set -g status-interval 2
+set -g status-interval 5
 set -g status-justify "left"
 
 # if something happened
@@ -128,11 +133,10 @@ setw -g window-status-current-style 'fg=colour18,bg=colour10'
 
 # status bar
 set -g status-style 'fg=colour0,bg=colour154'
-set -g status-left-style 'fg=black,bg=brightgreen'
+set -g status-left-style 'fg=black,bg=colour226'
 set -g status-right-style 'fg=black,bg=colour15'
 
-set -g status-left-length 60
-set -g status-left "#(~/proj/tmux-powerline/powerline.sh left)"
+set -g status-left ''
 
 set -g status-right-length 90
 set -g status-right "#(~/proj/tmux-powerline/powerline.sh right)"
@@ -140,7 +144,4 @@ set -g status-right "#(~/proj/tmux-powerline/powerline.sh right)"
 setw -g set-titles on
 setw -g set-titles-string "#W@#H"
 
-setw -g aggressive-resize off
-
-# run-shell "powerline-daemon -q"
-# source "$HOME/Library/Python/2.7/lib/python/site-packages/powerline/bindings/tmux/powerline.conf"
+setw -g aggressive-resize on
