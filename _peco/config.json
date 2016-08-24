@@ -1,7 +1,8 @@
 {
   "Keymap": {
     "C-g": "peco.Cancel",
-    "C-v": "peco.ScrollPageDown"
+    "C-b": "peco.ScrollPageUp",
+    "C-f": "peco.ScrollPageDown"
   },
   "Style": {
     "Selected": ["black", "on_cyan"],
