@@ -9,6 +9,7 @@ export LC_ALL=$LANG
 typeset -U path
 path=(
   ./bin
+  $HOME/.rbenv/bin(N-/)
   $HOME/.rbenv/shims(N-/)
   $HOME/bin(N-/)
   $HOME/perl5/bin(N-/)
