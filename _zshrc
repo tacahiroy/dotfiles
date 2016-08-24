@@ -14,7 +14,7 @@ bindkey -v
 # zsh-autosuggestions
 bindkey '^G' autosuggest-execute
 bindkey '^F' autosuggest-accept
-export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8'
+export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=27'
 
 # set terminal title including current directory # {{{
 #
@@ -184,6 +184,8 @@ setopt complete_aliases
 
 # }}}
 
+eval $(thefuck --alias)
+
 ## terminal configurations # {{{
 #
 unset LSCOLORS
@@ -265,7 +267,7 @@ if [ -x $(which peco 2>&1 >/dev/null) ]; then
   }
 
   zle -N peco-ssh
-  bindkey '^n' peco-ssh
+  bindkey '^q' peco-ssh
 
   zle -N peco-select-history
   bindkey '^r' peco-select-history
@@ -317,6 +319,5 @@ if [[ -x $(which brew) ]]; then
     [[ -s ${z} ]] && . ${z}
   done
 fi
-
 # __END__
 # vim: et ts=2 sts=2 sw=2
