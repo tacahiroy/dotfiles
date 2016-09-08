@@ -1,6 +1,6 @@
 #! /bin/zsh
 
-. ~/.zsh/functions/antigen.zsh
+. ~/.zsh/plugins/antigen.zsh
 
 _Z_CMD=j
 GIT_PROMPT_EXECUTABLE="haskell"
