@@ -14,7 +14,7 @@ bindkey -v
 # zsh-autosuggestions
 bindkey '^G' autosuggest-execute
 bindkey '^F' autosuggest-accept
-export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=27'
+export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=213'
 
 # set terminal title including current directory # {{{
 #
@@ -184,8 +184,6 @@ setopt complete_aliases
 
 # }}}
 
-eval $(thefuck --alias)
-
 ## terminal configurations # {{{
 #
 unset LSCOLORS
@@ -217,8 +215,10 @@ function cdup() {
 zle -N cdup
 bindkey '^\^' cdup
 
-if [ -x $(which peco 2>&1 >/dev/null) ]; then
-  function peco-select-history() {
+FILTERCMD=$(which fzf)
+
+if [ -x ${FILTERCMD} ]; then
+  function filter-select-history() {
     local tac
     if which tac > /dev/null; then
       tac="tac"
@@ -227,16 +227,16 @@ if [ -x $(which peco 2>&1 >/dev/null) ]; then
     fi
     BUFFER=$(fc -nl 1 | \
       eval $tac | \
-      peco --query "$LBUFFER")
+      ${FILTERCMD} --query "$LBUFFER")
     CURSOR=$#BUFFER
     zle clear-screen
   }
 
-  function peco-select-ctrlpvim-mru() {
+  function filter-select-ctrlpvim-mru() {
     local ctrlp_mrufile=$HOME/.cache/ctrlp/mru/cache.txt
     local _file
     if [ -f "${ctrlp_mrufile}" ]; then
-      _file=$(cat "${ctrlp_mrufile}" | peco --query "$LBUFFER")
+      _file=$(cat "${ctrlp_mrufile}" | ${FILTERCMD} --query "$LBUFFER")
       if [ -n "${_file}" -a -f "${_file}" ]; then
         BUFFER="$EDITOR ${_file}"
         CURSOR=$#BUFFER
@@ -245,15 +245,15 @@ if [ -x $(which peco 2>&1 >/dev/null) ]; then
     fi
   }
 
-  function peco-ssh() {
-    local _khost=$(grep -o '^\S\+' ~/.ssh/known_hosts | tr -d '[]' | tr ',' '\n' | sort)
+  function filter-ssh() {
+    local _khost=$(grep -o '^\S\+' ~/.ssh/known_hosts | grep -v '^|' | tr -d '[]' | tr ',' '\n' | sort)
     local _chost=$(grep '^Host ' ~/.ssh/config | sed 's/^Host //' | grep -v '\*\|?' | tr ' ' '\n' | sort)
 
     if [ -z "${_khost}" -a -z "${_chost}" ]; then
       return
     fi
 
-    local _host=$(echo "${_khost}\n${_chost}" | peco)
+    local _host=$(echo "${_khost}\n${_chost}" | ${FILTERCMD})
 
     if [ -z "${_host}" ]; then
       return
@@ -266,14 +266,14 @@ if [ -x $(which peco 2>&1 >/dev/null) ]; then
     fi
   }
 
-  zle -N peco-ssh
-  bindkey '^q' peco-ssh
+  zle -N filter-ssh
+  bindkey '^q' filter-ssh
 
-  zle -N peco-select-history
-  bindkey '^r' peco-select-history
+  zle -N filter-select-history
+  bindkey '^r' filter-select-history
 
-  zle -N peco-select-ctrlpvim-mru
-  bindkey '^t' peco-select-ctrlpvim-mru
+  zle -N filter-select-ctrlpvim-mru
+  bindkey '^t' filter-select-ctrlpvim-mru
 fi
 # }}}
 
