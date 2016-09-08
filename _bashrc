@@ -1,0 +1,220 @@
+# ~/.bashrc: executed by bash(1) for non-login shells.
+# see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
+# for examples
+
+export LANG=en_US.UTF-8
+
+umask 022
+
+_Z_NO_RESOLVE_SYMLINKS=1
+_Z_CMD=j
+. $HOME/functions/z.sh
+
+export GOPATH=$HOME/golang
+
+EDITOR=$(which vim)
+PAGER=less
+PATH=$PATH:$HOME/.local/bin:$HOME/bin
+PATH=$PATH:$GOPATH/bin
+PATH=$HOME/.rbenv/bin:$PATH
+export PATH
+
+eval "$(rbenv init -)"
+
+## ssh-agent
+SSH_ENV=$HOME/.ssh/environment
+start_agent() {
+  ssh-agent > $SSH_ENV
+  chmod 600 $SSH_ENV
+  . $SSH_ENV > /dev/null
+  # ssh-add
+}
+
+if [ -f $SSH_ENV ]; then
+  . $SSH_ENV > /dev/null
+  if ps ${SSH_AGENT_PID:-999999} | grep ssh-agent$ > /dev/null &&
+     test -S $SSH_AUTH_SOCK; then
+    # agent already running
+    :
+  else
+    start_agent
+  fi
+else
+  start_agent
+fi
+
+if [ -x $(which fzf 2>&1 >/dev/null) ]; then
+    FILTER=$(which fzf)
+    export FZF_DEFAULT_OPTS='--reverse --inline-info'
+    [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+    select-history() {
+        local tac
+        if which tac > /dev/null; then
+            tac="tac"
+        else
+            tac="tail -r"
+        fi
+        READLINE_LINE=$(fc -nl 1 | sed 's/^\t*//' | \
+            eval $tac | \
+            ${FILTER} --query "$READLINE_LINE")
+        READLINE_POINT=${#READLINE_LINE}
+    }
+
+    select-ctrlpvim-mru() {
+        local ctrlp_mrufile=$HOME/.cache/ctrlp/mru/cache.txt
+        local _file
+        if [ -f "${ctrlp_mrufile}" ]; then
+            _file=$(cat "${ctrlp_mrufile}" | ${FILTER} --query "$READLINE_LINE")
+            if [ -n "${_file}" -a -f "${_file}" ]; then
+                READLINE_LINE="$EDITOR ${_file}"
+                READLINE_POINT=${#READLINE_LINE}
+            fi
+        fi
+    }
+
+    select-ssh() {
+        local _khost=$(grep -o '^\S\+' ~/.ssh/known_hosts | tr -d '[]' | tr ',' '\n' | sort)
+        local _chost=$(grep '^Host ' ~/.ssh/config | sed 's/^Host //' | grep -v '\*\|?' | tr ' ' '\n' | sort)
+
+        if [ -z "${_khost}" -a -z "${_chost}" ]; then
+            return
+        fi
+
+        local _host=$(echo "${_khost}\n${_chost}" | ${FILTER})
+
+        if [ -z "${_host}" ]; then
+            return
+        fi
+
+        if [ -n "${_host}" -a -n "${TMUX}" ]; then
+            eval "tmux neww -n ${_host} 'ssh ${_host}'"
+        else
+            eval "ssh ${_host}"
+        fi
+    }
+fi
+
+# If not running interactively, don't do anything
+case $- in
+    *i*) ;;
+      *) return;;
+esac
+
+# don't put duplicate lines or lines starting with space in the history.
+# See bash(1) for more options
+HISTCONTROL=ignoreboth
+
+# append to the history file, don't overwrite it
+shopt -s histappend
+
+# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+HISTSIZE=50000
+HISTFILESIZE=50000
+
+# check the window size after each command and, if necessary,
+# update the values of LINES and COLUMNS.
+shopt -s checkwinsize
+
+# If set, the pattern "**" used in a pathname expansion context will
+# match all files and zero or more directories and subdirectories.
+shopt -s globstar
+
+# make less more friendly for non-text input files, see lesspipe(1)
+[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+
+# set variable identifying the chroot you work in (used in the prompt below)
+if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
+    debian_chroot=$(cat /etc/debian_chroot)
+fi
+
+# set a fancy prompt (non-color, unless we know we "want" color)
+case "$TERM" in
+    xterm-*color) color_prompt=yes;;
+    screen-*color) color_prompt=yes;;
+esac
+
+# uncomment for a colored prompt, if the terminal has the capability; turned
+# off by default to not distract the user: the focus in a terminal window
+# should be on the output of commands, not on the prompt
+#force_color_prompt=yes
+
+if [ -n "$force_color_prompt" ]; then
+    if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
+	# We have color support; assume it's compliant with Ecma-48
+	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
+	# a case would tend to support setf rather than setaf.)
+	color_prompt=yes
+    else
+	color_prompt=
+    fi
+fi
+
+if [ "$color_prompt" = yes ]; then
+    PS1='${debian_chroot:+($debian_chroot)}\[\033[00;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+else
+    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+fi
+unset color_prompt force_color_prompt
+
+# If this is an xterm set the title to user@host:dir
+case "$TERM" in
+xterm*|rxvt*)
+    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+    ;;
+*)
+    ;;
+esac
+
+# Add an "alert" alias for long running commands.  Use like so:
+#   sleep 10; alert
+# alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+
+# Alias definitions.
+# You may want to put all your additions into a separate file like
+# ~/.bash_aliases, instead of adding them here directly.
+# See /usr/share/doc/bash-doc/examples in the bash-doc package.
+
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi
+
+# enable programmable completion features (you don't need to enable
+# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
+# sources /etc/bash.bashrc).
+if ! shopt -oq posix; then
+  if [ -f /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion
+  elif [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+  fi
+fi
+
+# This is too heavy on BoW
+# . ~/.bash-git-prompt/gitprompt.sh
+# GIT_PROMPT_ONLY_IN_REPO=1
+
+PROMPT_GIT_STATUS_COLOR="$(tput setaf 28)"
+PROMPT_PREPOSITION_COLOR="$(tput setaf 1)"
+
+# Run twolfson/sexy-bash-prompt
+. ~/.bash_prompt
+
+## prompt customisation
+PS1="\[$sexy_bash_prompt_user_color\]\u\[$sexy_bash_prompt_reset\]\
+\[$sexy_bash_prompt_preposition_color\]@\[$sexy_bash_prompt_reset\]\
+\[$sexy_bash_prompt_device_color\]\h\[$sexy_bash_prompt_reset\] \
+\[$sexy_bash_prompt_preposition_color\]\[$sexy_bash_prompt_reset\]\
+\[$sexy_bash_prompt_dir_color\]\w\[$sexy_bash_prompt_reset\]\
+\$( sexy_bash_prompt_is_on_git && \
+echo -n \"\[$sexy_bash_prompt_preposition_color\](\[$sexy_bash_prompt_reset\]\" && \
+  echo -n \"\[$sexy_bash_prompt_git_status_color\]\$(sexy_bash_prompt_get_git_info)\" && \
+  echo -n \"\[$sexy_bash_prompt_git_progress_color\]\$(sexy_bash_prompt_get_git_progress))\" && \
+  echo -n \"\[$sexy_bash_prompt_preposition_color\]\")\n\[$sexy_bash_prompt_reset\]\
+\[$sexy_bash_prompt_symbol_color\]$sexy_bash_prompt_symbol\[$sexy_bash_prompt_reset\] "
+
+bind '"\C-p":history-search-backward'
+bind '"\C-n":history-search-forward'
+bind -x '"\C-r"':"\"select-history\""
+bind -x '"\C-t"':"\"select-ctrlpvim-mru\""
+# bind -x '"\C-q"':"\"select-ssh\""
