@@ -1,14 +1,13 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
-
 export LANG=en_US.UTF-8
 
 umask 022
 
 _Z_NO_RESOLVE_SYMLINKS=1
 _Z_CMD=j
-. $HOME/functions/z.sh
+. $HOME/.bash/plugins/z.sh
 
 export GOPATH=$HOME/golang
 
@@ -191,27 +190,28 @@ if ! shopt -oq posix; then
 fi
 
 # This is too heavy on BoW
-# . ~/.bash-git-prompt/gitprompt.sh
-# GIT_PROMPT_ONLY_IN_REPO=1
+. ~/.bash-git-prompt/gitprompt.sh
+GIT_PROMPT_ONLY_IN_REPO=1
+# GIT_PROMPT_STATUS_COMMAND=gitstatus.py
 
 PROMPT_GIT_STATUS_COLOR="$(tput setaf 28)"
 PROMPT_PREPOSITION_COLOR="$(tput setaf 1)"
 
 # Run twolfson/sexy-bash-prompt
-. ~/.bash_prompt
+# . ~/.bash_prompt
 
 ## prompt customisation
-PS1="\[$sexy_bash_prompt_user_color\]\u\[$sexy_bash_prompt_reset\]\
-\[$sexy_bash_prompt_preposition_color\]@\[$sexy_bash_prompt_reset\]\
-\[$sexy_bash_prompt_device_color\]\h\[$sexy_bash_prompt_reset\] \
-\[$sexy_bash_prompt_preposition_color\]\[$sexy_bash_prompt_reset\]\
-\[$sexy_bash_prompt_dir_color\]\w\[$sexy_bash_prompt_reset\]\
-\$( sexy_bash_prompt_is_on_git && \
-echo -n \"\[$sexy_bash_prompt_preposition_color\](\[$sexy_bash_prompt_reset\]\" && \
-  echo -n \"\[$sexy_bash_prompt_git_status_color\]\$(sexy_bash_prompt_get_git_info)\" && \
-  echo -n \"\[$sexy_bash_prompt_git_progress_color\]\$(sexy_bash_prompt_get_git_progress))\" && \
-  echo -n \"\[$sexy_bash_prompt_preposition_color\]\")\n\[$sexy_bash_prompt_reset\]\
-\[$sexy_bash_prompt_symbol_color\]$sexy_bash_prompt_symbol\[$sexy_bash_prompt_reset\] "
+# PS1="\[$sexy_bash_prompt_user_color\]\u\[$sexy_bash_prompt_reset\]\
+# \[$sexy_bash_prompt_preposition_color\]@\[$sexy_bash_prompt_reset\]\
+# \[$sexy_bash_prompt_device_color\]\h\[$sexy_bash_prompt_reset\] \
+# \[$sexy_bash_prompt_preposition_color\]\[$sexy_bash_prompt_reset\]\
+# \[$sexy_bash_prompt_dir_color\]\w\[$sexy_bash_prompt_reset\]\
+# \$( sexy_bash_prompt_is_on_git && \
+# echo -n \"\[$sexy_bash_prompt_preposition_color\](\[$sexy_bash_prompt_reset\]\" && \
+#   echo -n \"\[$sexy_bash_prompt_git_status_color\]\$(sexy_bash_prompt_get_git_info)\" && \
+#   echo -n \"\[$sexy_bash_prompt_git_progress_color\]\$(sexy_bash_prompt_get_git_progress))\" && \
+#   echo -n \"\[$sexy_bash_prompt_preposition_color\]\")\n\[$sexy_bash_prompt_reset\]\
+# \[$sexy_bash_prompt_symbol_color\]$sexy_bash_prompt_symbol\[$sexy_bash_prompt_reset\] "
 
 bind '"\C-p":history-search-backward'
 bind '"\C-n":history-search-forward'
