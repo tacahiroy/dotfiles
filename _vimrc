@@ -977,7 +977,10 @@ if has('gui_running')
     inoremap <silent> <M-v> <Esc>:let &paste=1<Cr>a<C-R>=@+<Cr><Esc>:let &paste=0<Cr>a
   else
     " Windows
-    set guifont=M+1VM+IPAG_circle:h10:cDEFAULT
+    set guifont=Circle_M+_1m:h12:cSHIFTJIS:qDRAFT
+    if has('directx')
+      set renderoptions=type:directx,level:2.0,geom:1,renmode:5,contrast:1,taamode:0
+    endif
   endif
 
   if has('printer')
