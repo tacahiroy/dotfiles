@@ -5,8 +5,8 @@ set cpo&vim
 
 if has('vim_starting')
   set encoding=utf-8
+  set termencoding=utf-8
 endif
-set termencoding=utf-8
 set verbose=0
 
 scriptencoding utf-8
@@ -18,6 +18,10 @@ autocmd!
 augroup Tacahiroy
   autocmd!
 augroup END
+
+let s:is_mac = has('macunix') || has('mac')
+let s:is_linux = !s:is_mac && has('unix')
+let s:is_windows = !(s:is_mac || s:is_linux) && has('win32') || has('win64')
 
 " functions " {{{
 " * global
@@ -87,13 +91,21 @@ function! s:toggle_qf_list()
     endif
   endif
 endfunction
-"}}}
 
-" enough
-let s:is_mac = has('macunix') || has('mac')
-let s:is_linux = !s:is_mac && has('unix')
-" just in case
-let s:is_windows = !(s:is_mac || s:is_linux) && has('win32') || has('win64')
+function! s:xclip()
+  if has('xterm_clipboard')
+    let @+ = @"
+  elseif executable('xclip')
+    let tmp = tempname()
+    call writefile([getreg('"')], tmp)
+    call system('xclip -d :0 -i ' . tmp)
+    call delete(tmp)
+    echomsg 'Copied!'
+  else
+    let @* = @"
+  endif
+endfunction
+"}}}
 
 if isdirectory($HOME . '/.vim')
   let $DOTVIM = $HOME . '/.vim'
@@ -118,7 +130,7 @@ map <Space> [Space]
 " * plugin management "{{{
 call plug#begin($HOME . '/plugins.vim')
 
-if 0 && has('python')
+if has('python')
   Plug 'nixprime/cpsm'
   let g:cpsm_highlight_mode = 'detailed'
   let g:ctrlp_match_func = { 'match': 'cpsm#CtrlPMatch' }
@@ -137,14 +149,15 @@ if has('patch-7.4.314')
   Plug 'honza/vim-snippets' | Plug 'SirVer/ultisnips'
 endif
 Plug 'Raimondi/delimitMate'
-Plug 'airblade/vim-gitgutter',        { 'on': ['GitGutter'] }
-Plug 'camelcasemotion'
-Plug 'davidhalter/jedi-vim',          { 'for': 'python', 'do': 'pip install jedi' }
-Plug 'fatih/vim-go',                  { 'for': 'go' }
-Plug 'glidenote/memolist.vim',        { 'on': ['MemoList', 'MemoNew', 'MemoGrep'] }
-Plug 'godlygeek/tabular',             { 'on': 'Tabularize' }
-Plug 'kien/rainbow_parentheses.vim',  { 'on': ['RainbowParenthesesActivate', 'RainbowParenthesesToggle'] }
-Plug 'matchit.zip'
+Plug 'airblade/vim-gitgutter',       { 'on': ['GitGutter'] }
+Plug 'camelcasemotion',              { 'frozen': 1 }
+Plug 'davidhalter/jedi-vim',         { 'for': 'python', 'do': 'pip install jedi' }
+Plug 'fatih/vim-go',                 { 'for': 'go' }
+Plug 'glidenote/memolist.vim',       { 'on': ['MemoList', 'MemoNew', 'MemoGrep'] }
+Plug 'godlygeek/tabular',            { 'on': 'Tabularize' }
+Plug 'kien/rainbow_parentheses.vim', { 'on': ['RainbowParenthesesActivate', 'RainbowParenthesesToggle'], 'frozen': 1 }
+Plug 'matchit.zip',                  { 'frozen': 1 }
+Plug 'thinca/vim-quickrun',          { 'on': ['QuickRun'] }
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-dispatch', { 'on': 'Dispatch' }
 Plug 'tpope/vim-endwise',  { 'for': ['ruby', 'sh', 'zsh', 'vim', 'snippets', 'elixir'] }
@@ -159,7 +172,7 @@ Plug 'ctrlpvim/ctrlp.vim'
 Plug 'tacahiroy/ctrlp-funky'
 Plug 'tacahiroy/vim-colors-isotake'
 Plug 'justinmk/vim-dirvish'
-Plug 'metakirby5/codi.vim'
+" Plug 'itchyny/lightline.vim'
 
 if filereadable(expand('~/.vimrc.plugins'))
   source ~/.vimrc.plugins
@@ -169,6 +182,10 @@ call plug#end()
 " }}}
 
 " * plugin configurations {{{
+" plug: lightline
+  let g:lightline = get(g:, 'lightline', {})
+  let g:lightline.colorscheme = 'wombat'
+
 " plug: memolist
   let g:memolist_path = expand('~/Projects/memo')
   let g:memolist_memo_suffix = 'md'
@@ -211,12 +228,6 @@ call plug#end()
     \ },
     \ 'fallback': 'ag %s -i --nocolor --nogroup -p ~/.agignore -g ""',
   \ }
-
-  if s:has_plugin('cpsm')
-    let g:ctrlp_match_func = { 'match': 'cpsm#CtrlPMatch' }
-  elseif s:has_plugin('ctrlp-cmatcher')
-    let g:ctrlp_match_func = { 'match': 'matcher#cmatch' }
-  endif
 
   let g:ctrlp_prompt_mappings = {
     \ 'AcceptSelection("e")': ['<Cr>'],
@@ -317,6 +328,7 @@ call plug#end()
   let g:surround_{char2nr('K')} = "『\r』"
   let g:surround_{char2nr('e')} = "<%= \r %>"
   let g:surround_{char2nr('b')} = "<%- \r %>"
+  nmap ye ys$
   
   xmap s <Plug>VSurround
 
@@ -352,7 +364,6 @@ call plug#end()
 
 " * options {{{
 set ambiwidth=double
-set belloff=all
 set noautoindent
 set nocindent
 set nosmartindent
@@ -429,15 +440,18 @@ set swapfile directory=$DOTVIM/swaps
 set switchbuf=useopen,usetab
 set synmaxcol=300
 set tags=tags,./tags,**3/tags,tags;/Projects
-set timeout timeoutlen=1000
+set timeout timeoutlen=500
 set title
 set titlestring=Vim:\ %F\ %h%r%m
 set titlelen=255
 set tabstop=2 shiftwidth=2 softtabstop=2
 set updatetime=2000
 set viminfo='64,<100,s10,n~/.viminfo
+if has('nvim')
+  set viminfo+=n~/.config/nvim/tmpfiles/viminfo
+endif
 set virtualedit=block,onemore
-set t_vb = visualbell
+set t_vb= novisualbell
 
 set wildignore=*.exe,*.dll,*.class,*.o,*.obj
 if exists('+wildignorecase')
@@ -469,7 +483,9 @@ syntax on
 set formatoptions& formatoptions+=mM formatoptions-=r
 
 " statusline config
-let &statusline = '#%n %<%t%*|%m%r%h%w'
+let &statusline = '%#Question#'
+let &statusline .= '#%n%*'
+let &statusline .= '%<%t%*|%m%r%h%w'
 let &statusline .= '%{&filetype}:'
 let &statusline .= '%{(&l:fileencoding != "" ? &l:fileencoding : &encoding) . ":" . &fileformat}'
 let &statusline .= '(%{&expandtab ? "" : ">"}%{&l:tabstop}'
@@ -479,9 +495,11 @@ let &statusline .= '%{(&list ? "L" : "")}'
 let &statusline .= '%{(empty(&clipboard) ? "" : "c")}'
 let &statusline .= '%{(&paste ? "p" : "")}'
 let &statusline .= '|%{&textwidth}'
-let &statusline .= '%#Type#'
-let &statusline .= '%{fugitive#statusline()}'
-let &statusline .= '%*'
+if s:has_plugin('fugitive')
+  let &statusline .= '%#Type#'
+  let &statusline .= '%{fugitive#statusline()}'
+  let &statusline .= '%*'
+endif
 if s:has_plugin('syntastic')
   let &statusline .= '%#WarningMsg#'
   let &statusline .= '%{SyntasticStatuslineFlag()}'
@@ -643,11 +661,7 @@ nnoremap [Space]W :<C-u>update!<Cr>
 nnoremap [Space]Q :<C-u>quit!<Cr>
 
 " copy to clipboard
-if has('xterm_clipboard')
-  nnoremap <silent> [Space]a :<C-u>let @+ = @"<Cr>
-else
-  nnoremap <silent> [Space]a :<C-u>let @* = @"<Cr>
-endif
+nnoremap <silent> [Space]a :<C-u>call <SID>xclip()<Cr>
 
 " help
 nnoremap <C-\> :<C-u>h<Space>
@@ -784,6 +798,7 @@ augroup Tacahiroy
   autocmd BufReadPost * if line("'\"") <= line('$') | execute "normal '\"" | endif
   " prevent auto comment insertion when 'o' pressed
   autocmd BufEnter * setlocal formatoptions-=o
+  autocmd BufEnter * lcd %:p:h
 
   "my ftdetects
   autocmd BufRead,BufNewFile *.ru,Gemfile,Guardfile,Sporkfile set filetype=ruby
@@ -981,6 +996,9 @@ if has('gui_running')
     if has('directx')
       set renderoptions=type:directx,level:2.0,geom:1,renmode:5,contrast:1,taamode:0
     endif
+    inoremap <silent> <M-v> <Esc>:let &paste=1<Cr>a<C-R>=@*<Cr><Esc>:let &paste=0<Cr>a
+    cnoremap <M-v> <C-R>*
+    vnoremap <M-c> "+y
   endif
 
   if has('printer')
