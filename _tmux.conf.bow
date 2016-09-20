@@ -10,9 +10,10 @@ set -g prefix2 C-s
 
 set -g default-terminal screen-256color
 
-bind s split-window -v -c '#(pwd)'
-bind v split-window -h -c '#(pwd)'
-bind C new-window -c '#(pwd)'
+bind c new-window
+bind s split-window -v
+bind v split-window -h
+bind C new-window -c '#{pane_current_path}'
 
 # resize panes like vim
 # feel free to change the "1" to however many lines you want to resize by, only
