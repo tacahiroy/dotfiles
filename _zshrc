@@ -286,6 +286,15 @@ autoload zmv
 autoload -Uz compinit
 compinit
 
+set_prompt() {
+  echo -n "%F{213}%n"
+  echo -n "%{${reset_color}%}@"
+  echo -n "%F{208}%m"
+  echo -n "%{${reset_color}%}:"
+  echo "%{${fg[green]}%}%/%{${reset_color}%}"
+  echo -n "%% "
+}
+
 case ${UID} in
 0)
   PROMPT="%B%{${fg[red]}%}%/ ${fg[green]}#%{${reset_color}%}%b "
@@ -298,8 +307,7 @@ case ${UID} in
       PROMPT="%{${fg[blue]}%}%3v%{${reset_color}%}"
   ;;
 *)
-  PROMPT="%{${fg[green]}%}%/%{${reset_color}%}%{$fg[green]%}%{$reset_color%}%{$fg[yellow]%}%2v%{$reset_color%}
-%% "
+  PROMPT=$(set_prompt)
   PROMPT2="%{${fg[red]}%}%_%{${reset_color}%}%% "
   SPROMPT="%{${fg[red]}%}%r is correct? [n,y,a,e]:%{${reset_color}%}"
 
