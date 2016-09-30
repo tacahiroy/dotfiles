@@ -78,6 +78,7 @@ typeset -U python_path
 
 python_path=(
   /Library/Python/2.7/site-packages(N-/)
+  $HOME/.local/lib/python2.7/site-packages(N-/)
   /usr/local/lib/python2.7/site-packages(N-/)
   /usr/local/opt/mitmproxy/libexec/lib/python2.7/site-packages(N-/)
 )
