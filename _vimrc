@@ -143,7 +143,7 @@ if has('patch-7.3.598')
   let ycmopts = []
   if executable('gocode') | call add(ycmopts, '--gocode-completer') | endif
   if executable('racer') | call add(ycmopts, '--racer-completer') | endif
-  Plug 'Valloric/YouCompleteMe', { 'do': './install.py ' . join(ycmopts, ' ') }
+  Plug 'Valloric/YouCompleteMe', { 'do': './install.py ' . join(ycmopts, ' '), 'for': ['ruby', 'python', 'sh', 'vim', 'make'] }
 endif
 if has('patch-7.4.314')
   Plug 'honza/vim-snippets' | Plug 'SirVer/ultisnips'
@@ -152,27 +152,26 @@ Plug 'Raimondi/delimitMate'
 Plug 'airblade/vim-gitgutter',       { 'on': ['GitGutter'] }
 Plug 'camelcasemotion',              { 'frozen': 1 }
 Plug 'davidhalter/jedi-vim',         { 'for': 'python', 'do': 'pip install jedi' }
-Plug 'fatih/vim-go',                 { 'for': 'go' }
+Plug 'fatih/vim-go',                 { 'for': 'go', 'frozen': 1 }
 Plug 'glidenote/memolist.vim',       { 'on': ['MemoList', 'MemoNew', 'MemoGrep'] }
 Plug 'godlygeek/tabular',            { 'on': 'Tabularize' }
 Plug 'kien/rainbow_parentheses.vim', { 'on': ['RainbowParenthesesActivate', 'RainbowParenthesesToggle'], 'frozen': 1 }
 Plug 'matchit.zip',                  { 'frozen': 1 }
-Plug 'thinca/vim-quickrun',          { 'on': ['QuickRun'] }
-Plug 'tpope/vim-commentary'
-Plug 'tpope/vim-dispatch', { 'on': 'Dispatch' }
-Plug 'tpope/vim-endwise',  { 'for': ['ruby', 'sh', 'zsh', 'vim', 'snippets', 'elixir'] }
+Plug 'tpope/vim-commentary',         { 'frozen': 1 }
+Plug 'tpope/vim-dispatch',           { 'on': 'Dispatch', 'frozen': 1 }
+Plug 'tpope/vim-endwise',            { 'for': ['ruby', 'sh', 'zsh', 'vim', 'snippets', 'elixir'] }
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 Plug 'vim-ruby/vim-ruby',             { 'for': 'ruby' }
-" Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java' }
-" Plug 'pangloss/vim-javascript',       { 'for': 'javascript' }
-Plug 'thinca/vim-quickrun',           { 'on': ['QuickRun'] }
+Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java', 'frozen': 1 }
+Plug 'pangloss/vim-javascript',       { 'for': 'javascript', 'frozen': 1 }
+Plug 'thinca/vim-quickrun',           { 'for': ['ruby', 'python', 'go', 'sh'] }
 
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'tacahiroy/ctrlp-funky'
-Plug 'tacahiroy/vim-colors-isotake'
-Plug 'justinmk/vim-dirvish'
-" Plug 'itchyny/lightline.vim'
+Plug 'tacahiroy/vim-colors-isotake', { 'frozen': 1 }
+Plug 'itchyny/lightline.vim'
+Plug 'plasticboy/vim-markdown'
 
 if filereadable(expand('~/.vimrc.plugins'))
   source ~/.vimrc.plugins
@@ -219,6 +218,7 @@ call plug#end()
   " Set delay to prevent extra search
   let g:ctrlp_lazy_update = 200
   let g:ctrlp_brief_prompt = 1
+  let g:ctrlp_key_loop = 1
 
   let g:ctrlp_user_command = {
     \ 'types': {
@@ -226,8 +226,9 @@ call plug#end()
       \ 2: ['.hg/', 'hg --cwd %s locate -I .'],
       \ 3: ['.svn/', 'svn ls file://%s']
     \ },
-    \ 'fallback': 'ag %s -i --nocolor --nogroup -p ~/.agignore -g ""',
+    \ 'fallback': 'pt %s -i --nocolor --nogroup -g ""',
   \ }
+  " \ 'fallback': 'ag %s -i --nocolor --nogroup -p ~/.agignore -g ""',
 
   let g:ctrlp_prompt_mappings = {
     \ 'AcceptSelection("e")': ['<Cr>'],
@@ -307,9 +308,10 @@ call plug#end()
   \ ]
 
 " plug: Valloric/YouCompleteMe
-  let g:ycm_collect_identifiers_from_comments_and_strings = 1
   let g:ycm_seed_identifiers_with_syntax = 1
-  let g:ycm_complete_in_comments = 1
+  let g:ycm_collect_identifiers_from_comments_and_strings = 0
+  let g:ycm_complete_in_comments = 0
+  let g:ycm_collect_identifiers_from_tags_files = 1
   let g:ycm_rust_src_path = '/usr/local/src/rust-1.7.0/src'
   let g:ycm_path_to_python_interpreter = '/usr/bin/python2'
 
@@ -348,6 +350,7 @@ call plug#end()
   augroup Tacahiroy
     autocmd FileType markdown let b:delimitMate_quotes = "\" '"
     autocmd FileType html,xml,eruby let b:delimitMate_matchpairs = &matchpairs
+    let g:vim_markdown_folding_disabled = 1
   augroup END
 
 " plug: quickrun
@@ -373,6 +376,7 @@ set backup
 set backupext=.bac
 set backupdir=$DOTVIM/backups
 set backupskip& backupskip+=/tmp/*,/private/tmp/*,*.bac,COMMIT_EDITMSG,hg-editor-*.txt,svn-commit.[0-9]*.tmp,knife-edit-*
+set belloff=backspace,cursor,esc,insertmode
 if exists('+breakindent')
   set breakindent
   set breakindentopt=sbr
@@ -519,7 +523,6 @@ let &statusline .= '%-12( %#Statement#%l%#Title#/%LL,%c %)%P%*'
 " }}}
 
 " * mappings "{{{
-" Emacs rules!??
 cnoremap <C-p> <Up>
 cnoremap <C-n> <Down>
 cnoremap <C-a> <Home>
@@ -527,6 +530,8 @@ cnoremap <C-e> <End>
 cnoremap <C-f> <Right>
 cnoremap <C-b> <Left>
 cnoremap <C-o> <C-d>
+inoremap <C-f> <Right>
+inoremap <C-b> <Left>
 
 " in case forgot to run vim w/o sudo
 cnoremap W!! %!sudo tee > /dev/null %
