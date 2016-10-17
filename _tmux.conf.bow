@@ -23,6 +23,8 @@ bind -r - resize-pane -D 3
 bind -r + resize-pane -U 3
 bind z resize-pane -Z
 
+bind -n M-w choose-window
+
 bind h select-pane -L
 bind j select-pane -D
 bind k select-pane -U
