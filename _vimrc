@@ -170,7 +170,7 @@ Plug 'thinca/vim-quickrun',           { 'for': ['ruby', 'python', 'go', 'sh'] }
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'tacahiroy/ctrlp-funky'
 Plug 'tacahiroy/vim-colors-isotake', { 'frozen': 1 }
-Plug 'itchyny/lightline.vim'
+" Plug 'itchyny/lightline.vim'
 Plug 'plasticboy/vim-markdown'
 
 if filereadable(expand('~/.vimrc.plugins'))
@@ -487,8 +487,7 @@ syntax on
 set formatoptions& formatoptions+=mM formatoptions-=r
 
 " statusline config
-let &statusline = '%#Question#'
-let &statusline .= '#%n%*'
+let &statusline .= '#%n|'
 let &statusline .= '%<%t%*|%m%r%h%w'
 let &statusline .= '%{&filetype}:'
 let &statusline .= '%{(&l:fileencoding != "" ? &l:fileencoding : &encoding) . ":" . &fileformat}'
@@ -572,8 +571,8 @@ nnoremap k gk
 
 " quickfix related mappings
 nnoremap <silent> qo :<C-u>silent call <SID>toggle_qf_list()<Cr>
-nnoremap <silent> [q :cprevious<Cr>zz
-nnoremap <silent> ]q :cnext<Cr>zz
+nnoremap <silent> q[ :cprevious<Cr>zz
+nnoremap <silent> q] :cnext<Cr>zz
 nnoremap <silent> qc :cc<Cr>zz
 
 " buffer navigations
