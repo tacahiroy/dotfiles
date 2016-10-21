@@ -10,6 +10,6 @@ _zsh/cache
 _zsh/vendor
 _zsh/functions/antigen.zsh
 *.zwc
+.zcompdump*
 
 *.old
-.zcompdump
