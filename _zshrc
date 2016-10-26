@@ -3,10 +3,10 @@
 autoload -Uz is-at-least
 
 _Z_CMD=j
-GIT_PROMPT_EXECUTABLE="haskell"
+# GIT_PROMPT_EXECUTABLE="haskell"
 
-source <(antibody init)
-antibody bundle < $HOME/.zsh/antibody/bundles.txt
+. <(antibody init)
+antibody bundle < ~/.zsh/antibody/bundles
 
 if is-at-least 4.3.10; then
   autoload -Uz add-zsh-hook
@@ -337,5 +337,8 @@ if [[ -x $(which brew) ]]; then
     [[ -s ${z} ]] && . ${z}
   done
 fi
+
+[[ -s "/home/tacahiroy/.gvm/scripts/gvm"  ]] && source "/home/tacahiroy/.gvm/scripts/gvm"
+
 # __END__
 # vim: et ts=2 sts=2 sw=2
