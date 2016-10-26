@@ -2,8 +2,11 @@
 
 autoload -Uz is-at-least
 
-[ -f ~/.zsh/zshrc.antigen ] && . ~/.zsh/zshrc.antigen
-# [ -f ~/.zsh/zshrc.vcs_prompt ] && . ~/.zsh/zshrc.vcs_prompt
+_Z_CMD=j
+GIT_PROMPT_EXECUTABLE="haskell"
+
+source <(antibody init)
+antibody bundle < $HOME/.zsh/antibody/bundles.txt
 
 if is-at-least 4.3.10; then
   autoload -Uz add-zsh-hook
@@ -215,7 +218,13 @@ function cdup() {
 zle -N cdup
 bindkey '^\^' cdup
 
-FILTERCMD=$(which fzf)
+if [ -x "$(which peco)" ]; then
+  FILTERCMD=$(which peco)
+elif [ -x "$(which fzf)" ]; then
+  FILTERCMD=$(which fzf)
+elif [ -x "$(which percol)" ]; then
+  FILTERCMD=$(which percol)
+fi
 
 if [ -x ${FILTERCMD} ]; then
   function filter-select-history() {
@@ -291,7 +300,8 @@ set_prompt() {
   echo -n "%{${reset_color}%}@"
   echo -n "%F{208}%m"
   echo -n "%{${reset_color}%}:"
-  echo "%{${fg[green]}%}%/%{${reset_color}%}"
+  echo -n "%{${fg[green]}%}%/%{${reset_color}%} "
+  echo '$(git_super_status)'
   echo -n "%% "
 }
 

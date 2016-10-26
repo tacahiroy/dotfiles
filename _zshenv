@@ -1,7 +1,5 @@
 export LANG=en_US.UTF-8
 
-ZDOTDIR=$HOME/.zsh
-
 export GOPATH=$HOME/golang
 export CARGO_PATH=$HOME/.cargo
 export RUST_SRC_PATH=/usr/local/src/rust-1.7.0/src
@@ -57,9 +55,7 @@ fi
 export PAGER='less'
 export LESS='-R -g'
 
-if [ -x /usr/local/bin/vim ]; then
-  export EDITOR=/usr/local/bin/vim
-else
+if [ -x "$(which vim)" ]; then
   export EDITOR=vim
 fi
 
