@@ -8,6 +8,7 @@ set -g prefix C-k
 set -g prefix2 C-s
 
 set -g default-terminal screen-256color
+# set -g default-terminal xterm-256color
 
 bind c new-window
 bind s split-window -v
@@ -73,9 +74,10 @@ unbind [
 bind y copy-mode
 unbind p
 bind p paste-buffer
-bind -t vi-copy v begin-selection
-bind -t vi-copy y copy-selection
-bind -t vi-copy Escape cancel
+bind -Tcopy-mode-vi v send -X begin-selection
+bind -Tcopy-mode-vi y send -X copy-selection-and-cancel
+bind -Tcopy-mode-vi a send -X append-selection
+bind -Tcopy-mode-vi Escape send -X cancel
 
 # Makes Insert to Normal mode quickly in Vim
 set -s escape-time 0
@@ -136,16 +138,19 @@ setw -g window-status-activity-style 'fg=colour196,bg=colour154'
 setw -g window-status-current-style 'fg=colour18,bg=colour10'
 
 # status bar
-set -g status-style 'fg=colour18,bg=colour154'
+set -g status-style 'fg=colour18,bg=colour153'
 
-set -g status-left-style 'fg=colour4,bg=colour231'
+set -g status-left-style 'fg=colour4,bg=colour225'
 set -g status-left-length 30
 set -g status-left ''
 
-set -g status-right-style 'fg=colour19,bg=colour15'
+set -g status-right-style 'fg=colour0,bg=colour33'
 set -g status-right-length 90
 # set -g status-right "#(~/proj/tmux-powerline/powerline.sh right)"
 set -g status-right '#(date +%H:%M)'
+
+set -g window-status-current-bg colour221
+
 
 setw -g set-titles on
 setw -g set-titles-string "#W@#H"
