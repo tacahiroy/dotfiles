@@ -214,3 +214,5 @@ bind -x '"\C-r"':"\"select-history\""
 bind -x '"\C-t"':"\"select-ctrlpvim-mru\""
 # bind -x '"\C-q"':"\"select-ssh\""
 bind '"\C-^"':"\"cdup\r\""
+
+[[ -s "/home/tacahiroy/.gvm/scripts/gvm" ]] && source "/home/tacahiroy/.gvm/scripts/gvm"
