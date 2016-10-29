@@ -139,11 +139,13 @@ else
   let g:ctrlp_match_func = { 'match': 'matcher#cmatch' }
 endif
 
+Plug 'lifepillar/vim-mucomplete'
+
 if has('patch-7.3.598')
   let ycmopts = []
   if executable('gocode') | call add(ycmopts, '--gocode-completer') | endif
   if executable('racer') | call add(ycmopts, '--racer-completer') | endif
-  Plug 'Valloric/YouCompleteMe', { 'do': './install.py ' . join(ycmopts, ' '), 'for': ['ruby', 'python', 'sh', 'vim', 'make'] }
+  " Plug 'Valloric/YouCompleteMe', { 'do': './install.py ' . join(ycmopts, ' '), 'for': ['ruby', 'python', 'sh', 'vim', 'make'] }
 endif
 if has('patch-7.4.314')
   Plug 'honza/vim-snippets' | Plug 'SirVer/ultisnips'
@@ -277,6 +279,7 @@ call plug#end()
 
 " plug: jedi-vim
   let g:jedi#auto_vim_configuration = 0
+  let g:jedi#popup_on_dot = 0
 
 " plug: kien/rainbow_parentheses
   if s:has_plugin('rainbow_parentheses.vim')
@@ -315,6 +318,9 @@ call plug#end()
   let g:ycm_rust_src_path = '/usr/local/src/rust-1.7.0/src'
   let g:ycm_path_to_python_interpreter = '/usr/bin/python2'
 
+" plug: mucomplete
+  let g:mucomplete#enable_auto_at_startup = 1
+
 " plug: UltiSnips
   let g:UltiSnipsExpandTrigger = '<C-y>'
   let g:UltiSnipsJumpForwardTrigger = '<C-f>'
@@ -331,7 +337,7 @@ call plug#end()
   let g:surround_{char2nr('e')} = "<%= \r %>"
   let g:surround_{char2nr('b')} = "<%- \r %>"
   nmap ye ys$
-  
+
   xmap s <Plug>VSurround
 
 " plug: camelcasemotion
@@ -386,7 +392,8 @@ set clipboard=
 set cmdheight=2
 " this makes scroll slower
 set colorcolumn=
-set completeopt& completeopt+=longest
+" set completeopt& completeopt+=longest
+set completeopt+=menu,menuone
 set cpoptions+=n
 set noequalalways
 set expandtab smarttab
