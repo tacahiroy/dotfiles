@@ -10,7 +10,9 @@
 	editor = ${EDITOR:-vim}
 	pager = ${PAGER:-less}
 	excludesfile = ~/.gitignore
-	bigFileThreshold = 512m
+	bigFileThreshold = 256m
+	compression = 0
+	losecompression = 0
 
 [alias]
 	b    = branch
@@ -55,3 +57,5 @@
 	statusHints = false
 [help]
 	autocorrect = 1
+[branch]
+	autosetuprebase = always
