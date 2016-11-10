@@ -197,7 +197,7 @@ PROMPT_PREPOSITION_COLOR="$(tput setaf 1)"
 # \[$sexy_bash_prompt_symbol_color\]$sexy_bash_prompt_symbol\[$sexy_bash_prompt_reset\] "
 
 set_prompt() {
-    echo -n '\e[0;35;2m\]\u\e[0m@\e[0;33;2m\h:\e[0;32;4m\w\e[0m'
+    echo -n '\e[0;35;2m\]\u\e[0m@\e[0;32;4m\h:\e[0;33;2m\w\e[0m'
     echo -n '\n'
     echo -n '$ '
 }
