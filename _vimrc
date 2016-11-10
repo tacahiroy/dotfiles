@@ -93,14 +93,14 @@ function! s:toggle_qf_list()
 endfunction
 
 function! s:xclip()
-  if has('xterm_clipboard')
-    let @+ = @"
-  elseif executable('xclip')
+  if isdirectory('/mnt/c') && executable('xclip')
     let tmp = tempname()
     call writefile([getreg('"')], tmp)
     call system('xclip -d :0 -i ' . tmp)
     call delete(tmp)
     echomsg 'Copied!'
+  elseif has('xterm_clipboard')
+    let @+ = @"
   else
     let @* = @"
   endif
@@ -164,10 +164,10 @@ Plug 'tpope/vim-dispatch',           { 'on': 'Dispatch', 'frozen': 1 }
 Plug 'tpope/vim-endwise',            { 'for': ['ruby', 'sh', 'zsh', 'vim', 'snippets', 'elixir'] }
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
-Plug 'vim-ruby/vim-ruby',             { 'for': 'ruby' }
+Plug 'vim-ruby/vim-ruby',             { 'for': 'ruby', 'frozen': 1 }
 Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java', 'frozen': 1 }
 Plug 'pangloss/vim-javascript',       { 'for': 'javascript', 'frozen': 1 }
-Plug 'thinca/vim-quickrun',           { 'for': ['ruby', 'python', 'go', 'sh'] }
+Plug 'thinca/vim-quickrun',           { 'for': ['ruby', 'python', 'go', 'sh'], 'frozen': 1 }
 
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'tacahiroy/ctrlp-funky'
@@ -183,6 +183,15 @@ call plug#end()
 " }}}
 
 " * plugin configurations {{{
+" plug: mucomplete
+	set showmode
+	set shortmess& shortmess+=c
+	set completeopt& completeopt+=menu,menuone,noinsert,noselect
+	" set completeopt& completeopt+=menu,menuone
+	" let g:mucomplete#user_mappings = { 'sqla' : "\<c-c>a" }
+	" let g:mucomplete#chains = { 'sql' : ['file', 'sqla', 'keyn'] }
+	let g:mucomplete#enable_auto_at_startup = 1
+
 " plug: lightline
   let g:lightline = get(g:, 'lightline', {})
   let g:lightline.colorscheme = 'wombat'
@@ -319,7 +328,7 @@ call plug#end()
   let g:ycm_path_to_python_interpreter = '/usr/bin/python2'
 
 " plug: mucomplete
-  let g:mucomplete#enable_auto_at_startup = 1
+  let g:mucomplete#enable_auto_at_startup = 0
 
 " plug: UltiSnips
   let g:UltiSnipsExpandTrigger = '<C-y>'
@@ -356,8 +365,10 @@ call plug#end()
   augroup Tacahiroy
     autocmd FileType markdown let b:delimitMate_quotes = "\" '"
     autocmd FileType html,xml,eruby let b:delimitMate_matchpairs = &matchpairs
-    let g:vim_markdown_folding_disabled = 1
   augroup END
+
+" plug: plasticboy/vim-markdown
+  let g:vim_markdown_folding_disabled = 1
 
 " plug: quickrun
   if s:has_plugin('vim-quickrun')
@@ -393,7 +404,7 @@ set cmdheight=2
 " this makes scroll slower
 set colorcolumn=
 " set completeopt& completeopt+=longest
-set completeopt+=menu,menuone
+" set completeopt+=menu,menuone
 set cpoptions+=n
 set noequalalways
 set expandtab smarttab
@@ -494,12 +505,10 @@ syntax on
 set formatoptions& formatoptions+=mM formatoptions-=r
 
 " statusline config
-let &statusline .= '#%n|'
+let &statusline = '#%n|'
 let &statusline .= '%<%t%*|%m%r%h%w'
-let &statusline .= '%{&filetype}:'
-let &statusline .= '%{(&l:fileencoding != "" ? &l:fileencoding : &encoding) . ":" . &fileformat}'
-let &statusline .= '(%{&expandtab ? "" : ">"}%{&l:tabstop}'
-let &statusline .= '%{search("\\t", "cnw") ? "!" : ""})'
+let &statusline .= '%{&expandtab ? "" : ">"}%{&l:tabstop}'
+let &statusline .= '%{search("\\t", "cnw") ? "!" : ""}'
 let &statusline .= '%{(empty(&mouse) ? "" : "m")}'
 let &statusline .= '%{(&list ? "L" : "")}'
 let &statusline .= '%{(empty(&clipboard) ? "" : "c")}'
@@ -515,8 +524,11 @@ if s:has_plugin('syntastic')
   let &statusline .= '%{SyntasticStatuslineFlag()}'
   let &statusline .= '%*'
 endif
+
 " right side from here
 let &statusline .= ' %='
+let &statusline .= '%{&filetype}:'
+let &statusline .= '%{(&l:fileencoding != "" ? &l:fileencoding : &encoding) . ":" . &fileformat}'
 if s:has_plugin('monstermethod')
   let &statusline .= '%#Structure#'
   let &statusline .= '%{monstermethod#search()}'
