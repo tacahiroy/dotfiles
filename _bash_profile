@@ -11,9 +11,8 @@ PAGER=less
 PATH=$PATH:$HOME/.local/bin:$HOME/bin
 PATH=$HOME/.rbenv/bin:$PATH
 PATH=$HOME/.local/bin:$PATH
-export PATH
-
 PATH=$PATH:$HOME/.local/bin:$HOME/bin
+PATH=$PATH:$HOME/.fzf/bin
 export PATH
 
 eval "$(rbenv init -)"
