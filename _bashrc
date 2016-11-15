@@ -25,11 +25,19 @@ else
   start_agent
 fi
 
-if [ -x $(which fzf 2>&1 >/dev/null) ]; then
-    FILTER=$(which fzf)
+if [ -x "$(which fzf 2>/dev/null)" ]; then
+    FILTER=fzf
     export FZF_DEFAULT_OPTS='--reverse --inline-info --color=light'
-    [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+    # [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+elif [ -x "$(which peco 2>/dev/null)" ]; then
+    FILTER=peco
+elif [ -x "$(which percol 2>/dev/null)" ]; then
+    FILTER=percol
+else
+    FILTER=
+fi
 
+if [ -n "${FILTER}" ]; then
     select-history() {
         local tac
         if which tac > /dev/null; then
@@ -75,6 +83,10 @@ if [ -x $(which fzf 2>&1 >/dev/null) ]; then
             eval "ssh ${_host}"
         fi
     }
+
+    bind -x '"\C-r"':"\"select-history\""
+    bind -x '"\C-t"':"\"select-ctrlpvim-mru\""
+    # bind -x '"\C-q"':"\"select-ssh\""
 fi
 
 # If not running interactively, don't do anything
@@ -172,32 +184,15 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# This is too heavy on BoW
-# . ~/.bash-git-prompt/gitprompt.sh
-# GIT_PROMPT_ONLY_IN_REPO=1
-# GIT_PROMPT_STATUS_COMMAND=gitstatus.py
-
 PROMPT_GIT_STATUS_COLOR="$(tput setaf 28)"
 PROMPT_PREPOSITION_COLOR="$(tput setaf 1)"
 
-# Run twolfson/sexy-bash-prompt
-# . ~/.bash_prompt
-
-## prompt customisation
-# PS1="\[$sexy_bash_prompt_user_color\]\u\[$sexy_bash_prompt_reset\]\
-# \[$sexy_bash_prompt_preposition_color\]@\[$sexy_bash_prompt_reset\]\
-# \[$sexy_bash_prompt_device_color\]\h\[$sexy_bash_prompt_reset\] \
-# \[$sexy_bash_prompt_preposition_color\]\[$sexy_bash_prompt_reset\]\
-# \[$sexy_bash_prompt_dir_color\]\w\[$sexy_bash_prompt_reset\]\
-# \$( sexy_bash_prompt_is_on_git && \
-# echo -n \"\[$sexy_bash_prompt_preposition_color\](\[$sexy_bash_prompt_reset\]\" && \
-#   echo -n \"\[$sexy_bash_prompt_git_status_color\]\$(sexy_bash_prompt_get_git_info)\" && \
-#   echo -n \"\[$sexy_bash_prompt_git_progress_color\]\$(sexy_bash_prompt_get_git_progress))\" && \
-#   echo -n \"\[$sexy_bash_prompt_preposition_color\]\")\n\[$sexy_bash_prompt_reset\]\
-# \[$sexy_bash_prompt_symbol_color\]$sexy_bash_prompt_symbol\[$sexy_bash_prompt_reset\] "
-
 set_prompt() {
-    echo -n '\e[0;35;2m\]\u\e[0m@\e[0;32;4m\h:\e[0;33;2m\w\e[0m'
+    if [ $(tput colors) = "256" ]; then
+        echo -n '\e[0;35;2m\]\u\e[0m@\e[0;32;4m\h:\e[0;33;2m\w\e[0m'
+    else
+        echo -n '\u@\h:\w'
+    fi
     echo -n '\n'
     echo -n '$ '
 }
@@ -210,9 +205,6 @@ PS1=$(set_prompt)
 
 bind '"\C-p":history-search-backward'
 bind '"\C-n":history-search-forward'
-bind -x '"\C-r"':"\"select-history\""
-bind -x '"\C-t"':"\"select-ctrlpvim-mru\""
-# bind -x '"\C-q"':"\"select-ssh\""
 bind '"\C-^"':"\"cdup\r\""
 
 [[ -s "/home/tacahiroy/.gvm/scripts/gvm" ]] && source "/home/tacahiroy/.gvm/scripts/gvm"
