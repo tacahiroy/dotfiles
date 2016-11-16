@@ -184,13 +184,11 @@ call plug#end()
 
 " * plugin configurations {{{
 " plug: mucomplete
-	set showmode
-	set shortmess& shortmess+=c
-	set completeopt& completeopt+=menu,menuone,noinsert,noselect
-	" set completeopt& completeopt+=menu,menuone
-	" let g:mucomplete#user_mappings = { 'sqla' : "\<c-c>a" }
-	" let g:mucomplete#chains = { 'sql' : ['file', 'sqla', 'keyn'] }
-	let g:mucomplete#enable_auto_at_startup = 1
+  set showmode
+  set shortmess& shortmess+=c
+  set completeopt=menu,menuone,preview,noinsert,noselect
+  let g:mucomplete#enable_auto_at_startup = 1
+  let g:mucomplete#exit_ctrlx_keys = '\<c-g>'
 
 " plug: lightline
   let g:lightline = get(g:, 'lightline', {})
@@ -327,13 +325,10 @@ call plug#end()
   let g:ycm_rust_src_path = '/usr/local/src/rust-1.7.0/src'
   let g:ycm_path_to_python_interpreter = '/usr/bin/python2'
 
-" plug: mucomplete
-  let g:mucomplete#enable_auto_at_startup = 0
-
 " plug: UltiSnips
   let g:UltiSnipsExpandTrigger = '<C-y>'
   let g:UltiSnipsJumpForwardTrigger = '<C-f>'
-  let g:UltiSnipsJumpBackwardTrigger = '<C-b>'
+  let g:UltiSnipsJumpBackwardTrigger = '<C-a>'
 
 " plug: commentary.vim
   nmap [Space]c gcc
@@ -404,7 +399,6 @@ set cmdheight=2
 " this makes scroll slower
 set colorcolumn=
 " set completeopt& completeopt+=longest
-" set completeopt+=menu,menuone
 set cpoptions+=n
 set noequalalways
 set expandtab smarttab
