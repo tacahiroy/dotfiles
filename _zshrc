@@ -2,6 +2,7 @@
 
 autoload -Uz is-at-least
 
+_Z_NO_RESOLVE_SYMLINKS=1
 _Z_CMD=j
 # GIT_PROMPT_EXECUTABLE="haskell"
 
