@@ -130,34 +130,30 @@ map <Space> [Space]
 " * plugin management "{{{
 call plug#begin($HOME . '/plugins.vim')
 
-if has('python')
+let s:ctrlp_matcher = 'cmatcher'
+
+if s:ctrlp_matcher == 'cpsm'
   Plug 'nixprime/cpsm'
   let g:cpsm_highlight_mode = 'detailed'
   let g:ctrlp_match_func = { 'match': 'cpsm#CtrlPMatch' }
-else
+elseif s:ctrlp_matcher == 'cmatcher'
   Plug 'JazzCore/ctrlp-cmatcher', { 'do': './install.sh' }
   let g:ctrlp_match_func = { 'match': 'matcher#cmatch' }
 endif
 
 Plug 'lifepillar/vim-mucomplete'
 
-if has('patch-7.3.598')
-  let ycmopts = []
-  if executable('gocode') | call add(ycmopts, '--gocode-completer') | endif
-  if executable('racer') | call add(ycmopts, '--racer-completer') | endif
-  " Plug 'Valloric/YouCompleteMe', { 'do': './install.py ' . join(ycmopts, ' '), 'for': ['ruby', 'python', 'sh', 'vim', 'make'] }
-endif
 if has('patch-7.4.314')
   Plug 'honza/vim-snippets' | Plug 'SirVer/ultisnips'
 endif
 Plug 'Raimondi/delimitMate'
-Plug 'airblade/vim-gitgutter',       { 'on': ['GitGutter'] }
+Plug 'airblade/vim-gitgutter'        ",       { 'on': ['GitGutter'] }
 Plug 'camelcasemotion',              { 'frozen': 1 }
 Plug 'davidhalter/jedi-vim',         { 'for': 'python', 'do': 'pip install jedi' }
 Plug 'fatih/vim-go',                 { 'for': 'go', 'frozen': 1 }
 Plug 'glidenote/memolist.vim',       { 'on': ['MemoList', 'MemoNew', 'MemoGrep'] }
 Plug 'godlygeek/tabular',            { 'on': 'Tabularize' }
-Plug 'kien/rainbow_parentheses.vim', { 'on': ['RainbowParenthesesActivate', 'RainbowParenthesesToggle'], 'frozen': 1 }
+Plug 'kien/rainbow_parentheses.vim', { 'frozen': 1 }
 Plug 'matchit.zip',                  { 'frozen': 1 }
 Plug 'tpope/vim-commentary',         { 'frozen': 1 }
 Plug 'tpope/vim-dispatch',           { 'on': 'Dispatch', 'frozen': 1 }
@@ -173,7 +169,9 @@ Plug 'ctrlpvim/ctrlp.vim'
 Plug 'tacahiroy/ctrlp-funky'
 Plug 'tacahiroy/vim-colors-isotake', { 'frozen': 1 }
 " Plug 'itchyny/lightline.vim'
-Plug 'plasticboy/vim-markdown'
+Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
+Plug 'vim-syntastic/syntastic', { 'for': ['ruby', 'python', 'sh', 'zsh', 'vim', 'go'] }
+Plug 'dag/vim-fish'
 
 if filereadable(expand('~/.vimrc.plugins'))
   source ~/.vimrc.plugins
@@ -316,14 +314,6 @@ call plug#end()
     \ ['Darkblue',    'firebrick3'],
     \ ['red',         'Darkblue'],
   \ ]
-
-" plug: Valloric/YouCompleteMe
-  let g:ycm_seed_identifiers_with_syntax = 1
-  let g:ycm_collect_identifiers_from_comments_and_strings = 0
-  let g:ycm_complete_in_comments = 0
-  let g:ycm_collect_identifiers_from_tags_files = 1
-  let g:ycm_rust_src_path = '/usr/local/src/rust-1.7.0/src'
-  let g:ycm_path_to_python_interpreter = '/usr/bin/python2'
 
 " plug: UltiSnips
   let g:UltiSnipsExpandTrigger = '<C-y>'
