@@ -12,4 +12,9 @@ _zsh/functions/antigen.zsh
 *.zwc
 .zcompdump*
 
+_config/fish/*
+_config/fisherman/
+!_config/fish/config.fish
+!_config/fish/fishfile
+
 *.old
