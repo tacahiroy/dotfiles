@@ -1,4 +1,3 @@
-_vim/autoload/plug.*
 _vim/backups
 _vim/plugged
 _vim/sandbox
@@ -16,5 +15,7 @@ _config/fish/*
 _config/fisherman/
 !_config/fish/config.fish
 !_config/fish/fishfile
+
+**/plug.vim*
 
 *.old
