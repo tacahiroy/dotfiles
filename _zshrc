@@ -8,6 +8,10 @@ _Z_CMD=j
 
 . <(antibody init)
 antibody bundle < ~/.zsh/antibody/bundles
+if test -f /proc/version && ! cat /proc/version | grep Microsoft 2>&1 >/dev/null; then
+  antibody bundle zsh-users/zsh-autosuggestions
+  antibody bundle olivierverdier/zsh-git-prompt
+fi
 
 if is-at-least 4.3.10; then
   autoload -Uz add-zsh-hook
@@ -302,7 +306,11 @@ set_prompt() {
   echo -n "%F{208}%m"
   echo -n "%{${reset_color}%}:"
   echo -n "%{${fg[green]}%}%/%{${reset_color}%} "
-  echo '$(git_super_status)'
+  if type git_super_status 2>&1 >/dev/null; then
+    echo '$(git_super_status)'
+  else
+    echo
+  fi
   echo -n "%% "
 }
 
