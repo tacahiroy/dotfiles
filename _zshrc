@@ -225,11 +225,11 @@ function cdup() {
 zle -N cdup
 bindkey '^\^' cdup
 
-if which peco 2>&1 >/dev/null; then
+if [ -x peco ]; then
   FILTERCMD=$(which peco)
-elif which fzf 2>&1 >/dev/null; then
+elif [ -x fzf ]; then
   FILTERCMD=$(which fzf)
-elif which percol 2>&1 >/dev/null; then
+elif [ -x percol ]; then
   FILTERCMD=$(which percol)
 fi
 
@@ -340,7 +340,7 @@ case ${UID} in
   ;;
 esac
 
-if [[ -x $(which brew) ]]; then
+if [ -x brew ]; then
   BREW_PREFIX=$(brew --prefix)
 
   for z in ${BREW_PREFIX}/opt/awscli/share/zsh/site-functions/_aws \
@@ -349,7 +349,7 @@ if [[ -x $(which brew) ]]; then
   done
 fi
 
-[[ -s "/home/tacahiroy/.gvm/scripts/gvm"  ]] && source "/home/tacahiroy/.gvm/scripts/gvm"
+[[ -s /home/tacahiroy/.gvm/scripts/gvm  ]] && source "/home/tacahiroy/.gvm/scripts/gvm"
 
 # __END__
 # vim: et ts=2 sts=2 sw=2
