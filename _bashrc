@@ -210,5 +210,3 @@ PS1=$(set_prompt)
 bind '"\C-p":history-search-backward'
 bind '"\C-n":history-search-forward'
 bind '"\C-^"':"\"cdup\r\""
-
-[[ -s "/home/tacahiroy/.gvm/scripts/gvm" ]] && source "/home/tacahiroy/.gvm/scripts/gvm"

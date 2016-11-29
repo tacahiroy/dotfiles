@@ -153,7 +153,7 @@ endif
 Plug 'Raimondi/delimitMate'
 Plug 'airblade/vim-gitgutter'        ",       { 'on': ['GitGutter'] }
 Plug 'camelcasemotion',              { 'frozen': 1 }
-Plug 'davidhalter/jedi-vim',         { 'for': 'python', 'do': 'pip install jedi' }
+Plug 'davidhalter/jedi-vim',         { 'for': 'python', 'do': 'pip install jedi --user' }
 Plug 'fatih/vim-go',                 { 'for': 'go', 'frozen': 1 }
 Plug 'glidenote/memolist.vim',       { 'on': ['MemoList', 'MemoNew', 'MemoGrep'] }
 Plug 'godlygeek/tabular',            { 'on': 'Tabularize' }

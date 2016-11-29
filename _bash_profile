@@ -4,18 +4,18 @@ export LANG=en_US.UTF-8
 
 _Z_NO_RESOLVE_SYMLINKS=1
 _Z_CMD=j
-. $HOME/.bash/plugins/z.sh
+. $HOME/.bash/z.sh
 
 EDITOR=vim
 PAGER=less
 PATH=$PATH:$HOME/.local/bin:$HOME/bin
-PATH=$HOME/.rbenv/bin:$PATH
+# PATH=$HOME/.rbenv/bin:$PATH
 PATH=$HOME/.local/bin:$PATH
 PATH=$PATH:$HOME/.local/bin:$HOME/bin
-PATH=$PATH:$HOME/.fzf/bin
+[ -x $HOME/.fzf/bin/fzf ] && PATH=$PATH:$HOME/.fzf/bin
 export PATH
 
-eval "$(rbenv init -)"
+# eval "$(rbenv init -)"
 
 # Trigger ~/.bashrc commands
 . ~/.bashrc
