@@ -130,7 +130,8 @@ map <Space> [Space]
 " * plugin management "{{{
 call plug#begin($HOME . '/plugins.vim')
 
-let s:ctrlp_matcher = 'cmatcher'
+let s:ctrlp_matcher = 'default'
+let s:ctrlp_matcher = 'py-matcher'
 
 if s:ctrlp_matcher == 'cpsm'
   Plug 'nixprime/cpsm'
@@ -139,6 +140,9 @@ if s:ctrlp_matcher == 'cpsm'
 elseif s:ctrlp_matcher == 'cmatcher'
   Plug 'JazzCore/ctrlp-cmatcher', { 'do': './install.sh' }
   let g:ctrlp_match_func = { 'match': 'matcher#cmatch' }
+elseif s:ctrlp_matcher == 'py-matcher'
+  Plug 'FelikZ/ctrlp-py-matcher'
+  let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
 endif
 
 Plug 'lifepillar/vim-mucomplete'
@@ -161,7 +165,6 @@ Plug 'tpope/vim-endwise',            { 'for': ['ruby', 'sh', 'zsh', 'vim', 'snip
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 Plug 'vim-ruby/vim-ruby',             { 'for': 'ruby', 'frozen': 1 }
-Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java', 'frozen': 1 }
 Plug 'pangloss/vim-javascript',       { 'for': 'javascript', 'frozen': 1 }
 Plug 'thinca/vim-quickrun',           { 'for': ['ruby', 'python', 'go', 'sh'], 'frozen': 1 }
 
@@ -169,9 +172,7 @@ Plug 'ctrlpvim/ctrlp.vim'
 Plug 'tacahiroy/ctrlp-funky'
 Plug 'tacahiroy/vim-colors-isotake', { 'frozen': 1 }
 " Plug 'itchyny/lightline.vim'
-Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
 Plug 'vim-syntastic/syntastic', { 'for': ['ruby', 'python', 'sh', 'zsh', 'vim', 'go'] }
-Plug 'dag/vim-fish'
 
 if filereadable(expand('~/.vimrc.plugins'))
   source ~/.vimrc.plugins
@@ -289,10 +290,10 @@ call plug#end()
 " plug: kien/rainbow_parentheses
   if s:has_plugin('rainbow_parentheses.vim')
     augroup Tacahiroy
-      " autocmd VimEnter * RainbowParenthesesToggle
+      autocmd VimEnter * RainbowParenthesesActivate
       autocmd Syntax * RainbowParenthesesLoadBraces
       autocmd Syntax * RainbowParenthesesLoadRound
-      " autocmd Syntax * RainbowParenthesesLoadSquare
+      autocmd Syntax * RainbowParenthesesLoadSquare
     augroup END
   endif
 
@@ -316,7 +317,7 @@ call plug#end()
   \ ]
 
 " plug: UltiSnips
-  let g:UltiSnipsExpandTrigger = '<C-y>'
+  let g:UltiSnipsExpandTrigger = '<C-\>'
   let g:UltiSnipsJumpForwardTrigger = '<C-f>'
   let g:UltiSnipsJumpBackwardTrigger = '<C-a>'
 
@@ -424,7 +425,7 @@ set scroll=0
 set scrolloff=5
 
 set shell&
-for s in ['/usr/local/bin/zsh', '/bin/zsh', '/bin/bash', '/bin/sh']
+for s in ['/usr/local/bin/zsh', '/usr/bin/zsh', '/bin/zsh', '/bin/bash', '/bin/sh']
   if executable(s)
     let &shell = s
     break
@@ -705,7 +706,10 @@ nnoremap <silent> <Leader>fn :let @" = expand('%:t')<Cr>
 inoremap <silent> <Leader>fN <C-R>=fnamemodify(@%, ':p')<Cr>
 nnoremap <silent> <Leader>fN :let @" = fnamemodify(@%, ':p')<Cr>
 
-" inoremap <expr> <Cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<Cr>"
+function! s:wisecr()
+  return pumvisible() ? "\<C-y>\<Cr>" : "\<C-g>u\<Cr>"
+endfunction
+inoremap <expr> <Cr> <C-R>=<SID>wisecr()<Cr>
 
 " Copy absolute path to current file to clipboard
 command! -nargs=0 CopyCurrentFilePath2CB let @* = fnamemodify(@%, ':p')
