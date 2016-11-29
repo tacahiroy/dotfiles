@@ -6,11 +6,13 @@ _Z_NO_RESOLVE_SYMLINKS=1
 _Z_CMD=j
 # GIT_PROMPT_EXECUTABLE="haskell"
 
-. <(antibody init)
-antibody bundle < ~/.zsh/antibody/bundles
-if test -f /proc/version && ! cat /proc/version | grep Microsoft 2>&1 >/dev/null; then
-  antibody bundle zsh-users/zsh-autosuggestions
-  antibody bundle olivierverdier/zsh-git-prompt
+if type antibody 2>&1 >/dev/null; then
+  . <(antibody init)
+  antibody bundle < ~/.zsh/antibody/bundles
+  if test -f /proc/version && ! cat /proc/version | grep Microsoft 2>&1 >/dev/null; then
+    antibody bundle zsh-users/zsh-autosuggestions
+    antibody bundle olivierverdier/zsh-git-prompt
+  fi
 fi
 
 if is-at-least 4.3.10; then
@@ -223,11 +225,11 @@ function cdup() {
 zle -N cdup
 bindkey '^\^' cdup
 
-if [ -x "$(which peco)" ]; then
+if which peco 2>&1 >/dev/null; then
   FILTERCMD=$(which peco)
-elif [ -x "$(which fzf)" ]; then
+elif which fzf 2>&1 >/dev/null; then
   FILTERCMD=$(which fzf)
-elif [ -x "$(which percol)" ]; then
+elif which percol 2>&1 >/dev/null; then
   FILTERCMD=$(which percol)
 fi
 
