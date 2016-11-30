@@ -307,7 +307,7 @@ set_prompt() {
   echo -n "%{${reset_color}%}@"
   echo -n "%F{208}%m"
   echo -n "%{${reset_color}%}:"
-  echo -n "%{${fg[green]}%}%/%{${reset_color}%} "
+  echo -n "%{${fg[green]}%}%~%{${reset_color}%} "
   if type git_super_status 2>&1 >/dev/null; then
     echo '$(git_super_status)'
   else
