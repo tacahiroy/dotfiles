@@ -225,11 +225,11 @@ function cdup() {
 zle -N cdup
 bindkey '^\^' cdup
 
-if [ -x peco ]; then
+if type peco 2>&1 >/dev/null; then
   FILTERCMD=$(which peco)
-elif [ -x fzf ]; then
+elif type fzf 2>&1 >/dev/null; then
   FILTERCMD=$(which fzf)
-elif [ -x percol ]; then
+elif type percol 2>&1 >/dev/null; then
   FILTERCMD=$(which percol)
 fi
 
