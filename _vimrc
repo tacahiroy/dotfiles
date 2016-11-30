@@ -709,7 +709,7 @@ nnoremap <silent> <Leader>fN :let @" = fnamemodify(@%, ':p')<Cr>
 function! s:wisecr()
   return pumvisible() ? "\<C-y>\<Cr>" : "\<C-g>u\<Cr>"
 endfunction
-inoremap <expr> <Cr> <C-R>=<SID>wisecr()<Cr>
+inoremap <Cr> <C-R>=<SID>wisecr()<Cr>
 
 " Copy absolute path to current file to clipboard
 command! -nargs=0 CopyCurrentFilePath2CB let @* = fnamemodify(@%, ':p')
