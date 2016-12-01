@@ -165,14 +165,17 @@ Plug 'tpope/vim-endwise',            { 'for': ['ruby', 'sh', 'zsh', 'vim', 'snip
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 Plug 'vim-ruby/vim-ruby',             { 'for': 'ruby', 'frozen': 1 }
+" Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java', 'frozen': 1 }
 Plug 'pangloss/vim-javascript',       { 'for': 'javascript', 'frozen': 1 }
 Plug 'thinca/vim-quickrun',           { 'for': ['ruby', 'python', 'go', 'sh'], 'frozen': 1 }
 
 Plug 'ctrlpvim/ctrlp.vim'
-Plug 'tacahiroy/ctrlp-funky'
+" Plug 'tacahiroy/ctrlp-funky'
 Plug 'tacahiroy/vim-colors-isotake', { 'frozen': 1 }
 " Plug 'itchyny/lightline.vim'
 Plug 'vim-syntastic/syntastic', { 'for': ['ruby', 'python', 'sh', 'zsh', 'vim', 'go'] }
+
+autocmd! FileType netrw CtrlP
 
 if filereadable(expand('~/.vimrc.plugins'))
   source ~/.vimrc.plugins
@@ -233,10 +236,14 @@ call plug#end()
       \ 1: ['.git/', 'cd %s && git ls-files . -co --exclude-standard | grep -v "\.\(png\|jpg\)"'],
       \ 2: ['.hg/', 'hg --cwd %s locate -I .'],
       \ 3: ['.svn/', 'svn ls file://%s']
-    \ },
-    \ 'fallback': 'pt %s -i --nocolor --nogroup -g ""',
+    \ }
   \ }
-  " \ 'fallback': 'ag %s -i --nocolor --nogroup -p ~/.agignore -g ""',
+
+  if 0
+    let g:ctrlp_user_command.types.fallback = 'pt %s -i --nocolor --nogroup -g ""'
+  else
+    let g:ctrlp_user_command.types.fallback = 'ag %s -i --nocolor --nogroup -p ~/.agignore -g ""'
+  endif
 
   let g:ctrlp_prompt_mappings = {
     \ 'AcceptSelection("e")': ['<Cr>'],
@@ -389,7 +396,6 @@ set clipboard=
 set cmdheight=2
 " this makes scroll slower
 set colorcolumn=
-" set completeopt& completeopt+=longest
 set cpoptions+=n
 set noequalalways
 set expandtab smarttab
@@ -932,7 +938,6 @@ augroup Tacahiroy
 
   " Java
   autocmd FileType java setlocal tabstop=4 shiftwidth=4 softtabstop=4
-  autocmd FileType java setlocal omnifunc=javacomplete#Complete
   let java_highlight_java_lang_ids = 1
   let java_highlight_java_io = 1
 
@@ -1016,6 +1021,5 @@ if has('gui_running')
     let &printfont = &guifont
   endif
 endif
-
 " __END__ {{{
 " vim: fen fdm=marker ts=2 sts=2 sw=2
