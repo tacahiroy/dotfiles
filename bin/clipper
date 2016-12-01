@@ -1,0 +1,14 @@
+#!/bin/bash
+
+UN=$(uname | tr '[A-Z]' '[a-z]')
+
+case ${UN} in
+    linux)
+        xclip -selection c
+        ;;
+    darwin)
+        pbcopy
+        ;;
+    *)
+        ;;
+esac
