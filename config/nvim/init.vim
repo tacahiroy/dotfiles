@@ -1,1 +1,1 @@
-/home/tacahiroy/proj/dotfiles/_vimrc
+../../vimrc
