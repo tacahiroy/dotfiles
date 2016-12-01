@@ -130,21 +130,6 @@ map <Space> [Space]
 " * plugin management "{{{
 call plug#begin($HOME . '/plugins.vim')
 
-let s:ctrlp_matcher = 'default'
-let s:ctrlp_matcher = 'py-matcher'
-
-if s:ctrlp_matcher == 'cpsm'
-  Plug 'nixprime/cpsm'
-  let g:cpsm_highlight_mode = 'detailed'
-  let g:ctrlp_match_func = { 'match': 'cpsm#CtrlPMatch' }
-elseif s:ctrlp_matcher == 'cmatcher'
-  Plug 'JazzCore/ctrlp-cmatcher', { 'do': './install.sh' }
-  let g:ctrlp_match_func = { 'match': 'matcher#cmatch' }
-elseif s:ctrlp_matcher == 'py-matcher'
-  Plug 'FelikZ/ctrlp-py-matcher'
-  let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
-endif
-
 Plug 'lifepillar/vim-mucomplete'
 
 if has('patch-7.4.314')
@@ -177,8 +162,22 @@ Plug 'vim-syntastic/syntastic', { 'for': ['ruby', 'python', 'sh', 'zsh', 'vim', 
 
 autocmd! FileType netrw CtrlP
 
+let g:ctrlp_matcher = ''
+
 if filereadable(expand('~/.vimrc.plugins'))
   source ~/.vimrc.plugins
+endif
+
+if g:ctrlp_matcher == 'cpsm'
+  Plug 'nixprime/cpsm'
+  let g:cpsm_highlight_mode = 'detailed'
+  let g:ctrlp_match_func = { 'match': 'cpsm#CtrlPMatch' }
+elseif g:ctrlp_matcher == 'cmatcher'
+  Plug 'JazzCore/ctrlp-cmatcher', { 'do': './install.sh' }
+  let g:ctrlp_match_func = { 'match': 'matcher#cmatch' }
+elseif g:ctrlp_matcher == 'py-matcher'
+  Plug 'FelikZ/ctrlp-py-matcher'
+  let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
 endif
 
 call plug#end()
