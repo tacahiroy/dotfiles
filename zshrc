@@ -254,7 +254,7 @@ if [ -x ${FILTERCMD} ]; then
     if [ -f "${ctrlp_mrufile}" ]; then
       _file=$(cat "${ctrlp_mrufile}" | ${FILTERCMD} --query "$LBUFFER")
       if [ -n "${_file}" -a -f "${_file}" ]; then
-        BUFFER="$EDITOR ${_file}"
+        BUFFER="${BUFFER} ${_file}"
         CURSOR=$#BUFFER
         zle clear-screen
       fi
