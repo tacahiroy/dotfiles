@@ -13,25 +13,37 @@ mkdir -p $HOME/bin
 for y in *; do
 	case $y in
 		README.md|UltiSnips|osx|install.sh|tmux.conf*|tmux-powerlinerc|bin)
+            continue
 			;;
+        config)
+            XDG_CONFIG_HOME=$HOME/.config
+            if [ ! -d ${XDG_CONFIG_HOME} ]; then
+                mkdir ${XDG_CONFIG_HOME}
+            fi
+            for y in $(find config -type d -not -wholename config); do
+                source=$(${READLINK} $y)
+                target=${XDG_CONFIG_HOME}/$(basename $y)
+                [ -L ${target} ] && unlink ${taget}
+                ln -s ${source} ${target}
+            done
+            ;;
 		*)
 			source=$y
+            target=$HOME/.${source}
+            [ -L ${target} ] && unlink ${target}
+            ln -s $(${READLINK} ${source}) ${target}
 			;;
 	esac
-
-	target=$HOME/.${source}
-
-	[ -L ${target} ] && unlink ${target}
-    ln -s $(${READLINK} ${source}) ${target}
 done
-exit
 
 ##
 # tmux
 #
+echo '** Configuring tmux'
+
 if [ "${UN}" = 'linux' ]; then
     if cat /proc/version | grep Microsoft 2>&1 >/dev/null; then
-        U=bow
+        UN=bow
     fi
 fi
 TMUX_CONF=tmux.conf
@@ -41,15 +53,19 @@ if tmux -V | grep 'tmux 1' 2>&1 >/dev/null; then
 fi
 TMUX_CONF=${TMUX_CONF}.${UN}
 
+echo "INFO: ${TMUX_CONF} is selected for this machine"
+
 target=$HOME/.tmux.conf
 [ -L ${target} ] && unlink ${target}
 ln -s $(${READLINK} ${TMUX_CONF}) ${target}
 
+echo Copying clipper
 cp bin/clipper $HOME/bin
 
 ##
 # vim-plug
 #
+echo '** Installing vim-plug'
 PLUG_VIM=$HOME/.vim/autoload/plug.vim
 if [ ! -r "${PLUG_VIM}" ]; then
     curl -fLo ${PLUG_VIM} --create-dirs \
@@ -84,7 +100,7 @@ extract() {
 }
 
 if [ ! -x $HOME/bin/antibody ]; then
-    echo Installing antibody
+    echo '** Installing antibody'
     test -z "$TMPDIR" && TMPDIR="$(mktemp -d)"
     download
     extract || true
