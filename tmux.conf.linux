@@ -57,9 +57,9 @@ bind -n M-right next-window
 bind g select-window -l
 bind R source-file ~/.tmux.conf \; display 'Sourced tmux config'
 
-# copy to osx paste board
-# set -g default-command "reattach-to-user-namespace -l zsh"
-# bind ^y run-shell "tmux showb | xclip -selection c"
+# copy to clipboard
+if-shell "which xsel" "bind ^y run-shell 'tmux save-buffer - | xsel -ib'"
+if-shell "[ $(uname) = 'Darwin' ]" "set -g default-command 'reattach-to-user-namespace -l zsh'; bind ^y run-shell 'reattach-to-user-namespace -l zsh -c \"tmux showb | pbcopy\"'"
 
 unbind m
 
@@ -89,7 +89,7 @@ setw -g mode-keys vi
 setw -g status-keys emacs
 
 setw -g allow-rename off
-setw -g automatic-rename yes
+setw -g automatic-rename on
 
 # mouse
 setw -g mouse on
