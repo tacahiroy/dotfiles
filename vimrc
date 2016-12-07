@@ -136,7 +136,7 @@ if has('patch-7.4.314')
   Plug 'honza/vim-snippets' | Plug 'SirVer/ultisnips'
 endif
 Plug 'Raimondi/delimitMate'
-Plug 'airblade/vim-gitgutter'        ",       { 'on': ['GitGutter'] }
+" Plug 'airblade/vim-gitgutter'        ",       { 'on': ['GitGutter'] }
 Plug 'camelcasemotion',              { 'frozen': 1 }
 Plug 'davidhalter/jedi-vim',         { 'for': 'python', 'do': 'pip install jedi --user' }
 Plug 'fatih/vim-go',                 { 'for': 'go', 'frozen': 1 }
@@ -155,7 +155,7 @@ Plug 'pangloss/vim-javascript',       { 'for': 'javascript', 'frozen': 1 }
 Plug 'thinca/vim-quickrun',           { 'for': ['ruby', 'python', 'go', 'sh'], 'frozen': 1 }
 
 Plug 'ctrlpvim/ctrlp.vim'
-" Plug 'tacahiroy/ctrlp-funky'
+Plug 'tacahiroy/ctrlp-funky'
 Plug 'tacahiroy/vim-colors-isotake', { 'frozen': 1 }
 " Plug 'itchyny/lightline.vim'
 Plug 'vim-syntastic/syntastic', { 'for': ['ruby', 'python', 'sh', 'zsh', 'vim', 'go'] }
@@ -187,7 +187,7 @@ call plug#end()
 " plug: mucomplete
   set showmode
   set shortmess& shortmess+=c
-  set completeopt=menu,menuone,preview,noinsert,noselect
+  set completeopt=menu,menuone,noinsert,noselect
   let g:mucomplete#enable_auto_at_startup = 1
   let g:mucomplete#exit_ctrlx_keys = '\<c-g>'
 
