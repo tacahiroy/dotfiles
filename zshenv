@@ -1,6 +1,6 @@
 export LANG=en_US.UTF-8
 
-export GOPATH=$HOME/golang
+export GOPATH=$HOME/go
 export CARGO_PATH=$HOME/.cargo
 export RUST_SRC_PATH=/usr/local/src/rust-1.7.0/src
 export LC_ALL=$LANG
@@ -75,10 +75,11 @@ typeset -xT PYTHONPATH python_path
 typeset -U python_path
 
 python_path=(
+  $HOME/.local/lib/python3.5/site-packages(N-/)
+  /usr/local/lib/python3.5/site-packages(N-/)
   /Library/Python/2.7/site-packages(N-/)
   $HOME/.local/lib/python2.7/site-packages(N-/)
   /usr/local/lib/python2.7/site-packages(N-/)
-  /usr/local/opt/mitmproxy/libexec/lib/python2.7/site-packages(N-/)
 )
 
 ## Perl
