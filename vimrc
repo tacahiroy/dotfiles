@@ -781,8 +781,8 @@ EOR
   command! -nargs=0 -range DecodeURI <line1>,<line2>call s:decode_uri()
 endif "}}}
 
-if has('python') "{{{
-python << EOF
+if has('python3') "{{{
+python3 << EOF
 import sqlparse
 from vim import *
 def format_sql(firstline, lastline):
@@ -796,10 +796,10 @@ def format_sql(firstline, lastline):
 EOF
 
 function! s:format_sql() range
-  python format_sql(firstline=int(vim.eval('a:firstline'))-1, lastline=int(vim.eval('a:lastline'))-1)
+  python3 format_sql(firstline=int(vim.eval('a:firstline'))-1, lastline=int(vim.eval('a:lastline'))-1)
 endfunction
 
-command! -nargs=? -range FormatSQL <line1>,<line2>call s:format_sql()
+command! -nargs=? -range PrettifySQL <line1>,<line2>call s:format_sql()
 endif "}}}
 
 if has('multi_byte_ime') || has('xim')
@@ -1004,7 +1004,7 @@ if has('gui_running')
   elseif s:is_linux
     set guifont=Rounded\ M+\ 2m\ 12
     vnoremap <silent> <M-c> "+y
-    inoremap <silent> <M-v> <Esc>:let &paste=1<Cr>a<C-R>=@+<Cr><Esc>:let &paste=0<Cr>a
+    inoremap <silent> <M-v> <Esc>:let &paste=1<Cr>a<C-R>+<Esc>:let &paste=0<Cr>a
   else
     " Windows
     set guifont=Circle_M+_1m:h12:cSHIFTJIS:qDRAFT
