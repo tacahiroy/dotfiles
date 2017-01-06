@@ -252,7 +252,7 @@ if [ -x ${FILTERCMD} ]; then
     local ctrlp_mrufile=$HOME/.cache/ctrlp/mru/cache.txt
     local _file
     if [ -f "${ctrlp_mrufile}" ]; then
-      _file=$(cat "${ctrlp_mrufile}" | ${FILTERCMD} --query "$LBUFFER")
+      _file=$(cat "${ctrlp_mrufile}" | ${FILTERCMD})
       if [ -n "${_file}" -a -f "${_file}" ]; then
         BUFFER="${BUFFER} ${_file}"
         CURSOR=$#BUFFER
