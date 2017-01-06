@@ -138,8 +138,8 @@ endif
 Plug 'Raimondi/delimitMate'
 " Plug 'airblade/vim-gitgutter'        ",       { 'on': ['GitGutter'] }
 Plug 'camelcasemotion',              { 'frozen': 1 }
-Plug 'davidhalter/jedi-vim',         { 'for': 'python', 'do': 'pip install jedi --user' }
-Plug 'fatih/vim-go',                 { 'for': 'go', 'frozen': 1 }
+Plug 'davidhalter/jedi-vim',         { 'for': 'python', 'do': 'pip3 install jedi --user' }
+Plug 'fatih/vim-go',                 { 'for': 'go', 'frozen': 0 }
 Plug 'glidenote/memolist.vim',       { 'on': ['MemoList', 'MemoNew', 'MemoGrep'] }
 Plug 'godlygeek/tabular',            { 'on': 'Tabularize' }
 Plug 'kien/rainbow_parentheses.vim', { 'frozen': 1 }
@@ -160,9 +160,7 @@ Plug 'tacahiroy/vim-colors-isotake', { 'frozen': 1 }
 " Plug 'itchyny/lightline.vim'
 Plug 'vim-syntastic/syntastic', { 'for': ['ruby', 'python', 'sh', 'zsh', 'vim', 'go'] }
 
-autocmd! FileType netrw CtrlP
-
-let g:ctrlp_matcher = ''
+let g:ctrlp_matcher = 'py-matcher'
 
 if filereadable(expand('~/.vimrc.plugins'))
   source ~/.vimrc.plugins
@@ -235,14 +233,9 @@ call plug#end()
       \ 1: ['.git/', 'cd %s && git ls-files . -co --exclude-standard | grep -v "\.\(png\|jpg\)"'],
       \ 2: ['.hg/', 'hg --cwd %s locate -I .'],
       \ 3: ['.svn/', 'svn ls file://%s']
-    \ }
+    \ },
+    \ 'fallback': 'ag %s -i --nocolor --nogroup -p ~/.agignore -g ""' 
   \ }
-
-  if 0
-    let g:ctrlp_user_command.types.fallback = 'pt %s -i --nocolor --nogroup -g ""'
-  else
-    let g:ctrlp_user_command.types.fallback = 'ag %s -i --nocolor --nogroup -p ~/.agignore -g ""'
-  endif
 
   let g:ctrlp_prompt_mappings = {
     \ 'AcceptSelection("e")': ['<Cr>'],
@@ -326,6 +319,7 @@ call plug#end()
   let g:UltiSnipsExpandTrigger = '<C-\>'
   let g:UltiSnipsJumpForwardTrigger = '<C-f>'
   let g:UltiSnipsJumpBackwardTrigger = '<C-a>'
+  " let g:UltiSnipsUsePythonVersion = 3
 
 " plug: commentary.vim
   nmap [Space]c gcc
@@ -712,9 +706,10 @@ inoremap <silent> <Leader>fN <C-R>=fnamemodify(@%, ':p')<Cr>
 nnoremap <silent> <Leader>fN :let @" = fnamemodify(@%, ':p')<Cr>
 
 function! s:wisecr()
-  return pumvisible() ? "\<C-y>\<Cr>" : "\<C-g>u\<Cr>"
+  " return pumvisible() ? "\<C-y>\<Cr>" : "\<C-g>u\<Cr>"
 endfunction
-inoremap <Cr> <C-R>=<SID>wisecr()<Cr>
+" imap <Cr> <C-R>=<SID>wisecr()<Cr>
+" inoremap <expr> <Cr> pumvisible() ? "\<C-y>" : "<Plug>delimitMateCR"
 
 " Copy absolute path to current file to clipboard
 command! -nargs=0 CopyCurrentFilePath2CB let @* = fnamemodify(@%, ':p')
