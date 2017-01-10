@@ -164,7 +164,7 @@ Plug 'tacahiroy/vim-colors-isotake', { 'frozen': 1 }
 " Plug 'itchyny/lightline.vim'
 Plug 'vim-syntastic/syntastic', { 'for': ['ruby', 'python', 'sh', 'zsh', 'vim', 'go'] }
 
-let g:ctrlp_matcher = 'py-matcher'
+let g:ctrlp_matcher = ''
 
 if filereadable(expand('~/.vimrc.plugins'))
   source ~/.vimrc.plugins

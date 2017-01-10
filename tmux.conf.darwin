@@ -1,7 +1,7 @@
 # By Daniel Thau.  Public domain.
 # tacahiroy's tmux configuration based on Daniel Thau's vim-keys.conf
 
-set -g default-shell /usr/bin/zsh
+set -g default-shell /usr/local/bin/zsh
 # set -g default-shell /bin/bash
 # set -g default-shell /usr/bin/fish
 
@@ -64,8 +64,9 @@ bind -n M-right next-window
 bind g select-window -l
 bind R source-file ~/.tmux.conf \; display 'Sourced tmux config'
 
-# copy to clipboard
-bind ^y run-shell "tmux showb | $HOME/bin/clipper"
+# copy to osx paste board
+set -g default-command "reattach-to-user-namespace -l zsh"
+bind ^y run-shell "tmux showb | /Users/tacahiroy/bin/clipper"
 
 unbind m
 
@@ -75,10 +76,10 @@ unbind [
 bind y copy-mode
 unbind p
 bind p paste-buffer
-bind -Tcopy-mode-vi v send -X begin-selection
-bind -Tcopy-mode-vi y send -X copy-selection-and-cancel
-bind -Tcopy-mode-vi a send -X append-selection
-bind -Tcopy-mode-vi Escape send -X cancel
+bind -Tcopy-mode-vi v send begin-selection
+bind -Tcopy-mode-vi y send copy-selection-and-cancel
+bind -Tcopy-mode-vi a send append-selection
+bind -Tcopy-mode-vi Escape send cancel
 
 # Makes Insert to Normal mode quickly in Vim
 set -s escape-time 0

@@ -38,12 +38,12 @@
 	up   = pull --rebase
 
 [pager]
-	log  = (perl /usr/share/doc/git/contrib/diff-highlight/diff-highlight 2>/dev/null || cat) | ${PAGER:-less}
-	show = (perl /usr/share/doc/git/contrib/diff-highlight/diff-highlight 2>/dev/null || cat) | ${PAGER:-less}
-	diff = (perl /usr/share/doc/git/contrib/diff-highlight/diff-highlight 2>/dev/null || cat) | ${PAGER:-less}
+	log  = (perl /usr/local/share/git-core/contrib/diff-highlight/diff-highlight 2>/dev/null || cat) | ${PAGER:-less}
+	show = (perl /usr/local/share/git-core/contrib/diff-highlight/diff-highlight 2>/dev/null || cat) | ${PAGER:-less}
+	diff = (perl /usr/local/share/git-core/contrib/diff-highlight/diff-highlight 2>/dev/null || cat) | ${PAGER:-less}
 
 [interactive]
-	diffFilter = (perl /usr/share/doc/git/contrib/diff-highlight/diff-highlight 2>/dev/null || cat)
+	diffFilter = (perl /usr/local/share/git-core/contrib/diff-highlight/diff-highlight 2>/dev/null || cat)
 [diff]
 	compactionHeuristic = true
 	mnemonicprefix = true
