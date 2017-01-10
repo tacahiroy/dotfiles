@@ -22,6 +22,10 @@ augroup END
 let s:is_mac = has('macunix') || has('mac')
 let s:is_linux = !s:is_mac && has('unix')
 let s:is_windows = !(s:is_mac || s:is_linux) && has('win32') || has('win64')
+let s:grep = executable('rg') ? 'rg' :
+           \ executable('ag') ? 'ag' :
+           \ executable('grep') ? 'grep' :
+           \ 'findstr'
 
 " functions " {{{
 " * global
@@ -234,8 +238,13 @@ call plug#end()
       \ 2: ['.hg/', 'hg --cwd %s locate -I .'],
       \ 3: ['.svn/', 'svn ls file://%s']
     \ },
-    \ 'fallback': 'ag %s -i --nocolor --nogroup -p ~/.agignore -g ""' 
   \ }
+
+  if s:grep ==# 'rg'
+    let g:ctrlp_user_command.fallback = 'rg %s -i --files --no-heading --ignore-file ~/.agignore'
+  elseif s:grep ==# 'ag'
+    let g:ctrlp_user_command.fallback = 'ag %s -i --nocolor --nogroup -p ~/.agignore -g ""'
+  endif
 
   let g:ctrlp_prompt_mappings = {
     \ 'AcceptSelection("e")': ['<Cr>'],
@@ -394,8 +403,14 @@ set noequalalways
 set expandtab smarttab
 set fileencodings=ucs-bom,utf-8,iso-2022-jp,euc-jp,cp932
 set fileformats=unix,dos,mac
-if executable('ag')
-  let grepprg = system('which ag') . ' --nocolor --nogroup -p ~/.agignore'
+if s:grep ==# 'rg'
+  let &grepprg = 'rg --no-heading --ignore-file ~/.agignore'
+elseif s:grep ==# 'ag'
+  let &grepprg = 'ag --nocolor --nogroup -p ~/.agignore'
+elseif s:grep ==# 'grep'
+  let &grepprg = 'grep --color=none'
+else
+  let &grepprg = 'findstr /n'
 endif
 set helplang=en
 set hidden
