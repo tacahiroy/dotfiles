@@ -75,8 +75,6 @@ typeset -xT PYTHONPATH python_path
 typeset -U python_path
 
 python_path=(
-  $HOME/.local/lib/python3.5/site-packages(N-/)
-  /usr/local/lib/python3.5/site-packages(N-/)
   /Library/Python/2.7/site-packages(N-/)
   $HOME/.local/lib/python2.7/site-packages(N-/)
   /usr/local/lib/python2.7/site-packages(N-/)

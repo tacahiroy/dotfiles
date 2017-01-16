@@ -354,7 +354,7 @@ call plug#end()
 
 " plug: delimiteMate
   let delimitMate_expand_space = 1
-  let delimitMate_expand_cr = 1
+  " let delimitMate_expand_cr = 1
   let delimitMate_matchpairs = "(:),[:],{:}"
 
   augroup Tacahiroy
@@ -791,8 +791,8 @@ EOR
   command! -nargs=0 -range DecodeURI <line1>,<line2>call s:decode_uri()
 endif "}}}
 
-if has('python3') "{{{
-python3 << EOF
+if has('python') "{{{
+python << EOF
 import sqlparse
 from vim import *
 def format_sql(firstline, lastline):
@@ -806,7 +806,7 @@ def format_sql(firstline, lastline):
 EOF
 
 function! s:format_sql() range
-  python3 format_sql(firstline=int(vim.eval('a:firstline'))-1, lastline=int(vim.eval('a:lastline'))-1)
+  python format_sql(firstline=int(vim.eval('a:firstline'))-1, lastline=int(vim.eval('a:lastline'))-1)
 endfunction
 
 command! -nargs=? -range PrettifySQL <line1>,<line2>call s:format_sql()
@@ -979,7 +979,6 @@ augroup Tacahiroy
 augroup END
 "}}}
 
-
 if filereadable(expand('~/.vimrc.local'))
   source ~/.vimrc.local
 endif
@@ -989,7 +988,7 @@ if has('gui_running')
   set columns=132
   set guioptions=aeciM
   set guitablabel=%N)\ %f
-  set lines=100
+  set lines=40
   set mousehide
   set nomousefocus
 
