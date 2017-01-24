@@ -30,12 +30,7 @@ let s:grep = executable('rg') ? 'rg' :
 " functions " {{{
 " * global
 function! Echohl(group, msg)
-  try
-    execute 'echohl ' . a:group
-    echomsg a:msg
-  finally
-    echohl NONE
-  endtry
+  execute printf('echohl %s | echomsg "%s" | echohl NONE', a:group, a:msg)
 endfunction
 
 " To realise where I am
@@ -239,6 +234,8 @@ call plug#end()
       \ 3: ['.svn/', 'svn ls file://%s']
     \ },
   \ }
+
+  let g:ctrlp_use_caching = 0
 
   if s:grep ==# 'rg'
     let g:ctrlp_user_command.fallback = 'rg %s -i --files --no-heading --ignore-file ~/.agignore'
