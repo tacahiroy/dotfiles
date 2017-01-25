@@ -345,11 +345,11 @@ if [ -x brew ]; then
 
   for z in ${BREW_PREFIX}/opt/awscli/share/zsh/site-functions/_aws \
            ~/.zsh/functions/zsh-utils; do
-    [[ -s ${z} ]] && . ${z}
+    [ -s ${z} ] && . ${z}
   done
 fi
 
-[[ -s /home/tacahiroy/.gvm/scripts/gvm  ]] && source "/home/tacahiroy/.gvm/scripts/gvm"
+[ -s /home/tacahiroy/.gvm/scripts/gvm  ] && source "/home/tacahiroy/.gvm/scripts/gvm"
 
 # __END__
 # vim: et ts=2 sts=2 sw=2
