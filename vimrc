@@ -172,7 +172,9 @@ Plug 'ctrlpvim/ctrlp.vim'
 Plug 'tacahiroy/ctrlp-funky'
 Plug 'tacahiroy/vim-colors-isotake', { 'frozen': 1 }
 " Plug 'itchyny/lightline.vim'
-Plug 'vim-syntastic/syntastic', { 'for': ['ruby', 'python', 'sh', 'zsh', 'vim', 'go'] }
+" Plug 'vim-syntastic/syntastic', { 'for': ['ruby', 'python', 'sh', 'zsh', 'vim', 'go'] }
+Plug 'w0rp/ale'
+Plug 'mhinz/vim-grepper'
 
 let g:ctrlp_matcher = ''
 
@@ -202,13 +204,18 @@ call plug#end()
   set completeopt=menu,menuone,noinsert,noselect
   let g:mucomplete#enable_auto_at_startup = 1
   let g:mucomplete#exit_ctrlx_keys = '\<c-g>'
+  let g:mucomplete#no_mappings = 1
+  let g:mucomplete#spel#good_words = 1
+  let g:mucomplete#chains = { 'default' : ['omni', 'ulti', 'c-p', 'incl', 'tags'] }
+  let g:mucomplete#chains.sql = []
 
-" plug: lightline
-  let g:lightline = get(g:, 'lightline', {})
-  let g:lightline.colorscheme = 'wombat'
+" plug: grepper
+  let g:grepper = {}
+  let g:grepper.rg = { 'grepprg': 'rg --vimgrep -- ' }
+  let g:grepper.tools = [ 'rg', 'ag', 'grep' ]
 
 " plug: memolist
-  let g:memolist_path = expand('~/Projects/memo')
+  let g:memolist_path = expand('~/proj/memo')
   let g:memolist_memo_suffix = 'md'
   let g:memolist_memo_date = '%Y-%m-%d %H:%M'
   let g:memolist_prompt_tags = 1
@@ -733,10 +740,9 @@ inoremap <silent> <Leader>fN <C-R>=fnamemodify(@%, ':p')<Cr>
 nnoremap <silent> <Leader>fN :let @" = fnamemodify(@%, ':p')<Cr>
 
 function! s:wisecr()
-  " return pumvisible() ? "\<C-y>\<Cr>" : "\<C-g>u\<Cr>"
+  return pumvisible() ? "\<C-y>\<Cr>" : "\<C-g>u\<Cr>"
 endfunction
-" imap <Cr> <C-R>=<SID>wisecr()<Cr>
-" inoremap <expr> <Cr> pumvisible() ? "\<C-y>" : "<Plug>delimitMateCR"
+inoremap <Cr> <C-R>=<SID>wisecr()<Cr>
 
 " Copy absolute path to current file to clipboard
 command! -nargs=0 CopyCurrentFilePath2CB let @* = fnamemodify(@%, ':p')
