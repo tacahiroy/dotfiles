@@ -64,12 +64,12 @@ shopt -s globstar
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
 # Filter stuff
-if [ -x "$(which fzf 2>/dev/null)" ]; then
+if [ -x "$(which peco 2>/dev/null)" ]; then
+    FILTER=peco
+elif [ -x "$(which fzf 2>/dev/null)" ]; then
     FILTER=fzf
     export FZF_DEFAULT_OPTS='--reverse --inline-info --color=light'
     # [ -f ~/.fzf.bash ] && source ~/.fzf.bash
-elif [ -x "$(which peco 2>/dev/null)" ]; then
-    FILTER=peco
 elif [ -x "$(which percol 2>/dev/null)" ]; then
     FILTER=percol
 else

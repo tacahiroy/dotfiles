@@ -23,6 +23,8 @@ set_path $HOME/.rbenv/bin
 set_path $HOME/.local/bin
 set_path $HOME/bin
 set_path $HOME/.fzf/bin
+set_path $HOME/.cabal/bin
+set_path $HOME/.cargo/bin
 
 if [ -d $HOME/go ]; then
     GOPATH=$HOME/go
