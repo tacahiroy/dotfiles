@@ -129,21 +129,6 @@ map <Space> [Space]
 " * plugin management "{{{
 call plug#begin($HOME . '/plugins.vim')
 
-let s:ctrlp_matcher = 'py-matcher'
-let s:ctrlp_matcher = 'default'
-
-if s:ctrlp_matcher == 'cpsm'
-  Plug 'nixprime/cpsm'
-  let g:cpsm_highlight_mode = 'detailed'
-  let g:ctrlp_match_func = { 'match': 'cpsm#CtrlPMatch' }
-elseif s:ctrlp_matcher == 'cmatcher'
-  Plug 'JazzCore/ctrlp-cmatcher', { 'do': './install.sh' }
-  let g:ctrlp_match_func = { 'match': 'matcher#cmatch' }
-elseif s:ctrlp_matcher == 'py-matcher'
-  Plug 'FelikZ/ctrlp-py-matcher'
-  let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
-endif
-
 Plug 'lifepillar/vim-mucomplete'
 
 if has('patch-7.4.314')
@@ -152,8 +137,9 @@ endif
 Plug 'Raimondi/delimitMate'
 " Plug 'airblade/vim-gitgutter'        ",       { 'on': ['GitGutter'] }
 Plug 'camelcasemotion',              { 'frozen': 1 }
-Plug 'davidhalter/jedi-vim',         { 'for': 'python', 'do': 'pip3 install jedi --user' }
-Plug 'fatih/vim-go',                 { 'for': 'go', 'frozen': 0 }
+Plug 'davidhalter/jedi-vim',         { 'for': 'python', 'do': 'pip install jedi --user' }
+Plug 'mhinz/vim-signify'
+Plug 'fatih/vim-go',                 { 'for': 'go', 'frozen': 1 }
 Plug 'glidenote/memolist.vim',       { 'on': ['MemoList', 'MemoNew', 'MemoGrep'] }
 Plug 'godlygeek/tabular',            { 'on': 'Tabularize' }
 Plug 'kien/rainbow_parentheses.vim', { 'frozen': 1 }
@@ -171,16 +157,14 @@ Plug 'thinca/vim-quickrun',           { 'for': ['ruby', 'python', 'go', 'sh'], '
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'tacahiroy/ctrlp-funky'
 Plug 'tacahiroy/vim-colors-isotake', { 'frozen': 1 }
-" Plug 'itchyny/lightline.vim'
-" Plug 'vim-syntastic/syntastic', { 'for': ['ruby', 'python', 'sh', 'zsh', 'vim', 'go'] }
 Plug 'w0rp/ale'
 Plug 'mhinz/vim-grepper'
-
-let g:ctrlp_matcher = ''
 
 if filereadable(expand('~/.vimrc.plugins'))
   source ~/.vimrc.plugins
 endif
+
+let g:ctrlp_matcher = 'py-matcher'
 
 if g:ctrlp_matcher == 'cpsm'
   Plug 'nixprime/cpsm'
@@ -211,7 +195,7 @@ call plug#end()
 
 " plug: grepper
   let g:grepper = {}
-  let g:grepper.rg = { 'grepprg': 'rg --vimgrep -- ' }
+  let g:grepper.rg = { 'grepprg': 'rg --vimgrep --' }
   let g:grepper.tools = [ 'rg', 'ag', 'grep' ]
 
 " plug: memolist
@@ -227,6 +211,7 @@ call plug#end()
   nnoremap [Space]ml :execute 'CtrlP ' . g:memolist_path<Cr><F5>
 
 " plug: ctrlp.vim
+  let g:ctrlp_by_filename = 1
   let g:ctrlp_map = '<Space>e'
   let g:ctrlp_cmd = 'CtrlP'
   let g:ctrlp_switch_buffer = 'Et'
@@ -248,21 +233,12 @@ call plug#end()
   let g:ctrlp_lazy_update = 200
   let g:ctrlp_brief_prompt = 1
   let g:ctrlp_key_loop = 1
-
-  let g:ctrlp_user_command = {
-    \ 'types': {
-      \ 1: ['.git/', 'cd %s && git ls-files . -co --exclude-standard | grep -v "\.\(png\|jpg\)"'],
-      \ 2: ['.hg/', 'hg --cwd %s locate -I .'],
-      \ 3: ['.svn/', 'svn ls file://%s']
-    \ },
-  \ }
-
   let g:ctrlp_use_caching = 0
 
   if s:grep ==# 'rg'
-    let g:ctrlp_user_command.fallback = 'rg %s -i --files --no-heading --ignore-file ~/.agignore'
+    let g:ctrlp_user_command = 'rg %s -i --files --no-heading --ignore-file ~/.agignore'
   elseif s:grep ==# 'ag'
-    let g:ctrlp_user_command.fallback = 'ag %s -i --nocolor --nogroup -p ~/.agignore -g ""'
+    let g:ctrlp_user_command = 'ag %s -i --nocolor --nogroup -p ~/.agignore -g ""'
   endif
 
   let g:ctrlp_prompt_mappings = {
@@ -294,8 +270,6 @@ call plug#end()
   let g:ctrlp_funky_ruby_chef_words = 0
 
   let g:ctrlp_funky_nudists = ['php', 'ruby']
-
-  let g:ctrlp_ssh_keep_ctrlp_window = 0
 
   nnoremap [Space]fl :CtrlPBuffer<Cr>
   nnoremap [Space]fm :CtrlPMRU<Cr><F5>
@@ -347,7 +321,6 @@ call plug#end()
   let g:UltiSnipsExpandTrigger = '<C-\>'
   let g:UltiSnipsJumpForwardTrigger = '<C-f>'
   let g:UltiSnipsJumpBackwardTrigger = '<C-a>'
-  " let g:UltiSnipsUsePythonVersion = 3
 
 " plug: commentary.vim
   nmap [Space]c gcc
