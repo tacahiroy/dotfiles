@@ -43,7 +43,7 @@ echo '** Configuring tmux'
 
 if [ "${UN}" = 'linux' ]; then
     if cat /proc/version | grep Microsoft 2>&1 >/dev/null; then
-        UN=bow
+        TMUX_CONF=${TMUX_CONF}.${UN}
     fi
 fi
 TMUX_CONF=tmux.conf
@@ -51,7 +51,6 @@ TMUX_CONF=tmux.conf
 if tmux -V | grep 'tmux 1' 2>&1 >/dev/null; then
 	TMUX_CONF=${TMUX_CONF}.1
 fi
-TMUX_CONF=${TMUX_CONF}.${UN}
 
 echo "INFO: ${TMUX_CONF} is selected for this machine"
 
