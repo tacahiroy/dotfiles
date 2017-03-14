@@ -19,13 +19,12 @@ augroup Tacahiroy
   autocmd!
 augroup END
 
-let s:is_mac = has('macunix') || has('mac')
-let s:is_linux = !s:is_mac && has('unix')
-let s:is_windows = !(s:is_mac || s:is_linux) && has('win32') || has('win64')
+let s:mac = has('macunix') || has('mac')
+let s:linux = !s:mac && has('unix')
+let s:win = !(s:mac || s:linux) && has('win32') || has('win64')
 let s:grep = executable('rg') ? 'rg' :
            \ executable('ag') ? 'ag' :
-           \ executable('grep') ? 'grep' :
-           \ 'findstr'
+           \ ''
 
 " functions " {{{
 " * global
@@ -137,7 +136,7 @@ endif
 Plug 'Raimondi/delimitMate'
 " Plug 'airblade/vim-gitgutter'        ",       { 'on': ['GitGutter'] }
 Plug 'camelcasemotion',              { 'frozen': 1 }
-Plug 'davidhalter/jedi-vim',         { 'for': 'python', 'do': 'pip install jedi --user' }
+Plug 'davidhalter/jedi-vim',         { 'for': 'python', 'do': 'pip3 install jedi --user' }
 Plug 'mhinz/vim-signify'
 Plug 'fatih/vim-go',                 { 'for': 'go', 'frozen': 1 }
 Plug 'glidenote/memolist.vim',       { 'on': ['MemoList', 'MemoNew', 'MemoGrep'] }
@@ -182,6 +181,9 @@ call plug#end()
 " }}}
 
 " * plugin configurations {{{
+" plug: ale
+  " let g:ale_python_flake8_executable = 'flake8'
+
 " plug: mucomplete
   set showmode
   set shortmess& shortmess+=c
@@ -239,6 +241,12 @@ call plug#end()
     let g:ctrlp_user_command = 'rg %s -i --files --no-heading --ignore-file ~/.agignore'
   elseif s:grep ==# 'ag'
     let g:ctrlp_user_command = 'ag %s -i --nocolor --nogroup -p ~/.agignore -g ""'
+  elseif s:grep ==# ''
+    if s:linux || s:mac
+      let g:ctrlp_user_command = 'find %s -type f'
+    else
+      let g:ctrlp_user_command = 'dir %s /-n /b /s /a-d'
+    endif
   endif
 
   let g:ctrlp_prompt_mappings = {
@@ -634,11 +642,11 @@ nnoremap gft :tabe <cfile><Cr>
 
 " returns the command for system specific file manager
 function! s:get_filer_command()
-  if s:is_mac
+  if s:mac
     return 'open -a Finder'
-  elseif s:is_linux && has('gui_gnome')
+  elseif s:linux && has('gui_gnome')
     return 'nautilus'
-  elseif s:is_windows
+  elseif s:win
     return 'start explorer'
   else
     return ''
@@ -647,7 +655,7 @@ endfunction
 
 " convert path separator: Windows <-> *nix
 function! s:convert_path(path)
-  if s:is_windows
+  if s:win
     return '"' . substitute(a:path, '/', '\', 'g') . '"'
   else
     return a:path
@@ -782,8 +790,9 @@ EOR
   command! -nargs=0 -range DecodeURI <line1>,<line2>call s:decode_uri()
 endif "}}}
 
-if has('python') "{{{
-python << EOF
+if has('pythonx')
+let &pyxversion = 0
+pyx << EOF
 import sqlparse
 from vim import *
 def format_sql(firstline, lastline):
@@ -797,11 +806,11 @@ def format_sql(firstline, lastline):
 EOF
 
 function! s:format_sql() range
-  python format_sql(firstline=int(vim.eval('a:firstline'))-1, lastline=int(vim.eval('a:lastline'))-1)
+  pyx format_sql(firstline=int(vim.eval('a:firstline'))-1, lastline=int(vim.eval('a:lastline'))-1)
 endfunction
 
 command! -nargs=? -range PrettifySQL <line1>,<line2>call s:format_sql()
-endif "}}}
+endif
 
 if has('multi_byte_ime') || has('xim')
   set iminsert=0 imsearch=0
@@ -991,7 +1000,7 @@ if has('gui_running')
     let &guioptions = substitute(&guioptions, '[mT]', '', 'g')
   endif
 
-  if s:is_mac
+  if s:mac
     set guifont=MyricaM\ monospace:h14
     set linespace=1
     set antialias
@@ -1001,7 +1010,7 @@ if has('gui_running')
     cnoremap <D-v> <C-R>*
     vnoremap <D-c> "+y
     nnoremap <D-a> ggVG
-  elseif s:is_linux
+  elseif s:linux
     set guifont=Rounded\ M+\ 2m\ 12
     vnoremap <silent> <M-c> "+y
     inoremap <silent> <M-v> <Esc>:let &paste=1<Cr>a<C-R>+<Esc>:let &paste=0<Cr>a

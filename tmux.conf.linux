@@ -49,6 +49,8 @@ bind @ setw synchronize-panes
 bind W choose-session
 
 # change window
+# https://github.com/christoomey/vim-tmux-navigator
+is_ssh="ps -o state= -o comm= -t #{pane_tty} | grep 'ssh$'"
 bind -r ^h previous-window
 bind -r ^l next-window
 bind -n M-left previous-window
@@ -73,7 +75,7 @@ bind -t vi-copy v begin-selection
 bind -t vi-copy y copy-selection
 bind -t vi-copy Escape cancel
 
-# Makes Insert to Normal mode quickly in Vim
+# Makes mode changes quickly in Vim
 set -s escape-time 0
 
 set -g terminal-overrides 'screen-256color:Tc:smcup@:rmcup@'
