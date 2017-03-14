@@ -20,6 +20,7 @@ path=(
   $CARGO_PATH/bin(N-/)
   $HOME/Library/Python/2.7/bin(N-/)
   $HOME/.autojump/bin(N-/)
+  $HOME/.cargo/bin(N-/)
   $path
 )
 

@@ -295,6 +295,7 @@ call plug#end()
 " plug: jedi-vim
   let g:jedi#auto_vim_configuration = 0
   let g:jedi#popup_on_dot = 0
+  let g:jedi#show_call_signatures = 2
 
 " plug: kien/rainbow_parentheses
   if s:has_plugin('rainbow_parentheses.vim')
