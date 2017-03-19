@@ -79,7 +79,7 @@ bind p paste-buffer
 bind -t vi-copy v begin-selection
 bind -t vi-copy y copy-selection -x
 bind -t vi-copy a append-selection
-bind -t vi-copy Escape send cancel
+bind -t vi-copy Escape cancel
 
 # Makes Insert to Normal mode quickly in Vim
 set -s escape-time 0

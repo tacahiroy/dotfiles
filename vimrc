@@ -238,7 +238,7 @@ call plug#end()
   let g:ctrlp_use_caching = 0
 
   if s:grep ==# 'rg'
-    let g:ctrlp_user_command = 'rg %s -i --files --no-heading --ignore-file ~/.agignore'
+    let g:ctrlp_user_command = 'rg %s -i --files --no-heading'
   elseif s:grep ==# 'ag'
     let g:ctrlp_user_command = 'ag %s -i --nocolor --nogroup -p ~/.agignore -g ""'
   elseif s:grep ==# ''
@@ -408,10 +408,12 @@ if s:grep ==# 'rg'
   let &grepprg = 'rg --no-heading --ignore-file ~/.agignore'
 elseif s:grep ==# 'ag'
   let &grepprg = 'ag --nocolor --nogroup -p ~/.agignore'
-elseif s:grep ==# 'grep'
-  let &grepprg = 'grep --color=none'
-else
-  let &grepprg = 'findstr /n'
+elseif s:grep ==# ''
+  if s:linux
+    let &grepprg = 'grep --color=none'
+  else
+    let &grepprg = 'findstr /n'
+  endif
 endif
 set helplang=en
 set hidden

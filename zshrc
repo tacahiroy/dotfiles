@@ -9,7 +9,7 @@ _Z_CMD=j
 if type antibody 2>&1 >/dev/null; then
   . <(antibody init)
   antibody bundle < ~/.zsh/antibody/bundles
-  if test -f /proc/version && ! cat /proc/version | grep Microsoft 2>&1 >/dev/null; then
+  if test -f /proc/version && ! (cat /proc/version | grep Microsoft >/dev/null 2>&1); then
     antibody bundle zsh-users/zsh-autosuggestions
     antibody bundle olivierverdier/zsh-git-prompt
   fi
