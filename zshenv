@@ -21,8 +21,11 @@ path=(
   $HOME/Library/Python/2.7/bin(N-/)
   $HOME/.autojump/bin(N-/)
   $HOME/.cargo/bin(N-/)
+  $HOME/lib/jdk1.8.0_121/bin(N-/)
   $path
 )
+
+JAVA_HOME=$HOME/lib/jdk1.8.0_121
 
 fpath=(/usr/local/opt/zsh-completions/share/zsh-completions/(N-/) \
        $HOME/.zsh/functions/*(N-) \

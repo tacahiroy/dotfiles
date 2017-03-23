@@ -77,7 +77,7 @@ fi
 DOWNLOAD_URL="https://github.com/getantibody/antibody/releases/download"
 
 last_version() {
-  curl -s https://raw.githubusercontent.com/getantibody/homebrew-antibody/master/antibody.rb |
+  curl -s https://git.io/antibody |
     grep version |
     cut -f2 -d '"'
 }

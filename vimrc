@@ -131,13 +131,13 @@ call plug#begin($HOME . '/plugins.vim')
 Plug 'lifepillar/vim-mucomplete'
 
 if has('patch-7.4.314')
-  Plug 'honza/vim-snippets' | Plug 'SirVer/ultisnips'
+  " Plug 'honza/vim-snippets' | Plug 'SirVer/ultisnips'
 endif
 Plug 'Raimondi/delimitMate'
-" Plug 'airblade/vim-gitgutter'        ",       { 'on': ['GitGutter'] }
+Plug 'airblade/vim-gitgutter'        ",       { 'on': ['GitGutter'] }
 Plug 'camelcasemotion',              { 'frozen': 1 }
-Plug 'davidhalter/jedi-vim',         { 'for': 'python', 'do': 'pip3 install jedi --user' }
-Plug 'mhinz/vim-signify'
+Plug 'davidhalter/jedi-vim',         { 'for': 'python', 'do': 'pip install jedi --user' }
+" Plug 'mhinz/vim-signify'
 Plug 'fatih/vim-go',                 { 'for': 'go', 'frozen': 1 }
 Plug 'glidenote/memolist.vim',       { 'on': ['MemoList', 'MemoNew', 'MemoGrep'] }
 Plug 'godlygeek/tabular',            { 'on': 'Tabularize' }
@@ -192,7 +192,7 @@ call plug#end()
   let g:mucomplete#exit_ctrlx_keys = '\<c-g>'
   let g:mucomplete#no_mappings = 1
   let g:mucomplete#spel#good_words = 1
-  let g:mucomplete#chains = { 'default' : ['omni', 'ulti', 'c-p', 'incl', 'tags'] }
+  let g:mucomplete#chains = { 'default' : ['file', 'keyn', 'c-n'] }
   let g:mucomplete#chains.sql = []
 
 " plug: grepper
@@ -793,9 +793,9 @@ EOR
   command! -nargs=0 -range DecodeURI <line1>,<line2>call s:decode_uri()
 endif "}}}
 
-if has('pythonx')
+if has('pythonx') "{{{
 let &pyxversion = 0
-pyx << EOF
+pythonx << EOF
 import sqlparse
 from vim import *
 def format_sql(firstline, lastline):
@@ -809,7 +809,7 @@ def format_sql(firstline, lastline):
 EOF
 
 function! s:format_sql() range
-  pyx format_sql(firstline=int(vim.eval('a:firstline'))-1, lastline=int(vim.eval('a:lastline'))-1)
+  pythonx format_sql(firstline=int(vim.eval('a:firstline'))-1, lastline=int(vim.eval('a:lastline'))-1)
 endfunction
 
 command! -nargs=? -range PrettifySQL <line1>,<line2>call s:format_sql()
