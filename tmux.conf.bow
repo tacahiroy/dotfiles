@@ -75,10 +75,14 @@ unbind [
 bind y copy-mode
 unbind p
 bind p paste-buffer
-bind -Tcopy-mode-vi v send -X begin-selection
-bind -Tcopy-mode-vi y send -X copy-selection-and-cancel
-bind -Tcopy-mode-vi a send -X append-selection
-bind -Tcopy-mode-vi Escape send -X cancel
+# bind -T copy-mode-vi v send -X begin-selection
+# bind -T copy-mode-vi y send -X copy-selection-and-cancel
+# bind -T copy-mode-vi a send -X append-selection
+# bind -T copy-mode-vi Escape send -X cancel
+bind -t vi-copy v begin-selection
+bind -t vi-copy y copy-selection
+bind -t vi-copy a append-selection
+bind -t vi-copy Escape cancel
 
 # Makes Insert to Normal mode quickly in Vim
 set -s escape-time 0
