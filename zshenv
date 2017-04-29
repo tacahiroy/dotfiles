@@ -5,12 +5,15 @@ export CARGO_PATH=$HOME/.cargo
 export RUST_SRC_PATH=/usr/local/src/rust-1.7.0/src
 export LC_ALL=$LANG
 
+export PYENV_ROOT="$HOME/.pyenv"
+
 ## path
 typeset -U path
 path=(
   ./bin
   $HOME/.rbenv/bin(N-/)
   $HOME/.rbenv/shims(N-/)
+  $PYENV_ROOT/bin(N-/)
   $HOME/bin(N-/)
   $HOME/perl5/bin(N-/)
   $HOME/.local/bin(N-/)
@@ -74,15 +77,15 @@ ruby_path=(
   $HOME/lib/ruby(N-/)
 )
 
-# Python
-typeset -xT PYTHONPATH python_path
-typeset -U python_path
+# # Python
+# typeset -xT PYTHONPATH python_path
+# typeset -U python_path
 
-python_path=(
-  /Library/Python/3.5/site-packages(N-/)
-  $HOME/.local/lib/python3.5/site-packages(N-/)
-  /usr/local/lib/python3.5/site-packages(N-/)
-)
+# python_path=(
+#   /Library/Python/3.5/site-packages(N-/)
+#   $HOME/.local/lib/python3.5/site-packages(N-/)
+#   /usr/local/lib/python3.5/site-packages(N-/)
+# )
 
 ## Perl
 typeset -xT PERL5LIB perl5_lib
