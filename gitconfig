@@ -38,12 +38,12 @@
 	up   = pull --rebase
 
 [pager]
-	log  = (perl /usr/local/share/git-core/contrib/diff-highlight/diff-highlight 2>/dev/null || cat) | ${PAGER:-less}
-	show = (perl /usr/local/share/git-core/contrib/diff-highlight/diff-highlight 2>/dev/null || cat) | ${PAGER:-less}
-	diff = (perl /usr/local/share/git-core/contrib/diff-highlight/diff-highlight 2>/dev/null || cat) | ${PAGER:-less}
+	log  = (diff-highlight 2>/dev/null || cat) | ${PAGER:-less}
+	show = (diff-highlight 2>/dev/null || cat) | ${PAGER:-less}
+	diff = (diff-highlight 2>/dev/null || cat) | ${PAGER:-less}
 
 [interactive]
-	diffFilter = (perl /usr/local/share/git-core/contrib/diff-highlight/diff-highlight 2>/dev/null || cat)
+	diffFilter = (diff-highlight 2>/dev/null || cat)
 [diff]
 	compactionHeuristic = true
 	mnemonicprefix = true
@@ -57,10 +57,5 @@
 	statusHints = false
 [help]
 	autocorrect = 1
-; [branch]
-; 	autosetuprebase = always
-[filter "lfs"]
-	required = true
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
-	process = git-lfs filter-process
+[branch]
+	autosetuprebase = always
