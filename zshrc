@@ -225,15 +225,18 @@ function cdup() {
 zle -N cdup
 bindkey '^\^' cdup
 
+WHICH=which
+
 if type peco 2>&1 >/dev/null; then
-  FILTERCMD=$(which peco)
+  FILTERCMD=$($WHICH peco)
 elif type fzf 2>&1 >/dev/null; then
-  FILTERCMD=$(which fzf)
+  FILTERCMD=$($WHICH fzf)
 elif type percol 2>&1 >/dev/null; then
-  FILTERCMD=$(which percol)
+  FILTERCMD=$($WHICH percol)
 fi
 
 if [ -x ${FILTERCMD} ]; then
+  F=$(readlink -f "${FILTERCMD}")
   function filter-select-history() {
     local tac
     if which tac > /dev/null; then
@@ -243,7 +246,7 @@ if [ -x ${FILTERCMD} ]; then
     fi
     BUFFER=$(fc -nl 1 | \
       eval $tac | \
-      ${FILTERCMD} --query "$LBUFFER")
+      ${F} --query "$LBUFFER")
     CURSOR=$#BUFFER
     zle clear-screen
   }
@@ -252,7 +255,7 @@ if [ -x ${FILTERCMD} ]; then
     local ctrlp_mrufile=$HOME/.cache/ctrlp/mru/cache.txt
     local _file
     if [ -f "${ctrlp_mrufile}" ]; then
-      _file=$(cat "${ctrlp_mrufile}" | ${FILTERCMD})
+      _file=$(cat "${ctrlp_mrufile}" | ${F})
       if [ -n "${_file}" -a -f "${_file}" ]; then
         BUFFER="${BUFFER} ${_file}"
         CURSOR=$#BUFFER
@@ -269,7 +272,7 @@ if [ -x ${FILTERCMD} ]; then
       return
     fi
 
-    local _host=$(echo "${_khost}\n${_chost}" | ${FILTERCMD})
+    local _host=$(echo "${_khost}\n${_chost}" | ${F})
 
     if [ -z "${_host}" ]; then
       return
@@ -282,6 +285,22 @@ if [ -x ${FILTERCMD} ]; then
     fi
   }
 
+  function filter-git-branch() {
+    local remote=$1
+    if [ "${remote}" = "r" ]; then
+      local git_opts='-r'
+    fi
+
+    if ! git status >/dev/null 2>&1; then
+      echo Not a git repository
+      return
+    fi
+    local _branch=$(git branch --no-color ${git_opts} | grep -v '\*' | ${F} --prompt "CHECKOUT>")
+    BUFFER="${BUFFER} ${_branch//[[:space:]]}"
+    CURSOR=$#BUFFER
+    # zle clear-screen
+  }
+
   zle -N filter-ssh
   bindkey '^q' filter-ssh
 
@@ -290,6 +309,9 @@ if [ -x ${FILTERCMD} ]; then
 
   zle -N filter-select-ctrlpvim-mru
   bindkey '^t' filter-select-ctrlpvim-mru
+
+  zle -N filter-git-branch
+  bindkey '^o' filter-git-branch
 fi
 # }}}
 
