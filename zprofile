@@ -8,6 +8,10 @@ if [ $SHLVL -gt 1 -a -d ${HOME}/.pyenv ]; then
     which pyenv > /dev/null && eval "$(pyenv init -)"
 fi
 
+if [ $SHLVL -gt 1 -a -d ${HOME}/.pyenv ]; then
+    eval "$(pyenv init -)"
+fi
+
 if [ -z "$SSH_AUTH_SOCK" ]; then
     ssh-agent > ~/.ssh/environment
     eval $(< ~/.ssh/environment)

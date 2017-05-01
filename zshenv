@@ -19,16 +19,16 @@ path=(
   $HOME/.local/bin(N-/)
   /usr/local/bin(N-/)
   /usr/local/sbin(N-/)
+  $PYENV_ROOT/bin(N-/)
   $GOPATH/bin(N-/)
   $CARGO_PATH/bin(N-/)
   $HOME/Library/Python/2.7/bin(N-/)
-  $HOME/.autojump/bin(N-/)
   $HOME/.cargo/bin(N-/)
   $HOME/lib/jdk1.8.0_121/bin(N-/)
   $path
 )
 
-JAVA_HOME=$HOME/lib/jdk1.8.0_121
+# JAVA_HOME=$HOME/lib/jdk1.8.0_121
 
 fpath=(/usr/local/opt/zsh-completions/share/zsh-completions/(N-/) \
        $HOME/.zsh/functions/*(N-) \
