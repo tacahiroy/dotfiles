@@ -36,6 +36,7 @@
 	st   = status
 	sup  = !git stash && git up
 	up   = pull --rebase
+	merge-log = !sh -c 'git log --stat $1^..$1' -
 
 [pager]
 	log  = (diff-highlight 2>/dev/null || cat) | ${PAGER:-less}
