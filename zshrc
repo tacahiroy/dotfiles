@@ -7,6 +7,7 @@ _Z_CMD=j
 # GIT_PROMPT_EXECUTABLE="haskell"
 
 if type antibody 2>&1 >/dev/null; then
+  unsetopt BG_NICE
   . <(antibody init)
   antibody bundle < ~/.zsh/antibody/bundles
   if test -f /proc/version && ! (cat /proc/version | grep Microsoft >/dev/null 2>&1); then
