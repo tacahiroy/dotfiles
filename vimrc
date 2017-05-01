@@ -130,9 +130,6 @@ call plug#begin($HOME . '/plugins.vim')
 
 Plug 'lifepillar/vim-mucomplete'
 
-if has('patch-7.4.314')
-  " Plug 'honza/vim-snippets' | Plug 'SirVer/ultisnips'
-endif
 Plug 'Raimondi/delimitMate'
 Plug 'airblade/vim-gitgutter'        ",       { 'on': ['GitGutter'] }
 Plug 'camelcasemotion',              { 'frozen': 1 }
@@ -150,7 +147,6 @@ Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 Plug 'vim-ruby/vim-ruby',             { 'for': 'ruby', 'frozen': 1 }
 " Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java', 'frozen': 1 }
-Plug 'pangloss/vim-javascript',       { 'for': 'javascript', 'frozen': 1 }
 Plug 'thinca/vim-quickrun',           { 'for': ['ruby', 'python', 'go', 'sh'], 'frozen': 1 }
 
 Plug 'ctrlpvim/ctrlp.vim'
@@ -709,7 +705,7 @@ xnoremap <Leader>ta :Tabularize<Space>/
 
 nnoremap <Leader>te :<C-u>tabe<Space>
 " clears search highlight
-nnoremap <silent> <C-l> <Esc>:<C-u>nohlsearch<Cr><C-l>
+nnoremap <silent> <C-l> :<C-u>nohlsearch<Cr><C-l>
 
 " no mouse basically
 nnoremap <MiddleMouse> <Nop>
