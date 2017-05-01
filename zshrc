@@ -226,18 +226,20 @@ function cdup() {
 zle -N cdup
 bindkey '^\^' cdup
 
-WHICH=which
+whicha() {
+  echo $(readlink -f $(which $1))
+}
 
 if type peco 2>&1 >/dev/null; then
-  FILTERCMD=$($WHICH peco)
+  F=$(whicha peco)
 elif type fzf 2>&1 >/dev/null; then
-  FILTERCMD=$($WHICH fzf)
+  F=$(whicha fzf)
+  export FZF_DEFAULT_OPTS="--reverse --border"
 elif type percol 2>&1 >/dev/null; then
-  FILTERCMD=$($WHICH percol)
+  F=$(whicha percol)
 fi
 
-if [ -x ${FILTERCMD} ]; then
-  F=$(readlink -f "${FILTERCMD}")
+if [ -x ${F} ]; then
   function filter-select-history() {
     local tac
     if which tac > /dev/null; then
@@ -296,7 +298,7 @@ if [ -x ${FILTERCMD} ]; then
       echo Not a git repository
       return
     fi
-    local _branch=$(git branch --no-color ${git_opts} | grep -v '\*' | ${F} --prompt "CHECKOUT>")
+    local _branch=$(git branch --no-color ${git_opts} | grep -v '\*' | ${F})
     BUFFER="${BUFFER} ${_branch//[[:space:]]}"
     CURSOR=$#BUFFER
     # zle clear-screen

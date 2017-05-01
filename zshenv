@@ -25,6 +25,7 @@ path=(
   $HOME/Library/Python/2.7/bin(N-/)
   $HOME/.cargo/bin(N-/)
   $HOME/lib/jdk1.8.0_121/bin(N-/)
+  $HOME/.fzf/bin(N-/)
   $path
 )
 
