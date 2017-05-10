@@ -5,16 +5,17 @@ if [ $SHLVL -gt 1 -a -d ${HOME}/.rbenv  ] ; then
 fi
 
 if [ $SHLVL -gt 1 -a -d ${HOME}/.pyenv ]; then
-    which pyenv > /dev/null && eval "$(pyenv init -)"
+    eval "$(pyenv init -)"
 fi
 
 if [ $SHLVL -gt 1 -a -d ${HOME}/.pyenv ]; then
     eval "$(pyenv init -)"
 fi
 
+agent_env=$HOME/.ssh/agent.env
 if [ -z "$SSH_AUTH_SOCK" ]; then
-    ssh-agent > ~/.ssh/environment
-    eval $(< ~/.ssh/environment)
+    ssh-agent > "${agent_env}"
+    . "${agent_env}"
 fi
 
 if [ -x "$(which VBoxClient >/dev/null 2>&1)" ]; then

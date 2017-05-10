@@ -14,18 +14,17 @@ esac
 umask 0022
 
 # ssh-agent
-SSH_ENV=$HOME/.ssh/environment
+SSH_ENV=$HOME/.ssh/agent.env
 start_agent() {
-  ssh-agent > $SSH_ENV
-  chmod 600 $SSH_ENV
-  . $SSH_ENV > /dev/null
+  umask 077; ssh-agent > "$SSH_ENV"
+  . "$SSH_ENV" > /dev/null
   # ssh-add
 }
 
-if [ -f $SSH_ENV ]; then
-  . $SSH_ENV > /dev/null
+if [ -f "$SSH_ENV" ]; then
+  . "$SSH_ENV" > /dev/null
   if ps ${SSH_AGENT_PID:-999999} | grep ssh-agent$ > /dev/null &&
-     test -S $SSH_AUTH_SOCK; then
+     test -S "${SSH_AUTH_SOCK}"; then
     # agent already running
     :
   else
