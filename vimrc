@@ -132,14 +132,14 @@ Plug 'lifepillar/vim-mucomplete'
 
 Plug 'Raimondi/delimitMate'
 Plug 'airblade/vim-gitgutter'        ",       { 'on': ['GitGutter'] }
-Plug 'camelcasemotion',              { 'frozen': 1 }
+Plug 'vim-scripts/camelcasemotion',  { 'frozen': 1 }
 Plug 'davidhalter/jedi-vim',         { 'for': 'python', 'do': 'pip install jedi --user' }
 " Plug 'mhinz/vim-signify'
 Plug 'fatih/vim-go',                 { 'for': 'go', 'frozen': 1 }
 Plug 'glidenote/memolist.vim',       { 'on': ['MemoList', 'MemoNew', 'MemoGrep'] }
 Plug 'godlygeek/tabular',            { 'on': 'Tabularize' }
 Plug 'kien/rainbow_parentheses.vim', { 'frozen': 1 }
-Plug 'matchit.zip',                  { 'frozen': 1 }
+Plug 'vim-scripts/matchit.zip',      { 'frozen': 1 }
 Plug 'tpope/vim-commentary',         { 'frozen': 1 }
 Plug 'tpope/vim-dispatch',           { 'on': 'Dispatch', 'frozen': 1 }
 Plug 'tpope/vim-endwise',            { 'for': ['ruby', 'sh', 'zsh', 'vim', 'snippets', 'elixir'] }
@@ -154,6 +154,7 @@ Plug 'tacahiroy/ctrlp-funky'
 Plug 'tacahiroy/vim-colors-isotake', { 'frozen': 1 }
 Plug 'w0rp/ale'
 Plug 'mhinz/vim-grepper'
+" Plug 'itchyny/vim-cursorword'
 
 if filereadable(expand('~/.vimrc.plugins'))
   source ~/.vimrc.plugins
@@ -185,7 +186,8 @@ call plug#end()
   set shortmess& shortmess+=c
   set completeopt=menu,menuone,noinsert,noselect
   let g:mucomplete#enable_auto_at_startup = 1
-  let g:mucomplete#exit_ctrlx_keys = '\<c-g>'
+  let g:mucomplete#exit_ctrlx_keys = '\<C-g>'
+  let g:mucomplete#cycle_with_trigger = 0
   let g:mucomplete#no_mappings = 1
   let g:mucomplete#spel#good_words = 1
   let g:mucomplete#chains = { 'default' : ['file', 'keyn', 'c-n'] }
@@ -351,7 +353,7 @@ call plug#end()
 
 " plug: delimiteMate
   let delimitMate_expand_space = 1
-  " let delimitMate_expand_cr = 1
+  let delimitMate_expand_cr = 1
   let delimitMate_matchpairs = "(:),[:],{:}"
 
   augroup Tacahiroy
@@ -517,9 +519,11 @@ if s:has_plugin('fugitive')
   let &statusline .= '%{fugitive#statusline()}'
   let &statusline .= '%*'
 endif
-if s:has_plugin('syntastic')
+if s:has_plugin('ale')
+  let g:ale_statusline_format = ['⨉ %d', '⚠ %d', '⬥ ok']
+
   let &statusline .= '%#WarningMsg#'
-  let &statusline .= '%{SyntasticStatuslineFlag()}'
+  let &statusline .= '%{ALEGetStatusLine()}'
   let &statusline .= '%*'
 endif
 
@@ -676,10 +680,10 @@ endfunction
 command! -nargs=? FileManager call s:open_with_file_manager(<f-args>)
 
 " save / quit
-nnoremap [Space]w :<C-u>update<Cr>
-nnoremap [Space]q :<C-u>quit<Cr>
-nnoremap [Space]W :<C-u>update!<Cr>
-nnoremap [Space]Q :<C-u>quit!<Cr>
+nnoremap [Space]w <Esc>:<C-u>update<Cr>
+nnoremap [Space]q <Esc>:<C-u>quit<Cr>
+nnoremap [Space]W <Esc>:<C-u>update!<Cr>
+nnoremap [Space]Q <Esc>:<C-u>quit!<Cr>
 
 " copy to clipboard
 nnoremap <silent> [Space]a :<C-u>call <SID>xclip()<Cr>
@@ -723,6 +727,9 @@ function! s:wisecr()
   return pumvisible() ? "\<C-y>\<Cr>" : "\<C-g>u\<Cr>"
 endfunction
 inoremap <Cr> <C-R>=<SID>wisecr()<Cr>
+" inoremap <expr> <CR> delimitMate#WithinEmptyPair() ?
+"           \ "<Plug>delimitMateCR" :
+"           \ <SID>wisecr()
 
 " Copy absolute path to current file to clipboard
 command! -nargs=0 CopyCurrentFilePath2CB let @* = fnamemodify(@%, ':p')
