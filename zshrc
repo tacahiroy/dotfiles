@@ -23,7 +23,6 @@ fi
 bindkey -v
 
 # zsh-autosuggestions
-bindkey '^G' autosuggest-execute
 bindkey '^F' autosuggest-accept
 export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=213'
 
@@ -112,7 +111,7 @@ bindkey "^p" history-beginning-search-backward-end
 bindkey "^n" history-beginning-search-forward-end
 bindkey "\\ep" history-beginning-search-backward-end
 bindkey "\\en" history-beginning-search-forward-end
-bindkey "^r" history-incremental-search-backward
+# bindkey "^r" history-incremental-search-backward
 
 # available multibyte characters
 setopt print_eight_bit
@@ -123,20 +122,27 @@ HISTFILE=~/.zhistory
 HISTSIZE=100000
 SAVEHIST=100000
 
-setopt hist_ignore_space # not save history, starts from space
+# not save history, starts from space
+setopt hist_ignore_space
 setopt hist_ignore_all_dups
 setopt hist_ignore_dups
 setopt hist_find_no_dups
-setopt hist_save_nodups # remove duplicated history when save history
-setopt hist_no_store # `history` command won't be saved to $HISTFILE
-setopt hist_reduce_blanks # trim space when save history
-setopt interactive_comments # comment after '#'
-setopt share_history # share command history data
+# remove duplicated history when save history
+setopt hist_save_nodups
+# `history` command won't be saved to $HISTFILE
+setopt hist_no_store
+# trim space when save history
+setopt hist_reduce_blanks
+# comment after '#'
+setopt interactive_comments
+# share command history data
+setopt share_history
 setopt inc_append_history
 
 ## Alias configuration# {{{
 # expand aliases before completing
-setopt complete_aliases # aliased ls needs if file/dir completions work
+# aliased ls needs if file/dir completions work
+setopt complete_aliases
 # _expand_alias:
 zstyle ':completion:*:expand-alias:*' global true
 bindkey '^y' _expand_alias
@@ -177,6 +183,7 @@ alias df='df -h'
 alias su='su -l'
 alias v='vim'
 alias vi='vim'
+alias gg='ghq'
 alias git='LC_ALL=en_US.UTF-8 git'
 alias gi='git'
 alias g='git'
@@ -188,7 +195,6 @@ alias re='rbenv'
 alias sortn='sort -n'
 
 # global
-alias -g K9='|xargs kill -9'
 alias -g L='|$PAGER -R'
 
 setopt complete_aliases
@@ -226,18 +232,7 @@ function cdup() {
 zle -N cdup
 bindkey '^\^' cdup
 
-whicha() {
-  echo $(readlink -f $(which $1))
-}
-
-if type peco 2>&1 >/dev/null; then
-  F=$(whicha peco)
-elif type fzf 2>&1 >/dev/null; then
-  F=$(whicha fzf)
-  export FZF_DEFAULT_OPTS="--reverse --border"
-elif type percol 2>&1 >/dev/null; then
-  F=$(whicha percol)
-fi
+F=$HOME/bin/filt
 
 if [ -x ${F} ]; then
   function filter-select-history() {
@@ -260,7 +255,11 @@ if [ -x ${F} ]; then
     if [ -f "${ctrlp_mrufile}" ]; then
       _file=$(cat "${ctrlp_mrufile}" | ${F})
       if [ -n "${_file}" -a -f "${_file}" ]; then
-        BUFFER="${BUFFER} ${_file}"
+        if [ $#BUFFER -eq 0 ]; then
+          BUFFER="vim ${_file}"
+        else
+          BUFFER="${BUFFER} ${_file}"
+        fi
         CURSOR=$#BUFFER
         zle clear-screen
       fi
@@ -288,20 +287,50 @@ if [ -x ${F} ]; then
     fi
   }
 
+  function filter-git-repo() {
+    if ! which ghq >/dev/null 2>&1; then
+      echo ghq is not detected!
+      return 9
+    fi
+
+    local _repo=$(ghq list -p | ${F})
+
+    BUFFER="cd ${_repo}"
+    CURSOR=$#BUFFER
+    # zle clear-screen
+  }
+
   function filter-git-branch() {
-    local remote=$1
-    if [ "${remote}" = "r" ]; then
+    if [ "${FILTER_BRANCH_REMOTE}" = "yes" ]; then
       local git_opts='-r'
     fi
 
-    if ! git status >/dev/null 2>&1; then
+    if ! git rev-parse --git-dir >/dev/null 2>&1; then
       echo Not a git repository
       return
     fi
+
     local _branch=$(git branch --no-color ${git_opts} | grep -v '\*' | ${F})
-    BUFFER="${BUFFER} ${_branch//[[:space:]]}"
+    _branch=${_branch//[[:space:]]}
+    if [ $#BUFFER -eq 0 ]; then
+      BUFFER="git checkout ${_branch}"
+    else
+      BUFFER="${BUFFER} ${_branch}"
+    fi
     CURSOR=$#BUFFER
     # zle clear-screen
+  }
+
+  function filter-cd-hist() {
+    local _dir=$(awk -F '[|]' -v home=$HOME '{ a=gensub(home, "~", "g", $1); print a }' ~/.z | sort | ${F})
+    if [ -n "${_dir// }" ]; then
+      if [ $#BUFFER -eq 0 ]; then
+        BUFFER="cd ${_dir}"
+      else
+        BUFFER="${BUFFER} ${_dir}"
+      fi
+    fi
+    CURSOR=$#BUFFER
   }
 
   zle -N filter-ssh
@@ -313,8 +342,15 @@ if [ -x ${F} ]; then
   zle -N filter-select-ctrlpvim-mru
   bindkey '^t' filter-select-ctrlpvim-mru
 
+  zle -N filter-git-repo
+
+  bindkey '^gr' filterhgit-repo
+
   zle -N filter-git-branch
-  bindkey '^o' filter-git-branch
+  bindkey '^gg' filter-git-branch
+
+  zle -N filter-cd-hist
+  bindkey '^gc' filter-cd-hist
 fi
 # }}}
 
@@ -327,6 +363,9 @@ autoload zmv
 autoload -Uz compinit
 compinit
 
+##
+# PROMPT
+#
 set_prompt() {
   echo -n "%F{213}%n"
   echo -n "%{${reset_color}%}@"
@@ -373,8 +412,5 @@ if [ -x brew ]; then
     [ -s ${z} ] && . ${z}
   done
 fi
-
-[ -s /home/tacahiroy/.gvm/scripts/gvm  ] && source "/home/tacahiroy/.gvm/scripts/gvm"
-
 # __END__
 # vim: et ts=2 sts=2 sw=2
