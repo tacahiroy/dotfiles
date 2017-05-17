@@ -1,6 +1,6 @@
 #!/bin/bash
 
-UN=$(uname | tr '[A-Z]' '[a-z]')
+UN=$(uname | tr '[:upper:]' '[:lower:]')
 
 if [ "${UN}" = 'darwin' ]; then
 	READLINK=realpath
@@ -8,7 +8,8 @@ else
 	READLINK='readlink -f'
 fi
 
-mkdir -p $HOME/bin
+mkdir -p "$HOME/bin"
+mkdir -p "$HOME/.tmux"
 
 for y in *; do
 	case $y in
@@ -42,13 +43,13 @@ done
 echo '** Configuring tmux'
 
 if [ "${UN}" = 'linux' ]; then
-    if cat /proc/version | grep Microsoft 2>&1 >/dev/null; then
+    if grep Microsoft >/dev/null 2>&1 /proc/version; then
         TMUX_CONF=${TMUX_CONF}.${UN}
     fi
 fi
 TMUX_CONF=tmux.conf
 
-if tmux -V | grep 'tmux 1' 2>&1 >/dev/null; then
+if tmux -V | grep 'tmux 1' >/dev/null 2>&1; then
 	TMUX_CONF=${TMUX_CONF}.1
 fi
 
@@ -62,12 +63,29 @@ echo Copying clipper
 cp bin/clipper $HOME/bin
 
 ##
+# filt
+#
+whicha() {
+  readlink -f $(which $1)
+}
+
+filt="$HOME/bin/filt"
+if type peco >/dev/null 2>&1; then
+  ln -sf "$(whicha peco)" "${filt}"
+elif type fzf >/dev/null 2>&1; then
+  ln -sf "$(whicha fzf)" "${filt}"
+  export FZF_DEFAULT_OPTS="--reverse --border"
+elif type percol >/dev/null 2>&1; then
+  ln -sf "$(whicha percol)" "${filt}"
+fi
+
+##
 # vim-plug
 #
 echo '** Installing vim-plug'
 PLUG_VIM=$HOME/.vim/autoload/plug.vim
 if [ ! -r "${PLUG_VIM}" ]; then
-    curl -fLo ${PLUG_VIM} --create-dirs \
+    curl -fLo "${PLUG_VIM}" --create-dirs \
         https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 fi
 
@@ -98,12 +116,12 @@ extract() {
   tar -xf /tmp/antibody.tar.gz -C "$TMPDIR"
 }
 
-if [ ! -x $HOME/bin/antibody ]; then
+if [ ! -x "$HOME/bin/antibody" ]; then
     echo '** Installing antibody'
     test -z "$TMPDIR" && TMPDIR="$(mktemp -d)"
     download
     extract || true
-    mv -f "$TMPDIR"/antibody $HOME/bin
+    mv -f "$TMPDIR/antibody" "$HOME/bin"
     which antibody
     echo Done
 fi
