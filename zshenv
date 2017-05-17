@@ -5,6 +5,7 @@ export CARGO_PATH=$HOME/.cargo
 export RUST_SRC_PATH=/usr/local/src/rust-1.7.0/src
 export LC_ALL=$LANG
 
+export SHELL=/usr/bin/zsh
 export PYENV_ROOT="$HOME/.pyenv"
 
 ## path
@@ -16,7 +17,6 @@ path=(
   $PYENV_ROOT/bin(N-/)
   $HOME/bin(N-/)
   $HOME/perl5/bin(N-/)
-  $HOME/.local/bin(N-/)
   /usr/local/bin(N-/)
   /usr/local/sbin(N-/)
   $PYENV_ROOT/bin(N-/)
