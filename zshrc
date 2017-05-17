@@ -244,7 +244,7 @@ if [ -x ${F} ]; then
     fi
     BUFFER=$(fc -nl 1 | \
       eval $tac | \
-      ${F} --query "$LBUFFER")
+      ${F} --prompt='HIST> ' --query="$LBUFFER")
     CURSOR=$#BUFFER
     zle clear-screen
   }
@@ -253,7 +253,7 @@ if [ -x ${F} ]; then
     local ctrlp_mrufile=$HOME/.cache/ctrlp/mru/cache.txt
     local _file
     if [ -f "${ctrlp_mrufile}" ]; then
-      _file=$(cat "${ctrlp_mrufile}" | ${F})
+      _file=$(cat "${ctrlp_mrufile}" | ${F} --prompt='MRU> ')
       if [ -n "${_file}" -a -f "${_file}" ]; then
         if [ $#BUFFER -eq 0 ]; then
           BUFFER="vim ${_file}"
@@ -293,7 +293,7 @@ if [ -x ${F} ]; then
       return 9
     fi
 
-    local _repo=$(ghq list -p | ${F})
+    local _repo=$(ghq list -p | ${F} --prompt='REPO> ')
 
     BUFFER="cd ${_repo}"
     CURSOR=$#BUFFER
@@ -310,7 +310,8 @@ if [ -x ${F} ]; then
       return
     fi
 
-    local _branch=$(git branch --no-color ${git_opts} | grep -v '\*' | ${F})
+    local _branches=$(git branch --all | grep -v '\*' | sed 's/^\s*remotes\/origin\///; s/^\s*//' | sort -u)
+    local _branch=$(echo ${_branches} | ${F} --prompt='BRANCH> ')
     _branch=${_branch//[[:space:]]}
     if [ $#BUFFER -eq 0 ]; then
       BUFFER="git checkout ${_branch}"
@@ -322,7 +323,7 @@ if [ -x ${F} ]; then
   }
 
   function filter-cd-hist() {
-    local _dir=$(awk -F '[|]' -v home=$HOME '{ a=gensub(home, "~", "g", $1); print a }' ~/.z | sort | ${F})
+    local _dir=$(awk -F '[|]' -v home=$HOME '{ a=gensub(home, "~", "g", $1); print a }' ~/.z | sort | ${F} --prompt='JUMP> ')
     if [ -n "${_dir// }" ]; then
       if [ $#BUFFER -eq 0 ]; then
         BUFFER="cd ${_dir}"
@@ -344,10 +345,10 @@ if [ -x ${F} ]; then
 
   zle -N filter-git-repo
 
-  bindkey '^gr' filterhgit-repo
+  bindkey '^gr' filter-git-repo
 
   zle -N filter-git-branch
-  bindkey '^gg' filter-git-branch
+  bindkey '^gb' filter-git-branch
 
   zle -N filter-cd-hist
   bindkey '^gc' filter-cd-hist
