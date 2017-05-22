@@ -295,16 +295,14 @@ if [ -x ${F} ]; then
 
     local _repo=$(ghq list -p | ${F} --prompt='REPO> ')
 
-    BUFFER="cd ${_repo}"
-    CURSOR=$#BUFFER
+    if [ -n "${_repo}" ]; then
+      BUFFER="cd ${_repo}"
+      CURSOR=$#BUFFER
+    fi
     # zle clear-screen
   }
 
   function filter-git-branch() {
-    if [ "${FILTER_BRANCH_REMOTE}" = "yes" ]; then
-      local git_opts='-r'
-    fi
-
     if ! git rev-parse --git-dir >/dev/null 2>&1; then
       echo Not a git repository
       return
@@ -313,12 +311,14 @@ if [ -x ${F} ]; then
     local _branches=$(git branch --all | grep -v '\*' | sed 's/^\s*remotes\/origin\///; s/^\s*//' | sort -u)
     local _branch=$(echo ${_branches} | ${F} --prompt='BRANCH> ')
     _branch=${_branch//[[:space:]]}
-    if [ $#BUFFER -eq 0 ]; then
-      BUFFER="git checkout ${_branch}"
-    else
-      BUFFER="${BUFFER} ${_branch}"
+    if [ -n "${_branch}" ]; then
+      if [ $#BUFFER -eq 0 ]; then
+        BUFFER="git checkout ${_branch}"
+      else
+        BUFFER="${BUFFER} ${_branch}"
+      fi
+      CURSOR=$#BUFFER
     fi
-    CURSOR=$#BUFFER
     # zle clear-screen
   }
 
