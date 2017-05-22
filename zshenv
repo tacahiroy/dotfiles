@@ -15,6 +15,7 @@ path=(
   $HOME/.rbenv/bin(N-/)
   $HOME/.rbenv/shims(N-/)
   $PYENV_ROOT/bin(N-/)
+  $HOME/.pyenv/shims(N-/)
   $HOME/bin(N-/)
   $HOME/perl5/bin(N-/)
   /usr/local/bin(N-/)

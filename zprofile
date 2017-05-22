@@ -5,11 +5,7 @@ if [ $SHLVL -gt 1 -a -d ${HOME}/.rbenv  ] ; then
 fi
 
 if [ $SHLVL -gt 1 -a -d ${HOME}/.pyenv ]; then
-    eval "$(pyenv init -)"
-fi
-
-if [ $SHLVL -gt 1 -a -d ${HOME}/.pyenv ]; then
-    eval "$(pyenv init -)"
+    eval "$(pyenv init - zsh)"
 fi
 
 agent_env=$HOME/.ssh/agent.env
