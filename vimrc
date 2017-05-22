@@ -155,6 +155,8 @@ Plug 'tacahiroy/vim-colors-isotake', { 'frozen': 1 }
 Plug 'w0rp/ale'
 Plug 'mhinz/vim-grepper'
 " Plug 'itchyny/vim-cursorword'
+Plug 'lambdalisue/vim-pyenv'
+let g:pyenv#auto_activate = 0
 
 if filereadable(expand('~/.vimrc.plugins'))
   source ~/.vimrc.plugins
@@ -520,9 +522,10 @@ if s:has_plugin('fugitive')
   let &statusline .= '%*'
 endif
 if s:has_plugin('ale')
-  let g:ale_statusline_format = ['⨉ %d', '⚠ %d', '⬥ ok']
+  let g:ale_statusline_format = ['x %d', 'w %d', 'ok']
 
-  let &statusline .= '%#WarningMsg#'
+  let &statusline .= '|'
+  let &statusline .= '%#SpellRare#'
   let &statusline .= '%{ALEGetStatusLine()}'
   let &statusline .= '%*'
 endif
