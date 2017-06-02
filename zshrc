@@ -159,7 +159,6 @@ case "${OSTYPE}" in
     alias netlisten='lsof -nP -iTCP -sTCP:LISTEN'
     alias netestab='lsof -nP -iTCP -sTCP:ESTABLISHED'
     alias -g C='|pbcopy'
-    alias netestablished=netestab
 
     if $(which gdu 2>&1 > /dev/null); then
       alias du="$(which gdu)"
@@ -308,8 +307,10 @@ if [ -x ${F} ]; then
       return
     fi
 
-    local _branches=$(git branch --all | grep -v '\*' | sed 's/^\s*remotes\/origin\///; s/^\s*//' | sort -u)
-    local _branch=$(echo ${_branches} | ${F} --prompt='BRANCH> ')
+    local _branches, _branch
+    _branches="$(git branch --all | grep -v '\*' | sed 's/^\s*remotes\/origin\///; s/^\s*//' | sort -u)"
+    _branch="$(echo ${_branches} | ${F} --prompt='BRANCH> ')"
+
     _branch=${_branch//[[:space:]]}
     if [ -n "${_branch}" ]; then
       if [ $#BUFFER -eq 0 ]; then
@@ -405,7 +406,7 @@ case ${UID} in
   ;;
 esac
 
-if [ -x brew ]; then
+if [ -x "$(which brew)" ]; then
   BREW_PREFIX=$(brew --prefix)
 
   for z in ${BREW_PREFIX}/opt/awscli/share/zsh/site-functions/_aws \
