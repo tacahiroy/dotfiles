@@ -188,3 +188,5 @@ cdup() {
 }
 
 PS1=$(set_prompt)
+
+test -n "$TMUX" && tmux -2 a || tmux -2
