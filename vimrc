@@ -131,47 +131,39 @@ call plug#begin($HOME . '/plugins.vim')
 Plug 'lifepillar/vim-mucomplete'
 
 Plug 'Raimondi/delimitMate'
-Plug 'airblade/vim-gitgutter'        ",       { 'on': ['GitGutter'] }
-Plug 'vim-scripts/camelcasemotion',  { 'frozen': 1 }
+" Plug 'airblade/vim-gitgutter'        ",       { 'on': ['GitGutter'] }
+Plug 'bkad/CamelCaseMotion',         { 'frozen': 1 }
 Plug 'davidhalter/jedi-vim',         { 'for': 'python', 'do': 'pip install jedi --user' }
 " Plug 'mhinz/vim-signify'
 Plug 'fatih/vim-go',                 { 'for': 'go', 'frozen': 1 }
 Plug 'glidenote/memolist.vim',       { 'on': ['MemoList', 'MemoNew', 'MemoGrep'] }
 Plug 'godlygeek/tabular',            { 'on': 'Tabularize' }
-Plug 'kien/rainbow_parentheses.vim', { 'frozen': 1 }
+Plug 'wellle/targets.vim'
+Plug 'junegunn/rainbow_parentheses.vim'
 Plug 'vim-scripts/matchit.zip',      { 'frozen': 1 }
 Plug 'tpope/vim-commentary',         { 'frozen': 1 }
-Plug 'tpope/vim-dispatch',           { 'on': 'Dispatch', 'frozen': 1 }
-Plug 'tpope/vim-endwise',            { 'for': ['ruby', 'sh', 'zsh', 'vim', 'snippets', 'elixir'] }
+" Plug 'tpope/vim-dispatch',           { 'on': 'Dispatch', 'frozen': 1 }
+Plug 'tpope/vim-endwise',            { 'for': ['ruby', 'sh', 'zsh', 'vim', 'elixir'] }
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
-Plug 'vim-ruby/vim-ruby',             { 'for': 'ruby', 'frozen': 1 }
+" Plug 'vim-ruby/vim-ruby',             { 'for': 'ruby', 'frozen': 1 }
 " Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java', 'frozen': 1 }
-Plug 'thinca/vim-quickrun',           { 'for': ['ruby', 'python', 'go', 'sh'], 'frozen': 1 }
+" Plug 'thinca/vim-quickrun',           { 'for': ['ruby', 'python', 'go', 'sh'], 'frozen': 1 }
 
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'tacahiroy/ctrlp-funky'
 Plug 'tacahiroy/vim-colors-isotake', { 'frozen': 1 }
 Plug 'w0rp/ale'
 Plug 'mhinz/vim-grepper'
-" Plug 'itchyny/vim-cursorword'
 Plug 'lambdalisue/vim-pyenv'
-let g:pyenv#auto_activate = 0
 
 if filereadable(expand('~/.vimrc.plugins'))
   source ~/.vimrc.plugins
 endif
 
-let g:ctrlp_matcher = 'py-matcher'
+let s:ctrlp_matcher = 'py-matcher'
 
-if g:ctrlp_matcher == 'cpsm'
-  Plug 'nixprime/cpsm'
-  let g:cpsm_highlight_mode = 'detailed'
-  let g:ctrlp_match_func = { 'match': 'cpsm#CtrlPMatch' }
-elseif g:ctrlp_matcher == 'cmatcher'
-  Plug 'JazzCore/ctrlp-cmatcher', { 'do': './install.sh' }
-  let g:ctrlp_match_func = { 'match': 'matcher#cmatch' }
-elseif g:ctrlp_matcher == 'py-matcher'
+if s:ctrlp_matcher ==# 'py-matcher'
   Plug 'FelikZ/ctrlp-py-matcher'
   let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
 endif
@@ -180,8 +172,8 @@ call plug#end()
 " }}}
 
 " * plugin configurations {{{
-" plug: ale
-  " let g:ale_python_flake8_executable = 'flake8'
+" plug: vim-pyenv
+  let g:pyenv#auto_activate = 0
 
 " plug: mucomplete
   set showmode
@@ -194,6 +186,7 @@ call plug#end()
   let g:mucomplete#spel#good_words = 1
   let g:mucomplete#chains = { 'default' : ['file', 'keyn', 'c-n'] }
   let g:mucomplete#chains.sql = []
+  let g:mucomplete#chains.go = ['omni', 'keyn', 'file']
 
 " plug: grepper
   let g:grepper = {}
@@ -223,8 +216,8 @@ call plug#end()
   let g:ctrlp_max_height = 20
   let g:ctrlp_clear_cache_on_exit = 0
   let g:ctrlp_follow_symlinks = 1
-  let g:ctrlp_max_files = 1024
-  let g:ctrlp_max_depth = 5
+  let g:ctrlp_max_files = 4096
+  let g:ctrlp_max_depth = 10
   let g:ctrlp_show_hidden = 0
   let g:ctrlp_mruf_max = 1024
   let g:ctrlp_mruf_tilde_homedir = 1
@@ -297,14 +290,12 @@ call plug#end()
   let g:jedi#popup_on_dot = 0
   let g:jedi#show_call_signatures = 2
 
-" plug: kien/rainbow_parentheses
+" plug: junegunn/rainbow_parentheses.vim
   if s:has_plugin('rainbow_parentheses.vim')
     augroup Tacahiroy
-      autocmd VimEnter * RainbowParenthesesActivate
-      autocmd Syntax * RainbowParenthesesLoadBraces
-      autocmd Syntax * RainbowParenthesesLoadRound
-      autocmd Syntax * RainbowParenthesesLoadSquare
+      autocmd Syntax * RainbowParentheses
     augroup END
+    let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
   endif
 
   let g:rbpt_colorpairs = [
@@ -327,7 +318,7 @@ call plug#end()
   \ ]
 
 " plug: UltiSnips
-  let g:UltiSnipsExpandTrigger = '<C-\>'
+  let g:UltiSnipsExpandTrigger = '<C-y><C-u>'
   let g:UltiSnipsJumpForwardTrigger = '<C-f>'
   let g:UltiSnipsJumpBackwardTrigger = '<C-a>'
 
@@ -729,10 +720,9 @@ nnoremap <silent> <Leader>fN :let @" = fnamemodify(@%, ':p')<Cr>
 function! s:wisecr()
   return pumvisible() ? "\<C-y>\<Cr>" : "\<C-g>u\<Cr>"
 endfunction
-inoremap <Cr> <C-R>=<SID>wisecr()<Cr>
-" inoremap <expr> <CR> delimitMate#WithinEmptyPair() ?
-"           \ "<Plug>delimitMateCR" :
-"           \ <SID>wisecr()
+" inoremap <Cr> <C-R>=<SID>wisecr()<Cr>
+imap <expr> <C-\> delimitMate#WithinEmptyPair() ? "<Plug>delimitMateCR" : "<Cr>"
+inoremap <expr> <Cr> mucomplete#popup_exit("\<Cr>")
 
 " Copy absolute path to current file to clipboard
 command! -nargs=0 CopyCurrentFilePath2CB let @* = fnamemodify(@%, ':p')
@@ -1039,4 +1029,4 @@ if has('gui_running')
   endif
 endif
 " __END__ {{{
-" vim: fen fdm=marker ts=2 sts=2 sw=2
+" vim: fen fdm=marker ts=2 sts=2 sw=2 tw=0
