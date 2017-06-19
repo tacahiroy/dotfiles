@@ -720,9 +720,8 @@ nnoremap <silent> <Leader>fN :let @" = fnamemodify(@%, ':p')<Cr>
 function! s:wisecr()
   return pumvisible() ? "\<C-y>\<Cr>" : "\<C-g>u\<Cr>"
 endfunction
-" inoremap <Cr> <C-R>=<SID>wisecr()<Cr>
 imap <expr> <C-\> delimitMate#WithinEmptyPair() ? "<Plug>delimitMateCR" : "<Cr>"
-inoremap <expr> <Cr> mucomplete#popup_exit("\<Cr>")
+inoremap <expr> <Cr> <SID>wisecr()
 
 " Copy absolute path to current file to clipboard
 command! -nargs=0 CopyCurrentFilePath2CB let @* = fnamemodify(@%, ':p')
@@ -1015,7 +1014,7 @@ if has('gui_running')
     inoremap <silent> <M-v> <Esc>:let &paste=1<Cr>a<C-R>+<Esc>:let &paste=0<Cr>a
   else
     " Windows
-    set guifont=Circle_M+_1m:h12:cSHIFTJIS:qDRAFT
+    set guifont=Ricty_Diminished:h14:cSHIFTJIS:qDRAFT
     if has('directx')
       set renderoptions=type:directx,level:2.0,geom:1,renmode:5,contrast:1,taamode:0
     endif
