@@ -16,7 +16,7 @@ umask 0022
 # ssh-agent
 SSH_ENV=$HOME/.ssh/agent.env
 start_agent() {
-  umask 077; ssh-agent > "$SSH_ENV"
+  ssh-agent > "$SSH_ENV"
   . "$SSH_ENV" > /dev/null
   # ssh-add
 }
