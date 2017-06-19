@@ -307,7 +307,8 @@ if [ -x ${F} ]; then
       return
     fi
 
-    local _branches, _branch
+    local _branches
+    local _branch
     _branches="$(git branch --all | grep -v '\*' | sed 's/^\s*remotes\/origin\///; s/^\s*//' | sort -u)"
     _branch="$(echo ${_branches} | ${F} --prompt='BRANCH> ')"
 
@@ -325,6 +326,18 @@ if [ -x ${F} ]; then
 
   function filter-cd-hist() {
     local _dir=$(awk -F '[|]' -v home=$HOME '{ a=gensub(home, "~", "g", $1); print a }' ~/.z | sort | ${F} --prompt='JUMP> ')
+    if [ -n "${_dir// }" ]; then
+      if [ $#BUFFER -eq 0 ]; then
+        BUFFER="cd ${_dir}"
+      else
+        BUFFER="${BUFFER} ${_dir}"
+      fi
+    fi
+    CURSOR=$#BUFFER
+  }
+
+  function filter-dirs() {
+    local _dir=$(find . -type d | grep -v '.git' | tail -n +2 | ${F} --prompt='JUMP> ')
     if [ -n "${_dir// }" ]; then
       if [ $#BUFFER -eq 0 ]; then
         BUFFER="cd ${_dir}"
@@ -353,10 +366,14 @@ if [ -x ${F} ]; then
 
   zle -N filter-cd-hist
   bindkey '^gc' filter-cd-hist
+
+  zle -N filter-dirs
+  bindkey '^gd' filter-dirs
 fi
 # }}}
 
 autoload zmv
+alias zmv='noglob zmv -W'
 
 # autoload predict-on
 # predict-on
