@@ -507,13 +507,18 @@ let &statusline .= '%{(&list ? "L" : "")}'
 let &statusline .= '%{(empty(&clipboard) ? "" : "c")}'
 let &statusline .= '%{(&paste ? "p" : "")}'
 let &statusline .= '|%{&textwidth}'
+
 if s:has_plugin('fugitive')
   let &statusline .= '%#Type#'
   let &statusline .= '%{fugitive#statusline()}'
   let &statusline .= '%*'
 endif
+
 if s:has_plugin('ale')
   let g:ale_statusline_format = ['x %d', 'w %d', 'ok']
+  let g:ale_lint_on_text_changed = 'never'
+  let g:ale_set_loclist = 0
+  let g:ale_set_quickfix = 1
 
   let &statusline .= '|'
   let &statusline .= '%#SpellRare#'
@@ -758,23 +763,7 @@ endif
 "}}}
 
 if has('ruby') "{{{
-ruby << EOR
-  require "uri"
-
-  def encode(line1, line2)
-    line1.upto(line2).each do |ln|
-      b = Vim::Buffer.current
-      b[ln] = URI.encode b[ln]
-    end
-  end
-
-  def decode(line1, line2)
-    line1.upto(line2).each do |ln|
-      b = Vim::Buffer.current
-      b[ln] = URI.decode b[ln]
-    end
-  end
-EOR
+  runtime! autoload/tacahiroy/ruby.vim
 
   function! s:encode_uri() range
     ruby encode(Vim::evaluate('a:firstline'), Vim::evaluate('a:lastline'))
@@ -789,25 +778,13 @@ EOR
 endif "}}}
 
 if has('pythonx') "{{{
-let &pyxversion = 0
-pythonx << EOF
-import sqlparse
-from vim import *
-def format_sql(firstline, lastline):
-  buf = vim.current.buffer
-  lines = ''.join(vim.eval('getline(%d, %d)' % (firstline + 1, lastline + 1)))
+  runtime! autoload/tacahiroy/python.vim
 
-  sql = sqlparse.format(lines, reindent=True, keyword_case='upper')
-  for l in range(firstline, lastline + 1):
-      del buf[l-1]
-  buf.append(sql.split("\n"), firstline)
-EOF
+  function! s:format_sql() range
+    pythonx format_sql(firstline=int(vim.eval('a:firstline'))-1, lastline=int(vim.eval('a:lastline'))-1)
+  endfunction
 
-function! s:format_sql() range
-  pythonx format_sql(firstline=int(vim.eval('a:firstline'))-1, lastline=int(vim.eval('a:lastline'))-1)
-endfunction
-
-command! -nargs=? -range PrettifySQL <line1>,<line2>call s:format_sql()
+  command! -nargs=? -range PrettifySQL <line1>,<line2>call s:format_sql()
 endif
 
 if has('multi_byte_ime') || has('xim')
