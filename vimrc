@@ -135,7 +135,7 @@ Plug 'Raimondi/delimitMate'
 Plug 'bkad/CamelCaseMotion',         { 'frozen': 1 }
 Plug 'davidhalter/jedi-vim',         { 'for': 'python', 'do': 'pip install jedi --user' }
 " Plug 'mhinz/vim-signify'
-Plug 'fatih/vim-go',                 { 'for': 'go', 'frozen': 1 }
+Plug 'fatih/vim-go' ",                 { 'for': 'go', 'frozen': 1 }
 Plug 'glidenote/memolist.vim',       { 'on': ['MemoList', 'MemoNew', 'MemoGrep'] }
 Plug 'godlygeek/tabular',            { 'on': 'Tabularize' }
 Plug 'wellle/targets.vim'
@@ -181,8 +181,8 @@ call plug#end()
   set completeopt=menu,menuone,noinsert,noselect
   let g:mucomplete#enable_auto_at_startup = 1
   let g:mucomplete#exit_ctrlx_keys = '\<C-g>'
-  let g:mucomplete#cycle_with_trigger = 0
-  let g:mucomplete#no_mappings = 1
+  let g:mucomplete#cycle_with_trigger = 1
+  let g:mucomplete#no_mappings = 0
   let g:mucomplete#spel#good_words = 1
   let g:mucomplete#chains = { 'default' : ['file', 'keyn', 'c-n'] }
   let g:mucomplete#chains.sql = []
@@ -976,7 +976,7 @@ if has('gui_running')
   endif
 
   if s:mac
-    set guifont=MyricaM\ monospace:h14
+    set guifont=源ノ角ゴシック\ Code\ JP\ R:h14
     set linespace=1
     set antialias
     set fuoptions& fuoptions+=maxhorz
