@@ -453,7 +453,7 @@ set smartcase
 set spelllang=en
 set swapfile directory=$DOTVIM/swaps
 set switchbuf=useopen,usetab
-set synmaxcol=300
+set synmaxcol=150
 set tags=tags,./tags,**3/tags,tags;/Projects
 set timeout timeoutlen=500
 set title
