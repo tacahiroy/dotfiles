@@ -143,7 +143,7 @@ Plug 'junegunn/rainbow_parentheses.vim'
 Plug 'vim-scripts/matchit.zip',      { 'frozen': 1 }
 Plug 'tpope/vim-commentary',         { 'frozen': 1 }
 " Plug 'tpope/vim-dispatch',           { 'on': 'Dispatch', 'frozen': 1 }
-Plug 'tpope/vim-endwise',            { 'for': ['ruby', 'sh', 'zsh', 'vim', 'elixir'] }
+" Plug 'tpope/vim-endwise',            { 'for': ['ruby', 'sh', 'zsh', 'vim', 'elixir'] }
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 " Plug 'vim-ruby/vim-ruby',             { 'for': 'ruby', 'frozen': 1 }
@@ -175,6 +175,7 @@ call plug#end()
 " plug: vim-pyenv
   let g:pyenv#auto_activate = 0
 
+
 " plug: mucomplete
   set showmode
   set shortmess& shortmess+=c
@@ -184,9 +185,10 @@ call plug#end()
   let g:mucomplete#cycle_with_trigger = 1
   let g:mucomplete#no_mappings = 0
   let g:mucomplete#spel#good_words = 1
-  let g:mucomplete#chains = { 'default' : ['file', 'keyn', 'c-n'] }
+  let g:mucomplete#chains = { 'default' : ['file', 'keyn'] }
   let g:mucomplete#chains.sql = []
-  let g:mucomplete#chains.go = ['omni', 'keyn', 'file']
+  let g:mucomplete#chains.go = ['omni', 'c-n', 'file']
+  let g:mucomplete#chains.python = ['omni', 'c-n', 'file']
 
 " plug: grepper
   let g:grepper = {}
@@ -723,10 +725,11 @@ inoremap <silent> <Leader>fN <C-R>=fnamemodify(@%, ':p')<Cr>
 nnoremap <silent> <Leader>fN :let @" = fnamemodify(@%, ':p')<Cr>
 
 function! s:wisecr()
-  return pumvisible() ? "\<C-y>\<Cr>" : "\<C-g>u\<Cr>"
+   return pumvisible() ? "\<C-y>\<Cr>" : "\<C-g>u\<Cr>"
 endfunction
-imap <expr> <C-\> delimitMate#WithinEmptyPair() ? "<Plug>delimitMateCR" : "<Cr>"
 inoremap <expr> <Cr> <SID>wisecr()
+
+imap <expr> <C-\> delimitMate#WithinEmptyPair() ? "\<Plug>delimitMateCR" : "\<Cr>"
 
 " Copy absolute path to current file to clipboard
 command! -nargs=0 CopyCurrentFilePath2CB let @* = fnamemodify(@%, ':p')
