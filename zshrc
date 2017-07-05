@@ -192,6 +192,7 @@ alias pyttpd='python -m SimpleHTTPServer'
 alias rbttpd='ruby -run -e httpd . -p 8000'
 alias re='rbenv'
 alias sortn='sort -n'
+alias rind='rg --files -g'
 
 # global
 alias -g L='|$PAGER -R'
@@ -325,7 +326,12 @@ if [ -x ${F} ]; then
   }
 
   function filter-cd-hist() {
-    local _dir=$(awk -F '[|]' -v home=$HOME '{ a=gensub(home, "~", "g", $1); print a }' ~/.z | sort | ${F} --prompt='JUMP> ')
+    # local _dir=$(awk -F '[|]' -v home=$HOME '{ a=gensub(home, "~", "g", $1); print a }' ~/.z | sort | ${F} --prompt='JUMP> ')
+
+    local ctrlp_cache=$HOME/.cache/ctrlp/mru/cache.txt
+    ! test -f ${ctrlp_cache} && return
+
+    local _dir=$(sed 's#/[^/]\+$##' ${ctrlp_cache} | sort -u | ${F} --prompt='JUMP> ')
     if [ -n "${_dir// }" ]; then
       if [ $#BUFFER -eq 0 ]; then
         BUFFER="cd ${_dir}"
@@ -348,6 +354,18 @@ if [ -x ${F} ]; then
     CURSOR=$#BUFFER
   }
 
+  function filter-files {
+    local _file=$(rg --files --no-heading | ${F} --prompt='FILE> ')
+    if [ -n "${_file// }" ]; then
+      if [ $#BUFFER -eq 0 ]; then
+        BUFFER="vim ${_file}"
+      else
+        BUFFER="${BUFFER} ${_file}"
+      fi
+    fi
+    CURSOR=$#BUFFER
+  }
+
   zle -N filter-ssh
   bindkey '^q' filter-ssh
 
@@ -365,10 +383,13 @@ if [ -x ${F} ]; then
   bindkey '^gb' filter-git-branch
 
   zle -N filter-cd-hist
-  bindkey '^gc' filter-cd-hist
+  bindkey '^gj' filter-cd-hist
 
   zle -N filter-dirs
   bindkey '^gd' filter-dirs
+
+  zle -N filter-files
+  bindkey '^gf' filter-files
 fi
 # }}}
 
