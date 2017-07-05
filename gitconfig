@@ -36,6 +36,8 @@
 	st   = status
 	sup  = !git stash && git up
 	up   = pull --rebase
+	fep = fetch --prune
+	fea = fetch --all
 	merge-log = !sh -c 'git log --stat $1^..$1' -
 
 [pager]
@@ -62,8 +64,3 @@
 	autosetuprebase = always
 [ghq]
 	root = /home/tacahiroy/proj
-[filter "lfs"]
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
-	process = git-lfs filter-process
-	required = true
