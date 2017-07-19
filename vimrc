@@ -155,7 +155,8 @@ Plug 'tacahiroy/ctrlp-funky'
 Plug 'tacahiroy/vim-colors-isotake', { 'frozen': 1 }
 Plug 'w0rp/ale'
 Plug 'mhinz/vim-grepper'
-Plug 'lambdalisue/vim-pyenv'
+" Plug 'lambdalisue/vim-pyenv'
+Plug 'martinda/Jenkinsfile-vim-syntax'
 
 if filereadable(expand('~/.vimrc.plugins'))
   source ~/.vimrc.plugins
@@ -730,12 +731,28 @@ function! s:wisecr()
 endfunction
 inoremap <expr> <Cr> <SID>wisecr()
 
-imap <expr> <C-\> delimitMate#WithinEmptyPair() ? "\<Plug>delimitMateCR" : "\<Cr>"
+function! s:mcr()
+  let s = ''
+  let words = ['end', 'fi', 'esac', 'endfunction', 'endif']
+  if delimitMate#WithinEmptyPair()
+    let s = "\<Plug>delimitMateCR"
+  elseif index(words, expand('<cword>'))
+    let s = "\<C-o>O"
+  else
+    let s = "\<Cr>"
+  endif
+  return s
+endfunction
+
+" imap <expr> <C-\> delimitMate#WithinEmptyPair() ? "\<Plug>delimitMateCR" : "\<Cr>"
+imap <expr> <C-\> <SID>mcr()
 
 " Copy absolute path to current file to clipboard
 command! -nargs=0 CopyCurrentFilePath2CB let @* = fnamemodify(@%, ':p')
 command! -nargs=0 AbsolutePath echomsg fnamemodify(@%, ':p')
 command! -nargs=0 RelativePath echomsg substitute(fnamemodify(@%, ':p'), getcwd() . '/', '', '')
+
+command! -nargs=0 PutBufferToCB !cat % | clipper
 
 " search visual-ed text
 vnoremap * y/<C-R>"<Cr>
@@ -803,7 +820,8 @@ augroup Tacahiroy
   autocmd BufReadPost * if line("'\"") <= line('$') | execute "normal '\"" | endif
   " prevent auto comment insertion when 'o' pressed
   autocmd BufEnter * setlocal formatoptions-=o
-  autocmd BufEnter * lcd %:p:h
+  " autocmd BufEnter * lcd %:p:h
+
 
   "my ftdetects
   autocmd BufRead,BufNewFile *.ru,Gemfile,Guardfile,Sporkfile set filetype=ruby
@@ -811,16 +829,6 @@ augroup Tacahiroy
   autocmd BufRead,BufNewFile *
         \ if &readonly || !&modifiable | nnoremap <buffer> <Return> <Return> | endif
 
-  " Chef
-  autocmd BufRead,BufNewFile *.rb
-        \  if expand('%:p:h') =~# '.*/cookbooks/.*'
-        \|   setlocal makeprg=foodcritic\ $*\ %
-        \|   setlocal errorformat=%m:\ %f:%l
-        \| endif
-
-  autocmd FileType eruby* inoremap <silent> <buffer> <Leader>e <C-g>u<%=  %><Esc>F<Space>i
-  autocmd FileType eruby* inoremap <silent> <buffer> <Leader>b <C-g>u<%-  -%><Esc>F<Space>i
-  autocmd FileType eruby* inoremap <silent> <buffer> <Leader>d <C-g>u<%===  %><Esc>F<Space>i
   autocmd FileType eruby* setlocal makeprg=erubis\ $*\ %
 
   " ShellScript
@@ -831,6 +839,7 @@ augroup Tacahiroy
   autocmd FileType vb setlocal fileformat=dos fileencoding=cp932
 
   autocmd FileType make set list
+  autocmd BufRead,BufNewFile *.groovy set filetype=Jenkinsfile
 
   " autochdir emulation
   autocmd BufEnter * call s:auto_chdir(6)
