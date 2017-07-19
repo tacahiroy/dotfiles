@@ -1,6 +1,6 @@
 #!/bin/bash
 
-UN=$(uname | tr '[A-Z]' '[a-z]')
+UN=$(uname | tr '[:upper:]' '[:lower:]')
 
 case ${UN} in
     linux)
