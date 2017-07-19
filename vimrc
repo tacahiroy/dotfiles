@@ -295,9 +295,10 @@ call plug#end()
 " plug: junegunn/rainbow_parentheses.vim
   if s:has_plugin('rainbow_parentheses.vim')
     augroup Tacahiroy
-      autocmd Syntax * RainbowParentheses
+      autocmd FileType * RainbowParentheses
     augroup END
-    let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
+    let g:rainbow#pairs = [['(',')'], ['[',']'], ['{','}']]
+    let g:rainbow#max_level = 16
   endif
 
   let g:rbpt_colorpairs = [
