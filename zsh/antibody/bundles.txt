@@ -1,5 +1,0 @@
-rupa/z
-# zsh-users/zsh-syntax-highlighting
-zsh-users/zsh-completions
-zsh-users/zsh-autosuggestions
-olivierverdier/zsh-git-prompt zshrc.sh
