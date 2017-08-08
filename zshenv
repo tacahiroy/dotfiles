@@ -8,6 +8,8 @@ export LC_ALL=$LANG
 export SHELL=/usr/bin/zsh
 export PYENV_ROOT="$HOME/.pyenv"
 
+export DISPLAY=:0
+
 ## path
 typeset -U path
 path=(
