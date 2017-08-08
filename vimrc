@@ -134,11 +134,9 @@ Plug 'Raimondi/delimitMate'
 " Plug 'airblade/vim-gitgutter'        ",       { 'on': ['GitGutter'] }
 Plug 'bkad/CamelCaseMotion',         { 'frozen': 1 }
 Plug 'davidhalter/jedi-vim',         { 'for': 'python', 'do': 'pip install jedi --user' }
-" Plug 'mhinz/vim-signify'
 Plug 'fatih/vim-go' ",                 { 'for': 'go', 'frozen': 1 }
 Plug 'glidenote/memolist.vim',       { 'on': ['MemoList', 'MemoNew', 'MemoGrep'] }
 Plug 'godlygeek/tabular',            { 'on': 'Tabularize' }
-Plug 'wellle/targets.vim'
 Plug 'junegunn/rainbow_parentheses.vim'
 Plug 'vim-scripts/matchit.zip',      { 'frozen': 1 }
 Plug 'tpope/vim-commentary',         { 'frozen': 1 }
@@ -186,9 +184,9 @@ call plug#end()
   let g:mucomplete#cycle_with_trigger = 1
   let g:mucomplete#no_mappings = 0
   let g:mucomplete#spel#good_words = 1
-  let g:mucomplete#chains = { 'default' : ['file', 'keyn'] }
+  let g:mucomplete#chains = { 'default' : ['keyn'] }
   let g:mucomplete#chains.sql = []
-  let g:mucomplete#chains.go = ['omni', 'c-n', 'file']
+  let g:mucomplete#chains.go = ['omni', 'c-n']
   let g:mucomplete#chains.python = ['omni', 'c-n', 'file']
 
 " plug: grepper
@@ -752,7 +750,7 @@ command! -nargs=0 CopyCurrentFilePath2CB let @* = fnamemodify(@%, ':p')
 command! -nargs=0 AbsolutePath echomsg fnamemodify(@%, ':p')
 command! -nargs=0 RelativePath echomsg substitute(fnamemodify(@%, ':p'), getcwd() . '/', '', '')
 
-command! -nargs=0 PutBufferToCB !cat % | clipper
+command! -nargs=0 PutBufferToCB 1,$!clipper
 
 " search visual-ed text
 vnoremap * y/<C-R>"<Cr>
@@ -839,7 +837,8 @@ augroup Tacahiroy
   autocmd FileType vb setlocal fileformat=dos fileencoding=cp932
 
   autocmd FileType make set list
-  autocmd BufRead,BufNewFile *.groovy set filetype=Jenkinsfile
+  autocmd BufRead,BufNewFile *.groovy,*.jenkins set filetype=Jenkinsfile
+  autocmd FileType Jenkinsfile setlocal autoindent smartindent
 
   " autochdir emulation
   autocmd BufEnter * call s:auto_chdir(6)
