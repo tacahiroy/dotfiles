@@ -197,6 +197,12 @@ alias rind='rg --files -g'
 # global
 alias -g L='|$PAGER -R'
 
+alias ms='exa'
+alias ml='ms -l'
+alias ma='ms -a'
+alias mal='ms -al'
+alias msg='ms --git -l'
+
 setopt complete_aliases
 
 # }}}
