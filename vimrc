@@ -814,10 +814,6 @@ augroup Tacahiroy
   " ShellScript
   autocmd FileType sh,zsh setlocal tabstop=4 softtabstop=4 shiftwidth=4 expandtab
 
-  " Visual Basic
-  autocmd BufRead,BufNewFile *.frm,*.bas,*.cls,*.dsr set filetype=vb
-  autocmd FileType vb setlocal fileformat=dos fileencoding=cp932
-
   autocmd FileType make set list
   autocmd BufRead,BufNewFile *.groovy,*.jenkins set filetype=Jenkinsfile
   autocmd FileType Jenkinsfile setlocal autoindent smartindent
@@ -891,23 +887,14 @@ augroup Tacahiroy
   autocmd FileType markdown inoremap <buffer> <Leader>tt <Esc>:<C-u>call <SID>insert_today_for_md_changelog()<Cr>:startinsert<Cr>
   autocmd FileType markdown set autoindent
   autocmd FileType markdown setlocal tabstop=4 shiftwidth=4
-  autocmd FileType markdown inoremap <buffer> <Leader>h1 #<Space>
-  autocmd FileType markdown inoremap <buffer> <Leader>h2 ##<Space>
-  autocmd FileType markdown inoremap <buffer> <Leader>h3 ###<Space>
-  autocmd FileType markdown inoremap <buffer> <Leader>h4 ####<Space>
-  autocmd FileType markdown inoremap <buffer> <Leader>h5 #####<Space>
 
   autocmd FileType gitcommit setlocal spell
-  autocmd FileType mail setlocal spell
 
   autocmd BufRead,BufNewFile *.applescript,*.scpt set filetype=applescript
   autocmd FileType applescript set commentstring=#\ %s
 
   autocmd FileType help,qf,logaling,bestfriend,ref-* nnoremap <buffer> <silent> qq <C-w>c
 
-  autocmd FileType rspec compiler rspec
-  autocmd FileType rspec set omnifunc=rubycomplete#Complete
-  autocmd FileType ruby,eruby,rspec :execute 'setlocal iskeyword+=' . char2nr('?')
   autocmd FileType python setlocal tabstop=4 shiftwidth=4 softtabstop=4
   autocmd FileType vim if &iskeyword !~# '&' | setlocal iskeyword+=& | endif
   autocmd FileType css,sass,scss,less setlocal omnifunc=csscomplete#CompleteCSS
@@ -924,7 +911,7 @@ augroup Tacahiroy
   autocmd FileType javascript,html setlocal errorformat=%f(%l):\ %m
 
   " Chef
-  autocmd BufRead,BufNewFile knife-edit-*.js,*.json set filetype=javascript.json
+  autocmd BufRead,BufNewFile *.json set filetype=javascript.json
   autocmd FileType json setlocal makeprg=python\ -mjson.tool\ 2>&1\ %\ >\ /dev/null
   autocmd FileType json setlocal errorformat=%m:\ line\ %l\ column\ %c\ %.%#
   autocmd FileType json nnoremap <Leader>pp :%!json_xs -f json -t json-pretty<Cr>
