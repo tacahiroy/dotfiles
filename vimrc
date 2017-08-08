@@ -130,7 +130,8 @@ call plug#begin($HOME . '/plugins.vim')
 
 Plug 'lifepillar/vim-mucomplete'
 
-Plug 'Raimondi/delimitMate'
+" Plug 'Raimondi/delimitMate'
+Plug 'cohama/lexima.vim'
 " Plug 'airblade/vim-gitgutter'        ",       { 'on': ['GitGutter'] }
 Plug 'bkad/CamelCaseMotion',         { 'frozen': 1 }
 Plug 'davidhalter/jedi-vim',         { 'for': 'python', 'do': 'pip install jedi --user' }
@@ -140,11 +141,8 @@ Plug 'godlygeek/tabular',            { 'on': 'Tabularize' }
 Plug 'junegunn/rainbow_parentheses.vim'
 Plug 'vim-scripts/matchit.zip',      { 'frozen': 1 }
 Plug 'tpope/vim-commentary',         { 'frozen': 1 }
-" Plug 'tpope/vim-dispatch',           { 'on': 'Dispatch', 'frozen': 1 }
-" Plug 'tpope/vim-endwise',            { 'for': ['ruby', 'sh', 'zsh', 'vim', 'elixir'] }
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
-" Plug 'vim-ruby/vim-ruby',             { 'for': 'ruby', 'frozen': 1 }
 " Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java', 'frozen': 1 }
 " Plug 'thinca/vim-quickrun',           { 'for': ['ruby', 'python', 'go', 'sh'], 'frozen': 1 }
 
@@ -155,6 +153,7 @@ Plug 'w0rp/ale'
 Plug 'mhinz/vim-grepper'
 " Plug 'lambdalisue/vim-pyenv'
 Plug 'martinda/Jenkinsfile-vim-syntax'
+
 
 if filereadable(expand('~/.vimrc.plugins'))
   source ~/.vimrc.plugins
@@ -184,10 +183,10 @@ call plug#end()
   let g:mucomplete#cycle_with_trigger = 1
   let g:mucomplete#no_mappings = 0
   let g:mucomplete#spel#good_words = 1
-  let g:mucomplete#chains = { 'default' : ['keyn'] }
+  let g:mucomplete#chains = { 'default' : [] }
   let g:mucomplete#chains.sql = []
-  let g:mucomplete#chains.go = ['omni', 'c-n']
-  let g:mucomplete#chains.python = ['omni', 'c-n', 'file']
+  let g:mucomplete#chains.go = ['omni', 'keyn']
+  let g:mucomplete#chains.python = ['omni', 'keyn', 'file']
 
 " plug: grepper
   let g:grepper = {}
@@ -284,11 +283,10 @@ call plug#end()
 
   nnoremap [Space]fu :CtrlPFunky<Cr>
   nnoremap [Space]uu :execute 'CtrlPFunky ' . fnameescape(expand('<cword>'))<Cr>
-  nnoremap [Space]fs :CtrlPSSH<Cr>
 
 " plug: jedi-vim
   let g:jedi#auto_vim_configuration = 0
-  let g:jedi#popup_on_dot = 0
+  let g:jedi#popup_on_dot = 1
   let g:jedi#show_call_signatures = 2
 
 " plug: junegunn/rainbow_parentheses.vim
@@ -318,11 +316,6 @@ call plug#end()
     \ ['Darkblue',    'firebrick3'],
     \ ['red',         'Darkblue'],
   \ ]
-
-" plug: UltiSnips
-  let g:UltiSnipsExpandTrigger = '<C-y><C-u>'
-  let g:UltiSnipsJumpForwardTrigger = '<C-f>'
-  let g:UltiSnipsJumpBackwardTrigger = '<C-a>'
 
 " plug: commentary.vim
   nmap [Space]c gcc
@@ -355,20 +348,6 @@ call plug#end()
     autocmd FileType markdown let b:delimitMate_quotes = "\" '"
     autocmd FileType html,xml,eruby let b:delimitMate_matchpairs = &matchpairs
   augroup END
-
-" plug: plasticboy/vim-markdown
-  let g:vim_markdown_folding_disabled = 1
-
-" plug: quickrun
-  if s:has_plugin('vim-quickrun')
-    nnoremap [Space]r :<C-u>QuickRun<Cr>
-  endif
-
-" plug: Syntastic
-  let g:syntastic_always_populate_loc_list = 1
-  let g:syntastic_auto_loc_list = 1
-  let g:syntastic_check_on_open = 1
-  let g:syntastic_check_on_wq = 0
 " }}}
 
 " * options {{{
@@ -766,19 +745,22 @@ vnoremap <C-p> :call <SID>move_block('u')<Cr>==gv
 vnoremap <C-n> :call <SID>move_block('d')<Cr>==gv
 
 " format HTML/XML
-if executable('tidy')
-  function! s:run_tidy(...) range
-    " this code is not perfect.
-    " tidy's Character encoding option and Vim's fileencoding/encoding is not a pair
-    let col = get(a:, 1, 80)
-    let enc = &l:fileencoding ? &l:fileencoding : &encoding
-    let enc = substitute(enc, '-', '', 'g')
+function! s:run_tidy(...) range
+  if !executable('tidy')
+    call Echohl('Error', 'tidy is not installed or not in PATH.')
+    return 0
+  endif
 
-    silent execute printf('%d,%d!tidy -xml -i -%s -wrap %d -q -asxml', a:firstline, a:lastline, enc, eval(col))
-  endfunction
+  " this code is not perfect.
+  " tidy's Character encoding option and Vim's fileencoding/encoding is not a pair
+  let col = get(a:, 1, 80)
+  let enc = &l:fileencoding ? &l:fileencoding : &encoding
+  let enc = substitute(enc, '-', '', 'g')
 
-  command! -nargs=? -range Tidy <line1>,<line2>call s:run_tidy(<args>)
-endif
+  silent execute printf('%d,%d!tidy -xml -i -%s -wrap %d -q -asxml', a:firstline, a:lastline, enc, eval(col))
+endfunction
+
+command! -nargs=? -range Tidy <line1>,<line2>call s:run_tidy(<args>)
 "}}}
 
 if has('ruby') "{{{
@@ -938,10 +920,8 @@ augroup Tacahiroy
   let java_highlight_java_io = 1
 
   autocmd FileType javascript,javascript.json set omnifunc=javascriptcomplete#CompleteJS
-  if executable('jsl')
-    autocmd FileType javascript,html setlocal makeprg=jsl\ -conf\ \"$HOME/jsl.conf\"\ -nologo\ -nofilelisting\ -nosummary\ -nocontext\ -process\ %
-    autocmd FileType javascript,html setlocal errorformat=%f(%l):\ %m
-  endif
+  autocmd FileType javascript,html setlocal makeprg=jsl\ -conf\ \"$HOME/jsl.conf\"\ -nologo\ -nofilelisting\ -nosummary\ -nocontext\ -process\ %
+  autocmd FileType javascript,html setlocal errorformat=%f(%l):\ %m
 
   " Chef
   autocmd BufRead,BufNewFile knife-edit-*.js,*.json set filetype=javascript.json
@@ -955,14 +935,17 @@ augroup Tacahiroy
   autocmd FileType c nnoremap <buffer> [Space]m :<C-u>write<Cr>:make --std=c99<Cr>
 
   " simple markdown preview
-  if executable('markdown')
-    function! s:md_preview_by_browser(f)
-      let tmp = '/tmp/vimmarkdown.html'
-      call system('markdown ' . a:f . ' > ' . tmp)
-      call system('open ' . tmp)
-    endfunction
-    autocmd FileType markdown command! -buffer -nargs=0 MdPreview call s:md_preview_by_browser(expand('%'))
-  endif
+  function! s:md_preview_by_browser(f)
+    if !executable('markdown')
+      call echohl('error', 'markdown is not installed or not in PATH.')
+      return 0
+    endif
+
+    let tmp = '/tmp/vimmarkdown.html'
+    call system('markdown ' . a:f . ' > ' . tmp)
+    call system('open ' . tmp)
+  endfunction
+  autocmd FileType markdown command! -buffer -nargs=0 MdPreview call s:md_preview_by_browser(expand('%'))
 augroup END
 "}}}
 
