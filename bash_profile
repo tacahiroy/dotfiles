@@ -37,3 +37,5 @@ fi
 
 # Trigger ~/.bashrc commands
 . ~/.bashrc
+
+export PATH="$HOME/.cargo/bin:$PATH"

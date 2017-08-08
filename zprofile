@@ -17,3 +17,5 @@ fi
 if [ -x "$(which VBoxClient >/dev/null 2>&1)" ]; then
     VBoxClient --clipboard
 fi
+
+export PATH="$HOME/.cargo/bin:$PATH"
