@@ -1,5 +1,6 @@
-rupa/z
+# rupa/z
 zsh-users/zsh-syntax-highlighting
 zsh-users/zsh-completions
-# clvv/fasd
+jhawthorn/fzy kind:path
+clvv/fasd kind:path
 # olivierverdier/zsh-git-prompt zshrc.sh
