@@ -4,27 +4,25 @@ autoload -Uz is-at-least
 
 _Z_NO_RESOLVE_SYMLINKS=1
 _Z_CMD=j
-# GIT_PROMPT_EXECUTABLE="haskell"
+export FZF_DEFAULT_OPTS='--reverse --inline-info --color=light'
 
 if type antibody 2>&1 >/dev/null; then
   unsetopt BG_NICE
   . <(antibody init)
-  antibody bundle < ~/.zsh/antibody/bundles
+  antibody bundle < ~/.zsh/plugins.txt
   if test -f /proc/version && ! (cat /proc/version | grep Microsoft >/dev/null 2>&1); then
     antibody bundle zsh-users/zsh-autosuggestions
     antibody bundle olivierverdier/zsh-git-prompt
   fi
 fi
 
+eval "$(fasd --init auto)"
+
 if is-at-least 4.3.10; then
   autoload -Uz add-zsh-hook
 fi
 
 bindkey -v
-
-# zsh-autosuggestions
-bindkey '^F' autosuggest-accept
-export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=213'
 
 # set terminal title including current directory # {{{
 #
@@ -180,7 +178,6 @@ alias llh='ls -lh'
 alias rm='nocorrect rm'
 alias df='df -h'
 alias su='su -l'
-alias v='vim'
 alias vi='vim'
 alias gg='ghq'
 alias git='LC_ALL=en_US.UTF-8 git'
@@ -188,11 +185,7 @@ alias gi='git'
 alias g='git'
 alias gu='git up'
 alias gl='git log'
-alias pyttpd='python -m SimpleHTTPServer'
-alias rbttpd='ruby -run -e httpd . -p 8000'
-alias re='rbenv'
-alias sortn='sort -n'
-alias rind='rg --files -g'
+alias pyttpd='python -m http.server'
 
 # global
 alias -g L='|$PAGER -R'
@@ -202,6 +195,11 @@ alias ml='ms -l'
 alias ma='ms -a'
 alias mal='ms -al'
 alias mg='ms --git -l'
+
+if [ -x "$(which fasd)" ]; then
+  alias d='cd $(fasd -dl | fzy -l 20)'
+  alias j='fasd_cd -d'
+fi
 
 setopt complete_aliases
 
@@ -240,163 +238,161 @@ bindkey '^\^' cdup
 
 F=$HOME/bin/filt
 
-if [ -x ${F} ]; then
-  function filter-select-history() {
-    local tac
-    if which tac > /dev/null; then
-      tac="tac"
-    else
-      tac="tail -r"
-    fi
-    BUFFER=$(fc -nl 1 | \
-      eval $tac | \
-      ${F} --prompt='HIST> ' --query="$LBUFFER")
-    CURSOR=$#BUFFER
-    zle clear-screen
-  }
+function filter-select-history() {
+  local tac
+  if which tac > /dev/null; then
+    tac="tac"
+  else
+    tac="tail -r"
+  fi
+  BUFFER=$(fc -nl 1 | \
+    eval $tac | \
+    ${F} --prompt='HIST> ' --query="$LBUFFER")
+  CURSOR=$#BUFFER
+  zle clear-screen
+}
 
-  function filter-select-ctrlpvim-mru() {
-    local ctrlp_mrufile=$HOME/.cache/ctrlp/mru/cache.txt
-    local _file
-    if [ -f "${ctrlp_mrufile}" ]; then
-      _file=$(cat "${ctrlp_mrufile}" | ${F} --prompt='MRU> ')
-      if [ -n "${_file}" -a -f "${_file}" ]; then
-        if [ $#BUFFER -eq 0 ]; then
-          BUFFER="vim ${_file}"
-        else
-          BUFFER="${BUFFER} ${_file}"
-        fi
-        CURSOR=$#BUFFER
-        zle clear-screen
-      fi
-    fi
-  }
-
-  function filter-ssh() {
-    local _khost=$(grep -o '^\S\+' ~/.ssh/known_hosts | grep -v '^|' | tr -d '[]' | tr ',' '\n' | sort)
-    local _chost=$(grep '^Host ' ~/.ssh/config | sed 's/^Host //' | grep -v '\*\|?' | tr ' ' '\n' | sort)
-
-    if [ -z "${_khost}" -a -z "${_chost}" ]; then
-      return
-    fi
-
-    local _host=$(echo "${_khost}\n${_chost}" | ${F})
-
-    if [ -z "${_host}" ]; then
-      return
-    fi
-
-    if [ -n "${_host}" -a -n "${TMUX}" ]; then
-      eval "tmux neww -n ${_host} 'ssh ${_host}'"
-    else
-      eval "ssh ${_host}"
-    fi
-  }
-
-  function filter-git-repo() {
-    if ! which ghq >/dev/null 2>&1; then
-      echo ghq is not detected!
-      return 9
-    fi
-
-    local _repo=$(ghq list -p | ${F} --prompt='REPO> ')
-
-    if [ -n "${_repo}" ]; then
-      BUFFER="cd ${_repo}"
-      CURSOR=$#BUFFER
-    fi
-    # zle clear-screen
-  }
-
-  function filter-git-branch() {
-    if ! git rev-parse --git-dir >/dev/null 2>&1; then
-      echo Not a git repository
-      return
-    fi
-
-    local _branches
-    local _branch
-    _branches="$(git branch --all | grep -v '\*' | sed 's/^\s*remotes\/origin\///; s/^\s*//' | sort -u)"
-    _branch="$(echo ${_branches} | ${F} --prompt='BRANCH> ')"
-
-    _branch=${_branch//[[:space:]]}
-    if [ -n "${_branch}" ]; then
-      if [ $#BUFFER -eq 0 ]; then
-        BUFFER="git checkout ${_branch}"
-      else
-        BUFFER="${BUFFER} ${_branch}"
-      fi
-      CURSOR=$#BUFFER
-    fi
-    # zle clear-screen
-  }
-
-  function filter-cd-hist() {
-    # local _dir=$(awk -F '[|]' -v home=$HOME '{ a=gensub(home, "~", "g", $1); print a }' ~/.z | sort | ${F} --prompt='JUMP> ')
-
-    local ctrlp_cache=$HOME/.cache/ctrlp/mru/cache.txt
-    ! test -f ${ctrlp_cache} && return
-
-    local _dir=$(sed 's#/[^/]\+$##' ${ctrlp_cache} | sort -u | ${F} --prompt='JUMP> ')
-    if [ -n "${_dir// }" ]; then
-      if [ $#BUFFER -eq 0 ]; then
-        BUFFER="cd ${_dir}"
-      else
-        BUFFER="${BUFFER} ${_dir}"
-      fi
-    fi
-    CURSOR=$#BUFFER
-  }
-
-  function filter-dirs() {
-    local _dir=$(find . -type d | grep -v '.git' | tail -n +2 | ${F} --prompt='JUMP> ')
-    if [ -n "${_dir// }" ]; then
-      if [ $#BUFFER -eq 0 ]; then
-        BUFFER="cd ${_dir}"
-      else
-        BUFFER="${BUFFER} ${_dir}"
-      fi
-    fi
-    CURSOR=$#BUFFER
-  }
-
-  function filter-files {
-    local _file=$(rg --files --no-heading | ${F} --prompt='FILE> ')
-    if [ -n "${_file// }" ]; then
+function filter-select-ctrlpvim-mru() {
+  local ctrlp_mrufile=$HOME/.cache/ctrlp/mru/cache.txt
+  local _file
+  if [ -f "${ctrlp_mrufile}" ]; then
+    _file=$(cat "${ctrlp_mrufile}" | ${F} --prompt='MRU> ')
+    if [ -n "${_file}" -a -f "${_file}" ]; then
       if [ $#BUFFER -eq 0 ]; then
         BUFFER="vim ${_file}"
       else
         BUFFER="${BUFFER} ${_file}"
       fi
+      CURSOR=$#BUFFER
+      zle clear-screen
+    fi
+  fi
+}
+
+function filter-ssh() {
+  local _khost=$(grep -o '^\S\+' ~/.ssh/known_hosts | grep -v '^|' | tr -d '[]' | tr ',' '\n' | sort)
+  local _chost=$(grep '^Host ' ~/.ssh/config | sed 's/^Host //' | grep -v '\*\|?' | tr ' ' '\n' | sort)
+
+  if [ -z "${_khost}" -a -z "${_chost}" ]; then
+    return
+  fi
+
+  local _host=$(echo "${_khost}\n${_chost}" | ${F})
+
+  if [ -z "${_host}" ]; then
+    return
+  fi
+
+  if [ -n "${_host}" -a -n "${TMUX}" ]; then
+    eval "tmux neww -n ${_host} 'ssh ${_host}'"
+  else
+    eval "ssh ${_host}"
+  fi
+}
+
+function filter-git-repo() {
+  if ! which ghq >/dev/null 2>&1; then
+    echo ghq is not detected!
+    return 9
+  fi
+
+  local _repo=$(ghq list -p | ${F} --prompt='REPO> ')
+
+  if [ -n "${_repo}" ]; then
+    BUFFER="cd ${_repo}"
+    CURSOR=$#BUFFER
+  fi
+  # zle clear-screen
+}
+
+function filter-git-branch() {
+  if ! git rev-parse --git-dir >/dev/null 2>&1; then
+    echo Not a git repository
+    return
+  fi
+
+  local _branches
+  local _branch
+  _branches="$(git branch --all | grep -v '\*' | sed 's/^\s*remotes\/origin\///; s/^\s*//' | sort -u)"
+  _branch="$(echo ${_branches} | ${F} --prompt='BRANCH> ')"
+
+  _branch=${_branch//[[:space:]]}
+  if [ -n "${_branch}" ]; then
+    if [ $#BUFFER -eq 0 ]; then
+      BUFFER="git checkout ${_branch}"
+    else
+      BUFFER="${BUFFER} ${_branch}"
     fi
     CURSOR=$#BUFFER
-  }
+  fi
+  # zle clear-screen
+}
 
-  zle -N filter-ssh
-  bindkey '^q' filter-ssh
+function filter-cd-hist() {
+  # local _dir=$(awk -F '[|]' -v home=$HOME '{ a=gensub(home, "~", "g", $1); print a }' ~/.z | sort | ${F} --prompt='JUMP> ')
 
-  zle -N filter-select-history
-  bindkey '^r' filter-select-history
+  local ctrlp_cache=$HOME/.cache/ctrlp/mru/cache.txt
+  ! test -f ${ctrlp_cache} && return
 
-  zle -N filter-select-ctrlpvim-mru
-  bindkey '^t' filter-select-ctrlpvim-mru
+  local _dir=$(sed 's#/[^/]\+$##' ${ctrlp_cache} | sort -u | ${F} --prompt='JUMP> ')
+  if [ -n "${_dir// }" ]; then
+    if [ $#BUFFER -eq 0 ]; then
+      BUFFER="cd ${_dir}"
+    else
+      BUFFER="${BUFFER} ${_dir}"
+    fi
+  fi
+  CURSOR=$#BUFFER
+}
 
-  zle -N filter-git-repo
+function filter-dirs() {
+  local _dir=$(find . -type d | grep -v '.git' | tail -n +2 | ${F} --prompt='JUMP> ')
+  if [ -n "${_dir// }" ]; then
+    if [ $#BUFFER -eq 0 ]; then
+      BUFFER="cd ${_dir}"
+    else
+      BUFFER="${BUFFER} ${_dir}"
+    fi
+  fi
+  CURSOR=$#BUFFER
+}
 
-  bindkey '^gr' filter-git-repo
+function filter-files {
+  local _file=$(rg --files --no-heading | ${F} --prompt='FILE> ')
+  if [ -n "${_file// }" ]; then
+    if [ $#BUFFER -eq 0 ]; then
+      BUFFER="vim ${_file}"
+    else
+      BUFFER="${BUFFER} ${_file}"
+    fi
+  fi
+  CURSOR=$#BUFFER
+}
 
-  zle -N filter-git-branch
-  bindkey '^gb' filter-git-branch
+zle -N filter-ssh
+bindkey '^q' filter-ssh
 
-  zle -N filter-cd-hist
-  bindkey '^gj' filter-cd-hist
+zle -N filter-select-history
+bindkey '^r' filter-select-history
 
-  zle -N filter-dirs
-  bindkey '^gd' filter-dirs
+zle -N filter-select-ctrlpvim-mru
+bindkey '^t' filter-select-ctrlpvim-mru
 
-  zle -N filter-files
-  bindkey '^gf' filter-files
-fi
+zle -N filter-git-repo
+
+bindkey '^gr' filter-git-repo
+
+zle -N filter-git-branch
+bindkey '^gb' filter-git-branch
+
+zle -N filter-cd-hist
+bindkey '^gj' filter-cd-hist
+
+zle -N filter-dirs
+bindkey '^gd' filter-dirs
+
+zle -N filter-files
+bindkey '^gf' filter-files
 # }}}
 
 autoload zmv
