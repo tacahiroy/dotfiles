@@ -128,9 +128,22 @@ map <Space> [Space]
 " * plugin management "{{{
 call plug#begin($HOME . '/plugins.vim')
 
-Plug 'lifepillar/vim-mucomplete'
+"Plug 'lifepillar/vim-mucomplete'
+Plug 'maxboisvert/vim-simple-complete'
+  " Enable/Disable tab key completion mapping
+  let g:vsc_tab_complete = 0
+  " Enable/Disable As-you-type completion
+  let g:vsc_type_complete = 1
+  " Completion command used
+  let g:vsc_completion_command = "\<C-n>"
+  " Reverse completion command used
+  let g:vsc_reverse_completion_command = "\<C-p>"
+  " Number of character to type to trigger completion
+  let g:vsc_type_complete_length = 3
 
-" Plug 'Raimondi/delimitMate'
+  set complete-=t
+  set complete-=i
+
 Plug 'cohama/lexima.vim'
 " Plug 'airblade/vim-gitgutter'        ",       { 'on': ['GitGutter'] }
 Plug 'bkad/CamelCaseMotion',         { 'frozen': 1 }
@@ -140,20 +153,17 @@ Plug 'glidenote/memolist.vim',       { 'on': ['MemoList', 'MemoNew', 'MemoGrep']
 Plug 'godlygeek/tabular',            { 'on': 'Tabularize' }
 Plug 'junegunn/rainbow_parentheses.vim'
 Plug 'vim-scripts/matchit.zip',      { 'frozen': 1 }
-Plug 'tpope/vim-commentary',         { 'frozen': 1 }
+" Plug 'tpope/vim-commentary',         { 'frozen': 1 }
+Plug 'manasthakur/vim-commentor'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 " Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java', 'frozen': 1 }
-" Plug 'thinca/vim-quickrun',           { 'for': ['ruby', 'python', 'go', 'sh'], 'frozen': 1 }
 
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'tacahiroy/ctrlp-funky'
 Plug 'tacahiroy/vim-colors-isotake', { 'frozen': 1 }
 Plug 'w0rp/ale'
-Plug 'mhinz/vim-grepper'
-" Plug 'lambdalisue/vim-pyenv'
-Plug 'martinda/Jenkinsfile-vim-syntax'
-
+Plug 'tfnico/vim-gradle', { 'for': ['groovy', 'java'] }
 
 if filereadable(expand('~/.vimrc.plugins'))
   source ~/.vimrc.plugins
@@ -175,18 +185,18 @@ call plug#end()
 
 
 " plug: mucomplete
-  set showmode
-  set shortmess& shortmess+=c
-  set completeopt=menu,menuone,noinsert,noselect
-  let g:mucomplete#enable_auto_at_startup = 1
-  let g:mucomplete#exit_ctrlx_keys = '\<C-g>'
-  let g:mucomplete#cycle_with_trigger = 1
-  let g:mucomplete#no_mappings = 0
-  let g:mucomplete#spel#good_words = 1
-  let g:mucomplete#chains = { 'default' : [] }
-  let g:mucomplete#chains.sql = []
-  let g:mucomplete#chains.go = ['omni', 'keyn']
-  let g:mucomplete#chains.python = ['omni', 'keyn', 'file']
+"  set showmode
+"  set shortmess& shortmess+=c
+"  set completeopt=menu,menuone,noinsert,noselect
+"  let g:mucomplete#enable_auto_at_startup = 1
+"  let g:mucomplete#exit_ctrlx_keys = '\<C-g>'
+"  let g:mucomplete#cycle_with_trigger = 1
+"  let g:mucomplete#no_mappings = 0
+"  let g:mucomplete#spel#good_words = 1
+"  let g:mucomplete#chains = { 'default' : [] }
+"  let g:mucomplete#chains.sql = []
+"  let g:mucomplete#chains.go = ['omni', 'keyn']
+"  let g:mucomplete#chains.python = ['omni', 'keyn', 'file']
 
 " plug: grepper
   let g:grepper = {}
@@ -509,17 +519,14 @@ endif
 
 " right side from here
 let &statusline .= ' %='
+" Cwd
+let &statusline .= '%#CursorLineNr#'
+let &statusline .= '%{ get(g:, "show_cwd", 0) ? Cwd() : ""}'
+" ft:fenc:ff
+let &statusline .= '%*'
 let &statusline .= '%{&filetype}:'
 let &statusline .= '%{(&l:fileencoding != "" ? &l:fileencoding : &encoding) . ":" . &fileformat}'
-if s:has_plugin('monstermethod')
-  let &statusline .= '%#Structure#'
-  let &statusline .= '%{monstermethod#search()}'
-  let &statusline .= ' '
-endif
-let &statusline .= '%#Title#'
-let &statusline .= '%{Cwd()}'
-let &statusline .= '%{(g:auto_chdir_enabled ? "e" : "d")}'
-let &statusline .= '%-12( %#Statement#%l%#Title#/%LL,%c %)%P%*'
+let &statusline .= '%-10(%#MoreMsg#%l%#Title#/%L:%c %)%P%*'
 " }}}
 
 " * mappings "{{{
@@ -615,6 +622,7 @@ nnoremap <silent> [Toggle]p :set paste!<Cr>
 nnoremap <silent> [Toggle]l :set list!<Cr>
 nnoremap <silent> [Toggle]n :<C-u>silent call <SID>toggle_line_number()<Cr>
 nnoremap <silent> [Toggle]r :set relativenumber!<Cr>
+nnoremap <silent> [Toggle]w :let g:show_cwd = abs(get(g:, 'show_cwd', 0) - 1)<Cr>
 
 " * makes gf better
 nnoremap gf <Nop>
@@ -703,27 +711,6 @@ nnoremap <silent> <Leader>fn :let @" = expand('%:t')<Cr>
 inoremap <silent> <Leader>fN <C-R>=fnamemodify(@%, ':p')<Cr>
 nnoremap <silent> <Leader>fN :let @" = fnamemodify(@%, ':p')<Cr>
 
-function! s:wisecr()
-   return pumvisible() ? "\<C-y>\<Cr>" : "\<C-g>u\<Cr>"
-endfunction
-inoremap <expr> <Cr> <SID>wisecr()
-
-function! s:mcr()
-  let s = ''
-  let words = ['end', 'fi', 'esac', 'endfunction', 'endif']
-  if delimitMate#WithinEmptyPair()
-    let s = "\<Plug>delimitMateCR"
-  elseif index(words, expand('<cword>'))
-    let s = "\<C-o>O"
-  else
-    let s = "\<Cr>"
-  endif
-  return s
-endfunction
-
-" imap <expr> <C-\> delimitMate#WithinEmptyPair() ? "\<Plug>delimitMateCR" : "\<Cr>"
-imap <expr> <C-\> <SID>mcr()
-
 " Copy absolute path to current file to clipboard
 command! -nargs=0 CopyCurrentFilePath2CB let @* = fnamemodify(@%, ':p')
 command! -nargs=0 AbsolutePath echomsg fnamemodify(@%, ':p')
@@ -804,19 +791,17 @@ augroup Tacahiroy
 
 
   "my ftdetects
-  autocmd BufRead,BufNewFile *.ru,Gemfile,Guardfile,Sporkfile set filetype=ruby
   autocmd BufRead,BufNewFile ?zshrc,?zshenv set filetype=zsh
   autocmd BufRead,BufNewFile *
         \ if &readonly || !&modifiable | nnoremap <buffer> <Return> <Return> | endif
 
-  autocmd FileType eruby* setlocal makeprg=erubis\ $*\ %
 
   " ShellScript
   autocmd FileType sh,zsh setlocal tabstop=4 softtabstop=4 shiftwidth=4 expandtab
 
   autocmd FileType make set list
-  autocmd BufRead,BufNewFile *.groovy,*.jenkins set filetype=Jenkinsfile
-  autocmd FileType Jenkinsfile setlocal autoindent smartindent
+  autocmd BufRead,BufNewFile *.groovy,*.jenkins,Jenkinsfile* setlocal filetype=groovy
+  autocmd FileType groovy setlocal autoindent smartindent
 
   " autochdir emulation
   autocmd BufEnter * call s:auto_chdir(6)
@@ -924,7 +909,7 @@ augroup Tacahiroy
   " simple markdown preview
   function! s:md_preview_by_browser(f)
     if !executable('markdown')
-      call echohl('error', 'markdown is not installed or not in PATH.')
+      call Echohl('error', 'markdown is not installed or not in PATH.')
       return 0
     endif
 
