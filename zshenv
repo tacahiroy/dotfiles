@@ -2,7 +2,6 @@ export LANG=en_US.UTF-8
 
 export GOPATH=$HOME/go
 export CARGO_PATH=$HOME/.cargo
-export RUST_SRC_PATH=/usr/local/src/rust-1.7.0/src
 export LC_ALL=$LANG
 
 export SHELL=/usr/bin/zsh
@@ -26,7 +25,6 @@ path=(
   $GOPATH/bin(N-/)
   $CARGO_PATH/bin(N-/)
   $HOME/Library/Python/2.7/bin(N-/)
-  $HOME/.cargo/bin(N-/)
   $HOME/lib/jdk1.8.0_121/bin(N-/)
   $HOME/.fzf/bin(N-/)
   $path
