@@ -29,6 +29,8 @@
 	loga = log --pretty=format:'%Cred%h%Creset %C(yellow)%d%Creset %s %Cgreen(%cr)%Creset - %C(bold blue)%an%Creset' --abbrev-commit
 	logo = log --pretty=oneline --abbrev-commit
 	logs = log --stat
+	puta = push --tags
+	pusu = push --set-upstream origin
 	ra   = rebase --abort
 	rc   = rebase --continue
 	ri   = rebase -i
@@ -52,6 +54,8 @@
 [diff]
 	compactionHeuristic = true
 	mnemonicprefix = true
+[merge]
+	tool = vimdiff
 
 [push]
 	default = simple
