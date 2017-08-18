@@ -30,7 +30,7 @@
 	logo = log --pretty=oneline --abbrev-commit
 	logs = log --stat
 	puta = push --tags
-	pusu = push --set-upstream origin
+	pusu = !git push --set-upstream origin $(git name-rev --name-only HEAD)
 	ra   = rebase --abort
 	rc   = rebase --continue
 	ri   = rebase -i
