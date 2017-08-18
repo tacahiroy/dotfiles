@@ -128,7 +128,6 @@ map <Space> [Space]
 " * plugin management "{{{
 call plug#begin($HOME . '/plugins.vim')
 
-"Plug 'lifepillar/vim-mucomplete'
 Plug 'maxboisvert/vim-simple-complete'
   " Enable/Disable tab key completion mapping
   let g:vsc_tab_complete = 0
@@ -153,12 +152,12 @@ Plug 'glidenote/memolist.vim',       { 'on': ['MemoList', 'MemoNew', 'MemoGrep']
 Plug 'godlygeek/tabular',            { 'on': 'Tabularize' }
 Plug 'junegunn/rainbow_parentheses.vim'
 Plug 'vim-scripts/matchit.zip',      { 'frozen': 1 }
-" Plug 'tpope/vim-commentary',         { 'frozen': 1 }
-Plug 'manasthakur/vim-commentor'
+Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 " Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java', 'frozen': 1 }
 
+Plug 'scrooloose/nerdtree'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'tacahiroy/ctrlp-funky'
 Plug 'tacahiroy/vim-colors-isotake', { 'frozen': 1 }
