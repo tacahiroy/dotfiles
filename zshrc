@@ -1,21 +1,35 @@
 # users generic .zshrc file for zsh(1)
 
+_dot() {
+  f=$1
+  [ -s "${f}" ] && . "${f}"
+}
+
 ## plugins
 #
-_Z_NO_RESOLVE_SYMLINKS=1
-_Z_CMD=j
+if [ -f $HOME/.zsh/plugins.txt ]; then
+  _Z_CMD=j
+  _Z_NO_RESOLVE_SYMLINKS=1
 
-if type antibody 2>&1 >/dev/null; then
   unsetopt BG_NICE
-  . <(antibody init)
-  antibody bundle < ~/.zsh/plugins.txt
-  if test -f /proc/version && ! (cat /proc/version | grep Microsoft >/dev/null 2>&1); then
-    antibody bundle zsh-users/zsh-autosuggestions
-    antibody bundle olivierverdier/zsh-git-prompt
-  fi
-fi
+  GHQ_GH_ROOT=$(ghq root)/github.com
+  while read a; do
+    local _repo="${GHQ_GH_ROOT}/${a}"
+    if [ ! -d "${_repo}" ]; then
+      ghq get "${a}"
+    fi
+    _dot "${_repo}"
+  done < ~/.zsh/plugins.txt
 
-eval "$(fasd --init auto)"
+  if test -f /proc/version && ! (cat /proc/version | grep Microsoft >/dev/null 2>&1); then
+    for y in zsh-users/zsh-autosuggestions olivierverdier/zsh-git-prompt; do
+      _dot "${GHQ_GH_ROOT}/${y}"
+    done
+  fi
+
+  _dot ${GHQ_GH_ROOT}/tacahiroy/z/z.sh
+  _dot ${GHQ_GH_ROOT}/zsh-users/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
 
 autoload -Uz add-zsh-hook
 
@@ -296,10 +310,14 @@ if test -x ${F}; then
     local _repo=$(ghq list -p | ${F} --prompt='REPO> ')
 
     if [ -n "${_repo}" ]; then
-      BUFFER="cd ${_repo}"
+      if [ -n "${BUFFER}" ]; then
+        BUFFER="${BUFFER} ${_repo}"
+      else
+        BUFFER="cd ${_repo}"
+      fi
       CURSOR=$#BUFFER
     fi
-    # zle clear-screen
+    zle clear-screen
   }
 
   function filter-git-branch() {
@@ -400,8 +418,7 @@ alias zmv='noglob zmv -W'
 # predict-on
 
 ## Completion configuration
-autoload -Uz compinit
-compinit
+autoload -Uz compinit && compinit -u
 
 ## {{{ PROMPT
 #

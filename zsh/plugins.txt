@@ -1,4 +1,4 @@
 zsh-users/zsh-syntax-highlighting
 zsh-users/zsh-completions
-jhawthorn/fzy kind:path
-clvv/fasd kind:path
+jhawthorn/fzy
+tacahiroy/z
