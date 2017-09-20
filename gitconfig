@@ -40,9 +40,11 @@
 	st   = status
 	sup  = !git stash && git up
 	up   = pull --rebase
-	fep = fetch --prune
-	feta = fetch --all --tags
+	fep  = fetch --prune
+	fea  = fetch --all
+	fet  = fetch --tags
 	merge-log = !sh -c 'git log --stat $1^..$1' -
+	mt = mergetool
 
 [pager]
 	log  = (diff-highlight 2>/dev/null || cat) | ${PAGER:-less}
@@ -56,6 +58,7 @@
 	mnemonicprefix = true
 [merge]
 	tool = vimdiff
+	renamelimit = 15000
 
 [push]
 	default = simple
