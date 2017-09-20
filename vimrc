@@ -103,6 +103,32 @@ function! s:xclip()
     let @* = @"
   endif
 endfunction
+
+function! s:ins_note_template(title)
+  let s = []
+  call add(s, printf('title: %s', a:title))
+  call add(s, '==========')
+  call add(s, printf('date: %s', strftime('%Y-%m-%d %T')))
+  call add(s, 'tags: []')
+  call add(s, '- - -')
+  let i = 1
+  for y in s
+    call setline(i, y)
+    let i += 1
+  endfor
+endfunction
+
+function! s:create_new_note()
+  while 1
+    let ans = input('New note>')
+    if !empty(ans)
+      break
+    endif
+  endwhile
+  let title = substitute(ans, '[\t /\\:?\*<>|]', '-', 'g')
+  execute printf('edit %s/%s.md', g:note_path, title)
+  call s:ins_note_template(ans)
+endfunction
 "}}}
 
 if isdirectory($HOME . '/.vim')
@@ -128,30 +154,23 @@ map <Space> [Space]
 " * plugin management "{{{
 call plug#begin($HOME . '/plugins.vim')
 
-Plug 'maxboisvert/vim-simple-complete'
-  " Enable/Disable tab key completion mapping
-  let g:vsc_tab_complete = 0
-  " Enable/Disable As-you-type completion
-  let g:vsc_type_complete = 1
-  " Completion command used
-  let g:vsc_completion_command = "\<C-n>"
-  " Reverse completion command used
-  let g:vsc_reverse_completion_command = "\<C-p>"
-  " Number of character to type to trigger completion
-  let g:vsc_type_complete_length = 3
-
-  set complete-=t
-  set complete-=i
+" Plug 'lifepillar/vim-mucomplete'
+"   let g:mucomplete#enable_auto_at_startup = 1
+"   inoremap <expr> <Cr> mucomplete#popup_exit("\<Cr>")
+"   set shortmess+=c   " Shut off completion messages
+"   set belloff+=ctrlg " If Vim beeps during completion
+Plug 'ajh17/vimcompletesme'
+  imap <C-n> <Plug>vim_completes_me_forward
+  imap <C-p> <Plug>vim_completes_me_backward
 
 Plug 'cohama/lexima.vim'
 " Plug 'airblade/vim-gitgutter'        ",       { 'on': ['GitGutter'] }
-Plug 'bkad/CamelCaseMotion',         { 'frozen': 1 }
+Plug 'bkad/CamelCaseMotion'
 Plug 'davidhalter/jedi-vim',         { 'for': 'python', 'do': 'pip install jedi --user' }
-Plug 'fatih/vim-go' ",                 { 'for': 'go', 'frozen': 1 }
-Plug 'glidenote/memolist.vim',       { 'on': ['MemoList', 'MemoNew', 'MemoGrep'] }
+Plug 'fatih/vim-go',                 { 'for': 'go', 'frozen': 1 }
 Plug 'godlygeek/tabular',            { 'on': 'Tabularize' }
 Plug 'junegunn/rainbow_parentheses.vim'
-Plug 'vim-scripts/matchit.zip',      { 'frozen': 1 }
+Plug 'benjifisher/matchit.zip'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
@@ -178,41 +197,15 @@ endif
 call plug#end()
 " }}}
 
-" * plugin configurations {{{
-" plug: vim-pyenv
-  let g:pyenv#auto_activate = 0
+set completeopt=preview,menu,menuone,noinsert,noselect
 
+" Super simple memolist
+let g:note_path = expand('~/proj/memo')
+nnoremap [Space]mc :NewNote<Cr>
+nnoremap [Space]ml :execute 'CtrlP ' . g:note_path<Cr><F5>
 
-" plug: mucomplete
-"  set showmode
-"  set shortmess& shortmess+=c
-"  set completeopt=menu,menuone,noinsert,noselect
-"  let g:mucomplete#enable_auto_at_startup = 1
-"  let g:mucomplete#exit_ctrlx_keys = '\<C-g>'
-"  let g:mucomplete#cycle_with_trigger = 1
-"  let g:mucomplete#no_mappings = 0
-"  let g:mucomplete#spel#good_words = 1
-"  let g:mucomplete#chains = { 'default' : [] }
-"  let g:mucomplete#chains.sql = []
-"  let g:mucomplete#chains.go = ['omni', 'keyn']
-"  let g:mucomplete#chains.python = ['omni', 'keyn', 'file']
-
-" plug: grepper
-  let g:grepper = {}
-  let g:grepper.rg = { 'grepprg': 'rg --vimgrep --' }
-  let g:grepper.tools = [ 'rg', 'ag', 'grep' ]
-
-" plug: memolist
-  let g:memolist_path = expand('~/proj/memo')
-  let g:memolist_memo_suffix = 'md'
-  let g:memolist_memo_date = '%Y-%m-%d %H:%M'
-  let g:memolist_prompt_tags = 1
-  let g:memolist_prompt_categories = 0
-  let g:memolist_qfixgrep = 0
-  let g:memolist_vimfiler = 0
-
-  nnoremap [Space]mc :MemoNew<Cr>
-  nnoremap [Space]ml :execute 'CtrlP ' . g:memolist_path<Cr><F5>
+command! -nargs=1 InsertNoteTemplate call <SID>ins_note_template(<q-args>)
+command! -nargs=0 NewNote call <SID>create_new_note()
 
 " plug: ctrlp.vim
   let g:ctrlp_by_filename = 1
@@ -273,10 +266,10 @@ call plug#end()
 
 " plug: ctrlp-funky
   let g:ctrlp_funky_debug = 0
-  let g:ctrlp_funky_use_cache = 1
+  let g:ctrlp_funky_use_cache = 0
   let g:ctrlp_funky_matchtype = 'path'
   let g:ctrlp_funky_sort_by_mru = 0
-  let g:ctrlp_funky_syntax_highlight = 1
+  let g:ctrlp_funky_syntax_highlight = 0
   let g:ctrlp_funky_ruby_chef_words = 0
 
   let g:ctrlp_funky_nudists = ['php', 'ruby']
@@ -337,7 +330,6 @@ call plug#end()
   let g:surround_{char2nr('e')} = "<%= \r %>"
   let g:surround_{char2nr('b')} = "<%- \r %>"
   nmap ye ys$
-
   xmap s <Plug>VSurround
 
 " plug: camelcasemotion
@@ -347,16 +339,6 @@ call plug#end()
   sunmap W
   sunmap B
   sunmap E
-
-" plug: delimiteMate
-  let delimitMate_expand_space = 1
-  let delimitMate_expand_cr = 1
-  let delimitMate_matchpairs = "(:),[:],{:}"
-
-  augroup Tacahiroy
-    autocmd FileType markdown let b:delimitMate_quotes = "\" '"
-    autocmd FileType html,xml,eruby let b:delimitMate_matchpairs = &matchpairs
-  augroup END
 " }}}
 
 " * options {{{
@@ -369,7 +351,7 @@ set backspace=indent,eol,start
 set backup
 set backupext=.bac
 set backupdir=$DOTVIM/backups
-set backupskip& backupskip+=/tmp/*,/private/tmp/*,*.bac,COMMIT_EDITMSG,hg-editor-*.txt,svn-commit.[0-9]*.tmp,knife-edit-*
+set backupskip& backupskip+=/tmp/*,/private/tmp/*,*.bac,COMMIT_EDITMSG,svn-commit.[0-9]*.tmp
 set belloff=backspace,cursor,esc,insertmode
 if exists('+breakindent')
   set breakindent
@@ -432,7 +414,7 @@ endfor
 
 set shellslash
 set shiftround
-" let &showbreak = "\u279e  "
+let &showbreak = "\u279e  "
 set showcmd
 set showfulltag
 set showmatch matchtime=1
@@ -505,6 +487,7 @@ if s:has_plugin('fugitive')
 endif
 
 if s:has_plugin('ale')
+  let g:ale_enabled = 0
   let g:ale_statusline_format = ['x %d', 'w %d', 'ok']
   let g:ale_lint_on_text_changed = 'never'
   let g:ale_set_loclist = 0
@@ -630,42 +613,6 @@ nnoremap gff :e <cfile><Cr>
 " like gff, but open <cfile> in a tab
 nnoremap gft :tabe <cfile><Cr>
 
-" returns the command for system specific file manager
-function! s:get_filer_command()
-  if s:mac
-    return 'open -a Finder'
-  elseif s:linux && has('gui_gnome')
-    return 'nautilus'
-  elseif s:win
-    return 'start explorer'
-  else
-    return ''
-  endif
-endfunction
-
-" convert path separator: Windows <-> *nix
-function! s:convert_path(path)
-  if s:win
-    return '"' . substitute(a:path, '/', '\', 'g') . '"'
-  else
-    return a:path
-  endif
-endfunction
-
-" open the current file's location using a file manager
-function! s:open_with_file_manager(...)
-  let cmd = s:get_filer_command()
-  let path = get(a:, 1, s:convert_path(expand('%:p:h')))
-
-  if empty(cmd)
-    call Echohl('Error', 'Your system is not supported yet.')
-    return
-  endif
-
-  execute printf('!%s %s', cmd, path)
-endfunction
-command! -nargs=? FileManager call s:open_with_file_manager(<f-args>)
-
 " save / quit
 nnoremap [Space]w <Esc>:<C-u>update<Cr>
 nnoremap [Space]q <Esc>:<C-u>quit<Cr>
@@ -689,7 +636,7 @@ nnoremap <Leader>g :<C-u>g/
 nnoremap <Leader>v :<C-u>v/
 nnoremap <Leader>s :<C-u>s/
 nnoremap <Leader>S :<C-u>%s/
-xnoremap <Leader>s :s/
+xnoremap <Leader>s :s@
 
 nnoremap <Leader>ta :Tabularize<Space>/
 xnoremap <Leader>ta :Tabularize<Space>/
@@ -714,8 +661,6 @@ nnoremap <silent> <Leader>fN :let @" = fnamemodify(@%, ':p')<Cr>
 command! -nargs=0 CopyCurrentFilePath2CB let @* = fnamemodify(@%, ':p')
 command! -nargs=0 AbsolutePath echomsg fnamemodify(@%, ':p')
 command! -nargs=0 RelativePath echomsg substitute(fnamemodify(@%, ':p'), getcwd() . '/', '', '')
-
-command! -nargs=0 PutBufferToCB 1,$!clipper
 
 " search visual-ed text
 vnoremap * y/<C-R>"<Cr>
@@ -781,19 +726,19 @@ endif
 
 " * autocmds "{{{
 augroup Tacahiroy
+  autocmd BufEnter ControlP let b:ale_enabled = 0
   autocmd BufReadPost * if !search('\S', 'cnw') | let &l:fileencoding = &encoding | endif
   " restore cursor position
   autocmd BufReadPost * if line("'\"") <= line('$') | execute "normal '\"" | endif
   " prevent auto comment insertion when 'o' pressed
   autocmd BufEnter * setlocal formatoptions-=o
-  " autocmd BufEnter * lcd %:p:h
-
 
   "my ftdetects
   autocmd BufRead,BufNewFile ?zshrc,?zshenv set filetype=zsh
   autocmd BufRead,BufNewFile *
         \ if &readonly || !&modifiable | nnoremap <buffer> <Return> <Return> | endif
 
+  autocmd! CompleteDone * if !pumvisible() | pclose | endif
 
   " ShellScript
   autocmd FileType sh,zsh setlocal tabstop=4 softtabstop=4 shiftwidth=4 expandtab
@@ -877,7 +822,7 @@ augroup Tacahiroy
   autocmd BufRead,BufNewFile *.applescript,*.scpt set filetype=applescript
   autocmd FileType applescript set commentstring=#\ %s
 
-  autocmd FileType help,qf,logaling,bestfriend,ref-* nnoremap <buffer> <silent> qq <C-w>c
+  autocmd FileType help,qf,ref-* nnoremap <buffer> <silent> qq <C-w>c
 
   autocmd FileType python setlocal tabstop=4 shiftwidth=4 softtabstop=4
   autocmd FileType vim if &iskeyword !~# '&' | setlocal iskeyword+=& | endif
@@ -894,7 +839,6 @@ augroup Tacahiroy
   autocmd FileType javascript,html setlocal makeprg=jsl\ -conf\ \"$HOME/jsl.conf\"\ -nologo\ -nofilelisting\ -nosummary\ -nocontext\ -process\ %
   autocmd FileType javascript,html setlocal errorformat=%f(%l):\ %m
 
-  " Chef
   autocmd BufRead,BufNewFile *.json set filetype=javascript.json
   autocmd FileType json setlocal makeprg=python\ -mjson.tool\ 2>&1\ %\ >\ /dev/null
   autocmd FileType json setlocal errorformat=%m:\ line\ %l\ column\ %c\ %.%#
@@ -904,19 +848,6 @@ augroup Tacahiroy
   autocmd FileType c compiler gcc
   autocmd FileType c setlocal makeprg=gcc\ -Wall\ %\ -o\ %:r.o
   autocmd FileType c nnoremap <buffer> [Space]m :<C-u>write<Cr>:make --std=c99<Cr>
-
-  " simple markdown preview
-  function! s:md_preview_by_browser(f)
-    if !executable('markdown')
-      call Echohl('error', 'markdown is not installed or not in PATH.')
-      return 0
-    endif
-
-    let tmp = '/tmp/vimmarkdown.html'
-    call system('markdown ' . a:f . ' > ' . tmp)
-    call system('open ' . tmp)
-  endfunction
-  autocmd FileType markdown command! -buffer -nargs=0 MdPreview call s:md_preview_by_browser(expand('%'))
 augroup END
 "}}}
 
