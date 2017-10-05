@@ -56,9 +56,10 @@
 [diff]
 	compactionHeuristic = true
 	mnemonicprefix = true
+	renameLimit = 15000
 [merge]
 	tool = vimdiff
-	renamelimit = 15000
+	renameLimit = 15000
 
 [push]
 	default = simple
