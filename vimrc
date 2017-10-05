@@ -164,7 +164,6 @@ Plug 'ajh17/vimcompletesme'
   imap <C-p> <Plug>vim_completes_me_backward
 
 Plug 'cohama/lexima.vim'
-" Plug 'airblade/vim-gitgutter'        ",       { 'on': ['GitGutter'] }
 Plug 'bkad/CamelCaseMotion'
 Plug 'davidhalter/jedi-vim',         { 'for': 'python', 'do': 'pip install jedi --user' }
 Plug 'fatih/vim-go',                 { 'for': 'go', 'frozen': 1 }
@@ -172,11 +171,9 @@ Plug 'godlygeek/tabular',            { 'on': 'Tabularize' }
 Plug 'junegunn/rainbow_parentheses.vim'
 Plug 'benjifisher/matchit.zip'
 Plug 'tpope/vim-commentary'
-Plug 'tpope/vim-fugitive'
+Plug 'jreybert/vimagit'
 Plug 'tpope/vim-surround'
-" Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java', 'frozen': 1 }
 
-Plug 'scrooloose/nerdtree'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'tacahiroy/ctrlp-funky'
 Plug 'tacahiroy/vim-colors-isotake', { 'frozen': 1 }
@@ -488,7 +485,7 @@ endif
 
 if s:has_plugin('ale')
   let g:ale_enabled = 0
-  let g:ale_statusline_format = ['x %d', 'w %d', 'ok']
+  let g:ale_statusline_format = ['!%d', '@%d', 'ok']
   let g:ale_lint_on_text_changed = 'never'
   let g:ale_set_loclist = 0
   let g:ale_set_quickfix = 1
