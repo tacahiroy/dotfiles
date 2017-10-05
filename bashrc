@@ -190,3 +190,4 @@ cdup() {
 PS1=$(set_prompt)
 
 test -n "$TMUX" && tmux -2 a || tmux -2
+source ~/qmk_utils/activate_wsl.sh
