@@ -27,7 +27,8 @@ if [ -f $HOME/.zsh/plugins.txt ]; then
     done
   fi
 
-  _dot ${GHQ_GH_ROOT}/tacahiroy/z/z.sh
+  # _dot ${GHQ_GH_ROOT}/tacahiroy/z/z.sh
+  [[ -s $HOME/.autojump/etc/profile.d/autojump.sh ]] && . $HOME/.autojump/etc/profile.d/autojump.sh ]]
   _dot ${GHQ_GH_ROOT}/zsh-users/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
 
@@ -468,5 +469,18 @@ if [ -x "$(which brew)" ]; then
     [ -s ${z} ] && . ${z}
   done
 fi
+
+export_variables() {
+    local util_dir=~/qmk_utils
+    local download_dir=$util_dir/wsl_downloaded
+
+    export DFU_PROGRAMMER=$download_dir/dfu-programmer/dfu-programmer.exe
+    export DFU_UTIL=$download_dir/dfu-util-0.9-win64/dfu-util.exe
+    export TEENSY_LOADER_CLI=$download_dir/teensy_loader_cli.exe
+    export BATCHISP=batchisp.exe
+}
+
+export_variables
+
 # __END__
 # vim: et ts=2 sts=2 sw=2 fdm=marker
