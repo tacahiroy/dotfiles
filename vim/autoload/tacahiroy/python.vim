@@ -1,4 +1,4 @@
-let &pyxversion = 0
+let &pyxversion = 2
 pythonx << EOF
 import sqlparse
 from vim import *
