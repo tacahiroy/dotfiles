@@ -30,7 +30,6 @@
 	logo = log --pretty=oneline --abbrev-commit
 	logs = log --stat
 	puta = push --tags
-	pusu = push --set-upstream origin HEAD
 	ra   = rebase --abort
 	rc   = rebase --continue
 	ri   = rebase -i
@@ -62,7 +61,7 @@
 	renameLimit = 15000
 
 [push]
-	default = simple
+	default = current
 
 [credential]
 	helper = cache
