@@ -32,6 +32,10 @@ if [ -f $HOME/.zsh/plugins.txt ]; then
   _dot ${GHQ_GH_ROOT}/zsh-users/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
 
+update_plugins() {
+  while read a; do ghq get -u $a; done < ~/.zsh/plugins.txt
+}
+
 autoload -Uz add-zsh-hook
 
 bindkey -v
@@ -261,7 +265,7 @@ if test -x ${F}; then
       eval $tac | \
       ${F} --prompt='HIST> ' --query="$LBUFFER")
     CURSOR=$#BUFFER
-    zle clear-screen
+    zle reset-prompt
   }
 
   function filter-select-ctrlpvim-mru() {
@@ -276,9 +280,9 @@ if test -x ${F}; then
           BUFFER="${BUFFER} ${_file}"
         fi
         CURSOR=$#BUFFER
-        zle clear-screen
       fi
     fi
+    zle reset-prompt
   }
 
   function filter-ssh() {
@@ -318,7 +322,7 @@ if test -x ${F}; then
       fi
       CURSOR=$#BUFFER
     fi
-    zle clear-screen
+    zle reset-prompt
   }
 
   function filter-git-branch() {
@@ -341,7 +345,7 @@ if test -x ${F}; then
       fi
       CURSOR=$#BUFFER
     fi
-    # zle clear-screen
+    zle reset-prompt
   }
 
   function filter-cd-hist() {
@@ -359,6 +363,7 @@ if test -x ${F}; then
       fi
     fi
     CURSOR=$#BUFFER
+    zle reset-prompt
   }
 
   function filter-dirs() {
@@ -371,6 +376,7 @@ if test -x ${F}; then
       fi
     fi
     CURSOR=$#BUFFER
+    zle reset-prompt
   }
 
   function filter-files {
@@ -383,6 +389,7 @@ if test -x ${F}; then
       fi
     fi
     CURSOR=$#BUFFER
+    zle reset-prompt
   }
 
   zle -N filter-ssh
@@ -470,17 +477,9 @@ if [ -x "$(which brew)" ]; then
   done
 fi
 
-export_variables() {
-    local util_dir=~/qmk_utils
-    local download_dir=$util_dir/wsl_downloaded
-
-    export DFU_PROGRAMMER=$download_dir/dfu-programmer/dfu-programmer.exe
-    export DFU_UTIL=$download_dir/dfu-util-0.9-win64/dfu-util.exe
-    export TEENSY_LOADER_CLI=$download_dir/teensy_loader_cli.exe
-    export BATCHISP=batchisp.exe
-}
-
-export_variables
+if [ -f $HOME/.zshrc.local ]; then
+  . $HOME/.zshrc.local
+fi
 
 # __END__
 # vim: et ts=2 sts=2 sw=2 fdm=marker
