@@ -691,21 +691,6 @@ endfunction
 command! -nargs=? -range Tidy <line1>,<line2>call s:run_tidy(<args>)
 "}}}
 
-if has('ruby') "{{{
-  runtime! autoload/tacahiroy/ruby.vim
-
-  function! s:encode_uri() range
-    ruby encode(Vim::evaluate('a:firstline'), Vim::evaluate('a:lastline'))
-  endfunction
-
-  function! s:decode_uri() range
-    ruby decode(Vim::evaluate('a:firstline'), Vim::evaluate('a:lastline'))
-  endfunction
-
-  command! -nargs=0 -range EncodeURI <line1>,<line2>call s:encode_uri()
-  command! -nargs=0 -range DecodeURI <line1>,<line2>call s:decode_uri()
-endif "}}}
-
 if has('pythonx') "{{{
   runtime! autoload/tacahiroy/python.vim
 
@@ -713,7 +698,17 @@ if has('pythonx') "{{{
     pythonx format_sql(firstline=int(vim.eval('a:firstline'))-1, lastline=int(vim.eval('a:lastline'))-1)
   endfunction
 
+  function! s:encode_uri() range
+    pythonx encode(int(vim.eval('a:firstline'))-1, int(vim.eval('a:lastline'))-1)
+  endfunction
+
+  function! s:decode_uri() range
+    pythonx decode(int(vim.eval('a:firstline'))-1, int(vim.eval('a:lastline'))-1)
+  endfunction
+
   command! -nargs=? -range PrettifySQL <line1>,<line2>call s:format_sql()
+  command! -nargs=0 -range EncodeURI <line1>,<line2>call s:encode_uri()
+  command! -nargs=0 -range DecodeURI <line1>,<line2>call s:decode_uri()
 endif
 
 if has('multi_byte_ime') || has('xim')
