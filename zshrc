@@ -8,9 +8,6 @@ _dot() {
 ## plugins
 #
 if [ -f $HOME/.zsh/plugins.txt ]; then
-  _Z_CMD=j
-  _Z_NO_RESOLVE_SYMLINKS=1
-
   unsetopt BG_NICE
   GHQ_GH_ROOT=$(ghq root)/github.com
   while read a; do
@@ -19,7 +16,7 @@ if [ -f $HOME/.zsh/plugins.txt ]; then
       ghq get "${a}"
     fi
     _dot "${_repo}"
-  done < ~/.zsh/plugins.txt
+  done < $HOME/.zsh/plugins.txt
 
   if test -f /proc/version && ! (cat /proc/version | grep Microsoft >/dev/null 2>&1); then
     for y in zsh-users/zsh-autosuggestions olivierverdier/zsh-git-prompt; do
