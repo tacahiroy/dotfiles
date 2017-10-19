@@ -18,6 +18,7 @@ path=(
   $PYENV_ROOT/bin(N-/)
   $HOME/.pyenv/shims(N-/)
   $HOME/bin(N-/)
+  $HOME/.local/bin(N-/)
   $HOME/perl5/bin(N-/)
   /usr/local/bin(N-/)
   /usr/local/sbin(N-/)
