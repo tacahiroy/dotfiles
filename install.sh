@@ -63,23 +63,6 @@ echo Copying clipper
 cp bin/clipper $HOME/bin
 
 ##
-# filt
-#
-whicha() {
-  readlink -f $(which $1)
-}
-
-filt="$HOME/bin/filt"
-if type peco >/dev/null 2>&1; then
-  ln -sf "$(whicha peco)" "${filt}"
-elif type fzf >/dev/null 2>&1; then
-  ln -sf "$(whicha fzf)" "${filt}"
-  export FZF_DEFAULT_OPTS="--reverse --border"
-elif type percol >/dev/null 2>&1; then
-  ln -sf "$(whicha percol)" "${filt}"
-fi
-
-##
 # vim-plug
 #
 echo '** Installing vim-plug'
