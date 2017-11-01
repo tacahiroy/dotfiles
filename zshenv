@@ -100,5 +100,9 @@ perl5_lib=(
 export PERL_MM_OPT=~/perl5/lib/perl5/local/lib.pm
 
 if [ -f ~/.zshrc.local ]; then
-  source ~/.zshrc.local
+  . ~/.zshrc.local
 fi
+
+VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
+source $HOME/.local/bin/virtualenvwrapper.sh
+export WORKON_HOME=~/.virtualenvs

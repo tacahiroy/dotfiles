@@ -474,9 +474,5 @@ if [ -x "$(which brew)" ]; then
   done
 fi
 
-if [ -f $HOME/.zshrc.local ]; then
-  . $HOME/.zshrc.local
-fi
-
 # __END__
 # vim: et ts=2 sts=2 sw=2 fdm=marker
