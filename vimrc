@@ -159,9 +159,10 @@ call plug#begin($HOME . '/plugins.vim')
 "   inoremap <expr> <Cr> mucomplete#popup_exit("\<Cr>")
 "   set shortmess+=c   " Shut off completion messages
 "   set belloff+=ctrlg " If Vim beeps during completion
-Plug 'ajh17/vimcompletesme'
-  imap <C-n> <Plug>vim_completes_me_forward
-  imap <C-p> <Plug>vim_completes_me_backward
+" Plug 'ajh17/vimcompletesme'
+"   imap <C-n> <Plug>vim_completes_me_forward
+"   imap <C-p> <Plug>vim_completes_me_backward
+Plug 'maralla/completor.vim'
 
 Plug 'cohama/lexima.vim'
 Plug 'bkad/CamelCaseMotion'
@@ -484,7 +485,7 @@ if s:has_plugin('fugitive')
 endif
 
 if s:has_plugin('ale')
-  let g:ale_enabled = 0
+  let g:ale_enabled = 1
   let g:ale_statusline_format = ['!%d', '@%d', 'ok']
   let g:ale_lint_on_text_changed = 'never'
   let g:ale_set_loclist = 0
