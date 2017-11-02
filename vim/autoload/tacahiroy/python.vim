@@ -1,8 +1,9 @@
 let &pyxversion = 3
 pythonx << EOF
 import sqlparse
-import urllib.parse
+import six.moves.urllib
 from vim import *
+
 def format_sql(firstline, lastline):
   buf = vim.current.buffer
   lines = ''.join(vim.eval('getline(%d, %d)' % (firstline + 1, lastline + 1)))
