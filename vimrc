@@ -167,12 +167,11 @@ Plug 'maralla/completor.vim'
 Plug 'cohama/lexima.vim'
 Plug 'bkad/CamelCaseMotion'
 Plug 'davidhalter/jedi-vim',         { 'for': 'python', 'do': 'pip install jedi --user' }
-Plug 'fatih/vim-go',                 { 'for': 'go', 'frozen': 1 }
+Plug 'fatih/vim-go',                 { 'for': 'go' }
 Plug 'godlygeek/tabular',            { 'on': 'Tabularize' }
 Plug 'junegunn/rainbow_parentheses.vim'
 Plug 'benjifisher/matchit.zip'
 Plug 'tpope/vim-commentary'
-Plug 'jreybert/vimagit'
 Plug 'tpope/vim-surround'
 
 Plug 'ctrlpvim/ctrlp.vim'
