@@ -328,9 +328,19 @@ if test -x ${F}; then
       return
     fi
 
+    local _is_all
+    local _git_branch_opts
+
+    _is_all="$1"
+    if [ "${_is_all}" = yes ]; then
+      _git_branch_opts="--all"
+    fi
+
     local _branches
     local _branch
-    _branches="$(git branch --all | grep -v '\*' | sed 's/^\s*remotes\/origin\///; s/^\s*//' | sort -u)"
+
+
+    _branches="$(git branch ${_git_branch_opts} | grep -v '\*' | sed 's/^\s*remotes\/origin\///; s/^\s*//' | sort -u)"
     _branch="$(echo ${_branches} | ${F} --prompt='BRANCH> ')"
 
     _branch=${_branch//[[:space:]]}
@@ -343,6 +353,10 @@ if test -x ${F}; then
       CURSOR=$#BUFFER
     fi
     zle reset-prompt
+  }
+
+  function filter-git-branch-all() {
+    filter-git-branch yes
   }
 
   function filter-cd-hist() {
@@ -399,11 +413,13 @@ if test -x ${F}; then
   bindkey '^t' filter-select-ctrlpvim-mru
 
   zle -N filter-git-repo
-
   bindkey '^gr' filter-git-repo
 
   zle -N filter-git-branch
   bindkey '^gb' filter-git-branch
+
+  zle -N filter-git-branch-all
+  bindkey '^gB' filter-git-branch-all
 
   zle -N filter-cd-hist
   bindkey '^gj' filter-cd-hist
