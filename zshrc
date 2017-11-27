@@ -207,11 +207,7 @@ alias ml='ms -l'
 alias ma='ms -a'
 alias mal='ms -al'
 alias mg='ms --git -l'
-
-if [ -x "$(which fasd)" ]; then
-  alias d='cd $(fasd -dl | fzy -l 20)'
-  alias j='fasd_cd -d'
-fi
+alias pi=pip
 
 setopt complete_aliases
 
