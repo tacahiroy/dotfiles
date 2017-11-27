@@ -152,49 +152,49 @@ nnoremap [Space] <Nop>
 map <Space> [Space]
 
 " * plugin management "{{{
-call plug#begin($HOME . '/plugins.vim')
+silent! packadd minpac
 
-" Plug 'lifepillar/vim-mucomplete'
-"   let g:mucomplete#enable_auto_at_startup = 1
-"   inoremap <expr> <Cr> mucomplete#popup_exit("\<Cr>")
-"   set shortmess+=c   " Shut off completion messages
-"   set belloff+=ctrlg " If Vim beeps during completion
-" Plug 'ajh17/vimcompletesme'
-"   imap <C-n> <Plug>vim_completes_me_forward
-"   imap <C-p> <Plug>vim_completes_me_backward
-Plug 'maralla/completor.vim'
+if exists('*minpac#init')
+  call minpac#init()
 
-Plug 'cohama/lexima.vim'
-Plug 'bkad/CamelCaseMotion'
-Plug 'davidhalter/jedi-vim',         { 'for': 'python', 'do': 'pip install jedi --user' }
-Plug 'fatih/vim-go',                 { 'for': 'go' }
-Plug 'godlygeek/tabular',            { 'on': 'Tabularize' }
-Plug 'junegunn/rainbow_parentheses.vim'
-Plug 'benjifisher/matchit.zip'
-Plug 'tpope/vim-commentary'
-Plug 'tpope/vim-surround'
+  " minpac must have {'type': 'opt'} so that it can be loaded with `packadd`.
+  call minpac#add('k-takata/minpac', {'type': 'opt'})
 
-Plug 'ctrlpvim/ctrlp.vim'
-Plug 'tacahiroy/ctrlp-funky'
-Plug 'tacahiroy/vim-colors-isotake', { 'frozen': 1 }
-Plug 'w0rp/ale'
-Plug 'tfnico/vim-gradle', { 'for': ['groovy', 'java'] }
+  call minpac#add('maralla/completor.vim')
+  call minpac#add('cohama/lexima.vim')
+  call minpac#add('bkad/CamelCaseMotion')
+  call minpac#add('davidhalter/jedi-vim', {'do': {-> system('pip install jedi --user')}})
+  call minpac#add('fatih/vim-go')
+  call minpac#add('godlygeek/tabular')
+  call minpac#add('junegunn/rainbow_parentheses.vim')
+  call minpac#add('benjifisher/matchit.zip')
+  call minpac#add('tpope/vim-commentary')
+  call minpac#add('tpope/vim-surround')
+  call minpac#add('ctrlpvim/ctrlp.vim')
+  call minpac#add('tacahiroy/ctrlp-funky')
+  call minpac#add('tacahiroy/vim-colors-isotake', {'frozen': 1})
+  call minpac#add('w0rp/ale')
 
-if filereadable(expand('~/.vimrc.plugins'))
-  source ~/.vimrc.plugins
+  if filereadable(expand('~/.vimrc.plugins'))
+    source ~/.vimrc.plugins
+  endif
+
+  let s:ctrlp_matcher = 'py-matcher'
+  if s:ctrlp_matcher ==# 'py-matcher'
+    call minpac#add('FelikZ/ctrlp-py-matcher')
+    let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
+  endif
 endif
 
-let s:ctrlp_matcher = 'py-matcher'
-
-if s:ctrlp_matcher ==# 'py-matcher'
-  Plug 'FelikZ/ctrlp-py-matcher'
-  let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
-endif
-
-call plug#end()
+" Define user commands for updating/cleaning the plugins.
+" Each of them loads minpac, reloads .vimrc to register the
+" information of plugins, then performs the task.
+command! PackUpdate packadd minpac | source $MYVIMRC | call minpac#update()
+command! PackClean  packadd minpac | source $MYVIMRC | call minpac#clean()
 " }}}
 
-set completeopt=preview,menu,menuone,noinsert,noselect
+" set completeopt=preview,menu,menuone,noinsert,noselect
+set completeopt=preview,menuone
 
 " Super simple memolist
 let g:note_path = expand('~/proj/memo')
