@@ -16,11 +16,13 @@
 
 [alias]
 	b    = branch
+	find = branch --contains
 	ci   = commit
 	ca   = commit --amend
 	co   = checkout
 	d    = diff
 	dc   = diff --cached
+	dno  = diff --name-only
 	hide = stash
 	l    = log
 	logc = log ORIG_HEAD.. --stat --no-merges
