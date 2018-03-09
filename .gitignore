@@ -1,21 +1,14 @@
 vim/backups
-vim/plugged
 vim/sandbox
 vim/spell
 vim/swaps
 vim/.netrwhist
+vim/pack
 
 zsh/cache
 zsh/vendor
 zsh/functions/antigen.zsh
 *.zwc
 .zcompdump*
-
-config/fish/*
-config/fisherman/
-!config/fish/config.fish
-!config/fish/fishfile
-
-**/plug.vim*
 
 *.old
