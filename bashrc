@@ -189,5 +189,19 @@ cdup() {
 
 PS1=$(set_prompt)
 
-test -n "$TMUX" && tmux -2 a || tmux -2
+# test -n "$TMUX" && tmux -2 a || tmux -2
 source ~/qmk_utils/activate_wsl.sh
+
+# If use_tmux=1, add these codes to .bashrc/.zshrc:
+ATTACH_ONLY=1
+[[ -z "$TMUX" && -n "$USE_TMUX" ]] && {
+    [[ -n "$ATTACH_ONLY" ]] && {
+        tmux a 2>/dev/null || {
+            cd && exec tmux
+        }
+        exit
+    }
+
+    tmux new-window -c "$PWD" 2>/dev/null && exec tmux a
+    exec tmux
+}
