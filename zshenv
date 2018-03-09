@@ -5,7 +5,6 @@ export CARGO_PATH=$HOME/.cargo
 export LC_ALL=$LANG
 
 export SHELL=/usr/bin/zsh
-export PYENV_ROOT="$HOME/.pyenv"
 
 export DISPLAY=:0
 
@@ -13,21 +12,16 @@ export DISPLAY=:0
 typeset -U path
 path=(
   ./bin
-  $HOME/.rbenv/bin(N-/)
-  $HOME/.rbenv/shims(N-/)
-  $PYENV_ROOT/bin(N-/)
-  $HOME/.pyenv/shims(N-/)
   $HOME/bin(N-/)
   $HOME/.local/bin(N-/)
   $HOME/perl5/bin(N-/)
   /usr/local/bin(N-/)
   /usr/local/sbin(N-/)
-  $PYENV_ROOT/bin(N-/)
   $GOPATH/bin(N-/)
   $CARGO_PATH/bin(N-/)
   $HOME/Library/Python/2.7/bin(N-/)
   $HOME/lib/jdk1.8.0_121/bin(N-/)
-  $HOME/.fzf/bin(N-/)
+  $HOME/sqlcl/bin(N-/)
   $path
 )
 
@@ -63,7 +57,7 @@ else
 fi
 
 export PAGER='less'
-export LESS='-R -g'
+export LESS='-FRSX -g'
 
 if [ -x "$(which vim)" ]; then
   export EDITOR=vim
