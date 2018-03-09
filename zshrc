@@ -202,13 +202,6 @@ alias pyttpd='python -m http.server'
 # global
 alias -g L='|$PAGER -R'
 
-alias ms='exa'
-alias ml='ms -l'
-alias ma='ms -a'
-alias mal='ms -al'
-alias mg='ms --git -l'
-alias pi=pip
-
 setopt complete_aliases
 
 # }}}
