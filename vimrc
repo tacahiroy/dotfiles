@@ -120,13 +120,13 @@ endfunction
 
 function! s:create_new_note()
   while 1
-    let ans = input('New note>')
+    let ans = input('New note >')
     if !empty(ans)
       break
     endif
   endwhile
   let title = substitute(ans, '[\t /\\:?\*<>|]', '-', 'g')
-  execute printf('edit %s/%s.md', g:note_path, title)
+  execute printf('edit %s/%s-%s.md', g:note_path, strftime('%Y-%m-%d'), title)
   call s:ins_note_template(ans)
 endfunction
 "}}}
@@ -175,9 +175,13 @@ if exists('*minpac#init')
   call minpac#add('tacahiroy/vim-colors-isotake', {'frozen': 1})
   call minpac#add('w0rp/ale')
 
+  call minpac#add('scrooloose/nerdtree')
+
   if filereadable(expand('~/.vimrc.plugins'))
     source ~/.vimrc.plugins
   endif
+
+  call minpac#add('ryanoasis/vim-devicons')
 
   let s:ctrlp_matcher = 'py-matcher'
   if s:ctrlp_matcher ==# 'py-matcher'
@@ -193,8 +197,7 @@ command! PackUpdate packadd minpac | source $MYVIMRC | call minpac#update()
 command! PackClean  packadd minpac | source $MYVIMRC | call minpac#clean()
 " }}}
 
-" set completeopt=preview,menu,menuone,noinsert,noselect
-set completeopt=preview,menuone
+set completeopt=preview,menuone,noinsert,noselect
 
 " Super simple memolist
 let g:note_path = expand('~/proj/memo')
@@ -240,6 +243,8 @@ command! -nargs=0 NewNote call <SID>create_new_note()
       let g:ctrlp_user_command = 'dir %s /-n /b /s /a-d'
     endif
   endif
+
+  let g:ctrlp_user_command='fd --type file --color never "" %s'
 
   let g:ctrlp_prompt_mappings = {
     \ 'AcceptSelection("e")': ['<Cr>'],
@@ -459,7 +464,9 @@ endif
 
 set t_Co=256
 set background=light
-colorscheme isotake
+if !exists(glob('*/colors/isotake.vim'))
+  colorscheme isotake
+endif
 
 filetype plugin indent on
 syntax on
@@ -490,9 +497,22 @@ if s:has_plugin('ale')
   let g:ale_set_loclist = 0
   let g:ale_set_quickfix = 1
 
+  function! LinterStatus() abort
+      let l:counts = ale#statusline#Count(bufnr(''))
+
+      let l:all_errors = l:counts.error + l:counts.style_error
+      let l:all_non_errors = l:counts.total - l:all_errors
+
+      return l:counts.total == 0 ? 'OK' : printf(
+      \   '%dW %dE',
+      \   all_non_errors,
+      \   all_errors
+      \)
+  endfunction
+
   let &statusline .= '|'
   let &statusline .= '%#SpellRare#'
-  let &statusline .= '%{ALEGetStatusLine()}'
+  let &statusline .= '%{LinterStatus()}'
   let &statusline .= '%*'
 endif
 
@@ -661,8 +681,6 @@ command! -nargs=0 RelativePath echomsg substitute(fnamemodify(@%, ':p'), getcwd(
 
 " search visual-ed text
 vnoremap * y/<C-R>"<Cr>
-vnoremap < <gv
-vnoremap > >gv
 
 " like Eclipse's Alt+Up/Down
 function! s:move_block(d) range
@@ -875,12 +893,12 @@ if has('gui_running')
     vnoremap <D-c> "+y
     nnoremap <D-a> ggVG
   elseif s:linux
-    set guifont=Rounded\ M+\ 2m\ 12
+    set guifont=Cica\ 11
     vnoremap <silent> <M-c> "+y
     inoremap <silent> <M-v> <Esc>:let &paste=1<Cr>a<C-R>+<Esc>:let &paste=0<Cr>a
   else
     " Windows
-    set guifont=Ricty_Diminished:h14:cSHIFTJIS:qDRAFT
+    set guifont=Cica:h14:cSHIFTJIS:qDRAFT
     if has('directx')
       set renderoptions=type:directx,level:2.0,geom:1,renmode:5,contrast:1,taamode:0
     endif
