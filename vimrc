@@ -181,7 +181,9 @@ if exists('*minpac#init')
     source ~/.vimrc.plugins
   endif
 
-  call minpac#add('ryanoasis/vim-devicons')
+  if exists('+guifont')
+    call minpac#add('ryanoasis/vim-devicons')
+  endif
 
   let s:ctrlp_matcher = 'py-matcher'
   if s:ctrlp_matcher ==# 'py-matcher'
