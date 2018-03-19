@@ -244,8 +244,6 @@ command! -nargs=0 NewNote call <SID>create_new_note()
     endif
   endif
 
-  let g:ctrlp_user_command='fd --type file --color never "" %s'
-
   let g:ctrlp_prompt_mappings = {
     \ 'AcceptSelection("e")': ['<Cr>'],
     \ 'AcceptSelection("h")': ['<C-x>'],
