@@ -98,5 +98,5 @@ if [ -f ~/.zshrc.local ]; then
 fi
 
 VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
-source $HOME/.local/bin/virtualenvwrapper.sh
+# source $HOME/.local/bin/virtualenvwrapper.sh
 export WORKON_HOME=~/.virtualenvs

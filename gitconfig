@@ -74,4 +74,4 @@
 [branch]
 	autosetuprebase = always
 [ghq]
-	root = /home/tacahiroy/proj
+	root = /Users/tacahiroy/proj

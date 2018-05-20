@@ -12,3 +12,4 @@ zsh/functions/antigen.zsh
 .zcompdump*
 
 *.old
+
