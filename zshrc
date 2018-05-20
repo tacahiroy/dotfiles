@@ -132,6 +132,8 @@ HISTFILE=~/.zhistory
 HISTSIZE=100000
 SAVEHIST=100000
 
+LESS=-XRF
+
 # not save history, starts from space
 setopt hist_ignore_space
 setopt hist_ignore_all_dups
