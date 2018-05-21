@@ -162,8 +162,9 @@ if exists('*minpac#init')
 
   call minpac#add('maralla/completor.vim')
   call minpac#add('cohama/lexima.vim')
+  packadd! lexima.vim
   call minpac#add('bkad/CamelCaseMotion')
-  call minpac#add('davidhalter/jedi-vim', {'do': {-> system('pip install jedi --user')}})
+  call minpac#add('davidhalter/jedi-vim', {'do': {-> system('pip3 install jedi --user')}})
   call minpac#add('fatih/vim-go')
   call minpac#add('godlygeek/tabular')
   call minpac#add('junegunn/rainbow_parentheses.vim')
@@ -176,6 +177,9 @@ if exists('*minpac#init')
   call minpac#add('w0rp/ale')
 
   call minpac#add('scrooloose/nerdtree')
+    let NERDTreeMouseMode = 3
+
+  call minpac#add('hashivim/vim-terraform')
 
   if filereadable(expand('~/.vimrc.plugins'))
     source ~/.vimrc.plugins
@@ -186,10 +190,13 @@ if exists('*minpac#init')
   endif
 
   let s:ctrlp_matcher = 'py-matcher'
+  let s:ctrlp_matcher = ''
   if s:ctrlp_matcher ==# 'py-matcher'
     call minpac#add('FelikZ/ctrlp-py-matcher')
     let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
   endif
+
+  let g:completor_python_binary = expand('~/.virtualenvs/redminer-XnFNlr0j/bin/python')
 endif
 
 " Define user commands for updating/cleaning the plugins.
@@ -208,6 +215,14 @@ nnoremap [Space]ml :execute 'CtrlP ' . g:note_path<Cr><F5>
 
 command! -nargs=1 InsertNoteTemplate call <SID>ins_note_template(<q-args>)
 command! -nargs=0 NewNote call <SID>create_new_note()
+
+" plug: lexima
+  " let g:lexima_no_default_rules = 1
+  let g:lexima_enable_space_rules = 0
+  let g:lexima_enable_endwise_rule = 0
+  call lexima#add_rule({'char': '(', 'at': '\%#\w', 'input': '('})
+  call lexima#add_rule({'char': '"', 'at': '\%#\w', 'input': '"'})
+  call lexima#add_rule({'char': "'", 'at': '\%#\w', 'input': "'"})
 
 " plug: ctrlp.vim
   let g:ctrlp_by_filename = 1
@@ -289,6 +304,7 @@ command! -nargs=0 NewNote call <SID>create_new_note()
   nnoremap [Space]uu :execute 'CtrlPFunky ' . fnameescape(expand('<cword>'))<Cr>
 
 " plug: jedi-vim
+  let g:jedi#auto_initialization = 0
   let g:jedi#auto_vim_configuration = 0
   let g:jedi#popup_on_dot = 1
   let g:jedi#show_call_signatures = 2
@@ -756,60 +772,6 @@ augroup Tacahiroy
   autocmd FileType make set list
   autocmd BufRead,BufNewFile *.groovy,*.jenkins,Jenkinsfile* setlocal filetype=groovy
   autocmd FileType groovy setlocal autoindent smartindent
-
-  " autochdir emulation
-  autocmd BufEnter * call s:auto_chdir(6)
-
-  function! s:get_project_root(dir, depth)
-    let i = 0
-    let dir = a:dir
-
-    while i < a:depth
-      let dirs = split(dir, '/')
-      if !exists('maxidx')
-        let maxidx = len(dirs)
-      endif
-
-      let idx = maxidx - i
-      if idx < 0
-        break
-      endif
-
-      let dir = '/' . join(dirs[0:idx], '/')
-      let patterns = ['Gemfile', 'Rakefile', 'README*']
-      for pat in patterns
-        for f in split(glob(dir . '/' . pat))
-          if filereadable(f)
-            return dir
-          endif
-        endfor
-      endfor
-      let i += 1
-    endwhile
-
-    return a:dir
-  endfunction
-
-  function! s:auto_chdir(depth)
-    if !get(g:, 'auto_chdir_enabled', 1)
-      return
-    endif
-
-    " fugitive:// or something
-    if expand('%') =~# '^\S\+://'
-      return
-    endif
-
-    let dir = s:get_project_root(expand('%:p:h'), a:depth)
-
-    execute 'lcd ' . escape(dir, ' ')
-  endfunction
-
-  function! s:toggle_auto_chdir_mode()
-    let g:auto_chdir_enabled = !get(g:, 'auto_chdir_enabled', 1)
-    call Echohl('Constant', 'AutoChdir: ' . (g:auto_chdir_enabled ? 'enabled' : 'disabled'))
-  endfunction
-  command! -nargs=0 -bang AutoChdirToggle call s:toggle_auto_chdir_mode()
 
   augroup PersistentUndo
     autocmd!
