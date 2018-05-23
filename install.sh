@@ -61,13 +61,3 @@ ln -s $(${READLINK} ${TMUX_CONF}) ${target}
 
 echo Copying clipper
 cp bin/clipper $HOME/bin
-
-##
-# vim-plug
-#
-echo '** Installing vim-plug'
-PLUG_VIM=$HOME/.vim/autoload/plug.vim
-if [ ! -r "${PLUG_VIM}" ]; then
-    curl -fLo "${PLUG_VIM}" --create-dirs \
-        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-fi
