@@ -22,9 +22,9 @@ for y in *; do
                 mkdir "${XDG_CONFIG_HOME}"
             fi
             for y in $(find config -type d -not -wholename config); do
-                source=$(${READLINK} $y)
-                target=${XDG_CONFIG_HOME}/$(basename $y)
-                [ -L ${target} ] && unlink ${taget}
+                source=$(${READLINK} "$y")
+                target=${XDG_CONFIG_HOME}/$(basename "$y")
+                [ -L "${target}" ] && unlink "${target}"
                 ln -s "${source}" "${target}"
             done
             ;;
