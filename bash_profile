@@ -5,37 +5,23 @@ export LANG=en_US.UTF-8
 
 set_path() {
     dir=$1
-    if [ -d ${dir} ]; then
+    if [ -d "${dir}" ]; then
         PATH=$PATH:${dir}
     fi
 }
 
-if [ -f $HOME/.bash/z.sh ]; then
-    _Z_NO_RESOLVE_SYMLINKS=1
-    _Z_CMD=j
-    . $HOME/.bash/z.sh
-fi
+set_path "$HOME/.local/bin"
+set_path "$HOME/bin"
+set_path "$HOME/.cargo/bin"
 
-EDITOR=vim
-PAGER=less
-
-set_path $HOME/.rbenv/bin
-set_path $HOME/.local/bin
-set_path $HOME/bin
-set_path $HOME/.fzf/bin
-set_path $HOME/.cabal/bin
-set_path $HOME/.cargo/bin
-
-if [ -d $HOME/go ]; then
+if [ -d "$HOME/go" ]; then
     GOPATH=$HOME/go
-    PATH=$PATH:$GOPATH/bin
+    set_path "$GOPATH"
 fi
 
-if type -t rbenv 2>&1 >/dev/null; then
-    eval "$(rbenv init -)"
-fi
+export EDITOR=vim
+export PAGER=less
+export PATH
 
 # Trigger ~/.bashrc commands
 . ~/.bashrc
-
-export PATH="$HOME/.cargo/bin:$PATH"

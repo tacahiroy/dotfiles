@@ -174,7 +174,7 @@ PROMPT_GIT_STATUS_COLOR="$(tput setaf 28)"
 PROMPT_PREPOSITION_COLOR="$(tput setaf 1)"
 
 set_prompt() {
-    if [ $(tput colors) = "256" ]; then
+    if [ "$(tput colors)" = "256" ]; then
         echo -n "${PINK}\u${RESET}@${ORANGE}\h:${GREEN}\w${RESET}"
     else
         echo -n '\u@\h:\w'
