@@ -239,7 +239,8 @@ function cdup() {
 zle -N cdup
 bindkey '^\^' cdup
 
-F=$HOME/bin/filt
+F=$HOME/bin/fzy
+FO='-l 20'
 
 if test -x ${F}; then
   function filter-select-history() {
@@ -251,7 +252,7 @@ if test -x ${F}; then
     fi
     BUFFER=$(fc -nl 1 | \
       eval $tac | \
-      ${F} --prompt='HIST> ' --query="$LBUFFER")
+      ${F} ${FO} --prompt='HIST> ' --query="$LBUFFER")
     CURSOR=$#BUFFER
     zle reset-prompt
   }
@@ -260,7 +261,7 @@ if test -x ${F}; then
     local ctrlp_mrufile=$HOME/.cache/ctrlp/mru/cache.txt
     local _file
     if [ -f "${ctrlp_mrufile}" ]; then
-      _file=$(cat "${ctrlp_mrufile}" | ${F} --prompt='MRU> ')
+      _file=$(cat "${ctrlp_mrufile}" | ${F} ${FO} --prompt='MRU> ')
       if [ -n "${_file}" -a -f "${_file}" ]; then
         if [ $#BUFFER -eq 0 ]; then
           BUFFER="vim ${_file}"
@@ -281,7 +282,7 @@ if test -x ${F}; then
       return
     fi
 
-    local _host=$(echo "${_khost}\n${_chost}" | ${F})
+    local _host=$(echo "${_khost}\n${_chost}" | ${F} ${FO})
 
     if [ -z "${_host}" ]; then
       return
@@ -300,7 +301,7 @@ if test -x ${F}; then
       return 9
     fi
 
-    local _repo=$(ghq list -p | ${F} --prompt='REPO> ')
+    local _repo=$(ghq list -p | ${F} ${FO} --prompt='REPO> ')
 
     if [ -n "${_repo}" ]; then
       if [ -n "${BUFFER}" ]; then
@@ -332,7 +333,7 @@ if test -x ${F}; then
 
 
     _branches="$(git branch ${_git_branch_opts} | grep -v '\*' | sed 's/^\s*remotes\/origin\///; s/^\s*//' | sort -u)"
-    _branch="$(echo ${_branches} | ${F} --prompt='BRANCH> ')"
+    _branch="$(echo ${_branches} | ${F} ${FO} --prompt='BRANCH> ')"
 
     _branch=${_branch//[[:space:]]}
     if [ -n "${_branch}" ]; then
@@ -351,12 +352,10 @@ if test -x ${F}; then
   }
 
   function filter-cd-hist() {
-    # local _dir=$(awk -F '[|]' -v home=$HOME '{ a=gensub(home, "~", "g", $1); print a }' ~/.z | sort | ${F} --prompt='JUMP> ')
-
     local ctrlp_cache=$HOME/.cache/ctrlp/mru/cache.txt
     ! test -f ${ctrlp_cache} && return
 
-    local _dir=$(sed 's#/[^/]\+$##' ${ctrlp_cache} | sort -u | ${F} --prompt='JUMP> ')
+    local _dir=$(sed 's#/[^/]\+$##' ${ctrlp_cache} | sort -u | ${F} ${FO} --prompt='JUMP> ')
     if [ -n "${_dir// }" ]; then
       if [ $#BUFFER -eq 0 ]; then
         BUFFER="cd ${_dir}"
@@ -369,7 +368,7 @@ if test -x ${F}; then
   }
 
   function filter-dirs() {
-    local _dir=$(find . -type d ! -name '.git' ! -path '*/.git/*' ! -name '.' | ${F} --prompt='JUMP> ')
+    local _dir=$(find . -type d ! -name '.git' ! -path '*/.git/*' ! -name '.' | ${F} ${FO} --prompt='JUMP> ')
     if [ -n "${_dir// }" ]; then
       if [ $#BUFFER -eq 0 ]; then
         BUFFER="cd ${_dir}"
@@ -382,7 +381,7 @@ if test -x ${F}; then
   }
 
   function filter-files {
-    local _file=$(rg --files --no-heading | ${F} --prompt='FILE> ')
+    local _file=$(rg --files --no-heading | ${F} ${FO} --prompt='FILE> ')
     if [ -n "${_file// }" ]; then
       if [ $#BUFFER -eq 0 ]; then
         BUFFER="vim ${_file}"
@@ -480,6 +479,10 @@ if [ -x "$(which brew)" ]; then
     [ -s ${z} ] && . ${z}
   done
 fi
+
+export PATH="$HOME/.pyenv/bin:$PATH"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
 
 # __END__
 # vim: et ts=2 sts=2 sw=2 fdm=marker
