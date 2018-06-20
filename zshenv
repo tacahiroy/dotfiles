@@ -22,6 +22,7 @@ path=(
   $HOME/Library/Python/2.7/bin(N-/)
   $HOME/lib/jdk1.8.0_121/bin(N-/)
   $HOME/sqlcl/bin(N-/)
+  /usr/local/go/bin(N-/)
   $path
 )
 
@@ -64,25 +65,6 @@ if [ -x "$(which vim)" ]; then
 fi
 
 export ANDROID_HOME=/usr/local/opt/android-sdk
-
-## Ruby
-typeset -xT RUBYLIB ruby_path
-typeset -U ruby_path
-
-ruby_path=(
-  ./lib(N-/)
-  $HOME/lib/ruby(N-/)
-)
-
-# # Python
-# typeset -xT PYTHONPATH python_path
-# typeset -U python_path
-
-# python_path=(
-#   /Library/Python/3.5/site-packages(N-/)
-#   $HOME/.local/lib/python3.5/site-packages(N-/)
-#   /usr/local/lib/python3.5/site-packages(N-/)
-# )
 
 ## Perl
 typeset -xT PERL5LIB perl5_lib
