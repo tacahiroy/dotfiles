@@ -1,0 +1,5 @@
+alias ls='ls -F'
+alias ll='ls -l'
+alias la='ls -a'
+alias gi='git'
+alias vi='vim'
