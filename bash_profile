@@ -23,5 +23,10 @@ export EDITOR=vim
 export PAGER=less
 export PATH
 
+if [[ "$(uname -s)" =~ "MSYS_NT.*" ]]; then
+    export GOROOT=/c/tools/msys64/mingw64/lib/go
+fi
+export GOPATH=$HOME/go
+
 # Trigger ~/.bashrc commands
 . ~/.bashrc

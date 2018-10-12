@@ -189,8 +189,19 @@ cdup() {
 
 PS1=$(set_prompt)
 
-# test -n "$TMUX" && tmux -2 a || tmux -2
-source ~/qmk_utils/activate_wsl.sh
+
+case "$(uname -a)" in
+        MSYS*)
+        source ~/qmk_utils/activate_msys2.sh
+        ;;
+        *Microsoft*)
+        source ~/qmk_utils/activate_wsl.sh
+        ;;
+        *Darwin*)
+        ;;
+        *)
+        ;;
+esac
 
 # If use_tmux=1, add these codes to .bashrc/.zshrc:
 ATTACH_ONLY=1
