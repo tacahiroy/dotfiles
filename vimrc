@@ -161,10 +161,13 @@ if exists('*minpac#init')
   call minpac#add('k-takata/minpac', {'type': 'opt'})
 
   call minpac#add('maralla/completor.vim')
+    let g:completor_python_binary = expand('/usr/bin/python3')
+    let g:completor_gocode_binary = expand('$GOPATH/bin/gocode')
+    let g:completor_complete_options = 'menuone,noselect,preview'
   call minpac#add('cohama/lexima.vim')
-  packadd! lexima.vim
+    packadd! lexima.vim
   call minpac#add('bkad/CamelCaseMotion')
-  call minpac#add('davidhalter/jedi-vim', {'do': {-> system('pip3 install jedi --user')}})
+  " call minpac#add('davidhalter/jedi-vim', {'do': {-> system('pip3 install jedi --user')}})
   call minpac#add('fatih/vim-go')
   call minpac#add('godlygeek/tabular')
   call minpac#add('junegunn/rainbow_parentheses.vim')
@@ -176,10 +179,7 @@ if exists('*minpac#init')
   call minpac#add('tacahiroy/vim-colors-isotake', {'frozen': 1})
   call minpac#add('w0rp/ale')
 
-  call minpac#add('scrooloose/nerdtree')
-    let NERDTreeMouseMode = 3
-
-  call minpac#add('hashivim/vim-terraform')
+  call minpac#add('mattn/webapi-vim')
 
   if filereadable(expand('~/.vimrc.plugins'))
     source ~/.vimrc.plugins
@@ -189,14 +189,11 @@ if exists('*minpac#init')
     call minpac#add('ryanoasis/vim-devicons')
   endif
 
-  let s:ctrlp_matcher = 'py-matcher'
-  let s:ctrlp_matcher = ''
-  if s:ctrlp_matcher ==# 'py-matcher'
-    call minpac#add('FelikZ/ctrlp-py-matcher')
-    let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
-  endif
-
-  let g:completor_python_binary = expand('~/.virtualenvs/redminer-XnFNlr0j/bin/python')
+  " call minpac#add('FelikZ/ctrlp-py-matcher')
+  " let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
+  call minpac#add('nixprime/cpsm')
+    let g:ctrlp_match_func = {'match': 'cpsm#CtrlPMatch'}
+    let g:cpsm_highlight_mode = 'detailed'
 endif
 
 " Define user commands for updating/cleaning the plugins.
@@ -205,6 +202,7 @@ endif
 command! PackUpdate packadd minpac | source $MYVIMRC | call minpac#update()
 command! PackClean  packadd minpac | source $MYVIMRC | call minpac#clean()
 " }}}
+
 
 set completeopt=preview,menuone,noinsert,noselect
 
@@ -225,7 +223,7 @@ command! -nargs=0 NewNote call <SID>create_new_note()
   call lexima#add_rule({'char': "'", 'at': '\%#\w', 'input': "'"})
 
 " plug: ctrlp.vim
-  let g:ctrlp_by_filename = 1
+  let g:ctrlp_by_filename = 0
   let g:ctrlp_map = '<Space>e'
   let g:ctrlp_cmd = 'CtrlP'
   let g:ctrlp_switch_buffer = 'Et'
@@ -251,8 +249,6 @@ command! -nargs=0 NewNote call <SID>create_new_note()
 
   if s:grep ==# 'rg'
     let g:ctrlp_user_command = 'rg %s -i --files --no-heading'
-  elseif s:grep ==# 'ag'
-    let g:ctrlp_user_command = 'ag %s -i --nocolor --nogroup -p ~/.agignore -g ""'
   elseif s:grep ==# ''
     if s:linux || s:mac
       let g:ctrlp_user_command = 'find %s -type f'
@@ -499,6 +495,7 @@ let &statusline .= '%{(&list ? "L" : "")}'
 let &statusline .= '%{(empty(&clipboard) ? "" : "c")}'
 let &statusline .= '%{(&paste ? "p" : "")}'
 let &statusline .= '|%{&textwidth}'
+let &statusline .= '|%{get(g:, "ctrlp_filetype", "")}'
 
 if s:has_plugin('fugitive')
   let &statusline .= '%#Type#'
@@ -796,7 +793,7 @@ augroup Tacahiroy
 
   autocmd FileType help,qf,ref-* nnoremap <buffer> <silent> qq <C-w>c
 
-  autocmd FileType python setlocal tabstop=4 shiftwidth=4 softtabstop=4
+  autocmd FileType python setlocal tabstop=4 shiftwidth=4 softtabstop=4 expandtab
   autocmd FileType vim if &iskeyword !~# '&' | setlocal iskeyword+=& | endif
   autocmd FileType css,sass,scss,less setlocal omnifunc=csscomplete#CompleteCSS
 
