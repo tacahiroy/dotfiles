@@ -24,6 +24,8 @@ if [ -f $HOME/.zsh/plugins.txt ]; then
     done
   fi
 
+  # _dot ${GHQ_GH_ROOT}/olivierverdier/zsh-git-prompt/zshrc.sh
+
   # _dot ${GHQ_GH_ROOT}/tacahiroy/z/z.sh
   [[ -s $HOME/.autojump/etc/profile.d/autojump.sh ]] && . $HOME/.autojump/etc/profile.d/autojump.sh ]]
   _dot ${GHQ_GH_ROOT}/zsh-users/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
@@ -479,10 +481,6 @@ if [ -x "$(which brew)" ]; then
     [ -s ${z} ] && . ${z}
   done
 fi
-
-export PATH="$HOME/.pyenv/bin:$PATH"
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
 
 # __END__
 # vim: et ts=2 sts=2 sw=2 fdm=marker
