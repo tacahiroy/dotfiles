@@ -1,7 +1,6 @@
 #!/bin/bash
-# .bash_profile
 
-export LANG=en_US.UTF-8
+umask 0022
 
 set_path() {
     dir=$1
@@ -10,23 +9,33 @@ set_path() {
     fi
 }
 
-set_path "$HOME/.local/bin"
-set_path "$HOME/bin"
-set_path "$HOME/.cargo/bin"
-
-if [ -d "$HOME/go" ]; then
-    GOPATH=$HOME/go
-    set_path "$GOPATH"
-fi
-
+export LANG=en_US.UTF-8
+export SHELL=/bin/bash
+export GOPATH=$HOME/go
 export EDITOR=vim
 export PAGER=less
+export FILTER_CMD=$HOME/bin/fzy
+export FILTER_OPTIONS='-l 20'
+
+set_path "$HOME/bin"
+set_path "$HOME/.local/bin"
+set_path "$HOME/.cargo/bin"
+set_path "$GOPATH/bin"
+
 export PATH
 
-if [[ "$(uname -s)" =~ "MSYS_NT.*" ]]; then
+if [[ "$(uname -s)" =~ MSYS_NT.* ]]; then
     export GOROOT=/c/tools/msys64/mingw64/lib/go
 fi
-export GOPATH=$HOME/go
 
-# Trigger ~/.bashrc commands
-. ~/.bashrc
+if [ -f "$HOME/.bashrc.local" ]; then
+    . "$HOME/.bashrc.local"
+fi
+
+# if running bash
+if [ -n "$BASH_VERSION" ]; then
+    # include .bashrc if it exists
+    if [ -f "$HOME/.bashrc" ]; then
+	. "$HOME/.bashrc"
+    fi
+fi

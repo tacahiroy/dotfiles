@@ -13,16 +13,44 @@ esac
 
 umask 0022
 
+_dot() {
+  f=$1
+  [ -s "${f}" ] && . "${f}"
+}
+
+update_plugins() {
+  while read -r a; do ghq get -u "${a}"; done < "$HOME/.bash/plugins.txt"
+}
+
+## plugins
+#
+export _Z_CMD=j
+if [ -f "$HOME/.bash/plugins.txt" ]; then
+  GHQ_GH_ROOT=$(ghq root)/github.com
+  while read -r a; do
+    _rn=$(echo "${a}" | cut -d ' ' -f1)
+    _init=$(echo "${a}" | cut -d ' ' -f2)
+    _repo="${GHQ_GH_ROOT}/${_rn}"
+    if [ ! -d "${_repo}" ]; then
+      ghq get "${_rn}"
+    fi
+    if [ -f "${_repo}/${_init}" ]; then
+        _dot "${_repo}/${_init}"
+    fi
+  done < "$HOME/.bash/plugins.txt"
+fi
+
+
 # ssh-agent
 SSH_ENV=$HOME/.ssh/agent.env
 start_agent() {
-  ssh-agent > "$SSH_ENV"
-  . "$SSH_ENV" > /dev/null
+  ssh-agent > "${SSH_ENV}"
+  . "${SSH_ENV}" > /dev/null
   # ssh-add
 }
 
-if [ -f "$SSH_ENV" ]; then
-  . "$SSH_ENV" > /dev/null
+if [ -f "${SSH_ENV}" ]; then
+  . "${SSH_ENV}" > /dev/null
   if ps ${SSH_AGENT_PID:-999999} | grep ssh-agent$ > /dev/null &&
      test -S "${SSH_AUTH_SOCK}"; then
     # agent already running
@@ -45,7 +73,7 @@ shopt -s histappend
 
 # After each command, append to the history file and reread it
 # http://unix.stackexchange.com/questions/1288/preserve-bash-history-in-multiple-terminal-windows
-export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a; history -c; history -r"
+export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
 
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
 HISTSIZE=50000
@@ -62,56 +90,8 @@ shopt -s globstar
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
-FILTER=$HOME/bin/filt
-if [ -n "${FILTER}" ]; then
-    # Search history
-    select-history() {
-        local tac
-        if which tac > /dev/null; then
-            tac="tac"
-        else
-            tac="tail -r"
-        fi
-        READLINE_LINE=$(fc -nl 1 | sed 's/^\t*//' | \
-            eval $tac | \
-            ${FILTER} --query "$READLINE_LINE")
-        READLINE_POINT=${#READLINE_LINE}
-    }
-
-    # Search MRU file using ctrlp.vim's MRU file list
-    select-ctrlpvim-mru() {
-        local ctrlp_mrufile=$HOME/.cache/ctrlp/mru/cache.txt
-        local _file
-        if [ -f "${ctrlp_mrufile}" ]; then
-            _file=$(cat "${ctrlp_mrufile}" | ${FILTER} --query "$READLINE_LINE")
-            if [ -n "${_file}" -a -f "${_file}" ]; then
-                READLINE_LINE="$EDITOR ${_file}"
-                READLINE_POINT=${#READLINE_LINE}
-            fi
-        fi
-    }
-
-    # Open ssh connection
-    select-ssh() {
-        local _khost=$(grep -o '^\S\+' ~/.ssh/known_hosts | tr -d '[]' | tr ',' '\n' | sort)
-        local _chost=$(grep '^Host ' ~/.ssh/config | sed 's/^Host //' | grep -v '\*\|?' | tr ' ' '\n' | sort)
-
-        if [ -z "${_khost}" -a -z "${_chost}" ]; then
-            return
-        fi
-
-        local _host=$(echo "${_khost}\n${_chost}" | ${FILTER})
-
-        if [ -z "${_host}" ]; then
-            return
-        fi
-
-        if [ -n "${_host}" -a -n "${TMUX}" ]; then
-            eval "tmux neww -n ${_host} 'ssh ${_host}'"
-        else
-            eval "ssh ${_host}"
-        fi
-    }
+if [ -n "${FILTER_CMD}" ]; then
+    [ -f "$HOME/.bash/selectors.sh" ] && . "$HOME/.bash/selectors.sh"
 fi
 
 ..() {
@@ -123,8 +103,8 @@ fi
 }
 
 
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
+if [ -f "$HOME/.bash_aliases" ]; then
+    . "$HOME/.bash_aliases"
 fi
 
 # enable programmable completion features (you don't need to enable
@@ -144,46 +124,38 @@ fi
 bind '"\C-p":history-search-backward'
 bind '"\C-n":history-search-forward'
 bind '"\C-^"':"\"cdup\r\""
-if [ -n "${FILTER}" ]; then
-    bind -x '"\C-r"':"\"select-history\""
-    bind -x '"\C-t"':"\"select-ctrlpvim-mru\""
-    # bind -x '"\C-q"':"\"select-ssh\""
-fi
-
-#--------------------
-# Prompt
-#--------------------
-PINK='\e[0;35;2m'
-ORANGE='\e[0;32;4m'
-GREEN='\e[0;33;2m'
-RESET='\e[0m'
-
-PROMPT_GIT_STATUS_COLOR="$(tput setaf 28)"
-PROMPT_PREPOSITION_COLOR="$(tput setaf 1)"
-
-set_prompt() {
-    if [ "$(tput colors)" = "256" ]; then
-        echo -n "${PINK}\u${RESET}@${ORANGE}\h:${GREEN}\w${RESET}"
-    else
-        echo -n '\u@\h:\w'
-    fi
-    echo -n '\n'
-    echo -n '$ '
-}
 
 cdup() {
     cd ..
 }
 
-PS1=$(set_prompt)
+#--------------------
+# Prompt
+#--------------------
+PINK='\e[0;35;5m'
+MIDORI='\e[0;32;4m'
+AO='\e[0;36;5m'
+RESET='\e[0m'
 
+set_prompt() {
+    if [ "$(tput colors)" = "256" ]; then
+        echo -n "${PINK}\u${RESET}@${MIDORI}\h:${AO}\w${RESET}"
+    else
+        echo -n '\u@\h:\w'
+    fi
+    printf '\n$ '
+}
+
+PS1=$(set_prompt)
+# Run twolfson/sexy-bash-prompt
+# . ~/.bash_prompt
 
 case "$(uname -a)" in
         MSYS*)
-        source ~/qmk_utils/activate_msys2.sh
+        . $HOME/qmk_utils/activate_msys2.sh
         ;;
         *Microsoft*)
-        source ~/qmk_utils/activate_wsl.sh
+        . $HOME/qmk_utils/activate_wsl.sh
         ;;
         *Darwin*)
         ;;
