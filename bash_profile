@@ -17,6 +17,8 @@ export PAGER=less
 export FILTER_CMD=$HOME/bin/fzy
 export FILTER_OPTIONS='-l 20'
 
+export DISPLAY=:0
+
 set_path "$HOME/bin"
 set_path "$HOME/.local/bin"
 set_path "$HOME/.cargo/bin"
