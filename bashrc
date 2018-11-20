@@ -147,8 +147,6 @@ set_prompt() {
 }
 
 PS1=$(set_prompt)
-# Run twolfson/sexy-bash-prompt
-# . ~/.bash_prompt
 
 case "$(uname -a)" in
         MSYS*)
@@ -165,14 +163,18 @@ esac
 
 # If use_tmux=1, add these codes to .bashrc/.zshrc:
 ATTACH_ONLY=1
+USE_TMUX=1
 [[ -z "$TMUX" && -n "$USE_TMUX" ]] && {
     [[ -n "$ATTACH_ONLY" ]] && {
         tmux a 2>/dev/null || {
-            cd && exec tmux
+            cd && exec tmux -l
         }
         exit
     }
-
-    tmux new-window -c "$PWD" 2>/dev/null && exec tmux a
-    exec tmux
+    tmux new-window -l -c "$PWD" 2>/dev/null && exec tmux a
+    exec tmux -l
 }
+
+VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
+. $HOME/.local/bin/virtualenvwrapper.sh
+export WORKON_HOME=~/.virtualenvs
