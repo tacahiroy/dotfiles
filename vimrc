@@ -164,11 +164,18 @@ if exists('*minpac#init')
     let g:completor_python_binary = expand('/usr/bin/python3')
     let g:completor_gocode_binary = expand('$GOPATH/bin/gocode')
     let g:completor_complete_options = 'menuone,noselect,preview'
+
   call minpac#add('cohama/lexima.vim')
     packadd! lexima.vim
+
   call minpac#add('bkad/CamelCaseMotion')
-  " call minpac#add('davidhalter/jedi-vim', {'do': {-> system('pip3 install jedi --user')}})
+
   call minpac#add('fatih/vim-go')
+    let g:go_fmt_options = {
+        \ 'gofmt': '-s',
+        \ 'goimports': '',
+    \ }
+
   call minpac#add('godlygeek/tabular')
   call minpac#add('junegunn/rainbow_parentheses.vim')
   call minpac#add('benjifisher/matchit.zip')
@@ -180,6 +187,7 @@ if exists('*minpac#init')
   call minpac#add('w0rp/ale')
 
   call minpac#add('mattn/webapi-vim')
+  call minpac#add('mechatroner/rainbow_csv')
 
   if filereadable(expand('~/.vimrc.plugins'))
     source ~/.vimrc.plugins
@@ -428,7 +436,7 @@ endfor
 
 set shellslash
 set shiftround
-let &showbreak = "\u279e  "
+let &showbreak = nr2char(8618) . ' '
 set showcmd
 set showfulltag
 set showmatch matchtime=1
@@ -649,9 +657,6 @@ nnoremap [Space]q <Esc>:<C-u>quit<Cr>
 nnoremap [Space]W <Esc>:<C-u>update!<Cr>
 nnoremap [Space]Q <Esc>:<C-u>quit!<Cr>
 
-" copy to clipboard
-nnoremap <silent> [Space]a :<C-u>call <SID>xclip()<Cr>
-
 " help
 nnoremap <C-\> :<C-u>h<Space>
 " put a whitespace into under the cursor
@@ -855,6 +860,8 @@ if has('gui_running')
     set guifont=Cica\ 11
     vnoremap <silent> <M-c> "+y
     inoremap <silent> <M-v> <Esc>:let &paste=1<Cr>a<C-R>+<Esc>:let &paste=0<Cr>a
+    " copy to clipboard
+    nnoremap <silent> [Space]a :<C-u>call <SID>xclip()<Cr>
   else
     " Windows
     set guifont=Cica:h14:cSHIFTJIS:qDRAFT
