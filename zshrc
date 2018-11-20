@@ -5,6 +5,10 @@ _dot() {
   [ -s "${f}" ] && . "${f}"
 }
 
+update_plugins() {
+  while read a; do ghq get -u $a; done < ~/.zsh/plugins.txt
+}
+
 ## plugins
 #
 if [ -f $HOME/.zsh/plugins.txt ]; then
@@ -30,10 +34,6 @@ if [ -f $HOME/.zsh/plugins.txt ]; then
   [[ -s $HOME/.autojump/etc/profile.d/autojump.sh ]] && . $HOME/.autojump/etc/profile.d/autojump.sh ]]
   _dot ${GHQ_GH_ROOT}/zsh-users/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
-
-update_plugins() {
-  while read a; do ghq get -u $a; done < ~/.zsh/plugins.txt
-}
 
 autoload -Uz add-zsh-hook
 
