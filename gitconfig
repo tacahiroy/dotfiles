@@ -18,6 +18,7 @@
 
 [alias]
 	b    = branch
+	ba   = branch --all
 	find = branch --contains
 	ci   = commit
 	ca   = commit --amend
