@@ -1,4 +1,11 @@
-alias ls='ls -F --color'
+case "$OSTYPE" in
+    darwin*)
+        alias ls='ls -pG'
+        ;;
+    *)
+        alias ls='ls -F --color'
+        ;;
+esac
 alias ll='ls -l'
 alias la='ls -a'
 alias lla='ls -la'
