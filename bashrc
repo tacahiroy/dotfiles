@@ -83,9 +83,15 @@ HISTFILESIZE=${HISTSIZE}
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
 
-# If set, the pattern "**" used in a pathname expansion context will
-# match all files and zero or more directories and subdirectories.
-shopt -s globstar
+case "${OSTYPE}" in
+    darwin*)
+        ;;
+    *)
+        # If set, the pattern "**" used in a pathname expansion context will
+        # match all files and zero or more directories and subdirectories.
+        shopt -s globstar
+        ;;
+esac
 
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
@@ -175,6 +181,11 @@ USE_TMUX=1
     exec tmux -l
 }
 
-VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
-. $HOME/.local/bin/virtualenvwrapper.sh
-export WORKON_HOME=~/.virtualenvs
+if [ -f $HOME/.local/bin/virtualenvwrapper.sh ]; then
+    . $HOME/.local/bin/virtualenvwrapper.sh
+    VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
+    export WORKON_HOME=~/.virtualenvs
+fi
+
+[[ -s $HOME/.autojump/etc/profile.d/autojump.sh ]] && . $HOME/.autojump/etc/profile.d/autojump.sh
+
