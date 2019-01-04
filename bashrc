@@ -186,6 +186,3 @@ if [ -f $HOME/.local/bin/virtualenvwrapper.sh ]; then
     VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
     export WORKON_HOME=~/.virtualenvs
 fi
-
-[[ -s $HOME/.autojump/etc/profile.d/autojump.sh ]] && . $HOME/.autojump/etc/profile.d/autojump.sh
-
