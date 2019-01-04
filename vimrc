@@ -25,6 +25,7 @@ let s:win = !(s:mac || s:linux) && has('win32') || has('win64')
 let s:grep = executable('rg') ? 'rg' :
            \ executable('ag') ? 'ag' :
            \ ''
+let g:show_cwd = 1
 
 " functions " {{{
 " * global
@@ -160,17 +161,52 @@ if exists('*minpac#init')
   " minpac must have {'type': 'opt'} so that it can be loaded with `packadd`.
   call minpac#add('k-takata/minpac', {'type': 'opt'})
 
-  call minpac#add('maralla/completor.vim')
-    let g:completor_python_binary = expand('/usr/bin/python3')
-    let g:completor_gocode_binary = expand('$GOPATH/bin/gocode')
-    let g:completor_complete_options = 'menuone,noselect,preview'
+	call minpac#add('prabirshrestha/async.vim')
+	call minpac#add('prabirshrestha/vim-lsp')
+	call minpac#add('prabirshrestha/asyncomplete.vim')
+		let g:asyncomplete_smart_completion = 1
+		let g:asyncomplete_auto_popup = 1
+    let g:asyncomplete_remove_duplicates = 1
+  call minpac#add('prabirshrestha/asyncomplete-buffer.vim')
+	call minpac#add('prabirshrestha/asyncomplete-lsp.vim')
+
+	call minpac#add('natebosch/vim-lsc')
+		let g:lsp_async_completion = 1
+
+		if executable('golsp')
+			augroup LspGo
+				autocmd!
+				autocmd User lsp_setup call lsp#register_server({
+							\ 'name': 'go-lang',
+							\ 'cmd': {server_info->['golsp', '-mode', 'stdio']},
+							\ 'whitelist': ['go'],
+							\ })
+				autocmd FileType go setlocal omnifunc=lsp#complete
+			augroup END
+		endif
+
+  call minpac#add('ryanolsonx/vim-lsp-python')
+    if executable('pyls')
+      " pip install python-language-server
+      augroup LspPython
+        autocmd User lsp_setup call lsp#register_server({
+              \ 'name': 'pyls',
+              \ 'cmd': {server_info->['pyls', '--log-file', '/tmp/pyls.log']},
+              \ 'whitelist': ['python'],
+              \ })
+      augroup END
+    endif
 
   call minpac#add('cohama/lexima.vim')
-    packadd! lexima.vim
-
   call minpac#add('bkad/CamelCaseMotion')
 
   call minpac#add('fatih/vim-go')
+    let g:go_highlight_types = 1
+    let g:go_highlight_fields = 1
+    let g:go_highlight_operators = 0
+    let g:go_highlight_functions = 1
+    let g:go_highlight_function_arguments = 0
+    let g:go_highlight_variable_declarations = 0
     let g:go_fmt_options = {
         \ 'gofmt': '-s',
         \ 'goimports': '',
@@ -184,10 +220,12 @@ if exists('*minpac#init')
   call minpac#add('ctrlpvim/ctrlp.vim')
   call minpac#add('tacahiroy/ctrlp-funky')
   call minpac#add('tacahiroy/vim-colors-isotake', {'frozen': 1})
+  call minpac#add('dracula/vim')
   call minpac#add('w0rp/ale')
 
   call minpac#add('mattn/webapi-vim')
   call minpac#add('mechatroner/rainbow_csv')
+  call minpac#add('Glench/Vim-Jinja2-Syntax')
 
   if filereadable(expand('~/.vimrc.plugins'))
     source ~/.vimrc.plugins
@@ -212,7 +250,8 @@ command! PackClean  packadd minpac | source $MYVIMRC | call minpac#clean()
 " }}}
 
 
-set completeopt=preview,menuone,noinsert,noselect
+" set completeopt=preview,menuone,noinsert,noselect
+set completeopt+=preview
 
 " Super simple memolist
 let g:note_path = expand('~/proj/memo')
@@ -225,10 +264,7 @@ command! -nargs=0 NewNote call <SID>create_new_note()
 " plug: lexima
   " let g:lexima_no_default_rules = 1
   let g:lexima_enable_space_rules = 0
-  let g:lexima_enable_endwise_rule = 0
-  call lexima#add_rule({'char': '(', 'at': '\%#\w', 'input': '('})
-  call lexima#add_rule({'char': '"', 'at': '\%#\w', 'input': '"'})
-  call lexima#add_rule({'char': "'", 'at': '\%#\w', 'input': "'"})
+  let g:lexima_enable_endwise_rule = 1
 
 " plug: ctrlp.vim
   let g:ctrlp_by_filename = 0
@@ -239,7 +275,7 @@ command! -nargs=0 NewNote call <SID>create_new_note()
   let g:ctrlp_working_path_mode = 'ra'
   let g:ctrlp_match_window = 'bottom,order:ttb,min:1,max10,results:50'
   let g:ctrlp_max_height = 20
-  let g:ctrlp_clear_cache_on_exit = 0
+  let g:ctrlp_clear_cache_on_exit = 1
   let g:ctrlp_follow_symlinks = 1
   let g:ctrlp_max_files = 5000
   let g:ctrlp_max_depth = 10
@@ -256,7 +292,7 @@ command! -nargs=0 NewNote call <SID>create_new_note()
   let g:ctrlp_use_caching = 0
 
   if s:grep ==# 'rg'
-    let g:ctrlp_user_command = 'rg %s -i --files --no-heading'
+    let g:ctrlp_user_command = 'rg %s -i --files --no-heading --max-depth 10'
   elseif s:grep ==# ''
     if s:linux || s:mac
       let g:ctrlp_user_command = 'find %s -type f'
@@ -754,6 +790,16 @@ endif
 
 " * autocmds "{{{
 augroup Tacahiroy
+  autocmd VimEnter * call lexima#add_rule({'char': '(', 'at': '\%#\w', 'input': '('})
+  autocmd VimEnter * call lexima#add_rule({'char': '"', 'at': '\%#\w', 'input': '"'})
+  autocmd VimEnter * call lexima#add_rule({'char': "'", 'at': '\%#\w', 'input': "'"})
+  autocmd VimEnter * call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
+        \ 'name': 'buffer',
+        \ 'whitelist': ['*'],
+        \ 'blacklist': [],
+        \ 'completor': function('asyncomplete#sources#buffer#completor'),
+        \ }))
+
   autocmd BufEnter ControlP let b:ale_enabled = 0
   autocmd BufReadPost * if !search('\S', 'cnw') | let &l:fileencoding = &encoding | endif
   " restore cursor position
