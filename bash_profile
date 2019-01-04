@@ -4,8 +4,17 @@ umask 0022
 
 set_path() {
     dir=$1
+    prioritise=$2
     if [ -d "${dir}" ]; then
-        PATH=$PATH:${dir}
+        if echo "$PATH" | tr ':' '\n' | grep "${dir}"; then
+            return
+        fi
+
+        if [ -n "${prioritise}" ]; then
+            PATH=${dir}:$PATH
+        else
+            PATH=$PATH:${dir}
+        fi
     fi
 }
 
@@ -16,10 +25,12 @@ export EDITOR=vim
 export PAGER=less
 export FILTER_CMD=$HOME/bin/fzy
 export FILTER_OPTIONS='-l 20'
+# export FILTER_CMD=$HOME/.cargo/bin/rff
+# export FILTER_OPTIONS='-s'
 
 export DISPLAY=:0
 
-set_path "$HOME/bin"
+set_path "$HOME/bin" 1
 set_path "$HOME/.local/bin"
 set_path "$HOME/.cargo/bin"
 set_path "$GOPATH/bin"
