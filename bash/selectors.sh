@@ -5,6 +5,11 @@
 F=${FILTER_CMD:-$HOME/bin/fzy}
 FO=${FILTER_OPTIONS:-}
 
+SELECTOR_HIST_PROMPT_OPT="--prompt=HIST> "
+SELECTOR_DIR_PROMPT_OPT="--prompt=CD> "
+SELECTOR_MRU_PROMPT_OPT="--prompt=MRU> "
+SELECTOR_GIT_REPO_PROMPT_OPT="--prompt=REPO> "
+
 select_history() {
     local tac
     if which tac > /dev/null; then
@@ -14,7 +19,13 @@ select_history() {
     fi
     READLINE_LINE=$(fc -nl 1 | sed 's/^[\t ]*//g' | \
         eval "${tac}" | \
-        ${F} "${FO}" -q "$READLINE_LINE" -p 'HIST> ')
+        ${F} "${FO}" "${SELECTOR_HIST_PROMPT_OPT}")
+    READLINE_POINT=${#READLINE_LINE}
+}
+
+select_dir() {
+    READLINE_LINE="cd $(_z -s 2>&1 | awk '{ print $2 }' | \
+        ${F} "${FO}" "${SELECTOR_DIR_PROMPT_OPT}")"
     READLINE_POINT=${#READLINE_LINE}
 }
 
@@ -23,7 +34,7 @@ select_ctrlpvim_mru() {
     local ctrlp_mrufile=$HOME/.cache/ctrlp/mru/cache.txt
     local _file
     if [ -f "${ctrlp_mrufile}" ]; then
-        _file=$(${F} "${FO}" -q "$READLINE_LINE" -p 'MRU> ' <"${ctrlp_mrufile}")
+        _file=$(${F} "${FO}" "${SELECTOR_MRU_PROMPT_OPT}" <"${ctrlp_mrufile}")
         if [ -n "${_file}" ] && [ -f "${_file}" ]; then
             READLINE_LINE="$EDITOR ${_file}"
             READLINE_POINT=${#READLINE_LINE}
@@ -64,7 +75,7 @@ select_git_repo() {
     fi
 
     local _repo
-    _repo=$(ghq list -p | "${F}" "${FO}" --prompt='REPO> ')
+    _repo=$(ghq list -p | "${F}" "${FO}" "${SELECTOR_GIT_REPO_PROMPT_OPT}")
 
     if [ -n "${_repo}" ]; then
         READLINE_LINE="cd ${_repo}"
@@ -109,7 +120,8 @@ select_git_branch_all() {
 
 bind -x '"\C-r"':"\"select_history\""
 bind -x '"\C-t"':"\"select_ctrlpvim_mru\""
-bind -x '"\C-gp"':"\"select_git_repo\""
+bind -x '"\C-gd"':"\"select_dir\""
+bind -x '"\C-gr"':"\"select_git_repo\""
 bind -x '"\C-gg"':"\"select_git_branch\""
 bind -x '"\C-ga"':"\"select_git_branch_all\""
 # bind -x '"\C-q"':"\"select-ssh\""
