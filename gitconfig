@@ -77,7 +77,7 @@
 [branch]
 	autosetuprebase = always
 [ghq]
-	root = ~/proj
+	root = ~/dev
 [filter "lfs"]
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
