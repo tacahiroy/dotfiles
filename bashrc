@@ -156,10 +156,14 @@ PS1=$(set_prompt)
 
 case "$(uname -a)" in
         MSYS*)
-        . $HOME/qmk_utils/activate_msys2.sh
+        if [ -f $HOME/qmk_utils/activate_msys2.sh ]; then
+            . $HOME/qmk_utils/activate_msys2.sh
+        fi
         ;;
         *Microsoft*)
-        . $HOME/qmk_utils/activate_wsl.sh
+        if [ -f $HOME/qmk_utils/activate_wsl.sh ]; then
+            . $HOME/qmk_utils/activate_wsl.sh
+        fi
         ;;
         *Darwin*)
         ;;
@@ -172,13 +176,13 @@ ATTACH_ONLY=1
 USE_TMUX=1
 [[ -z "$TMUX" && -n "$USE_TMUX" ]] && {
     [[ -n "$ATTACH_ONLY" ]] && {
-        tmux a 2>/dev/null || {
-            cd && exec tmux -l
+        tmux -2 a 2>/dev/null || {
+            cd && exec tmux -l2
         }
         exit
     }
-    tmux new-window -l -c "$PWD" 2>/dev/null && exec tmux a
-    exec tmux -l
+    tmux -2 new-window -l -c "$PWD" 2>/dev/null && exec tmux -2 a
+    exec tmux -l2
 }
 
 if [ -f $HOME/.local/bin/virtualenvwrapper.sh ]; then
