@@ -167,6 +167,7 @@ if exists('*minpac#init')
 		let g:asyncomplete_smart_completion = 1
 		let g:asyncomplete_auto_popup = 1
     let g:asyncomplete_remove_duplicates = 1
+
   call minpac#add('prabirshrestha/asyncomplete-buffer.vim')
 	call minpac#add('prabirshrestha/asyncomplete-lsp.vim')
 
@@ -185,17 +186,17 @@ if exists('*minpac#init')
 			augroup END
 		endif
 
-  call minpac#add('ryanolsonx/vim-lsp-python')
-    if executable('pyls')
-      " pip install python-language-server
-      augroup LspPython
-        autocmd User lsp_setup call lsp#register_server({
-              \ 'name': 'pyls',
-              \ 'cmd': {server_info->['pyls', '--log-file', '/tmp/pyls.log']},
-              \ 'whitelist': ['python'],
-              \ })
-      augroup END
-    endif
+  if executable('pyls')
+    call minpac#add('ryanolsonx/vim-lsp-python')
+    " pip install python-language-server
+    augroup LspPython
+      autocmd User lsp_setup call lsp#register_server({
+            \ 'name': 'pyls',
+            \ 'cmd': {server_info->['pyls', '--log-file', '/tmp/pyls.log']},
+            \ 'whitelist': ['python'],
+            \ })
+    augroup END
+  endif
 
   call minpac#add('cohama/lexima.vim')
   call minpac#add('bkad/CamelCaseMotion')
