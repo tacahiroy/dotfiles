@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -Cue
+
 UN=$(uname | tr '[:upper:]' '[:lower:]')
 
 if [ "${UN}" = 'darwin' ]; then
@@ -8,14 +10,15 @@ else
 	READLINK='readlink -f'
 fi
 
+curd=$(dirname "$(${READLINK} "$0")")
+BLACKLIST="${curd}/.blacklist"
+
 mkdir -p "$HOME/bin"
 mkdir -p "$HOME/.tmux"
 
 for x in *; do
+    grep "^${x}$" "${BLACKLIST}" && continue
 	case $x in
-		README.md|osx|install.sh|tmux.conf*|bin)
-            continue
-			;;
         config)
             XDG_CONFIG_HOME=$HOME/.config
             if [ ! -d "${XDG_CONFIG_HOME}" ]; then
