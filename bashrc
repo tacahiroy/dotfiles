@@ -51,8 +51,7 @@ start_agent() {
 
 if [ -f "${SSH_ENV}" ]; then
   . "${SSH_ENV}" > /dev/null
-  if ps ${SSH_AGENT_PID:-999999} | grep ssh-agent$ > /dev/null &&
-     test -S "${SSH_AUTH_SOCK}"; then
+  if pgrep ssh-agent > /dev/null && test -S "${SSH_AUTH_SOCK}"; then
     # agent already running
     :
   else

@@ -70,7 +70,7 @@ select_ssh() {
 
 select_git_repo() {
     if ! which ghq >/dev/null 2>&1; then
-        echo ghq is not detected!
+        echo ghq is not found!
         return 9
     fi
 
@@ -78,7 +78,8 @@ select_git_repo() {
     _repo=$(ghq list -p | "${F}" "${FO}" "${SELECTOR_GIT_REPO_PROMPT_OPT}")
 
     if [ -n "${_repo}" ]; then
-        READLINE_LINE="cd ${_repo}"
+        cmdline=${READLINE_LINE:-cd}
+        READLINE_LINE="${cmdline} ${_repo}"
         READLINE_POINT=${#READLINE_LINE}
     fi
 }
