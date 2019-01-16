@@ -1,4 +1,0 @@
-#!/bin/bash
-
-F=$(which fzy)
-${F} $*

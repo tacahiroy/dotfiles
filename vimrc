@@ -161,6 +161,8 @@ if exists('*minpac#init')
   " minpac must have {'type': 'opt'} so that it can be loaded with `packadd`.
   call minpac#add('k-takata/minpac', {'type': 'opt'})
 
+  call minpac#add('tpope/vim-fugitive')
+
 	call minpac#add('prabirshrestha/async.vim')
 	call minpac#add('prabirshrestha/vim-lsp')
 	call minpac#add('prabirshrestha/asyncomplete.vim')
@@ -186,19 +188,23 @@ if exists('*minpac#init')
 			augroup END
 		endif
 
-  if executable('pyls')
-    call minpac#add('ryanolsonx/vim-lsp-python')
-    " pip install python-language-server
-    augroup LspPython
-      autocmd User lsp_setup call lsp#register_server({
-            \ 'name': 'pyls',
-            \ 'cmd': {server_info->['pyls', '--log-file', '/tmp/pyls.log']},
-            \ 'whitelist': ['python'],
-            \ })
-    augroup END
-  endif
+    if executable('pyls')
+      call minpac#add('ryanolsonx/vim-lsp-python')
+      " pip install python-language-server
+      augroup LspPython
+        autocmd User lsp_setup call lsp#register_server({
+              \ 'name': 'pyls',
+              \ 'cmd': {server_info->['pyls', '--log-file', '/tmp/pyls.log']},
+              \ 'whitelist': ['python'],
+              \ })
+      augroup END
+    endif
 
   call minpac#add('cohama/lexima.vim')
+    " let g:lexima_no_default_rules = 1
+    let g:lexima_enable_space_rules = 0
+    let g:lexima_enable_endwise_rule = 1
+
   call minpac#add('bkad/CamelCaseMotion')
 
   call minpac#add('fatih/vim-go')
@@ -209,15 +215,28 @@ if exists('*minpac#init')
     let g:go_highlight_function_arguments = 0
     let g:go_highlight_variable_declarations = 0
     let g:go_fmt_options = {
-        \ 'gofmt': '-s',
         \ 'goimports': '',
     \ }
 
   call minpac#add('godlygeek/tabular')
-  call minpac#add('junegunn/rainbow_parentheses.vim')
+  call minpac#add('luochen1990/rainbow')
+    let g:rainbow_active = 1
+    let g:rainbow_conf = {}
+    let g:rainbow_conf.guifgs = ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick']
+    let g:rainbow_conf.ctermfgs = ['darkblue', 'darkyellow', 'darkgreen', 'darkgray', 'darkmagenta']
+    let g:rainbow_conf.operators = '_,_'
+    let g:rainbow_conf.parentheses = ['start=/(/ end=/)/ fold', 'start=/\[/ end=/\]/ fold', 'start=/{/ end=/}/ fold']
+    let g:rainbow_conf.separately = { '*': {} }
   call minpac#add('benjifisher/matchit.zip')
   call minpac#add('tpope/vim-commentary')
+    nmap [Space]c gcc
+    nmap [Space]yc yygccp
+    xmap [Space]c gc
+
   call minpac#add('tpope/vim-surround')
+    nmap ye ys$
+    xmap s <Plug>VSurround
+
   call minpac#add('ctrlpvim/ctrlp.vim')
   call minpac#add('tacahiroy/ctrlp-funky')
   call minpac#add('tacahiroy/vim-colors-isotake', {'frozen': 1})
@@ -225,15 +244,13 @@ if exists('*minpac#init')
   call minpac#add('w0rp/ale')
 
   call minpac#add('mattn/webapi-vim')
+  call minpac#add('mattn/sonictemplate-vim')
   call minpac#add('mechatroner/rainbow_csv')
-  call minpac#add('Glench/Vim-Jinja2-Syntax')
+  call minpac#add('jremmen/vim-ripgrep')
+  call minpac#add('kana/vim-textobj-user')
 
   if filereadable(expand('~/.vimrc.plugins'))
     source ~/.vimrc.plugins
-  endif
-
-  if exists('+guifont')
-    call minpac#add('ryanoasis/vim-devicons')
   endif
 
   " call minpac#add('FelikZ/ctrlp-py-matcher')
@@ -255,17 +272,12 @@ command! PackClean  packadd minpac | source $MYVIMRC | call minpac#clean()
 set completeopt+=preview
 
 " Super simple memolist
-let g:note_path = expand('~/proj/memo')
+let g:note_path = expand('~/dev/memo')
 nnoremap [Space]mc :NewNote<Cr>
 nnoremap [Space]ml :execute 'CtrlP ' . g:note_path<Cr><F5>
 
 command! -nargs=1 InsertNoteTemplate call <SID>ins_note_template(<q-args>)
 command! -nargs=0 NewNote call <SID>create_new_note()
-
-" plug: lexima
-  " let g:lexima_no_default_rules = 1
-  let g:lexima_enable_space_rules = 0
-  let g:lexima_enable_endwise_rule = 1
 
 " plug: ctrlp.vim
   let g:ctrlp_by_filename = 0
@@ -344,53 +356,6 @@ command! -nargs=0 NewNote call <SID>create_new_note()
   nnoremap [Space]fu :CtrlPFunky<Cr>
   nnoremap [Space]uu :execute 'CtrlPFunky ' . fnameescape(expand('<cword>'))<Cr>
 
-" plug: jedi-vim
-  let g:jedi#auto_initialization = 0
-  let g:jedi#auto_vim_configuration = 0
-  let g:jedi#popup_on_dot = 1
-  let g:jedi#show_call_signatures = 2
-
-" plug: junegunn/rainbow_parentheses.vim
-  if s:has_plugin('rainbow_parentheses.vim')
-    augroup Tacahiroy
-      autocmd FileType * RainbowParentheses
-    augroup END
-    let g:rainbow#pairs = [['(',')'], ['[',']'], ['{','}']]
-    let g:rainbow#max_level = 16
-  endif
-
-  let g:rbpt_colorpairs = [
-    \ ['brown',       'RoyalBlue3'],
-    \ ['Darkblue',    'SeaGreen3'],
-    \ ['darkgray',    'DarkOrchid3'],
-    \ ['darkgreen',   'firebrick3'],
-    \ ['darkcyan',    'RoyalBlue3'],
-    \ ['darkred',     'SeaGreen3'],
-    \ ['darkmagenta', 'DarkOrchid3'],
-    \ ['brown',       'firebrick3'],
-    \ ['gray',        'RoyalBlue3'],
-    \ ['black',       'SeaGreen3'],
-    \ ['darkmagenta', 'DarkOrchid3'],
-    \ ['darkgreen',   'RoyalBlue3'],
-    \ ['darkred',     'DarkOrchid3'],
-    \ ['darkcyan',    'SeaGreen3'],
-    \ ['Darkblue',    'firebrick3'],
-    \ ['red',         'Darkblue'],
-  \ ]
-
-" plug: commentary.vim
-  nmap [Space]c gcc
-  nmap [Space]yc yygccp
-  xmap [Space]c gc
-
-" plug: surround.vim
-  let g:surround_{char2nr('k')} = "「\r」"
-  let g:surround_{char2nr('K')} = "『\r』"
-  let g:surround_{char2nr('e')} = "<%= \r %>"
-  let g:surround_{char2nr('b')} = "<%- \r %>"
-  nmap ye ys$
-  xmap s <Plug>VSurround
-
 " plug: camelcasemotion
   map <silent> W <plug>CamelCaseMotion_w
   map <silent> B <plug>CamelCaseMotion_b
@@ -427,7 +392,7 @@ set expandtab smarttab
 set fileencodings=ucs-bom,utf-8,iso-2022-jp,euc-jp,cp932
 set fileformats=unix,dos,mac
 if s:grep ==# 'rg'
-  let &grepprg = 'rg --no-heading --ignore-file ~/.agignore'
+  let &grepprg = 'rg --no-heading --ignore-file ~/.gitignore'
 elseif s:grep ==# 'ag'
   let &grepprg = 'ag --nocolor --nogroup -p ~/.agignore'
 elseif s:grep ==# ''
@@ -464,7 +429,7 @@ set scroll=0
 set scrolloff=5
 
 set shell&
-for s in ['/usr/local/bin/zsh', '/usr/bin/zsh', '/bin/zsh', '/bin/bash', '/bin/sh']
+for s in ['/usr/bin/bash', '/bin/bash', '/usr/local/bin/zsh', '/usr/bin/zsh', '/bin/zsh', '/bin/sh']
   if executable(s)
     let &shell = s
     break
@@ -794,6 +759,23 @@ augroup Tacahiroy
   autocmd VimEnter * call lexima#add_rule({'char': '(', 'at': '\%#\w', 'input': '('})
   autocmd VimEnter * call lexima#add_rule({'char': '"', 'at': '\%#\w', 'input': '"'})
   autocmd VimEnter * call lexima#add_rule({'char': "'", 'at': '\%#\w', 'input': "'"})
+  autocmd VimEnter * call textobj#user#plugin('datetime', {
+    \   'date': {
+    \     'pattern': '\<\d\d\d\d-\d\d-\d\d\>',
+    \     'select': ['ad', 'id'],
+    \   },
+    \   'time': {
+    \     'pattern': '\<\d\d:\d\d:\d\d\>',
+    \     'select': ['at', 'it'],
+    \   },
+    \ })
+  autocmd FileType groovy call textobj#user#plugin('jenkins', {
+    \   'code': {
+    \     'pattern': ['', ''],
+    \     'select-a': 'aP',
+    \     'select-i': 'iP',
+    \   },
+    \ })
   autocmd VimEnter * call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
         \ 'name': 'buffer',
         \ 'whitelist': ['*'],
