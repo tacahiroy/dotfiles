@@ -20,6 +20,7 @@ set_path() {
 
 export LANG=en_US.UTF-8
 export SHELL=/bin/bash
+export GOROOT=/usr/local/go
 export GOPATH=$HOME/go
 export EDITOR=vim
 export PAGER=less
@@ -34,6 +35,7 @@ set_path "$HOME/bin" 1
 set_path "$HOME/.local/bin"
 set_path "$HOME/.cargo/bin"
 set_path "$GOPATH/bin"
+set_path "/usr/local/go/bin" 1
 
 export PATH
 
