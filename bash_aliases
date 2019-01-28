@@ -23,3 +23,6 @@ alias g='git'
 alias gu='git up'
 alias gl='git log'
 alias pyttpd='python -m http.server'
+if type _z >/dev/null 2>&1; then
+    alias jc='_z -c'
+fi
