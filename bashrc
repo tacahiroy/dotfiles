@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Tacahiroy's bashrc
 
@@ -34,6 +34,9 @@ if [ -f "$HOME/.bash/plugins.txt" ]; then
     if [ ! -d "${_repo}" ]; then
       ghq get "${_rn}"
     fi
+
+    PATH=$PATH:"${_repo}"
+
     if [ -f "${_repo}/${_init}" ]; then
         _dot "${_repo}/${_init}"
     fi
