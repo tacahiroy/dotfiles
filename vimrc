@@ -165,10 +165,16 @@ if exists('*minpac#init')
 
 	call minpac#add('prabirshrestha/async.vim')
 	call minpac#add('prabirshrestha/vim-lsp')
+    let g:lsp_signs_enabled = 1
+    let g:lsp_diagnostics_echo_cursor = 1
+    let g:lsp_log_verbose = 1
+    let g:lsp_log_file = expand('~/vim-lsp.log')
+
 	call minpac#add('prabirshrestha/asyncomplete.vim')
 		let g:asyncomplete_smart_completion = 1
 		let g:asyncomplete_auto_popup = 1
     let g:asyncomplete_remove_duplicates = 1
+    let g:asyncomplete_log_file = expand('~/asyncomplete.log')
 
   call minpac#add('prabirshrestha/asyncomplete-buffer.vim')
 	call minpac#add('prabirshrestha/asyncomplete-lsp.vim')
@@ -176,14 +182,24 @@ if exists('*minpac#init')
 	call minpac#add('natebosch/vim-lsc')
 		let g:lsp_async_completion = 1
 
-		if executable('golsp')
+		if executable('gopls')
 			augroup LspGo
 				autocmd!
 				autocmd User lsp_setup call lsp#register_server({
-							\ 'name': 'go-lang',
-							\ 'cmd': {server_info->['golsp', '-mode', 'stdio']},
+							\ 'name': 'gopls',
+							\ 'cmd': {server_info->['gopls', '-mode', 'stdio']},
 							\ 'whitelist': ['go'],
 							\ })
+				" autocmd User lsp_setup call lsp#register_server({
+				" 			\ 'name': 'bingo',
+				" 			\ 'cmd': {server_info->['bingo', '-mode', 'stdio']},
+				" 			\ 'whitelist': ['go'],
+				" 			\ })
+				" autocmd User lsp_setup call lsp#register_server({
+				" 			\ 'name': 'bingo',
+				" 			\ 'cmd': {server_info->['bingo', '-mode', 'stdio']},
+				" 			\ 'whitelist': ['go'],
+				" 			\ })
 				autocmd FileType go setlocal omnifunc=lsp#complete
 			augroup END
 		endif
@@ -214,6 +230,7 @@ if exists('*minpac#init')
     let g:go_highlight_functions = 1
     let g:go_highlight_function_arguments = 0
     let g:go_highlight_variable_declarations = 0
+    let g:go_gocode_propose_builtins = 0
     let g:go_fmt_options = {
         \ 'goimports': '',
     \ }
@@ -232,6 +249,7 @@ if exists('*minpac#init')
     nmap [Space]c gcc
     nmap [Space]yc yygccp
     xmap [Space]c gc
+    xmap [Space]yc ygvgcgv<Esc>p
 
   call minpac#add('tpope/vim-surround')
     nmap ye ys$
@@ -242,6 +260,29 @@ if exists('*minpac#init')
   call minpac#add('tacahiroy/vim-colors-isotake', {'frozen': 1})
   call minpac#add('dracula/vim')
   call minpac#add('w0rp/ale')
+    let g:ale_enabled = 1
+    let g:ale_statusline_format = ['!%d', '@%d', 'ok']
+    let g:ale_lint_on_text_changed = 'never'
+    let g:ale_set_loclist = 0
+    let g:ale_set_quickfix = 1
+
+    function! LinterStatus() abort
+        let l:counts = ale#statusline#Count(bufnr(''))
+
+        let l:all_errors = l:counts.error + l:counts.style_error
+        let l:all_non_errors = l:counts.total - l:all_errors
+
+        return l:counts.total == 0 ? 'OK' : printf(
+        \   '%dW %dE',
+        \   all_non_errors,
+        \   all_errors
+        \)
+    endfunction
+
+    let &statusline .= '|'
+    let &statusline .= '%#SpellRare#'
+    let &statusline .= '%{LinterStatus()}'
+    let &statusline .= '%*'
 
   call minpac#add('mattn/webapi-vim')
   call minpac#add('mattn/sonictemplate-vim')
@@ -513,32 +554,6 @@ if s:has_plugin('fugitive')
   let &statusline .= '%*'
 endif
 
-if s:has_plugin('ale')
-  let g:ale_enabled = 1
-  let g:ale_statusline_format = ['!%d', '@%d', 'ok']
-  let g:ale_lint_on_text_changed = 'never'
-  let g:ale_set_loclist = 0
-  let g:ale_set_quickfix = 1
-
-  function! LinterStatus() abort
-      let l:counts = ale#statusline#Count(bufnr(''))
-
-      let l:all_errors = l:counts.error + l:counts.style_error
-      let l:all_non_errors = l:counts.total - l:all_errors
-
-      return l:counts.total == 0 ? 'OK' : printf(
-      \   '%dW %dE',
-      \   all_non_errors,
-      \   all_errors
-      \)
-  endfunction
-
-  let &statusline .= '|'
-  let &statusline .= '%#SpellRare#'
-  let &statusline .= '%{LinterStatus()}'
-  let &statusline .= '%*'
-endif
-
 " right side from here
 let &statusline .= ' %='
 " Cwd
@@ -565,8 +580,9 @@ inoremap <C-b> <Left>
 " in case forgot to run vim w/o sudo
 cnoremap W!! %!sudo tee > /dev/null %
 
-" disable dangerous mappings
+" disable dangerous / unwanted mappings
 nnoremap ZZ <Nop>
+nnoremap ZQ <Nop>
 nnoremap s <Nop>
 nnoremap Q <Nop>
 nnoremap q <Nop>
@@ -584,6 +600,18 @@ nnoremap vo vg_o
 nnoremap vO ^vg_o
 " visual last put lines by p or gp
 nnoremap sv `[v`]
+nnoremap so gv<Esc>
+nnoremap sap va}V
+nnoremap sU :<C-u>call <SID>toggle_case(1)<Cr>
+nnoremap su :<C-u>call <SID>toggle_case(0)<Cr>
+
+function! s:toggle_case(upper)
+  let [_, l, c, _] = getpos('.')
+  let keys = a:upper ? 'gUaw' : 'guaw'
+  echom 'normal! ' . keys
+  execute 'normal! ' . keys
+  call cursor(l, c)
+endfunction
 
 nnoremap <C-]> <C-]>zz
 nnoremap <C-t> <C-t>zz
@@ -759,6 +787,7 @@ augroup Tacahiroy
   autocmd VimEnter * call lexima#add_rule({'char': '(', 'at': '\%#\w', 'input': '('})
   autocmd VimEnter * call lexima#add_rule({'char': '"', 'at': '\%#\w', 'input': '"'})
   autocmd VimEnter * call lexima#add_rule({'char': "'", 'at': '\%#\w', 'input': "'"})
+
   autocmd VimEnter * call textobj#user#plugin('datetime', {
     \   'date': {
     \     'pattern': '\<\d\d\d\d-\d\d-\d\d\>',
@@ -776,12 +805,16 @@ augroup Tacahiroy
     \     'select-i': 'iP',
     \   },
     \ })
+
   autocmd VimEnter * call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
         \ 'name': 'buffer',
         \ 'whitelist': ['*'],
         \ 'blacklist': [],
         \ 'completor': function('asyncomplete#sources#buffer#completor'),
         \ }))
+
+  autocmd FileType go command! -nargs=0 GomRun :terminal gom run %
+  autocmd FileType go nnoremap <Leader>m :GomRun<Cr>
 
   autocmd BufEnter ControlP let b:ale_enabled = 0
   autocmd BufReadPost * if !search('\S', 'cnw') | let &l:fileencoding = &encoding | endif
