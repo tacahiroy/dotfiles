@@ -165,42 +165,45 @@ if exists('*minpac#init')
 
 	call minpac#add('prabirshrestha/async.vim')
 	call minpac#add('prabirshrestha/vim-lsp')
-    let g:lsp_signs_enabled = 1
+    let g:lsp_diagnostics_enabled = 1
     let g:lsp_diagnostics_echo_cursor = 1
+    let g:lsp_signs_enabled = 1
+    let g:lsp_signs_error = {'text': '🤕'}
+    let g:lsp_signs_warning = {'text': '🤔'}
+    let g:lsp_signs_hint = {'text': '💡'}
     let g:lsp_log_verbose = 1
     let g:lsp_log_file = expand('~/vim-lsp.log')
 
 	call minpac#add('prabirshrestha/asyncomplete.vim')
-		let g:asyncomplete_smart_completion = 1
+    if has('lua') | let g:asyncomplete_smart_completion = 1 | endif
 		let g:asyncomplete_auto_popup = 1
     let g:asyncomplete_remove_duplicates = 1
     let g:asyncomplete_log_file = expand('~/asyncomplete.log')
 
   call minpac#add('prabirshrestha/asyncomplete-buffer.vim')
 	call minpac#add('prabirshrestha/asyncomplete-lsp.vim')
-
 	call minpac#add('natebosch/vim-lsc')
 		let g:lsp_async_completion = 1
 
 		if executable('gopls')
 			augroup LspGo
 				autocmd!
+				" autocmd User lsp_setup call lsp#register_server({
+				" 			\ 'name': 'gopls',
+				" 			\ 'cmd': {server_info->['gopls', '-mode', 'stdio']},
+				" 			\ 'whitelist': ['go'],
+				" 			\ })
+				" autocmd User lsp_setup call lsp#register_server({
+				" 			\ 'name': 'bingo',
+				" 			\ 'cmd': {server_info->['bingo', '-mode', 'stdio']},
+				" 			\ 'whitelist': ['go'],
+				" 			\ })
 				autocmd User lsp_setup call lsp#register_server({
-							\ 'name': 'gopls',
-							\ 'cmd': {server_info->['gopls', '-mode', 'stdio']},
+							\ 'name': 'bingo',
+							\ 'cmd': {server_info->['bingo', '-mode', 'stdio']},
 							\ 'whitelist': ['go'],
 							\ })
-				" autocmd User lsp_setup call lsp#register_server({
-				" 			\ 'name': 'bingo',
-				" 			\ 'cmd': {server_info->['bingo', '-mode', 'stdio']},
-				" 			\ 'whitelist': ['go'],
-				" 			\ })
-				" autocmd User lsp_setup call lsp#register_server({
-				" 			\ 'name': 'bingo',
-				" 			\ 'cmd': {server_info->['bingo', '-mode', 'stdio']},
-				" 			\ 'whitelist': ['go'],
-				" 			\ })
-				autocmd FileType go setlocal omnifunc=lsp#complete
+        autocmd FileType go setlocal omnifunc=lsp#complete
 			augroup END
 		endif
 
@@ -223,7 +226,7 @@ if exists('*minpac#init')
 
   call minpac#add('bkad/CamelCaseMotion')
 
-  call minpac#add('fatih/vim-go')
+  " call minpac#add('fatih/vim-go')
     let g:go_highlight_types = 1
     let g:go_highlight_fields = 1
     let g:go_highlight_operators = 0
@@ -331,7 +334,7 @@ command! -nargs=0 NewNote call <SID>create_new_note()
   let g:ctrlp_max_height = 20
   let g:ctrlp_clear_cache_on_exit = 1
   let g:ctrlp_follow_symlinks = 1
-  let g:ctrlp_max_files = 5000
+  let g:ctrlp_max_files = 10000
   let g:ctrlp_max_depth = 10
   let g:ctrlp_show_hidden = 0
   let g:ctrlp_mruf_max = 1024
@@ -809,7 +812,7 @@ augroup Tacahiroy
   autocmd VimEnter * call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
         \ 'name': 'buffer',
         \ 'whitelist': ['*'],
-        \ 'blacklist': [],
+        \ 'blacklist': ['go'],
         \ 'completor': function('asyncomplete#sources#buffer#completor'),
         \ }))
 
