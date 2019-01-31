@@ -2,6 +2,8 @@
 #
 # Tacahiroy's bashrc
 
+umask 0022
+
 #--------------------
 # Guard
 #--------------------
@@ -11,10 +13,16 @@ case $- in
       *) return;;
 esac
 
-umask 0022
+case "$(uname -a)" in
+    MSYS*) MYOS=msys;;
+    *Microsoft*) MYOS=wsl;;
+    *Darwin*) MYOS=macos;;
+    *) MYOS=linux;;
+esac
 
 _dot() {
   f=$1
+  # shellcheck source=/dev/null
   [ -s "${f}" ] && . "${f}"
 }
 
@@ -25,34 +33,35 @@ update_plugins() {
 ## plugins
 #
 export _Z_CMD=j
-if [ -f "$HOME/.bash/plugins.txt" ]; then
-  GHQ_GH_ROOT=$(ghq root)/github.com
-  while read -r a; do
-    _rn=$(echo "${a}" | cut -d ' ' -f1)
-    _init=$(echo "${a}" | cut -d ' ' -f2)
-    _repo="${GHQ_GH_ROOT}/${_rn}"
-    if [ ! -d "${_repo}" ]; then
-      ghq get "${_rn}"
-    fi
+if [ -x "$(which ghq)" ] && [ -f "$HOME/.bash/plugins.txt" ]; then
+    GHQ_GH_ROOT=$(ghq root)/github.com
+    while read -r a; do
+        _rn=$(echo "${a}" | cut -d ' ' -f1)
+        _init=$(echo "${a}" | cut -d ' ' -f2)
+        _repo="${GHQ_GH_ROOT}/${_rn}"
+        if [ ! -d "${_repo}" ]; then
+        ghq get "${_rn}"
+        fi
 
-    PATH=$PATH:"${_repo}"
+        PATH=$PATH:"${_repo}"
 
-    if [ -f "${_repo}/${_init}" ]; then
-        _dot "${_repo}/${_init}"
-    fi
-  done < "$HOME/.bash/plugins.txt"
+        if [ -f "${_repo}/${_init}" ]; then
+            _dot "${_repo}/${_init}"
+        fi
+    done < "$HOME/.bash/plugins.txt"
 fi
-
 
 # ssh-agent
 SSH_ENV=$HOME/.ssh/agent.env
 start_agent() {
   ssh-agent > "${SSH_ENV}"
+  # shellcheck source=/dev/null
   . "${SSH_ENV}" > /dev/null
   # ssh-add
 }
 
 if [ -f "${SSH_ENV}" ]; then
+  # shellcheck source=/dev/null
   . "${SSH_ENV}" > /dev/null
   if pgrep ssh-agent > /dev/null && test -S "${SSH_AUTH_SOCK}"; then
     # agent already running
@@ -99,6 +108,7 @@ esac
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
 if [ -n "${FILTER_CMD}" ]; then
+    # shellcheck source=/dev/null
     [ -f "$HOME/.bash/selectors.sh" ] && . "$HOME/.bash/selectors.sh"
 fi
 
@@ -106,12 +116,13 @@ fi
     if [ $# -eq 0 ]; then
         cd ..
     else
-        eval "cd $(printf \"%$1s\" | sed 's/ /..\//g')"
+        eval "cd $(printf \"%"$1"s\" | sed 's/ /..\//g')"
     fi
 }
 
 
 if [ -f "$HOME/.bash_aliases" ]; then
+    # shellcheck source=/dev/null
     . "$HOME/.bash_aliases"
 fi
 
@@ -158,13 +169,15 @@ PS1=$(set_prompt)
 
 case "$(uname -a)" in
         MSYS*)
-        if [ -f $HOME/qmk_utils/activate_msys2.sh ]; then
-            . $HOME/qmk_utils/activate_msys2.sh
+        if [ -f "$HOME/qmk_utils/activate_msys2.sh" ]; then
+            # shellcheck source=/dev/null
+            . "$HOME/qmk_utils/activate_msys2.sh"
         fi
         ;;
         *Microsoft*)
-        if [ -f $HOME/qmk_utils/activate_wsl.sh ]; then
-            . $HOME/qmk_utils/activate_wsl.sh
+        if [ -f "$HOME/qmk_utils/activate_wsl.sh" ]; then
+            # shellcheck source=/dev/null
+            . "$HOME/qmk_utils/activate_wsl.sh"
         fi
         ;;
         *Darwin*)
@@ -187,8 +200,13 @@ USE_TMUX=1
     exec tmux -l2
 }
 
-if [ -f $HOME/.local/bin/virtualenvwrapper.sh ]; then
-    . $HOME/.local/bin/virtualenvwrapper.sh
-    VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
+if [ -f "$HOME/.local/bin/virtualenvwrapper.sh" ]; then
+    # shellcheck source=/dev/null
+    . "$HOME/.local/bin/virtualenvwrapper.sh"
+    export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
     export WORKON_HOME=~/.virtualenvs
+fi
+
+if [ "${MYOS}" = wsl ] && [ -x "$HOME/bin/tmp-clean.sh" ]; then
+    bash "$HOME"/bin/tmp-clean.sh
 fi
