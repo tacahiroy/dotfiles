@@ -2,6 +2,12 @@
 
 umask 0022
 
+if uname | grep 'MSYS' >/dev/null 2>&1; then
+    IS_MSYS=yes
+else
+    IS_MSYS=no
+fi
+
 set_path() {
     dir=$1
     prioritise=$2
@@ -43,6 +49,11 @@ set_path "$HOME/.cargo/bin"
 set_path "$GOPATH/bin"
 set_path "/usr/local/go/bin" 1
 set_path "$HOME/.yarn/bin"
+
+if [ "${IS_MSYS}" = yes ]; then
+    set_path "/mingw64/bin"
+fi
+
 export PATH
 
 if go version | grep 'go1.1[1-9]' >/dev/null 2>&1; then
