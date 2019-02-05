@@ -35,6 +35,7 @@ _dot() {
 }
 
 update_plugins() {
+<<<<<<< HEAD
   while read -r a; do ghq get -u "${a}" >/dev/null 2>&1; done < "$HOME/.bash/plugins.txt"
 }
 
@@ -51,6 +52,8 @@ git_clone() {
     else
         ghq get "${url}"
     fi
+  [ ! -x $(which ghq) ] && return
+  while read -r a; do ghq get -u "${a}"; done < "$HOME/.bash/plugins.txt"
 }
 
 ## plugins
@@ -247,15 +250,16 @@ complete -C $HOME/bin/terraform terraform
 # If use_tmux=1, add these codes to .bashrc/.zshrc:
 ATTACH_ONLY=1
 USE_TMUX=1
-if which tmux >/dev/null 2>&1; then
-    [[ -z "$TMUX" && -n "$USE_TMUX" ]] && {
-        [[ -n "$ATTACH_ONLY" ]] && {
-            tmux -2 a 2>/dev/null || {
-                cd && exec tmux -l2
-            }
-            exit
+[[ -x $(which tmux) && -z "$TMUX" && -n "$USE_TMUX" ]] && {
+    [[ -n "$ATTACH_ONLY" ]] && {
+        tmux -2 a 2>/dev/null || {
+            cd && exec tmux -l2
         }
         tmux -2 new-window -l -c "$PWD" 2>/dev/null && exec tmux -2 a
         exec tmux -l2
     }
+}
+
+if [ -f ~/qmk_utils/activate_msys2.sh ]; then
+    . ~/qmk_utils/activate_msys2.sh
 fi
