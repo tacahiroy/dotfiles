@@ -1,5 +1,6 @@
 ; vim: ts=4 sw=4 sts=4 noexpandtab
 [include]
+	path = /c/Users/tacahiroy/.gitlocal/gitconfig
 [user]
 	name = Takahiro Yoshihara
 [color]
@@ -76,8 +77,6 @@
 	autocorrect = 1
 [branch]
 	autosetuprebase = always
-[ghq]
-	root = ~/dev
 [filter "lfs"]
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process

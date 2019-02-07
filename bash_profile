@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 umask 0022
 
@@ -6,7 +6,7 @@ set_path() {
     dir=$1
     prioritise=$2
     if [ -d "${dir}" ]; then
-        if echo "$PATH" | tr ':' '\n' | grep "${dir}"; then
+        if echo "$PATH" | tr ':' '\n' | grep "${dir}" >/dev/null 2>&1; then
             return
         fi
 
@@ -24,8 +24,11 @@ export GOROOT=/usr/local/go
 export GOPATH=$HOME/go
 export EDITOR=vim
 export PAGER=less
-export FILTER_CMD=$(which fzy)
-export FILTER_OPTIONS='-l 20'
+r=$(which fzy >/dev/null 2>&1)
+if [ -x "${r}" ]; then
+    export FILTER_CMD="${r}"
+    export FILTER_OPTIONS='-l 20'
+fi
 # export FILTER_CMD=$HOME/.cargo/bin/rff
 # export FILTER_OPTIONS='-s'
 
@@ -40,7 +43,8 @@ set_path "/usr/local/go/bin" 1
 export PATH
 
 if [[ "$(uname -s)" =~ MSYS_NT.* ]]; then
-    export GOROOT=/c/tools/msys64/mingw64/lib/go
+    # export GOROOT=/c/tools/msys64/mingw64/lib/go
+    :
 fi
 
 if [ -f "$HOME/.bashrc.local" ]; then
@@ -53,10 +57,4 @@ if [ -n "$BASH_VERSION" ]; then
     if [ -f "$HOME/.bashrc" ]; then
 	. "$HOME/.bashrc"
     fi
-fi
-
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-if command -v pyenv 1>/dev/null 2>&1; then
-  eval "$(pyenv init -)"
 fi

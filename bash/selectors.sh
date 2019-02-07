@@ -10,6 +10,12 @@ SELECTOR_DIR_PROMPT_OPT="--prompt=CD> "
 SELECTOR_MRU_PROMPT_OPT="--prompt=MRU> "
 SELECTOR_GIT_REPO_PROMPT_OPT="--prompt=REPO> "
 
+[ which ghq >/dev/null 2>&1 ] && IS_GHQ=yes || IS_GHQ=no
+
+ghq_root() {
+    git config ghq.root | head -1
+}
+
 select_history() {
     local tac
     if which tac > /dev/null; then
@@ -67,15 +73,17 @@ select_ssh() {
     fi
 }
 
-
 select_git_repo() {
-    if ! which ghq >/dev/null 2>&1; then
-        echo ghq is not found!
-        return 9
+    local list_cmd
+    if [ "${IS_GHQ}" = yes ]; then
+        list_cmd="ghq list -p"
+    else
+        list_cmd="find $(ghq_root) -maxdepth 4 -type d -name .git | xargs dirname"
     fi
 
     local _repo
-    _repo=$(ghq list -p | "${F}" "${FO}" "${SELECTOR_GIT_REPO_PROMPT_OPT}")
+    # _repo=$(ghq list -p | "${F}" "${FO}" "${SELECTOR_GIT_REPO_PROMPT_OPT}")
+    _repo=$(eval "${list_cmd}" | "${F}" "${FO}" "${SELECTOR_GIT_REPO_PROMPT_OPT}")
 
     if [ -n "${_repo}" ]; then
         cmdline=${READLINE_LINE:-cd}

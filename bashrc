@@ -30,17 +30,48 @@ update_plugins() {
   while read -r a; do ghq get -u "${a}"; done < "$HOME/.bash/plugins.txt"
 }
 
+is_ssh_agent_running() {
+    ps aux | grep -q [s]sh-agent
+}
+
+if which ghq >/dev/null 2>&1; then
+    GIT_CMD=$(which ghq)
+    IS_PURE_GIT=no
+else
+    GIT_CMD=$(which git)
+    IS_PURE_GIT=yes
+fi
+
+get_git_root() {
+    if [ "${IS_PURE_GIT}" = yes ]; then
+        "${GIT_CMD}" config ghq.root | head -1
+    else
+        "${GIT_CMD}" root
+    fi
+}
+
+git_clone() {
+    url=$1
+    dest=$2
+
+    if [ "${IS_PURE_GIT}" = yes ]; then
+        "${GIT_CMD}" clone  "${url}" "${dest}"
+    else
+        "${GIT_CMD}" get "${url}"
+    fi
+}
+
 ## plugins
 #
 export _Z_CMD=j
-if [ -x "$(which ghq)" ] && [ -f "$HOME/.bash/plugins.txt" ]; then
-    GHQ_GH_ROOT=$(ghq root)/github.com
+if [ -x "${GIT_CMD}" ] && [ -f "$HOME/.bash/plugins.txt" ]; then
+    GIT_ROOT=$(get_git_root)/github.com
     while read -r a; do
         _rn=$(echo "${a}" | cut -d ' ' -f1)
         _init=$(echo "${a}" | cut -d ' ' -f2)
-        _repo="${GHQ_GH_ROOT}/${_rn}"
+        _repo="${GIT_ROOT}/${_rn}"
         if [ ! -d "${_repo}" ]; then
-        ghq get "${_rn}"
+            git_clone https://github.com/"${_rn}" "${_repo}"
         fi
 
         PATH=$PATH:"${_repo}"
@@ -63,7 +94,7 @@ start_agent() {
 if [ -f "${SSH_ENV}" ]; then
   # shellcheck source=/dev/null
   . "${SSH_ENV}" > /dev/null
-  if pgrep ssh-agent > /dev/null && test -S "${SSH_AUTH_SOCK}"; then
+  if is_ssh_agent_running > /dev/null && test -S "${SSH_AUTH_SOCK}"; then
     # agent already running
     :
   else
@@ -94,8 +125,8 @@ HISTFILESIZE=${HISTSIZE}
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
 
-case "${OSTYPE}" in
-    darwin*)
+case "${MYOS}" in
+    macos)
         ;;
     *)
         # If set, the pattern "**" used in a pathname expansion context will
@@ -189,16 +220,18 @@ esac
 # If use_tmux=1, add these codes to .bashrc/.zshrc:
 ATTACH_ONLY=1
 USE_TMUX=1
-[[ -z "$TMUX" && -n "$USE_TMUX" ]] && {
-    [[ -n "$ATTACH_ONLY" ]] && {
-        tmux -2 a 2>/dev/null || {
-            cd && exec tmux -l2
+if which tmux >/dev/null 2>&1; then
+    [[ -z "$TMUX" && -n "$USE_TMUX" ]] && {
+        [[ -n "$ATTACH_ONLY" ]] && {
+            tmux -2 a 2>/dev/null || {
+                cd && exec tmux -l2
+            }
+            exit
         }
-        exit
+        tmux -2 new-window -l -c "$PWD" 2>/dev/null && exec tmux -2 a
+        exec tmux -l2
     }
-    tmux -2 new-window -l -c "$PWD" 2>/dev/null && exec tmux -2 a
-    exec tmux -l2
-}
+fi
 
 if [ -f "$HOME/.local/bin/virtualenvwrapper.sh" ]; then
     # shellcheck source=/dev/null
