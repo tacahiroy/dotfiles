@@ -8,6 +8,7 @@
 *.rej
 .*.rej
 .*~
+*.sw?
 .DS_Store
 .sw?
 tags
@@ -15,3 +16,4 @@ tags-*
 .netrwhist
 .bundle/
 Gemfile.lock
+.env

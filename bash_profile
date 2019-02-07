@@ -39,8 +39,11 @@ set_path "$HOME/.local/bin"
 set_path "$HOME/.cargo/bin"
 set_path "$GOPATH/bin"
 set_path "/usr/local/go/bin" 1
-
 export PATH
+
+if go version | grep go1.11 >/dev/null 2>&1; then
+    export GO111MODULE=on
+fi
 
 if [[ "$(uname -s)" =~ MSYS_NT.* ]]; then
     # export GOROOT=/c/tools/msys64/mingw64/lib/go

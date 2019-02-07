@@ -185,7 +185,7 @@ if exists('*minpac#init')
 	call minpac#add('natebosch/vim-lsc')
 		let g:lsp_async_completion = 1
 
-		if executable('gopls')
+		if executable('bingo')
 			augroup LspGo
 				autocmd!
 				" autocmd User lsp_setup call lsp#register_server({
