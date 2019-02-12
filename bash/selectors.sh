@@ -10,7 +10,7 @@ SELECTOR_DIR_PROMPT_OPT="--prompt=CD> "
 SELECTOR_MRU_PROMPT_OPT="--prompt=MRU> "
 SELECTOR_GIT_REPO_PROMPT_OPT="--prompt=REPO> "
 
-[ which ghq >/dev/null 2>&1 ] && IS_GHQ=yes || IS_GHQ=no
+which ghq >/dev/null 2>&1 && IS_GHQ=yes || IS_GHQ=no
 
 ghq_root() {
     git config ghq.root | head -1
@@ -81,9 +81,15 @@ select_git_repo() {
         list_cmd="find $(ghq_root) -maxdepth 4 -type d -name .git | xargs dirname"
     fi
 
+    local list_go_repos_cmd
+    if [ -d "${GOPATH}/src" ]; then
+        list_go_repos_cmd="find ${GOPATH}/src -maxdepth 4 -type d -name .git | xargs dirname"
+    fi
+
+    list_cmd="${list_cmd}; ${list_go_repos_cmd}"
+
     local _repo
-    # _repo=$(ghq list -p | "${F}" "${FO}" "${SELECTOR_GIT_REPO_PROMPT_OPT}")
-    _repo=$(eval "${list_cmd}" | "${F}" "${FO}" "${SELECTOR_GIT_REPO_PROMPT_OPT}")
+    _repo=$((eval "${list_cmd}") | "${F}" "${FO}" "${SELECTOR_GIT_REPO_PROMPT_OPT}")
 
     if [ -n "${_repo}" ]; then
         cmdline=${READLINE_LINE:-cd}

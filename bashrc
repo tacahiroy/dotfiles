@@ -20,20 +20,6 @@ case "$(uname -a)" in
     *) MYOS=linux;;
 esac
 
-_dot() {
-  f=$1
-  # shellcheck source=/dev/null
-  [ -s "${f}" ] && . "${f}"
-}
-
-update_plugins() {
-  while read -r a; do ghq get -u "${a}"; done < "$HOME/.bash/plugins.txt"
-}
-
-is_ssh_agent_running() {
-    ps aux | grep -q [s]sh-agent
-}
-
 if which ghq >/dev/null 2>&1; then
     GIT_CMD=$(which ghq)
     IS_PURE_GIT=no
@@ -42,45 +28,64 @@ else
     IS_PURE_GIT=yes
 fi
 
-get_git_root() {
-    if [ "${IS_PURE_GIT}" = yes ]; then
-        "${GIT_CMD}" config ghq.root | head -1
-    else
-        "${GIT_CMD}" root
-    fi
+_dot() {
+  f=$1
+  # shellcheck source=/dev/null
+  [ -s "${f}" ] && . "${f}"
+}
+
+update_plugins() {
+  while read -r a; do ghq get -u "${a}" >/dev/null 2>&1; done < "$HOME/.bash/plugins.txt"
+}
+
+is_ssh_agent_running() {
+    ps aux | grep -q '[s]sh-agent' >/dev/null 2>&1
 }
 
 git_clone() {
-    url=$1
-    dest=$2
+    local url=$1
+    local dest=$2
 
     if [ "${IS_PURE_GIT}" = yes ]; then
-        "${GIT_CMD}" clone  "${url}" "${dest}"
+        git clone  "${url}" "${dest}"
     else
-        "${GIT_CMD}" get "${url}"
+        ghq get "${url}"
     fi
 }
 
 ## plugins
 #
-export _Z_CMD=j
-if [ -x "${GIT_CMD}" ] && [ -f "$HOME/.bash/plugins.txt" ]; then
-    GIT_ROOT=$(get_git_root)/github.com
-    while read -r a; do
-        _rn=$(echo "${a}" | cut -d ' ' -f1)
-        _init=$(echo "${a}" | cut -d ' ' -f2)
-        _repo="${GIT_ROOT}/${_rn}"
-        if [ ! -d "${_repo}" ]; then
-            git_clone https://github.com/"${_rn}" "${_repo}"
-        fi
+setup_plugins() {
+    if [ ! -x "${GIT_CMD}" ]; then
+        echo "Git was not found on your system."
+        return 1
+    fi
 
-        PATH=$PATH:"${_repo}"
+    if [ -z "${GIT_ROOT}" ]; then
+        echo "GIT_ROOT is not set."
+        return 1
+    fi
 
-        if [ -f "${_repo}/${_init}" ]; then
+    export _Z_CMD=j
+    if [ -f "$HOME/.bash/plugins.txt" ]; then
+        while read -r a; do
+            local _rn=$(echo "${a}" | awk -F ' ' '{ print $1 }')
+            local _init=$(echo "${a}" | awk -F ' ' '{ print $2 }')
+            local _repo="${GIT_ROOT}/${_rn}"
+
+            if [ ! -d $(readlink -f "${_repo}") ]; then
+                git_clone "https://${_rn}" "${_repo}"
+            fi
+
+            PATH=$PATH:"${_repo}"
+
+            [ -z "${_init}" ] && continue
             _dot "${_repo}/${_init}"
-        fi
-    done < "$HOME/.bash/plugins.txt"
-fi
+        done < "$HOME/.bash/plugins.txt"
+    fi
+}
+
+setup_plugins
 
 # ssh-agent
 SSH_ENV=$HOME/.ssh/agent.env

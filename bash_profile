@@ -20,17 +20,17 @@ set_path() {
 
 export LANG=en_US.UTF-8
 export SHELL=/bin/bash
-export GOROOT=/usr/local/go
+# export GOROOT=/usr/local/go
 export GOPATH=$HOME/go
 export EDITOR=vim
 export PAGER=less
-r=$(which fzy >/dev/null 2>&1)
+r=$(which fzy)
 if [ -x "${r}" ]; then
     export FILTER_CMD="${r}"
     export FILTER_OPTIONS='-l 20'
 fi
-# export FILTER_CMD=$HOME/.cargo/bin/rff
-# export FILTER_OPTIONS='-s'
+
+export GIT_ROOT=$HOME/dev/git/src
 
 export DISPLAY=:0
 
@@ -39,6 +39,7 @@ set_path "$HOME/.local/bin"
 set_path "$HOME/.cargo/bin"
 set_path "$GOPATH/bin"
 set_path "/usr/local/go/bin" 1
+set_path "$HOME/.yarn/bin"
 export PATH
 
 if go version | grep go1.11 >/dev/null 2>&1; then
