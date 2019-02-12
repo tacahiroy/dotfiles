@@ -171,14 +171,14 @@ if exists('*minpac#init')
     let g:lsp_signs_error = {'text': '🤕'}
     let g:lsp_signs_warning = {'text': '🤔'}
     let g:lsp_signs_hint = {'text': '💡'}
-    let g:lsp_log_verbose = 1
-    let g:lsp_log_file = expand('~/vim-lsp.log')
+    let g:lsp_log_verbose = 0
+    " let g:lsp_log_file = expand('~/vim-lsp.log')
 
 	call minpac#add('prabirshrestha/asyncomplete.vim')
     if has('lua') | let g:asyncomplete_smart_completion = 1 | endif
 		let g:asyncomplete_auto_popup = 1
     let g:asyncomplete_remove_duplicates = 1
-    let g:asyncomplete_log_file = expand('~/asyncomplete.log')
+    " let g:asyncomplete_log_file = expand('~/asyncomplete.log')
 
   call minpac#add('prabirshrestha/asyncomplete-buffer.vim')
 	call minpac#add('prabirshrestha/asyncomplete-lsp.vim')
@@ -191,11 +191,6 @@ if exists('*minpac#init')
 				" autocmd User lsp_setup call lsp#register_server({
 				" 			\ 'name': 'gopls',
 				" 			\ 'cmd': {server_info->['gopls', '-mode', 'stdio']},
-				" 			\ 'whitelist': ['go'],
-				" 			\ })
-				" autocmd User lsp_setup call lsp#register_server({
-				" 			\ 'name': 'bingo',
-				" 			\ 'cmd': {server_info->['bingo', '-mode', 'stdio']},
 				" 			\ 'whitelist': ['go'],
 				" 			\ })
 				autocmd User lsp_setup call lsp#register_server({
@@ -268,6 +263,7 @@ if exists('*minpac#init')
     let g:ale_lint_on_text_changed = 'never'
     let g:ale_set_loclist = 0
     let g:ale_set_quickfix = 1
+    let g:ale_pattern_options = {'\.go$': {'ale_enabled': 0}}
 
     function! LinterStatus() abort
         let l:counts = ale#statusline#Count(bufnr(''))
@@ -302,6 +298,10 @@ if exists('*minpac#init')
   call minpac#add('nixprime/cpsm')
     let g:ctrlp_match_func = {'match': 'cpsm#CtrlPMatch'}
     let g:cpsm_highlight_mode = 'detailed'
+
+  call minpac#add('pangloss/vim-javascript')
+  call minpac#add('mxw/vim-jsx')
+    let g:jsx_ext_required = 0
 endif
 
 " Define user commands for updating/cleaning the plugins.
@@ -874,19 +874,17 @@ augroup Tacahiroy
   let java_highlight_java_lang_ids = 1
   let java_highlight_java_io = 1
 
-  autocmd FileType javascript,javascript.json set omnifunc=javascriptcomplete#CompleteJS
-  autocmd FileType javascript,html setlocal makeprg=jsl\ -conf\ \"$HOME/jsl.conf\"\ -nologo\ -nofilelisting\ -nosummary\ -nocontext\ -process\ %
-  autocmd FileType javascript,html setlocal errorformat=%f(%l):\ %m
-
-  autocmd BufRead,BufNewFile *.json set filetype=javascript.json
-  autocmd FileType json setlocal makeprg=python\ -mjson.tool\ 2>&1\ %\ >\ /dev/null
-  autocmd FileType json setlocal errorformat=%m:\ line\ %l\ column\ %c\ %.%#
-  autocmd FileType json nnoremap <Leader>pp :%!json_xs -f json -t json-pretty<Cr>
+  autocmd BufRead *.jsx setlocal filetype=javascript.jsx
+  " autocmd FileType javascript,javascript.json set omnifunc=javascriptcomplete#CompleteJS
+  autocmd FileType javascript,javascript.json setlocal omnifunc=lsp#complete
 
   autocmd FileType c setlocal tabstop=4 softtabstop=4 shiftwidth=4
   autocmd FileType c compiler gcc
   autocmd FileType c setlocal makeprg=gcc\ -Wall\ %\ -o\ %:r.o
   autocmd FileType c nnoremap <buffer> [Space]m :<C-u>write<Cr>:make --std=c99<Cr>
+
+  autocmd FileType python,go nmap gd <plug>(lsp-definition)
+  autocmd BufWritePre <buffer> LspDocumentFormatSync
 augroup END
 "}}}
 
