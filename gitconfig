@@ -1,6 +1,6 @@
 ; vim: ts=4 sw=4 sts=4 noexpandtab
 [include]
-	path = /c/Users/tacahiroy/.gitlocal/gitconfig
+	path = ~/.gitlocal/gitconfig
 [user]
 	name = Takahiro Yoshihara
 [color]
