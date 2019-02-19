@@ -20,8 +20,8 @@ set_path() {
 
 export LANG=en_US.UTF-8
 export SHELL=/bin/bash
-# export GOROOT=/usr/local/go
-export GOPATH=$HOME/go
+export GIT_ROOT=$HOME/dev/git/src
+export GOPATH=$(dirname ${GIT_ROOT})
 export EDITOR=vim
 export PAGER=less
 r=$(which fzy)
@@ -29,8 +29,6 @@ if [ -x "${r}" ]; then
     export FILTER_CMD="${r}"
     export FILTER_OPTIONS='-l 20'
 fi
-
-export GIT_ROOT=$HOME/dev/git/src
 
 export DISPLAY=:0
 
