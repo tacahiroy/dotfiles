@@ -29,6 +29,11 @@ if [ -x "${r}" ]; then
     export FILTER_CMD="${r}"
     export FILTER_OPTIONS='-l 20'
 fi
+fd=$(which fd)
+if [ -x "${fd}" ]; then
+    export FIND="${fd}"
+    export FINDO=
+fi
 
 export DISPLAY=:0
 
@@ -40,7 +45,7 @@ set_path "/usr/local/go/bin" 1
 set_path "$HOME/.yarn/bin"
 export PATH
 
-if go version | grep go1.11 >/dev/null 2>&1; then
+if go version | grep 'go1.1[1-9]' >/dev/null 2>&1; then
     export GO111MODULE=on
 fi
 

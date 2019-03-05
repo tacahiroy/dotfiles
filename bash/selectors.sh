@@ -4,9 +4,12 @@
 
 F=${FILTER_CMD:-$HOME/bin/fzy}
 FO=${FILTER_OPTIONS:-}
+FIND=${FILTER_FIND:-find}
+FINDO=${FINDO:--maxdepth 5 ! -path '*/.git/*' -type f}
 
 SELECTOR_HIST_PROMPT_OPT="--prompt=HIST> "
 SELECTOR_DIR_PROMPT_OPT="--prompt=CD> "
+SELECTOR_FILE_PROMPT_OPT="--prompt=FILE> "
 SELECTOR_MRU_PROMPT_OPT="--prompt=MRU> "
 SELECTOR_GIT_REPO_PROMPT_OPT="--prompt=REPO> "
 
@@ -32,6 +35,14 @@ select_history() {
 select_dir() {
     READLINE_LINE="cd $(_z -s 2>&1 | awk '{ print $2 }' | \
         ${F} "${FO}" "${SELECTOR_DIR_PROMPT_OPT}")"
+    READLINE_POINT=${#READLINE_LINE}
+}
+
+select_file() {
+    local cmd=${READLINE_LINE:-${EDITOR:-vim}}
+
+    READLINE_LINE="${cmd} $(${FIND} . ${FINDO} | \
+        ${F} "${FO}" "${SELECTOR_FILE_PROMPT_OPT}")"
     READLINE_POINT=${#READLINE_LINE}
 }
 
@@ -81,13 +92,6 @@ select_git_repo() {
         list_cmd="find $(ghq_root) -maxdepth 4 -type d -name .git | xargs dirname"
     fi
 
-    local list_go_repos_cmd
-    if [ -d "${GOPATH}/src" ]; then
-        list_go_repos_cmd="find ${GOPATH}/src -maxdepth 4 -type d -name .git | xargs dirname"
-    fi
-
-    list_cmd="${list_cmd}; ${list_go_repos_cmd}"
-
     local _repo
     _repo=$((eval "${list_cmd}") | "${F}" "${FO}" "${SELECTOR_GIT_REPO_PROMPT_OPT}")
 
@@ -136,6 +140,7 @@ select_git_branch_all() {
 bind -x '"\C-r"':"\"select_history\""
 bind -x '"\C-t"':"\"select_ctrlpvim_mru\""
 bind -x '"\C-gd"':"\"select_dir\""
+bind -x '"\C-gf"':"\"select_file\""
 bind -x '"\C-gr"':"\"select_git_repo\""
 bind -x '"\C-gg"':"\"select_git_branch\""
 bind -x '"\C-ga"':"\"select_git_branch_all\""
