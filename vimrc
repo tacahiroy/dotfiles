@@ -165,7 +165,7 @@ if exists('*minpac#init')
 
 	call minpac#add('prabirshrestha/async.vim')
 	call minpac#add('prabirshrestha/vim-lsp')
-    let g:lsp_diagnostics_enabled = 1
+    let g:lsp_diagnostics_enabled = 1 "{{{ vim-lsp
     let g:lsp_diagnostics_echo_cursor = 1
     let g:lsp_signs_enabled = 1
     let g:lsp_signs_error = {'text': '🤕'}
@@ -173,9 +173,10 @@ if exists('*minpac#init')
     let g:lsp_signs_hint = {'text': '💡'}
     let g:lsp_log_verbose = 0
     " let g:lsp_log_file = expand('~/vim-lsp.log')
+  "}}}
 
 	call minpac#add('prabirshrestha/asyncomplete.vim')
-    if has('lua') | let g:asyncomplete_smart_completion = 1 | endif
+    let g:asyncomplete_smart_completion = has('lua')
 		let g:asyncomplete_auto_popup = 1
     let g:asyncomplete_remove_duplicates = 1
     " let g:asyncomplete_log_file = expand('~/asyncomplete.log')
@@ -183,16 +184,12 @@ if exists('*minpac#init')
   call minpac#add('prabirshrestha/asyncomplete-buffer.vim')
 	call minpac#add('prabirshrestha/asyncomplete-lsp.vim')
 	call minpac#add('natebosch/vim-lsc')
-		let g:lsp_async_completion = 1
+		let g:lsp_async_completion = 1 "{{{ vim-lsc
+    let g:lsc_auto_map = v:true
 
 		if executable('bingo')
 			augroup LspGo
 				autocmd!
-				" autocmd User lsp_setup call lsp#register_server({
-				" 			\ 'name': 'gopls',
-				" 			\ 'cmd': {server_info->['gopls', '-mode', 'stdio']},
-				" 			\ 'whitelist': ['go'],
-				" 			\ })
 				autocmd User lsp_setup call lsp#register_server({
 							\ 'name': 'bingo',
 							\ 'cmd': {server_info->['bingo', '-mode', 'stdio']},
@@ -213,6 +210,21 @@ if exists('*minpac#init')
               \ })
       augroup END
     endif
+  "}}}
+
+  call minpac#add('stephpy/vim-yaml')
+  call minpac#add('pearofducks/ansible-vim')
+    let g:ansible_yamlKeyName = 'yamlKey'
+    let g:ansible_attribute_highlight = "ob"
+    let g:ansible_name_highlight = 'b'
+    let g:ansible_extra_keywords_highlight = 1
+    let g:ansible_unindent_after_newline = 1
+
+
+  call minpac#add('hashivim/vim-terraform')
+    let g:terraform_align = 1
+    let g:terraform_commentstring = '//%s'
+    let g:terraform_fmt_on_save = 0
 
   call minpac#add('cohama/lexima.vim')
     " let g:lexima_no_default_rules = 1
@@ -220,18 +232,6 @@ if exists('*minpac#init')
     let g:lexima_enable_endwise_rule = 1
 
   call minpac#add('bkad/CamelCaseMotion')
-
-  " call minpac#add('fatih/vim-go')
-    let g:go_highlight_types = 1
-    let g:go_highlight_fields = 1
-    let g:go_highlight_operators = 0
-    let g:go_highlight_functions = 1
-    let g:go_highlight_function_arguments = 0
-    let g:go_highlight_variable_declarations = 0
-    let g:go_gocode_propose_builtins = 0
-    let g:go_fmt_options = {
-        \ 'goimports': '',
-    \ }
 
   call minpac#add('godlygeek/tabular')
   call minpac#add('luochen1990/rainbow')
@@ -242,6 +242,7 @@ if exists('*minpac#init')
     let g:rainbow_conf.operators = '_,_'
     let g:rainbow_conf.parentheses = ['start=/(/ end=/)/ fold', 'start=/\[/ end=/\]/ fold', 'start=/{/ end=/}/ fold']
     let g:rainbow_conf.separately = { '*': {} }
+
   call minpac#add('benjifisher/matchit.zip')
   call minpac#add('tpope/vim-commentary')
     nmap [Space]c gcc
@@ -254,44 +255,68 @@ if exists('*minpac#init')
     xmap s <Plug>VSurround
 
   call minpac#add('ctrlpvim/ctrlp.vim')
-  call minpac#add('tacahiroy/ctrlp-funky')
-  call minpac#add('tacahiroy/vim-colors-isotake', {'frozen': 1})
-  call minpac#add('dracula/vim')
-  call minpac#add('w0rp/ale')
-    let g:ale_enabled = 1
-    let g:ale_statusline_format = ['!%d', '@%d', 'ok']
-    let g:ale_lint_on_text_changed = 'never'
-    let g:ale_set_loclist = 0
-    let g:ale_set_quickfix = 1
-    let g:ale_pattern_options = {'\.go$': {'ale_enabled': 0}}
+    let g:ctrlp_by_filename = 0 " {{{ ctrlp.vim
+    let g:ctrlp_map = '<Space>e'
+    let g:ctrlp_cmd = 'CtrlP'
+    let g:ctrlp_switch_buffer = 'Et'
+    let g:ctrlp_tabpage_position = 'ac'
+    let g:ctrlp_working_path_mode = 'ra'
+    let g:ctrlp_match_window = 'bottom,order:ttb,min:1,max10,results:50'
+    let g:ctrlp_max_height = 20
+    let g:ctrlp_clear_cache_on_exit = 1
+    let g:ctrlp_follow_symlinks = 1
+    let g:ctrlp_max_files = 10000
+    let g:ctrlp_max_depth = 10
+    let g:ctrlp_show_hidden = 0
+    let g:ctrlp_mruf_max = 1024
+    let g:ctrlp_mruf_tilde_homedir = 1
+    let g:ctrlp_mruf_exclude = 'COMMIT_EDITMSG'
+    let g:ctrlp_mruf_default_order = 1
+    let g:ctrlp_path_nolim = 0
+    " Set delay to prevent extra search
+    let g:ctrlp_lazy_update = 200
+    let g:ctrlp_brief_prompt = 1
+    let g:ctrlp_key_loop = 1
+    let g:ctrlp_use_caching = 0
 
-    function! LinterStatus() abort
-        let l:counts = ale#statusline#Count(bufnr(''))
+    if s:grep ==# 'rg'
+      let g:ctrlp_user_command = 'rg %s -i --files --no-heading --max-depth 10'
+    elseif s:grep ==# ''
+      if s:linux || s:mac
+        let g:ctrlp_user_command = 'find %s -type f'
+      else
+        let g:ctrlp_user_command = 'dir %s /-n /b /s /a-d'
+      endif
+    endif
 
-        let l:all_errors = l:counts.error + l:counts.style_error
-        let l:all_non_errors = l:counts.total - l:all_errors
+    let g:ctrlp_prompt_mappings = {
+      \ 'AcceptSelection("e")': ['<Cr>'],
+      \ 'AcceptSelection("h")': ['<C-x>'],
+      \ 'AcceptSelection("t")': ['<C-t>', '<C-Cr>'],
+      \ 'AcceptSelection("v")': ['<C-v>'],
+      \ 'PrtSelectMove("j")':   ['<C-n>'],
+      \ 'PrtSelectMove("k")':   ['<C-p>'],
+      \ 'PrtHistory(-1)':       ['<Up>'],
+      \ 'PrtHistory(1)':        ['<Down>'],
+      \ 'CreateNewFile()':      ['<C-y>'],
+      \ }
 
-        return l:counts.total == 0 ? 'OK' : printf(
-        \   '%dW %dE',
-        \   all_non_errors,
-        \   all_errors
-        \)
-    endfunction
+    let dir = ['\.git$', '\.hg$', '\.svn$', '\.vimundo$', '\.cache/ctrlp$',
+          \    '\.rbenv', '\.gem', 'backup', 'Documents', $TMPDIR,
+          \    'vendor']
+    let g:ctrlp_custom_ignore = {
+      \ 'dir': '\v[\/]' . join(dir, '|') . '/',
+      \ 'file': '\v(\.exe|\.so|\.dll|\.DS_Store|\.db|COMMIT_EDITMSG)$'
+      \ }
 
-    let &statusline .= '|'
-    let &statusline .= '%#SpellRare#'
-    let &statusline .= '%{LinterStatus()}'
-    let &statusline .= '%*'
-
-  call minpac#add('mattn/webapi-vim')
-  call minpac#add('mattn/sonictemplate-vim')
-  call minpac#add('mechatroner/rainbow_csv')
-  call minpac#add('jremmen/vim-ripgrep')
-  call minpac#add('kana/vim-textobj-user')
-
-  if filereadable(expand('~/.vimrc.plugins'))
-    source ~/.vimrc.plugins
-  endif
+    nnoremap [Space]fl :CtrlPBuffer<Cr>
+    nnoremap [Space]fm :CtrlPMRU<Cr><F5>
+    nnoremap [Space]fi :CtrlPLine<Cr>
+    nnoremap [Space]f. :CtrlPCurWD<Cr>
+    nnoremap [Space]f, :CtrlPCurFile<Cr>
+    nnoremap [Space]fr :CtrlPRTS<Cr>
+    nnoremap [Space]fq :CtrlPQuickfix<Cr>
+  "}}}
 
   " call minpac#add('FelikZ/ctrlp-py-matcher')
   " let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
@@ -299,9 +324,60 @@ if exists('*minpac#init')
     let g:ctrlp_match_func = {'match': 'cpsm#CtrlPMatch'}
     let g:cpsm_highlight_mode = 'detailed'
 
+  call minpac#add('tacahiroy/ctrlp-funky')
+    let g:ctrlp_funky_debug = 0 "{{{ ctrlp-funky
+    let g:ctrlp_funky_use_cache = 0
+    let g:ctrlp_funky_matchtype = 'path'
+    let g:ctrlp_funky_sort_by_mru = 0
+    let g:ctrlp_funky_syntax_highlight = 0
+    let g:ctrlp_funky_ruby_chef_words = 0
+
+    let g:ctrlp_funky_nudists = ['php', 'ruby']
+
+    nnoremap [Space]fu :CtrlPFunky<Cr>
+    nnoremap [Space]uu :execute 'CtrlPFunky ' . fnameescape(expand('<cword>'))<Cr>
+  "}}}
+
+  call minpac#add('tacahiroy/vim-colors-isotake', {'frozen': 1})
+  call minpac#add('dracula/vim')
+  call minpac#add('w0rp/ale')
+    let g:ale_enabled = 1 "{{{ ALE
+    let g:ale_statusline_format = ['!%d', '@%d', 'ok']
+    let g:ale_lint_on_text_changed = 'never'
+    let g:ale_set_loclist = 0
+    let g:ale_set_quickfix = 1
+    let g:ale_pattern_options = {'\.go$': {'ale_enabled': 0}}
+
+    function! LinterStatus() abort
+      let l:counts = ale#statusline#Count(bufnr(''))
+
+      let l:all_errors = l:counts.error + l:counts.style_error
+      let l:all_non_errors = l:counts.total - l:all_errors
+
+      return l:counts.total == 0 ? 'OK' : printf(
+      \   '%dW %dE',
+      \   all_non_errors,
+      \   all_errors
+      \)
+    endfunction
+
+    let &statusline .= '|'
+    let &statusline .= '%#SpellRare#'
+    let &statusline .= '%{LinterStatus()}'
+    let &statusline .= '%*'
+  "}}}
+
+  call minpac#add('mechatroner/rainbow_csv')
+  call minpac#add('jremmen/vim-ripgrep')
+  call minpac#add('kana/vim-textobj-user')
+
   call minpac#add('pangloss/vim-javascript')
   call minpac#add('mxw/vim-jsx')
     let g:jsx_ext_required = 0
+
+  if filereadable(expand('~/.vimrc.plugins'))
+    source ~/.vimrc.plugins
+  endif
 endif
 
 " Define user commands for updating/cleaning the plugins.
@@ -311,94 +387,15 @@ command! PackUpdate packadd minpac | source $MYVIMRC | call minpac#update()
 command! PackClean  packadd minpac | source $MYVIMRC | call minpac#clean()
 " }}}
 
-
 " set completeopt=preview,menuone,noinsert,noselect
 set completeopt+=preview
 
-" Super simple memolist
+" Super simple note taking
 let g:note_path = expand('~/dev/memo')
-nnoremap [Space]mc :NewNote<Cr>
-nnoremap [Space]ml :execute 'CtrlP ' . g:note_path<Cr><F5>
-
 command! -nargs=1 InsertNoteTemplate call <SID>ins_note_template(<q-args>)
 command! -nargs=0 NewNote call <SID>create_new_note()
-
-" plug: ctrlp.vim
-  let g:ctrlp_by_filename = 0
-  let g:ctrlp_map = '<Space>e'
-  let g:ctrlp_cmd = 'CtrlP'
-  let g:ctrlp_switch_buffer = 'Et'
-  let g:ctrlp_tabpage_position = 'ac'
-  let g:ctrlp_working_path_mode = 'ra'
-  let g:ctrlp_match_window = 'bottom,order:ttb,min:1,max10,results:50'
-  let g:ctrlp_max_height = 20
-  let g:ctrlp_clear_cache_on_exit = 1
-  let g:ctrlp_follow_symlinks = 1
-  let g:ctrlp_max_files = 10000
-  let g:ctrlp_max_depth = 10
-  let g:ctrlp_show_hidden = 0
-  let g:ctrlp_mruf_max = 1024
-  let g:ctrlp_mruf_tilde_homedir = 1
-  let g:ctrlp_mruf_exclude = 'COMMIT_EDITMSG'
-  let g:ctrlp_mruf_default_order = 1
-  let g:ctrlp_path_nolim = 0
-  " Set delay to prevent extra search
-  let g:ctrlp_lazy_update = 200
-  let g:ctrlp_brief_prompt = 1
-  let g:ctrlp_key_loop = 1
-  let g:ctrlp_use_caching = 0
-
-  if s:grep ==# 'rg'
-    let g:ctrlp_user_command = 'rg %s -i --files --no-heading --max-depth 10'
-  elseif s:grep ==# ''
-    if s:linux || s:mac
-      let g:ctrlp_user_command = 'find %s -type f'
-    else
-      let g:ctrlp_user_command = 'dir %s /-n /b /s /a-d'
-    endif
-  endif
-
-  let g:ctrlp_prompt_mappings = {
-    \ 'AcceptSelection("e")': ['<Cr>'],
-    \ 'AcceptSelection("h")': ['<C-x>'],
-    \ 'AcceptSelection("t")': ['<C-t>', '<C-Cr>'],
-    \ 'AcceptSelection("v")': ['<C-v>'],
-    \ 'PrtSelectMove("j")':   ['<C-n>'],
-    \ 'PrtSelectMove("k")':   ['<C-p>'],
-    \ 'PrtHistory(-1)':       ['<Up>'],
-    \ 'PrtHistory(1)':        ['<Down>'],
-    \ 'CreateNewFile()':      ['<C-y>'],
-    \ }
-
-  let dir = ['\.git$', '\.hg$', '\.svn$', '\.vimundo$', '\.cache/ctrlp$',
-        \    '\.rbenv', '\.gem', 'backup', 'Documents', $TMPDIR,
-        \    'vendor']
-  let g:ctrlp_custom_ignore = {
-    \ 'dir': '\v[\/]' . join(dir, '|') . '/',
-    \ 'file': '\v(\.exe|\.so|\.dll|\.DS_Store|\.db|COMMIT_EDITMSG)$'
-    \ }
-
-" plug: ctrlp-funky
-  let g:ctrlp_funky_debug = 0
-  let g:ctrlp_funky_use_cache = 0
-  let g:ctrlp_funky_matchtype = 'path'
-  let g:ctrlp_funky_sort_by_mru = 0
-  let g:ctrlp_funky_syntax_highlight = 0
-  let g:ctrlp_funky_ruby_chef_words = 0
-
-  let g:ctrlp_funky_nudists = ['php', 'ruby']
-
-  nnoremap [Space]fl :CtrlPBuffer<Cr>
-  nnoremap [Space]fm :CtrlPMRU<Cr><F5>
-  nnoremap [Space]fi :CtrlPLine<Cr>
-  nnoremap [Space]f. :CtrlPCurWD<Cr>
-  nnoremap [Space]f, :CtrlPCurFile<Cr>
-  nnoremap [Space]fr :CtrlPRTS<Cr>
-  nnoremap [Space]t  :CtrlPTag<Cr>
-  nnoremap [Space]fq :CtrlPQuickfix<Cr>
-
-  nnoremap [Space]fu :CtrlPFunky<Cr>
-  nnoremap [Space]uu :execute 'CtrlPFunky ' . fnameescape(expand('<cword>'))<Cr>
+nnoremap [Space]mc :NewNote<Cr>
+nnoremap [Space]ml :execute 'CtrlP ' . g:note_path<Cr><F5>
 
 " plug: camelcasemotion
   map <silent> W <plug>CamelCaseMotion_w
@@ -607,6 +604,7 @@ nnoremap so gv<Esc>
 nnoremap sap va}V
 nnoremap sU :<C-u>call <SID>toggle_case(1)<Cr>
 nnoremap su :<C-u>call <SID>toggle_case(0)<Cr>
+nnoremap [Space]te :<C-u>terminal<Cr>
 
 function! s:toggle_case(upper)
   let [_, l, c, _] = getpos('.')
@@ -809,15 +807,14 @@ augroup Tacahiroy
     \   },
     \ })
 
+  autocmd BufRead,BufNewFile */playbooks/*.yml set filetype=yaml.ansible
+
   autocmd VimEnter * call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
         \ 'name': 'buffer',
         \ 'whitelist': ['*'],
         \ 'blacklist': ['go'],
         \ 'completor': function('asyncomplete#sources#buffer#completor'),
         \ }))
-
-  autocmd FileType go command! -nargs=0 GomRun :terminal gom run %
-  autocmd FileType go nnoremap <Leader>m :GomRun<Cr>
 
   autocmd BufEnter ControlP let b:ale_enabled = 0
   autocmd BufReadPost * if !search('\S', 'cnw') | let &l:fileencoding = &encoding | endif
@@ -874,8 +871,6 @@ augroup Tacahiroy
   let java_highlight_java_lang_ids = 1
   let java_highlight_java_io = 1
 
-  autocmd BufRead *.jsx setlocal filetype=javascript.jsx
-  " autocmd FileType javascript,javascript.json set omnifunc=javascriptcomplete#CompleteJS
   autocmd FileType javascript,javascript.json setlocal omnifunc=lsp#complete
 
   autocmd FileType c setlocal tabstop=4 softtabstop=4 shiftwidth=4
