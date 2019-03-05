@@ -90,13 +90,15 @@ setup_plugins
 # ssh-agent
 SSH_ENV=$HOME/.ssh/agent.env
 start_agent() {
+  return
+
   ssh-agent > "${SSH_ENV}"
   # shellcheck source=/dev/null
   . "${SSH_ENV}" > /dev/null
   # ssh-add
 }
 
-if [ -f "${SSH_ENV}" ]; then
+if [ "${MYOS}" = "wsl" ] && [ -f "${SSH_ENV}" ]; then
   # shellcheck source=/dev/null
   . "${SSH_ENV}" > /dev/null
   if is_ssh_agent_running > /dev/null && test -S "${SSH_AUTH_SOCK}"; then
@@ -110,6 +112,8 @@ else
 fi
 
 unset MAILCHECK
+
+FIGNORE="${FIGNORE}:@tmp:retry:tfstate:backup"
 
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
@@ -203,24 +207,42 @@ set_prompt() {
 
 PS1=$(set_prompt)
 
-case "$(uname -a)" in
-        MSYS*)
+case "${MYOS}" in
+        msys)
         if [ -f "$HOME/qmk_utils/activate_msys2.sh" ]; then
             # shellcheck source=/dev/null
             . "$HOME/qmk_utils/activate_msys2.sh"
         fi
         ;;
-        *Microsoft*)
+        wsl)
+        eval $(/win/dev/bin/ssh-agent-wsl/ssh-agent-wsl -r)
         if [ -f "$HOME/qmk_utils/activate_wsl.sh" ]; then
             # shellcheck source=/dev/null
             . "$HOME/qmk_utils/activate_wsl.sh"
         fi
         ;;
-        *Darwin*)
+        macos)
         ;;
         *)
         ;;
 esac
+
+if [ -f "$HOME/.local/bin/virtualenvwrapper.sh" ]; then
+    # shellcheck source=/dev/null
+    . "$HOME/.local/bin/virtualenvwrapper.sh"
+    export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
+    export WORKON_HOME=~/.virtualenvs
+fi
+
+if [ "${MYOS}" = wsl ] && [ -x "$HOME/bin/tmp-clean.sh" ]; then
+    bash "$HOME"/bin/tmp-clean.sh
+fi
+
+if which aws >/dev/null 2>&1; then
+    complete -C aws_completer aws
+fi
+
+complete -C $HOME/bin/terraform terraform
 
 # If use_tmux=1, add these codes to .bashrc/.zshrc:
 ATTACH_ONLY=1
@@ -236,15 +258,4 @@ if which tmux >/dev/null 2>&1; then
         tmux -2 new-window -l -c "$PWD" 2>/dev/null && exec tmux -2 a
         exec tmux -l2
     }
-fi
-
-if [ -f "$HOME/.local/bin/virtualenvwrapper.sh" ]; then
-    # shellcheck source=/dev/null
-    . "$HOME/.local/bin/virtualenvwrapper.sh"
-    export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
-    export WORKON_HOME=~/.virtualenvs
-fi
-
-if [ "${MYOS}" = wsl ] && [ -x "$HOME/bin/tmp-clean.sh" ]; then
-    bash "$HOME"/bin/tmp-clean.sh
 fi
