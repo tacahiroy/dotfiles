@@ -70,7 +70,7 @@
 	default = current
 
 [credential]
-	helper = cache
+	helper = manager
 [advice]
 	statusHints = false
 [help]
