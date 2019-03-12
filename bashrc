@@ -35,7 +35,6 @@ _dot() {
 }
 
 update_plugins() {
-<<<<<<< HEAD
   while read -r a; do ghq get -u "${a}" >/dev/null 2>&1; done < "$HOME/.bash/plugins.txt"
 }
 
@@ -211,22 +210,22 @@ set_prompt() {
 PS1=$(set_prompt)
 
 case "${MYOS}" in
-        msys)
+    msys)
         if [ -f "$HOME/qmk_utils/activate_msys2.sh" ]; then
             # shellcheck source=/dev/null
             . "$HOME/qmk_utils/activate_msys2.sh"
         fi
         ;;
-        wsl)
+    wsl)
         eval $(/win/dev/bin/ssh-agent-wsl/ssh-agent-wsl -r)
         if [ -f "$HOME/qmk_utils/activate_wsl.sh" ]; then
             # shellcheck source=/dev/null
             . "$HOME/qmk_utils/activate_wsl.sh"
         fi
         ;;
-        macos)
+    macos)
         ;;
-        *)
+    *)
         ;;
 esac
 
