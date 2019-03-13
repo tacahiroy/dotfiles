@@ -56,6 +56,8 @@ fi
 
 export PATH
 
+export SHELLCHECK_OPTS="-e SC2016 -e SC1090"
+
 if go version | grep 'go1.1[1-9]' >/dev/null 2>&1; then
     export GO111MODULE=on
 fi
