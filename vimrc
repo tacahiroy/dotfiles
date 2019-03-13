@@ -180,12 +180,15 @@ if exists('*minpac#init')
 		let g:asyncomplete_auto_popup = 1
     let g:asyncomplete_remove_duplicates = 1
     " let g:asyncomplete_log_file = expand('~/asyncomplete.log')
+    imap <c-space> <Plug>(asyncomplete_force_refresh)
 
   call minpac#add('prabirshrestha/asyncomplete-buffer.vim')
 	call minpac#add('prabirshrestha/asyncomplete-lsp.vim')
 	call minpac#add('natebosch/vim-lsc')
-		let g:lsp_async_completion = 1 "{{{ vim-lsc
+		let g:lsp_async_completion = 0 "{{{ vim-lsc
     let g:lsc_auto_map = v:true
+    let g:lsc_enable_autocomplete = v:false
+    " let g:lsc_server_commands = {'go': 'bingo'}
 
 		if executable('bingo')
 			augroup LspGo
@@ -196,6 +199,7 @@ if exists('*minpac#init')
 							\ 'whitelist': ['go'],
 							\ })
         autocmd FileType go setlocal omnifunc=lsp#complete
+        autocmd FileType go setlocal completeopt+=preview
 			augroup END
 		endif
 
@@ -219,7 +223,6 @@ if exists('*minpac#init')
     let g:ansible_name_highlight = 'b'
     let g:ansible_extra_keywords_highlight = 1
     let g:ansible_unindent_after_newline = 1
-
 
   call minpac#add('hashivim/vim-terraform')
     let g:terraform_align = 1
@@ -339,7 +342,6 @@ if exists('*minpac#init')
   "}}}
 
   call minpac#add('tacahiroy/vim-colors-isotake', {'frozen': 1})
-  call minpac#add('dracula/vim')
   call minpac#add('w0rp/ale')
     let g:ale_enabled = 1 "{{{ ALE
     let g:ale_statusline_format = ['!%d', '@%d', 'ok']
@@ -371,9 +373,9 @@ if exists('*minpac#init')
   call minpac#add('jremmen/vim-ripgrep')
   call minpac#add('kana/vim-textobj-user')
 
-  call minpac#add('pangloss/vim-javascript')
-  call minpac#add('mxw/vim-jsx')
-    let g:jsx_ext_required = 0
+  call minpac#add('mattn/emmet-vim')
+
+  " call minpac#add('SirVer/ultisnips')
 
   if filereadable(expand('~/.vimrc.plugins'))
     source ~/.vimrc.plugins
@@ -638,14 +640,14 @@ nnoremap <silent> qc :cc<Cr>zz
 nnoremap <silent> qn :bnext<Cr>
 nnoremap <silent> qp :bprevious<Cr>
 " tab navigations
-nnoremap <silent> sn :tabnext<Cr>
-nnoremap <silent> sp :tabprevious<Cr>
+nnoremap <silent> gn :tabnext<Cr>
+nnoremap <silent> gh :tabprevious<Cr>
 
 " window navigations
 nnoremap <silent> sh <C-w>h
-nnoremap <silent> sk <C-w>k
-nnoremap <silent> sl <C-w>l
-nnoremap <silent> sj <C-w>j
+nnoremap <silent> se <C-w>k
+nnoremap <silent> si <C-w>l
+nnoremap <silent> sn <C-w>j
 
 nnoremap <silent> <Return> :<C-u>call <SID>append_blank_line()<Cr>
 
@@ -689,7 +691,7 @@ nnoremap [Space]W <Esc>:<C-u>update!<Cr>
 nnoremap [Space]Q <Esc>:<C-u>quit!<Cr>
 
 " help
-nnoremap <C-\> :<C-u>h<Space>
+nnoremap <Leader>h :<C-u>h<Space>
 " put a whitespace into under the cursor
 nnoremap s<Space> i<Space><Esc>
 
@@ -755,7 +757,22 @@ function! s:run_tidy(...) range
   silent execute printf('%d,%d!tidy -xml -i -%s -wrap %d -q -asxml', a:firstline, a:lastline, enc, eval(col))
 endfunction
 
+function! s:fmt()
+  let ft = &filetype
+  let save_cursor = getcurpos()
+
+  try
+    if ft ==# 'go'
+      execute '1,$!gofmt'
+    endif
+  finally
+    call setpos('.', save_cursor)
+  endtry
+endfunction
+
 command! -nargs=? -range Tidy <line1>,<line2>call s:run_tidy(<args>)
+command! -nargs=0 Fmt call s:fmt()
+command! -nargs=0 GoFmt :%!gofmt
 "}}}
 
 if has('pythonx') "{{{
@@ -789,25 +806,7 @@ augroup Tacahiroy
   autocmd VimEnter * call lexima#add_rule({'char': '"', 'at': '\%#\w', 'input': '"'})
   autocmd VimEnter * call lexima#add_rule({'char': "'", 'at': '\%#\w', 'input': "'"})
 
-  autocmd VimEnter * call textobj#user#plugin('datetime', {
-    \   'date': {
-    \     'pattern': '\<\d\d\d\d-\d\d-\d\d\>',
-    \     'select': ['ad', 'id'],
-    \   },
-    \   'time': {
-    \     'pattern': '\<\d\d:\d\d:\d\d\>',
-    \     'select': ['at', 'it'],
-    \   },
-    \ })
-  autocmd FileType groovy call textobj#user#plugin('jenkins', {
-    \   'code': {
-    \     'pattern': ['', ''],
-    \     'select-a': 'aP',
-    \     'select-i': 'iP',
-    \   },
-    \ })
-
-  autocmd BufRead,BufNewFile */playbooks/*.yml set filetype=yaml.ansible
+  autocmd BufRead,BufNewFile */playbooks/*.yml,*/tasks/*.yml,*/handlers/*.yml,*/roles/*.yml set filetype=yaml.ansible
 
   autocmd VimEnter * call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
         \ 'name': 'buffer',
@@ -828,7 +827,7 @@ augroup Tacahiroy
   autocmd BufRead,BufNewFile *
         \ if &readonly || !&modifiable | nnoremap <buffer> <Return> <Return> | endif
 
-  autocmd! CompleteDone * if !pumvisible() | pclose | endif
+  autocmd CompleteDone * if !pumvisible() | silent! pclose | endif
 
   " ShellScript
   autocmd FileType sh,zsh setlocal tabstop=4 softtabstop=4 shiftwidth=4 expandtab
@@ -855,23 +854,10 @@ augroup Tacahiroy
 
   autocmd FileType gitcommit setlocal spell
 
-  autocmd BufRead,BufNewFile *.applescript,*.scpt set filetype=applescript
-  autocmd FileType applescript set commentstring=#\ %s
-
   autocmd FileType help,qf,ref-* nnoremap <buffer> <silent> qq <C-w>c
 
   autocmd FileType python setlocal tabstop=4 shiftwidth=4 softtabstop=4 expandtab
   autocmd FileType vim if &iskeyword !~# '&' | setlocal iskeyword+=& | endif
-  autocmd FileType css,sass,scss,less setlocal omnifunc=csscomplete#CompleteCSS
-
-  autocmd FileType sql setlocal tabstop=4 shiftwidth=4 softtabstop=4
-
-  " Java
-  autocmd FileType java setlocal tabstop=4 shiftwidth=4 softtabstop=4
-  let java_highlight_java_lang_ids = 1
-  let java_highlight_java_io = 1
-
-  autocmd FileType javascript,javascript.json setlocal omnifunc=lsp#complete
 
   autocmd FileType c setlocal tabstop=4 softtabstop=4 shiftwidth=4
   autocmd FileType c compiler gcc
@@ -879,7 +865,6 @@ augroup Tacahiroy
   autocmd FileType c nnoremap <buffer> [Space]m :<C-u>write<Cr>:make --std=c99<Cr>
 
   autocmd FileType python,go nmap gd <plug>(lsp-definition)
-  autocmd BufWritePre <buffer> LspDocumentFormatSync
 augroup END
 "}}}
 
