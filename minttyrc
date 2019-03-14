@@ -1,8 +1,8 @@
 BoldAsFont=-1
-Transparency=low
+Transparency=off
 Font=Cica
 FontHeight=16
-Columns=112
+Columns=125
 Rows=38
 Scrollbar=none
 Term=xterm-256color
@@ -35,4 +35,4 @@ BellType=0
 Language=en_US
 OpaqueWhenFocused=no
 CursorBlinks=no
-ThemeFile=dracula
+ThemeFile=nord
