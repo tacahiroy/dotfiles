@@ -27,6 +27,9 @@ set_path() {
 export LANG=en_US.UTF-8
 export SHELL=/bin/bash
 export GIT_ROOT=$HOME/dev/git/src
+if [ "${IS_MSYS}" = yes ]; then
+    export GOROOT=/mingw64/lib/go
+fi
 export GOPATH=$(dirname ${GIT_ROOT})
 export EDITOR=vim
 export PAGER=less
@@ -35,7 +38,7 @@ if [ -x "${r}" ]; then
     export FILTER_CMD="${r}"
     export FILTER_OPTIONS='-l 20'
 fi
-fd=$(which fd)
+fd=$(which fd 2>/dev/null)
 if [ -x "${fd}" ]; then
     export FIND="${fd}"
     export FINDO=
