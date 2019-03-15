@@ -89,33 +89,9 @@ setup_plugins() {
 
 setup_plugins
 
-# ssh-agent
-SSH_ENV=$HOME/.ssh/agent.env
-start_agent() {
-  return
-
-  ssh-agent > "${SSH_ENV}"
-  # shellcheck source=/dev/null
-  . "${SSH_ENV}" > /dev/null
-  # ssh-add
-}
-
-if [ "${MYOS}" = "wsl" ] && [ -f "${SSH_ENV}" ]; then
-  # shellcheck source=/dev/null
-  . "${SSH_ENV}" > /dev/null
-  if is_ssh_agent_running > /dev/null && test -S "${SSH_AUTH_SOCK}"; then
-    # agent already running
-    :
-  else
-    start_agent
-  fi
-else
-  start_agent
-fi
-
 unset MAILCHECK
 
-FIGNORE="${FIGNORE}:@tmp:retry:tfstate:backup"
+FIGNORE="${FIGNORE}:@tmp:retry:tfstate:backup:bat"
 
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
