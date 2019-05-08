@@ -29,16 +29,16 @@ for x in *; do
                 source=$(${READLINK} "$y")
                 target=${XDG_CONFIG_HOME}/$(basename "$y")
                 [ -L "${target}" ] && unlink "${target}"
-                echo ln -s "${source}" "${target}"
-                ln -s "${source}" "${target}"
+                echo ln -sf "${source}" "${target}"
+                ln -sf "${source}" "${target}"
             done < <(find config -type d -not -wholename config)
             ;;
 		*)
 			source=$x
             target=$HOME/.${source}
             [ -L "${target}" ] && unlink "${target}"
-            echo ln -s "$(${READLINK} "${source}")" "${target}"
-            ln -s "$(${READLINK} "${source}")" "${target}"
+            echo ln -sf "$(${READLINK} "${source}")" "${target}"
+            ln -sf "$(${READLINK} "${source}")" "${target}"
 			;;
 	esac
 done
@@ -53,5 +53,5 @@ echo "INFO: ${TMUX_CONF} is selected for this machine"
 
 target=$HOME/.tmux.conf
 [ -L "${target}" ] && unlink "${target}"
-echo ln -s "$(${READLINK} "${TMUX_CONF}")" "${target}"
-ln -s "$(${READLINK} "${TMUX_CONF}")" "${target}"
+echo ln -sf "$(${READLINK} "${TMUX_CONF}")" "${target}"
+ln -sf "$(${READLINK} "${TMUX_CONF}")" "${target}"
