@@ -232,8 +232,6 @@ if command -v aws >/dev/null 2>&1; then
     complete -C aws_completer aws
 fi
 
-complete -C "$HOME/bin/terraform terraform"
-
 # If use_tmux=1, add these codes to .bashrc/.zshrc:
 ATTACH_ONLY=1
 USE_TMUX=1
