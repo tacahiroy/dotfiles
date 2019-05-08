@@ -20,11 +20,11 @@ case "$(uname -a)" in
     *) MYOS=linux;;
 esac
 
-if which ghq >/dev/null 2>&1; then
-    GIT_CMD=$(which ghq)
+if command -v ghq >/dev/null 2>&1; then
+    GIT_CMD=$(command -v ghq)
     IS_PURE_GIT=no
 else
-    GIT_CMD=$(which git)
+    GIT_CMD=$(command -v git)
     IS_PURE_GIT=yes
 fi
 
@@ -51,7 +51,7 @@ git_clone() {
     else
         ghq get "${url}"
     fi
-  [ ! -x "$(which ghq)" ] && return
+  [ ! -x "$(command -v ghq)" ] && return
   while read -r a; do ghq get -u "${a}"; done < "$HOME/.bash/plugins.txt"
 }
 
@@ -228,7 +228,7 @@ if [ "${MYOS}" = wsl ] && [ -x "$HOME/bin/tmp-clean.sh" ]; then
     bash "$HOME"/bin/tmp-clean.sh
 fi
 
-if which aws >/dev/null 2>&1; then
+if command -v aws >/dev/null 2>&1; then
     complete -C aws_completer aws
 fi
 
@@ -237,7 +237,7 @@ complete -C "$HOME/bin/terraform terraform"
 # If use_tmux=1, add these codes to .bashrc/.zshrc:
 ATTACH_ONLY=1
 USE_TMUX=1
-[[ -x $(which tmux) && -z "$TMUX" && -n "$USE_TMUX" ]] && {
+[[ -x $(command -v tmux) && -z "$TMUX" && -n "$USE_TMUX" ]] && {
     [[ -n "$ATTACH_ONLY" ]] && {
         tmux -2 a 2>/dev/null || {
             cd && exec tmux -l2
