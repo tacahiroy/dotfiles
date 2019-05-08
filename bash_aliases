@@ -26,4 +26,4 @@ alias pyttpd='python -m http.server'
 if type _z >/dev/null 2>&1; then
     alias jc='_z -c'
 fi
-alias tf=terraform
+alias tfm=terraform

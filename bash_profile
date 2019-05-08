@@ -26,11 +26,9 @@ set_path() {
 
 export LANG=en_US.UTF-8
 export SHELL=/bin/bash
-export GIT_ROOT=$HOME/dev/git/src
-if [ "${IS_MSYS}" = yes ]; then
-    export GOROOT=/mingw64/lib/go
-fi
-export GOPATH=$(dirname ${GIT_ROOT})
+export GIT_ROOT=$HOME/dev/src
+GOPATH=$(dirname "${GIT_ROOT}")
+export GOPATH
 export EDITOR=vim
 export PAGER=less
 r=$(which fzy)
@@ -58,6 +56,9 @@ if [ "${IS_MSYS}" = yes ]; then
 fi
 
 export PATH
+
+# Enable plugin cache dir for Terraform
+export TF_PLUGIN_CACHE_DIR="$HOME/.terraform.d/plugin-cache"
 
 export SHELLCHECK_OPTS="-e SC2016 -e SC1090"
 

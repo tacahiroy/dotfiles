@@ -93,7 +93,7 @@ select_git_repo() {
     fi
 
     local _repo
-    _repo=$((eval "${list_cmd}") | "${F}" "${FO}" "${SELECTOR_GIT_REPO_PROMPT_OPT}")
+    _repo=$( (eval "${list_cmd}") | "${F}" "${FO}" "${SELECTOR_GIT_REPO_PROMPT_OPT}" )
 
     if [ -n "${_repo}" ]; then
         cmdline=${READLINE_LINE:-cd}

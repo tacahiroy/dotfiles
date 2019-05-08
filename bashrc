@@ -39,7 +39,7 @@ update_plugins() {
 }
 
 is_ssh_agent_running() {
-    ps aux | grep -q '[s]sh-agent' >/dev/null 2>&1
+    pgrep ssh-agent >/dev/null 2>&1
 }
 
 git_clone() {
@@ -51,7 +51,7 @@ git_clone() {
     else
         ghq get "${url}"
     fi
-  [ ! -x $(which ghq) ] && return
+  [ ! -x "$(which ghq)" ] && return
   while read -r a; do ghq get -u "${a}"; done < "$HOME/.bash/plugins.txt"
 }
 
@@ -71,11 +71,12 @@ setup_plugins() {
     export _Z_CMD=j
     if [ -f "$HOME/.bash/plugins.txt" ]; then
         while read -r a; do
-            local _rn=$(echo "${a}" | awk -F ' ' '{ print $1 }')
-            local _init=$(echo "${a}" | awk -F ' ' '{ print $2 }')
-            local _repo="${GIT_ROOT}/${_rn}"
+            local _rn _init _repo
+            _rn=$(echo "${a}" | awk -F ' ' '{ print $1 }')
+            _init=$(echo "${a}" | awk -F ' ' '{ print $2 }')
+            _repo="${GIT_ROOT}/${_rn}"
 
-            if [ ! -d $(readlink -f "${_repo}") ]; then
+            if [ ! -d "$(readlink -f "${_repo}")" ]; then
                 git_clone "https://${_rn}" "${_repo}"
             fi
 
@@ -88,6 +89,17 @@ setup_plugins() {
 }
 
 setup_plugins
+
+synclo() {
+    if [ ! -f meta/main.yml ]; then
+        echo "The current directory dosen't look like an Ansible role's directory: $(readlink -f .)"
+        return 1
+    fi
+
+    role_name="$(basename "$(readlink -f .)")"
+    echo "Synchronising ${role_name} to $HOME/.ansible/roles"
+    rsync -av --no-p -p --delete . "$HOME/.ansible/roles/${role_name}"
+}
 
 unset MAILCHECK
 
@@ -193,7 +205,7 @@ case "${MYOS}" in
         fi
         ;;
     wsl)
-        eval $(/win/dev/bin/ssh-agent-wsl/ssh-agent-wsl -r)
+        eval "$(/win/dev/bin/ssh-agent-wsl/ssh-agent-wsl -r)"
         if [ -f "$HOME/qmk_utils/activate_wsl.sh" ]; then
             # shellcheck source=/dev/null
             . "$HOME/qmk_utils/activate_wsl.sh"
@@ -220,7 +232,7 @@ if which aws >/dev/null 2>&1; then
     complete -C aws_completer aws
 fi
 
-complete -C $HOME/bin/terraform terraform
+complete -C "$HOME/bin/terraform terraform"
 
 # If use_tmux=1, add these codes to .bashrc/.zshrc:
 ATTACH_ONLY=1

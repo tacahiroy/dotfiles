@@ -161,6 +161,8 @@ if exists('*minpac#init')
   " minpac must have {'type': 'opt'} so that it can be loaded with `packadd`.
   call minpac#add('k-takata/minpac', {'type': 'opt'})
 
+  call minpac#add('mattn/webapi-vim')
+
   call minpac#add('tpope/vim-fugitive')
 
 	call minpac#add('prabirshrestha/async.vim')
@@ -180,22 +182,30 @@ if exists('*minpac#init')
 		let g:asyncomplete_auto_popup = 1
     let g:asyncomplete_remove_duplicates = 1
     " let g:asyncomplete_log_file = expand('~/asyncomplete.log')
-    imap <c-space> <Plug>(asyncomplete_force_refresh)
+    " imap <c-space> <Plug>(asyncomplete_force_refresh)
 
   call minpac#add('prabirshrestha/asyncomplete-buffer.vim')
 	call minpac#add('prabirshrestha/asyncomplete-lsp.vim')
 	call minpac#add('natebosch/vim-lsc')
-		let g:lsp_async_completion = 0 "{{{ vim-lsc
+		let g:lsp_async_completion = 1 "{{{ vim-lsc
     let g:lsc_auto_map = v:true
-    let g:lsc_enable_autocomplete = v:false
+    let g:lsc_enable_autocomplete = v:true
     " let g:lsc_server_commands = {'go': 'bingo'}
 
-		if executable('bingo')
+    " let s:bingo_path = '/mnt/c/Users/tacahiroy/dev/git/bin/bingo.exe'
+    let s:bingo_path = 'bingo'
+
+		if executable(s:bingo_path)
 			augroup LspGo
 				autocmd!
+				" autocmd User lsp_setup call lsp#register_server({
+				" 			\ 'name': 'bingo',
+				" 			\ 'cmd': {server_info->[s:bingo_path, '-mode', 'stdio']},
+				" 			\ 'whitelist': ['go'],
+				" 			\ })
 				autocmd User lsp_setup call lsp#register_server({
-							\ 'name': 'bingo',
-							\ 'cmd': {server_info->['bingo', '-mode', 'stdio']},
+							\ 'name': 'gopls',
+							\ 'cmd': {server_info->['gopls', '-mode', 'stdio']},
 							\ 'whitelist': ['go'],
 							\ })
         autocmd FileType go setlocal omnifunc=lsp#complete
@@ -207,14 +217,18 @@ if exists('*minpac#init')
       call minpac#add('ryanolsonx/vim-lsp-python')
       " pip install python-language-server
       augroup LspPython
+        autocmd!
         autocmd User lsp_setup call lsp#register_server({
               \ 'name': 'pyls',
-              \ 'cmd': {server_info->['pyls', '--log-file', '/tmp/pyls.log']},
+              \ 'cmd': {server_info->['pyls', '']},
               \ 'whitelist': ['python'],
               \ })
+
       augroup END
     endif
   "}}}
+
+  call minpac#add('fatih/vim-go')
 
   call minpac#add('stephpy/vim-yaml')
   call minpac#add('pearofducks/ansible-vim')
@@ -832,7 +846,8 @@ augroup Tacahiroy
   " ShellScript
   autocmd FileType sh,zsh setlocal tabstop=4 softtabstop=4 shiftwidth=4 expandtab
 
-  autocmd FileType make set list
+  autocmd FileType make setlocal list
+  autocmd FileType make setlocal iskeyword+=-
   autocmd BufRead,BufNewFile *.groovy,*.jenkins,Jenkinsfile* setlocal filetype=groovy
   autocmd FileType groovy setlocal autoindent smartindent
 
