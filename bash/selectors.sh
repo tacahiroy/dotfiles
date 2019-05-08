@@ -1,6 +1,6 @@
-#/bin/bash
+#/usr/bin/env bash
 
-# set -Cue
+set -Cue
 
 F=${FILTER_CMD:-$HOME/bin/fzy}
 FO=${FILTER_OPTIONS:-}
@@ -41,7 +41,7 @@ select_dir() {
 select_file() {
     local cmd=${READLINE_LINE:-${EDITOR:-vim}}
 
-    READLINE_LINE="${cmd} $(${FIND} . ${FINDO} | \
+    READLINE_LINE="${cmd} $(${FIND} . "${FINDO}" | \
         ${F} "${FO}" "${SELECTOR_FILE_PROMPT_OPT}")"
     READLINE_POINT=${#READLINE_LINE}
 }
