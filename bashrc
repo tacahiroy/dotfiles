@@ -219,9 +219,9 @@ esac
 
 if [ -f "$HOME/.local/bin/virtualenvwrapper.sh" ]; then
     # shellcheck source=/dev/null
-    . "$HOME/.local/bin/virtualenvwrapper.sh"
     export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
     export WORKON_HOME=~/.virtualenvs
+    . "$HOME/.local/bin/virtualenvwrapper.sh"
 fi
 
 if [ "${MYOS}" = wsl ] && [ -x "$HOME/bin/tmp-clean.sh" ]; then

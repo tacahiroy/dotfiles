@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-set -Cue
-
 F=${FILTER_CMD:-$HOME/bin/fzy}
 FO=${FILTER_OPTIONS:-}
 FIND=${FILTER_FIND:-find}
