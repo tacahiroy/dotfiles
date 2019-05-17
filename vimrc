@@ -190,21 +190,12 @@ if exists('*minpac#init')
 		let g:lsp_async_completion = 1 "{{{ vim-lsc
     let g:lsc_auto_map = v:true
     let g:lsc_enable_autocomplete = v:true
-    " let g:lsc_server_commands = {'go': 'bingo'}
 
-    " let s:bingo_path = '/mnt/c/Users/tacahiroy/dev/git/bin/bingo.exe'
-    let s:bingo_path = 'bingo'
-
-		if executable(s:bingo_path)
+		if executable('gopls')
 			augroup LspGo
 				autocmd!
-				" autocmd User lsp_setup call lsp#register_server({
-				" 			\ 'name': 'bingo',
-				" 			\ 'cmd': {server_info->[s:bingo_path, '-mode', 'stdio']},
-				" 			\ 'whitelist': ['go'],
-				" 			\ })
 				autocmd User lsp_setup call lsp#register_server({
-							\ 'name': 'gopls',
+							\ 'name': 'golang',
 							\ 'cmd': {server_info->['gopls', '-mode', 'stdio']},
 							\ 'whitelist': ['go'],
 							\ })
@@ -229,6 +220,8 @@ if exists('*minpac#init')
   "}}}
 
   call minpac#add('fatih/vim-go')
+    let g:go_def_mode = 'gopls'
+    let g:go_info_mode = 'gopls'
 
   call minpac#add('stephpy/vim-yaml')
   call minpac#add('pearofducks/ansible-vim')
@@ -386,6 +379,9 @@ if exists('*minpac#init')
   call minpac#add('mechatroner/rainbow_csv')
   call minpac#add('jremmen/vim-ripgrep')
   call minpac#add('kana/vim-textobj-user')
+
+  call minpac#add('joereynolds/vim-minisnip')
+    let g:minisnip_trigger = '<Tab>'
 
   call minpac#add('mattn/emmet-vim')
 
@@ -564,7 +560,7 @@ let &statusline .= '%{(&paste ? "p" : "")}'
 let &statusline .= '|%{&textwidth}'
 let &statusline .= '|%{get(g:, "ctrlp_filetype", "")}'
 
-if s:has_plugin('fugitive')
+if s:has_plugin('vim-fugitive')
   let &statusline .= '%#Type#'
   let &statusline .= '%{fugitive#statusline()}'
   let &statusline .= '%*'
@@ -771,22 +767,7 @@ function! s:run_tidy(...) range
   silent execute printf('%d,%d!tidy -xml -i -%s -wrap %d -q -asxml', a:firstline, a:lastline, enc, eval(col))
 endfunction
 
-function! s:fmt()
-  let ft = &filetype
-  let save_cursor = getcurpos()
-
-  try
-    if ft ==# 'go'
-      execute '1,$!gofmt'
-    endif
-  finally
-    call setpos('.', save_cursor)
-  endtry
-endfunction
-
 command! -nargs=? -range Tidy <line1>,<line2>call s:run_tidy(<args>)
-command! -nargs=0 Fmt call s:fmt()
-command! -nargs=0 GoFmt :%!gofmt
 "}}}
 
 if has('pythonx') "{{{

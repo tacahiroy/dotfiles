@@ -40,6 +40,7 @@ export PATH
 export LANG=en_US.UTF-8
 export SHELL=/bin/bash
 export GIT_ROOT=$HOME/dev/src
+
 GOPATH=$(dirname "${GIT_ROOT}")
 export GOPATH
 export EDITOR=vim
