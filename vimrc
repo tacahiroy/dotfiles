@@ -335,7 +335,7 @@ if exists('*minpac#init')
     let g:cpsm_highlight_mode = 'detailed'
 
   call minpac#add('tacahiroy/ctrlp-funky')
-    let g:ctrlp_funky_debug = 0 "{{{ ctrlp-funky
+    let g:ctrlp_funky_debug = 1 "{{{ ctrlp-funky
     let g:ctrlp_funky_use_cache = 0
     let g:ctrlp_funky_matchtype = 'path'
     let g:ctrlp_funky_sort_by_mru = 0

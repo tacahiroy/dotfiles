@@ -2,6 +2,12 @@
 
 umask 0022
 
+if uname | grep 'MSYS' >/dev/null 2>&1; then
+    IS_MSYS=yes
+else
+    IS_MSYS=no
+fi
+
 set_path() {
     dir=$1
     prioritise=$2
@@ -18,11 +24,27 @@ set_path() {
     fi
 }
 
-if uname | grep 'MSYS' >/dev/null 2>&1; then
-    IS_MSYS=yes
-else
-    IS_MSYS=no
+export LANG=en_US.UTF-8
+export SHELL=/bin/bash
+export GIT_ROOT=$HOME/dev/src
+if [ "${IS_MSYS}" = yes ]; then
+    export GOROOT=/mingw64/lib/go
 fi
+export GOPATH=$(dirname ${GIT_ROOT})
+export EDITOR=vim
+export PAGER=less
+r=$(which fzy)
+if [ -x "${r}" ]; then
+    export FILTER_CMD="${r}"
+    export FILTER_OPTIONS='-l 20'
+fi
+fd=$(which fd 2>/dev/null)
+if [ -x "${fd}" ]; then
+    export FIND="${fd}"
+    export FINDO=
+fi
+
+export DISPLAY=:0
 
 set_path "$HOME/bin" 1
 set_path "$HOME/.local/bin"
@@ -36,34 +58,6 @@ if [ "${IS_MSYS}" = yes ]; then
 fi
 
 export PATH
-
-export LANG=en_US.UTF-8
-export SHELL=/bin/bash
-export GIT_ROOT=$HOME/dev/src
-
-GOPATH=$(dirname "${GIT_ROOT}")
-export GOPATH
-export EDITOR=vim
-export PAGER=less
-
-r=$(command -v fzy)
-if [ -n "${r}" ]; then
-    FILTER_CMD="${r}"
-    FILTER_OPTIONS='-l 20'
-    export FILTER_CMD FILTER_OPTIONS
-fi
-
-fd=$(command -v fd 2>/dev/null)
-if [ -n "${fd}" ]; then
-    FIND="${fd}"
-    FINDO=
-    export FIND FINDO
-fi
-
-export DISPLAY=:0
-
-# Enable plugin cache dir for Terraform
-export TF_PLUGIN_CACHE_DIR="$HOME/.terraform.d/plugin-cache"
 
 export SHELLCHECK_OPTS="-e SC2016 -e SC1090"
 
