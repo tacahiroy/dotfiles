@@ -35,4 +35,4 @@ BellType=0
 Language=en_US
 OpaqueWhenFocused=no
 CursorBlinks=no
-ThemeFile=nord
+ThemeFile=gruvbox-dark
