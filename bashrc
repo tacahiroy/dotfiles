@@ -205,7 +205,7 @@ case "${MYOS}" in
         fi
         ;;
     wsl)
-        eval "$(/win/dev/bin/ssh-agent-wsl/ssh-agent-wsl -r)"
+        eval "$(/win/scoop/apps/ssh-agent-wsl/current/ssh-agent-wsl -r)"
         if [ -f "$HOME/qmk_utils/activate_wsl.sh" ]; then
             # shellcheck source=/dev/null
             . "$HOME/qmk_utils/activate_wsl.sh"
