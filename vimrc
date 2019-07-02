@@ -162,9 +162,9 @@ if exists('*minpac#init')
   call minpac#add('k-takata/minpac', {'type': 'opt'})
 
   call minpac#add('mattn/webapi-vim')
-
   call minpac#add('tpope/vim-fugitive')
 
+  " Completion {{{
 	call minpac#add('prabirshrestha/async.vim')
 	call minpac#add('prabirshrestha/vim-lsp')
     let g:lsp_diagnostics_enabled = 1 "{{{ vim-lsp
@@ -218,6 +218,7 @@ if exists('*minpac#init')
       augroup END
     endif
   "}}}
+  "}}}
 
   call minpac#add('fatih/vim-go')
     let g:go_def_mode = 'gopls'
@@ -264,8 +265,9 @@ if exists('*minpac#init')
     nmap ye ys$
     xmap s <Plug>VSurround
 
+" {{{ ctrlp.vim
   call minpac#add('ctrlpvim/ctrlp.vim')
-    let g:ctrlp_by_filename = 0 " {{{ ctrlp.vim
+    let g:ctrlp_by_filename = 0
     let g:ctrlp_map = '<Space>e'
     let g:ctrlp_cmd = 'CtrlP'
     let g:ctrlp_switch_buffer = 'Et'
@@ -326,7 +328,6 @@ if exists('*minpac#init')
     nnoremap [Space]f, :CtrlPCurFile<Cr>
     nnoremap [Space]fr :CtrlPRTS<Cr>
     nnoremap [Space]fq :CtrlPQuickfix<Cr>
-  "}}}
 
   " call minpac#add('FelikZ/ctrlp-py-matcher')
   " let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
@@ -335,7 +336,7 @@ if exists('*minpac#init')
     let g:cpsm_highlight_mode = 'detailed'
 
   call minpac#add('tacahiroy/ctrlp-funky')
-    let g:ctrlp_funky_debug = 1 "{{{ ctrlp-funky
+    let g:ctrlp_funky_debug = 0
     let g:ctrlp_funky_use_cache = 0
     let g:ctrlp_funky_matchtype = 'path'
     let g:ctrlp_funky_sort_by_mru = 0
@@ -348,9 +349,9 @@ if exists('*minpac#init')
     nnoremap [Space]uu :execute 'CtrlPFunky ' . fnameescape(expand('<cword>'))<Cr>
   "}}}
 
-  call minpac#add('tacahiroy/vim-colors-isotake', {'frozen': 1})
+"{{{ ALE
   call minpac#add('w0rp/ale')
-    let g:ale_enabled = 1 "{{{ ALE
+    let g:ale_enabled = 1
     let g:ale_statusline_format = ['!%d', '@%d', 'ok']
     let g:ale_lint_on_text_changed = 'never'
     let g:ale_set_loclist = 0
@@ -376,6 +377,7 @@ if exists('*minpac#init')
     let &statusline .= '%*'
   "}}}
 
+  call minpac#add('tacahiroy/vim-colors-isotake', {'frozen': 1})
   call minpac#add('mechatroner/rainbow_csv')
   call minpac#add('jremmen/vim-ripgrep')
   call minpac#add('kana/vim-textobj-user')
@@ -384,8 +386,6 @@ if exists('*minpac#init')
     let g:minisnip_trigger = '<Tab>'
 
   call minpac#add('mattn/emmet-vim')
-
-  " call minpac#add('SirVer/ultisnips')
 
   if filereadable(expand('~/.vimrc.plugins'))
     source ~/.vimrc.plugins
@@ -614,8 +614,8 @@ nnoremap vO ^vg_o
 nnoremap sv `[v`]
 nnoremap so gv<Esc>
 nnoremap sap va}V
-nnoremap sU :<C-u>call <SID>toggle_case(1)<Cr>
-nnoremap su :<C-u>call <SID>toggle_case(0)<Cr>
+nnoremap su :<C-u>call <SID>toggle_case(1)<Cr>
+nnoremap sl :<C-u>call <SID>toggle_case(0)<Cr>
 nnoremap [Space]te :<C-u>terminal<Cr>
 
 function! s:toggle_case(upper)
@@ -721,7 +721,7 @@ xnoremap <Leader>ta :Tabularize<Space>/
 
 nnoremap <Leader>te :<C-u>tabe<Space>
 " clears search highlight
-nnoremap <silent> <C-l> :<C-u>nohlsearch<Cr><C-l>
+nnoremap <silent> <C-l> :<C-u>nohlsearch<Cr>
 
 " no mouse basically
 nnoremap <MiddleMouse> <Nop>
@@ -803,12 +803,14 @@ augroup Tacahiroy
 
   autocmd BufRead,BufNewFile */playbooks/*.yml,*/tasks/*.yml,*/handlers/*.yml,*/roles/*.yml set filetype=yaml.ansible
 
-  autocmd VimEnter * call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
-        \ 'name': 'buffer',
-        \ 'whitelist': ['*'],
-        \ 'blacklist': ['go'],
-        \ 'completor': function('asyncomplete#sources#buffer#completor'),
-        \ }))
+  if exists('*asyncomplete#register_source')
+    autocmd VimEnter * call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
+          \ 'name': 'buffer',
+          \ 'whitelist': ['*'],
+          \ 'blacklist': ['go'],
+          \ 'completor': function('asyncomplete#sources#buffer#completor'),
+          \ }))
+  endif
 
   autocmd BufEnter ControlP let b:ale_enabled = 0
   autocmd BufReadPost * if !search('\S', 'cnw') | let &l:fileencoding = &encoding | endif
