@@ -165,9 +165,10 @@ if exists('*minpac#init')
   call minpac#add('tpope/vim-fugitive')
 
   " Completion {{{
-	call minpac#add('prabirshrestha/async.vim')
-	call minpac#add('prabirshrestha/vim-lsp')
-    let g:lsp_diagnostics_enabled = 1 "{{{ vim-lsp
+  call minpac#add('prabirshrestha/async.vim')
+  call minpac#add('prabirshrestha/vim-lsp')
+    let g:lsp_async_completion = 1 "{{{ vim-lsp
+    let g:lsp_diagnostics_enabled = 1
     let g:lsp_diagnostics_echo_cursor = 1
     let g:lsp_signs_enabled = 1
     let g:lsp_signs_error = {'text': '🤕'}
@@ -177,32 +178,31 @@ if exists('*minpac#init')
     " let g:lsp_log_file = expand('~/vim-lsp.log')
   "}}}
 
-	call minpac#add('prabirshrestha/asyncomplete.vim')
+  call minpac#add('prabirshrestha/asyncomplete.vim')
     let g:asyncomplete_smart_completion = has('lua')
-		let g:asyncomplete_auto_popup = 1
+    let g:asyncomplete_auto_popup = 1
     let g:asyncomplete_remove_duplicates = 1
     " let g:asyncomplete_log_file = expand('~/asyncomplete.log')
     " imap <c-space> <Plug>(asyncomplete_force_refresh)
 
   call minpac#add('prabirshrestha/asyncomplete-buffer.vim')
-	call minpac#add('prabirshrestha/asyncomplete-lsp.vim')
-	call minpac#add('natebosch/vim-lsc')
-		let g:lsp_async_completion = 1 "{{{ vim-lsc
-    let g:lsc_auto_map = v:true
+  call minpac#add('prabirshrestha/asyncomplete-lsp.vim')
+  call minpac#add('natebosch/vim-lsc')
+    let g:lsc_auto_map = v:true "{{{ vim-lsc
     let g:lsc_enable_autocomplete = v:true
 
-		if executable('gopls')
-			augroup LspGo
-				autocmd!
-				autocmd User lsp_setup call lsp#register_server({
-							\ 'name': 'golang',
-							\ 'cmd': {server_info->['gopls', '-mode', 'stdio']},
-							\ 'whitelist': ['go'],
-							\ })
+    if executable('gopls')
+      augroup LspGo
+        autocmd!
+        autocmd User lsp_setup call lsp#register_server({
+              \ 'name': 'golang',
+              \ 'cmd': {server_info->['gopls', '-mode', 'stdio']},
+              \ 'whitelist': ['go'],
+              \ })
         autocmd FileType go setlocal omnifunc=lsp#complete
         autocmd FileType go setlocal completeopt+=preview
-			augroup END
-		endif
+      augroup END
+    endif
 
     if executable('pyls')
       call minpac#add('ryanolsonx/vim-lsp-python')
@@ -356,7 +356,10 @@ if exists('*minpac#init')
     let g:ale_lint_on_text_changed = 'never'
     let g:ale_set_loclist = 0
     let g:ale_set_quickfix = 1
-    let g:ale_pattern_options = {'\.go$': {'ale_enabled': 0}}
+    let g:ale_python_flake8_auto_pipenv = 1
+    let g:ale_disable_lsp = 0
+    let g:ale_pattern_options = {'\.go$': {'ale_enabled': 0},
+                               \ '\.py$': {'ale_enabled': 0}}
 
     function! LinterStatus() abort
       let l:counts = ale#statusline#Count(bufnr(''))
