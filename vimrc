@@ -329,11 +329,14 @@ if exists('*minpac#init')
     nnoremap [Space]fr :CtrlPRTS<Cr>
     nnoremap [Space]fq :CtrlPQuickfix<Cr>
 
-  " call minpac#add('FelikZ/ctrlp-py-matcher')
-  " let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
-  call minpac#add('nixprime/cpsm')
+  if s:win
+    call minpac#add('FelikZ/ctrlp-py-matcher')
+    let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
+  else
+    call minpac#add('nixprime/cpsm')
     let g:ctrlp_match_func = {'match': 'cpsm#CtrlPMatch'}
     let g:cpsm_highlight_mode = 'detailed'
+  endif
 
   call minpac#add('tacahiroy/ctrlp-funky')
     let g:ctrlp_funky_debug = 0
