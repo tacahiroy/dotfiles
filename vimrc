@@ -380,7 +380,8 @@ if exists('*minpac#init')
     let &statusline .= '%*'
   "}}}
 
-  call minpac#add('tacahiroy/vim-colors-isotake', {'frozen': 1})
+  call minpac#add('lifepillar/vim-gruvbox8')
+  call minpac#add('tacahiroy/vim-colors-isotake')
   call minpac#add('mechatroner/rainbow_csv')
   call minpac#add('jremmen/vim-ripgrep')
   call minpac#add('kana/vim-textobj-user')
@@ -540,14 +541,12 @@ if has('persistent_undo')
   augroup END
 endif
 
-set t_Co=256
-set background=light
-if !exists(glob('*/colors/isotake.vim'))
-  colorscheme isotake
-endif
-
 filetype plugin indent on
 syntax on
+
+set t_Co=256
+set background=light
+colorscheme isotake
 
 set formatoptions& formatoptions+=mM formatoptions-=r
 
