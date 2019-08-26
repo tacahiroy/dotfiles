@@ -90,7 +90,7 @@ setup_plugins() {
 
 setup_plugins
 
-synclo() {
+srol() {
     if [ ! -f meta/main.yml ]; then
         echo "The current directory dosen't look like an Ansible role's directory: $(readlink -f .)"
         return 1
@@ -98,7 +98,7 @@ synclo() {
 
     role_name="$(basename "$(readlink -f .)")"
     echo "Synchronising ${role_name} to $HOME/.ansible/roles"
-    rsync -av --no-p -p --delete . "$HOME/.ansible/roles/${role_name}"
+    rsync -av --no-p -p --exclude '.git' --exclude '.git/*' --delete . "$HOME/.ansible/roles/${role_name}"
 }
 
 unset MAILCHECK
