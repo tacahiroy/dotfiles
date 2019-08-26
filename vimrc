@@ -183,7 +183,18 @@ if exists('*minpac#init')
     let g:asyncomplete_auto_popup = 1
     let g:asyncomplete_remove_duplicates = 1
     " let g:asyncomplete_log_file = expand('~/asyncomplete.log')
-    " imap <c-space> <Plug>(asyncomplete_force_refresh)
+    augroup Tacahiroy
+      autocmd VimEnter * call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
+            \ 'name': 'buffer',
+            \ 'whitelist': ['*'],
+            \ 'blacklist': ['go'],
+            \ 'completor': function('asyncomplete#sources#buffer#completor'),
+            \ 'config': {
+            \    'max_buffer_size': 5000000,
+            \  },
+            \ }))
+      " autocmd VimEnter * doautocmd Tacahiroy User asyncomplete_setup
+    augroup END
 
   call minpac#add('prabirshrestha/asyncomplete-buffer.vim')
   call minpac#add('prabirshrestha/asyncomplete-lsp.vim')
@@ -219,7 +230,6 @@ if exists('*minpac#init')
     endif
   "}}}
   "}}}
-
   call minpac#add('fatih/vim-go')
     let g:go_def_mode = 'gopls'
     let g:go_info_mode = 'gopls'
@@ -383,11 +393,14 @@ if exists('*minpac#init')
     let &statusline .= '%*'
   "}}}
 
+  call minpac#add('sheerun/vim-polyglot')
+    let g:polyglot_disabled = ['jenkins']
+
   call minpac#add('lifepillar/vim-gruvbox8')
   call minpac#add('tacahiroy/vim-colors-isotake')
   call minpac#add('mechatroner/rainbow_csv')
   call minpac#add('jremmen/vim-ripgrep')
-  call minpac#add('kana/vim-textobj-user')
+  " call minpac#add('kana/vim-textobj-user')
 
   call minpac#add('joereynolds/vim-minisnip')
     let g:minisnip_trigger = '<Tab>'
@@ -553,34 +566,40 @@ colorscheme isotake
 
 set formatoptions& formatoptions+=mM formatoptions-=r
 
-" statusline config
-let &statusline = '#%n|'
-let &statusline .= '%<%t%*|%m%r%h%w'
-let &statusline .= '%{&expandtab ? "" : ">"}%{&l:tabstop}'
-let &statusline .= '%{search("\\t", "cnw") ? "!" : ""}'
-let &statusline .= '%{(empty(&mouse) ? "" : "m")}'
-let &statusline .= '%{(&list ? "L" : "")}'
-let &statusline .= '%{(empty(&clipboard) ? "" : "c")}'
-let &statusline .= '%{(&paste ? "p" : "")}'
-let &statusline .= '|%{&textwidth}'
-let &statusline .= '|%{get(g:, "ctrlp_filetype", "")}'
+function! s:set_statusline()
+  " statusline config
+  let &statusline = '#%n|'
+  let &statusline .= '%<%t%*|%m%r%h%w'
+  let &statusline .= '%{&expandtab ? "" : ">"}%{&l:tabstop}'
+  let &statusline .= '%{search("\\t", "cnw") ? "!" : ""}'
+  let &statusline .= '%{(empty(&mouse) ? "" : "m")}'
+  let &statusline .= '%{(&list ? "L" : "")}'
+  let &statusline .= '%{(empty(&clipboard) ? "" : "c")}'
+  let &statusline .= '%{(&paste ? "p" : "")}'
+  let &statusline .= '|%{&textwidth}'
+  let &statusline .= '|%{get(g:, "ctrlp_filetype", "")}'
 
-if s:has_plugin('vim-fugitive')
-  let &statusline .= '%#Type#'
-  let &statusline .= '%{fugitive#statusline()}'
+  if exists('*fugitive#statusline')
+    let &statusline .= '%#Type#'
+    let &statusline .= '%{fugitive#statusline()}'
+    let &statusline .= '%*'
+  endif
+
+  " right side from here
+  let &statusline .= ' %='
+  " Cwd
+  let &statusline .= '%#CursorLineNr#'
+  let &statusline .= '%{ get(g:, "show_cwd", 0) ? Cwd() : ""}'
+  " ft:fenc:ff
   let &statusline .= '%*'
-endif
+  let &statusline .= '%{&filetype}:'
+  let &statusline .= '%{(&l:fileencoding != "" ? &l:fileencoding : &encoding) . ":" . &fileformat}'
+  let &statusline .= '%-10(%#MoreMsg#%l%#Title#/%L:%c %)%P%*'
+endfunction
 
-" right side from here
-let &statusline .= ' %='
-" Cwd
-let &statusline .= '%#CursorLineNr#'
-let &statusline .= '%{ get(g:, "show_cwd", 0) ? Cwd() : ""}'
-" ft:fenc:ff
-let &statusline .= '%*'
-let &statusline .= '%{&filetype}:'
-let &statusline .= '%{(&l:fileencoding != "" ? &l:fileencoding : &encoding) . ":" . &fileformat}'
-let &statusline .= '%-10(%#MoreMsg#%l%#Title#/%L:%c %)%P%*'
+augroup Tacahiroy
+  autocmd VimEnter * call s:set_statusline()
+augroup END
 " }}}
 
 " * mappings "{{{
@@ -808,15 +827,6 @@ augroup Tacahiroy
 
   autocmd BufRead,BufNewFile */playbooks/*.yml,*/tasks/*.yml,*/handlers/*.yml,*/roles/*.yml set filetype=yaml.ansible
 
-  if exists('*asyncomplete#register_source')
-    autocmd VimEnter * call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
-          \ 'name': 'buffer',
-          \ 'whitelist': ['*'],
-          \ 'blacklist': ['go'],
-          \ 'completor': function('asyncomplete#sources#buffer#completor'),
-          \ }))
-  endif
-
   autocmd BufEnter ControlP let b:ale_enabled = 0
   autocmd BufReadPost * if !search('\S', 'cnw') | let &l:fileencoding = &encoding | endif
   " restore cursor position
@@ -837,7 +847,7 @@ augroup Tacahiroy
   autocmd FileType make setlocal list
   autocmd FileType make setlocal iskeyword+=-
   autocmd BufRead,BufNewFile *.groovy,*.jenkins,Jenkinsfile* setlocal filetype=groovy
-  autocmd FileType groovy setlocal autoindent smartindent
+  autocmd FileType groovy,jenkinsfile setlocal autoindent smartindent
 
   augroup PersistentUndo
     autocmd!
