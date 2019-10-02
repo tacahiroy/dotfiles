@@ -232,11 +232,8 @@ if command -v aws >/dev/null 2>&1; then
     complete -C aws_completer aws
 fi
 
-# If use_tmux=1, add these codes to .bashrc/.zshrc:
-ATTACH_ONLY=1
-USE_TMUX=1
-[[ -x $(command -v tmux) && -z "$TMUX" && -n "$USE_TMUX" ]] && {
-    [[ -n "$ATTACH_ONLY" ]] && {
+[[ -x $(command -v tmux) && -z "$TMUX" && "$USE_TMUX" = yes ]] && {
+    [ "$ATTACH_ONLY" = yes ] && {
         tmux -2 a 2>/dev/null || {
             cd && exec tmux -l2
         }
