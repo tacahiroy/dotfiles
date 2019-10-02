@@ -244,7 +244,3 @@ USE_TMUX=1
         exec tmux -l2
     }
 }
-
-if [ -f ~/qmk_utils/activate_msys2.sh ]; then
-    . ~/qmk_utils/activate_msys2.sh
-fi
