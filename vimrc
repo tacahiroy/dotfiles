@@ -560,8 +560,6 @@ filetype plugin indent on
 syntax on
 
 set t_Co=256
-set background=light
-colorscheme isotake
 
 set formatoptions& formatoptions+=mM formatoptions-=r
 
