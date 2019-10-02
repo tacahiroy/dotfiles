@@ -400,7 +400,6 @@ if exists('*minpac#init')
   call minpac#add('tacahiroy/vim-colors-isotake')
   call minpac#add('mechatroner/rainbow_csv')
   call minpac#add('jremmen/vim-ripgrep')
-  " call minpac#add('kana/vim-textobj-user')
 
   call minpac#add('joereynolds/vim-minisnip')
     let g:minisnip_trigger = '<Tab>'
@@ -417,8 +416,8 @@ endif
 " information of plugins, then performs the task.
 command! PackUpdate packadd minpac | source $MYVIMRC | call minpac#update()
 command! PackClean  packadd minpac | source $MYVIMRC | call minpac#clean()
-" }}}
-
+command! PackStatus packadd minpac | source $MYVIMRC | call minpac#status()
+"}}}
 " set completeopt=preview,menuone,noinsert,noselect
 set completeopt+=preview
 
@@ -601,6 +600,7 @@ augroup Tacahiroy
   autocmd VimEnter * call s:set_statusline()
 augroup END
 " }}}
+
 
 " * mappings "{{{
 cnoremap <C-p> <Up>
@@ -903,7 +903,7 @@ if has('gui_running')
   endif
 
   if s:mac
-    set guifont=源ノ角ゴシック\ Code\ JP\ R:h14
+    set guifont=HackGen:h14
     set linespace=1
     set antialias
     set fuoptions& fuoptions+=maxhorz
@@ -913,14 +913,14 @@ if has('gui_running')
     vnoremap <D-c> "+y
     nnoremap <D-a> ggVG
   elseif s:linux
-    set guifont=Cica\ 11
+    set guifont=HackGen\ 14
     vnoremap <silent> <M-c> "+y
     inoremap <silent> <M-v> <Esc>:let &paste=1<Cr>a<C-R>+<Esc>:let &paste=0<Cr>a
     " copy to clipboard
     nnoremap <silent> [Space]a :<C-u>call <SID>xclip()<Cr>
   else
     " Windows
-    set guifont=Cica:h14:cSHIFTJIS:qDRAFT
+    set guifont=HackGen:h14:cSHIFTJIS:qDRAFT
     if has('directx')
       set renderoptions=type:directx,level:2.0,geom:1,renmode:5,contrast:1,taamode:0
     endif
@@ -935,3 +935,7 @@ if has('gui_running')
 endif
 " __END__ {{{
 " vim: fen fdm=marker ts=2 sts=2 sw=2 tw=0
+
+aug Tacahiroy
+  au colorscheme * hi Folded ctermbg=15
+aug end
