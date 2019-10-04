@@ -933,7 +933,3 @@ if has('gui_running')
 endif
 " __END__ {{{
 " vim: fen fdm=marker ts=2 sts=2 sw=2 tw=0
-
-aug Tacahiroy
-  au colorscheme * hi Folded ctermbg=15
-aug end
