@@ -4,6 +4,10 @@
 
 umask 0022
 
+if [ -f "$HOME/.bash/prompt.sh" ]; then
+    . "$HOME/.bash/prompt.sh"
+fi
+
 #--------------------
 # Guard
 #--------------------
@@ -181,21 +185,7 @@ cdup() {
 #--------------------
 # Prompt
 #--------------------
-PINK='\e[0;35;5m'
-MIDORI='\e[0;32;4m'
-AO='\e[0;36;5m'
-RESET='\e[0m'
-
-set_prompt() {
-    if [ "$(tput colors)" = "256" ]; then
-        echo -n "${PINK}\u${RESET}@${MIDORI}\h:${AO}\w${RESET}"
-    else
-        echo -n '\u@\h:\w'
-    fi
-    printf '\n$ '
-}
-
-PS1=$(set_prompt)
+set_prompt ${RED} ${GREEN} ${BLUE}
 
 case "${MYOS}" in
     msys)
@@ -230,6 +220,10 @@ fi
 
 if command -v aws >/dev/null 2>&1; then
     complete -C aws_completer aws
+fi
+
+if [ -f "$HOME/.bashrc.local" ]; then
+    . "$HOME/.bashrc.local"
 fi
 
 [[ -x $(command -v tmux) && -z "$TMUX" && "$USE_TMUX" = yes ]] && {

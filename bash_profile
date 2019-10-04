@@ -92,10 +92,6 @@ if [[ "$(uname -s)" =~ MSYS_NT.* ]]; then
     :
 fi
 
-if [ -f "$HOME/.bashrc.local" ]; then
-    . "$HOME/.bashrc.local"
-fi
-
 # if running bash
 if [ -n "$BASH_VERSION" ]; then
     # include .bashrc if it exists
