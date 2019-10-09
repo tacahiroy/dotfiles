@@ -9,6 +9,15 @@ if [ -f "$HOME/.bash/prompt.sh" ]; then
 fi
 
 #--------------------
+# Prompt
+#--------------------
+set_prompt ${RED} ${GREEN} ${BLUE}
+
+if [ -f "$HOME/.bashrc.local" ]; then
+    . "$HOME/.bashrc.local"
+fi
+
+#--------------------
 # Guard
 #--------------------
 # If not running interactively, don't do anything
@@ -182,11 +191,6 @@ cdup() {
     cd ..
 }
 
-#--------------------
-# Prompt
-#--------------------
-set_prompt ${RED} ${GREEN} ${BLUE}
-
 case "${MYOS}" in
     msys)
         if [ -f "$HOME/qmk_utils/activate_msys2.sh" ]; then
@@ -220,10 +224,6 @@ fi
 
 if command -v aws >/dev/null 2>&1; then
     complete -C aws_completer aws
-fi
-
-if [ -f "$HOME/.bashrc.local" ]; then
-    . "$HOME/.bashrc.local"
 fi
 
 [[ -x $(command -v tmux) && -z "$TMUX" && "$USE_TMUX" = yes ]] && {
