@@ -198,6 +198,7 @@ if exists('*minpac#init')
 
   call minpac#add('prabirshrestha/asyncomplete-buffer.vim')
   call minpac#add('prabirshrestha/asyncomplete-lsp.vim')
+
   call minpac#add('natebosch/vim-lsc')
     let g:lsc_auto_map = v:true "{{{ vim-lsc
     let g:lsc_enable_autocomplete = v:true
@@ -228,19 +229,19 @@ if exists('*minpac#init')
 
       augroup END
     endif
-  "}}}
+    "}}}
   "}}}
   call minpac#add('fatih/vim-go')
     let g:go_def_mode = 'gopls'
     let g:go_info_mode = 'gopls'
 
   call minpac#add('stephpy/vim-yaml')
-  call minpac#add('pearofducks/ansible-vim')
-    let g:ansible_yamlKeyName = 'yamlKey'
-    let g:ansible_attribute_highlight = "ob"
-    let g:ansible_name_highlight = 'b'
-    let g:ansible_extra_keywords_highlight = 1
-    let g:ansible_unindent_after_newline = 1
+  " call minpac#add('pearofducks/ansible-vim')
+  "   let g:ansible_yamlKeyName = 'yamlKey'
+  "   let g:ansible_attribute_highlight = "ob"
+  "   let g:ansible_name_highlight = 'b'
+  "   let g:ansible_extra_keywords_highlight = 1
+  "   let g:ansible_unindent_after_newline = 1
 
   call minpac#add('hashivim/vim-terraform')
     let g:terraform_align = 1
@@ -374,6 +375,8 @@ if exists('*minpac#init')
     let g:ale_pattern_options = {'\.go$': {'ale_enabled': 0},
                                \ '\.py$': {'ale_enabled': 0}}
 
+    let g:ale_linters = {'html': ['eslint']}
+
     function! LinterStatus() abort
       let l:counts = ale#statusline#Count(bufnr(''))
 
@@ -402,7 +405,7 @@ if exists('*minpac#init')
   call minpac#add('jremmen/vim-ripgrep')
 
   call minpac#add('joereynolds/vim-minisnip')
-    let g:minisnip_trigger = '<Tab>'
+    let g:minisnip_trigger = '<C-e>'
 
   call minpac#add('mattn/emmet-vim')
 
