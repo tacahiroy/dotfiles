@@ -1,0 +1,4 @@
+- name: {{+name+}}
+  systemd:
+    name: {{++}}
+    state: {{+started|restarted|stopped|reloaded+}}

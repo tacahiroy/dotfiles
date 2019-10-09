@@ -1,0 +1,5 @@
+- assert:
+    that:
+      - {{++}}
+    success_msg: {{++}}
+    fail_msg: {{++}}
