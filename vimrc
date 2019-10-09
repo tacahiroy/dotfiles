@@ -340,15 +340,6 @@ if exists('*minpac#init')
     nnoremap [Space]fr :CtrlPRTS<Cr>
     nnoremap [Space]fq :CtrlPQuickfix<Cr>
 
-  if s:win
-    call minpac#add('FelikZ/ctrlp-py-matcher')
-    let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
-  else
-    call minpac#add('nixprime/cpsm')
-    let g:ctrlp_match_func = {'match': 'cpsm#CtrlPMatch'}
-    let g:cpsm_highlight_mode = 'detailed'
-  endif
-
   call minpac#add('tacahiroy/ctrlp-funky')
     let g:ctrlp_funky_debug = 0
     let g:ctrlp_funky_use_cache = 0
@@ -361,6 +352,11 @@ if exists('*minpac#init')
 
     nnoremap [Space]fu :CtrlPFunky<Cr>
     nnoremap [Space]uu :execute 'CtrlPFunky ' . fnameescape(expand('<cword>'))<Cr>
+
+  call minpac#add('raghur/fruzzy') " {'do': { -> fruzzy#install()}}')
+    let g:fruzzy#usenative = 1
+    let g:ctrlp_match_func = {'match': 'fruzzy#ctrlp#matcher'}
+    let g:ctrlp_match_current_file = 0 " to include current file in matches
   "}}}
 
 "{{{ ALE
@@ -399,7 +395,6 @@ if exists('*minpac#init')
   call minpac#add('sheerun/vim-polyglot')
     let g:polyglot_disabled = ['jenkins']
 
-  call minpac#add('lifepillar/vim-gruvbox8')
   call minpac#add('tacahiroy/vim-colors-isotake')
   call minpac#add('mechatroner/rainbow_csv')
   call minpac#add('jremmen/vim-ripgrep')
