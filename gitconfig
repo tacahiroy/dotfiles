@@ -16,6 +16,7 @@
 	bigFileThreshold = 256m
 	compression = 0
 	losecompression = 0
+	autocrlf = false
 
 [alias]
 	b    = branch
@@ -24,6 +25,7 @@
 	ci   = commit
 	ca   = commit --amend
 	co   = checkout
+	conflicts = diff --name-only --diff-filter=U
 	d    = diff
 	dc   = diff --cached
 	dno  = diff --name-only
@@ -43,6 +45,7 @@
 	sno  = status -sb -uno
 	spo  = stash pop
 	st   = status
+	sw   = switch
 	sup  = !git stash && git up
 	up   = pull --rebase
 	fep  = fetch --prune
