@@ -55,7 +55,7 @@ set_path "$HOME/bin" 1
 set_path "$HOME/.local/bin"
 set_path "$HOME/.cargo/bin"
 set_path "$GOPATH/bin"
-set_path "/usr/local/go/bin" 1
+set_path "/usr/local/bin" 1
 set_path "$HOME/.yarn/bin"
 
 if [ "${IS_MSYS}" = yes ]; then
