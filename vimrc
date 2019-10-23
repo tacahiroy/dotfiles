@@ -121,7 +121,7 @@ endfunction
 
 function! s:create_new_note()
   while 1
-    let ans = input('New note >')
+    let ans = input('New note> ')
     if !empty(ans)
       break
     endif
@@ -353,9 +353,8 @@ if exists('*minpac#init')
     nnoremap [Space]fu :CtrlPFunky<Cr>
     nnoremap [Space]uu :execute 'CtrlPFunky ' . fnameescape(expand('<cword>'))<Cr>
 
-  call minpac#add('raghur/fruzzy') " {'do': { -> fruzzy#install()}}')
-    let g:fruzzy#usenative = 1
-    let g:ctrlp_match_func = {'match': 'fruzzy#ctrlp#matcher'}
+  call minpac#add('FelikZ/ctrlp-py-matcher')
+    let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
     let g:ctrlp_match_current_file = 0 " to include current file in matches
   "}}}
 
