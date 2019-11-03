@@ -340,7 +340,7 @@ if exists('*minpac#init')
     nnoremap [Space]fr :CtrlPRTS<Cr>
     nnoremap [Space]fq :CtrlPQuickfix<Cr>
 
-  call minpac#add('tacahiroy/ctrlp-funky')
+  call minpac#add('tacahiroy/ctrlp-funky', { 'frozen': 1 })
     let g:ctrlp_funky_debug = 0
     let g:ctrlp_funky_use_cache = 0
     let g:ctrlp_funky_matchtype = 'path'
