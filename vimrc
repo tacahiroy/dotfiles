@@ -161,7 +161,6 @@ if exists('*minpac#init')
   " minpac must have {'type': 'opt'} so that it can be loaded with `packadd`.
   call minpac#add('k-takata/minpac', {'type': 'opt'})
 
-  call minpac#add('mattn/webapi-vim')
   call minpac#add('tpope/vim-fugitive')
 
   " Completion {{{
@@ -231,6 +230,7 @@ if exists('*minpac#init')
     endif
     "}}}
   "}}}
+
   call minpac#add('fatih/vim-go')
     let g:go_def_mode = 'gopls'
     let g:go_info_mode = 'gopls'
@@ -242,11 +242,6 @@ if exists('*minpac#init')
   "   let g:ansible_name_highlight = 'b'
   "   let g:ansible_extra_keywords_highlight = 1
   "   let g:ansible_unindent_after_newline = 1
-
-  call minpac#add('hashivim/vim-terraform')
-    let g:terraform_align = 1
-    let g:terraform_commentstring = '//%s'
-    let g:terraform_fmt_on_save = 0
 
   call minpac#add('cohama/lexima.vim')
     " let g:lexima_no_default_rules = 1
