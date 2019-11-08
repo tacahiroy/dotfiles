@@ -2,12 +2,6 @@
 
 umask 0022
 
-if uname | grep 'MSYS' >/dev/null 2>&1; then
-    IS_MSYS=yes
-else
-    IS_MSYS=no
-fi
-
 set_path() {
     dir=$1
     prioritise=$2
@@ -24,6 +18,12 @@ set_path() {
     fi
 }
 
+if uname | grep 'MSYS' >/dev/null 2>&1; then
+    IS_MSYS=yes
+else
+    IS_MSYS=no
+fi
+
 export LANG=en_US.UTF-8
 export SHELL=/bin/bash
 export GIT_ROOT=$HOME/dev/src
@@ -34,22 +34,8 @@ GOPATH=$(dirname "${GIT_ROOT}")
 export GOPATH
 export EDITOR=vim
 export PAGER=less
-r=$(which fzy)
-if [ -x "${r}" ]; then
-    export FILTER_CMD="${r}"
-    export FILTER_OPTIONS='-l 20'
-fi
-fd=$(which fd 2>/dev/null)
-if [ -x "${fd}" ]; then
-    export FIND="${fd}"
-    export FINDO=
-fi
 
 export DISPLAY=:0
-
-export LANG=en_US.UTF-8
-export SHELL=/bin/bash
-export GIT_ROOT=$HOME/dev/src
 
 set_path "$HOME/bin" 1
 set_path "$HOME/.local/bin"
