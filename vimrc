@@ -319,11 +319,11 @@ if exists('*minpac#init')
       \ 'CreateNewFile()':      ['<C-y>'],
       \ }
 
-    let dir = ['\.git$', '\.hg$', '\.svn$', '\.vimundo$', '\.cache/ctrlp$',
+    let dir = ['\.git', '\.hg$', '\.svn$', '\.vimundo$', '\.cache/ctrlp$',
           \    '\.rbenv', '\.gem', 'backup', 'Documents', $TMPDIR,
           \    'vendor']
     let g:ctrlp_custom_ignore = {
-      \ 'dir': '\v[\/]' . join(dir, '|') . '/',
+      \ 'dir': '\v[\/]?(' . join(dir, '|') . ')',
       \ 'file': '\v(\.exe|\.so|\.dll|\.DS_Store|\.db|COMMIT_EDITMSG)$'
       \ }
 
@@ -360,12 +360,16 @@ if exists('*minpac#init')
     let g:ale_lint_on_text_changed = 'never'
     let g:ale_set_loclist = 0
     let g:ale_set_quickfix = 1
+    let g:ale_python_auto_pipenv = 1
     let g:ale_python_flake8_auto_pipenv = 1
     let g:ale_disable_lsp = 0
     let g:ale_pattern_options = {'\.go$': {'ale_enabled': 0},
                                \ '\.py$': {'ale_enabled': 0}}
 
-    let g:ale_linters = {'html': ['eslint']}
+    let g:ale_linters = {'html': ['eslint'],
+                       \ 'python': ['flake8', 'pylint']}
+    let g:ale_fixers = {'python': ['yapf', 'autopep8']}
+    let g:ale_fix_on_save = 1
 
     function! LinterStatus() abort
       let l:counts = ale#statusline#Count(bufnr(''))
@@ -753,6 +757,8 @@ nnoremap <silent> <Leader>fN :let @" = fnamemodify(@%, ':p')<Cr>
 command! -nargs=0 CopyCurrentFilePath2CB let @* = fnamemodify(@%, ':p')
 command! -nargs=0 AbsolutePath echomsg fnamemodify(@%, ':p')
 command! -nargs=0 RelativePath echomsg substitute(fnamemodify(@%, ':p'), getcwd() . '/', '', '')
+
+command! -nargs=0 Xclip execute ':!cat % | xclip'
 
 " search visual-ed text
 vnoremap * y/<C-R>"<Cr>
