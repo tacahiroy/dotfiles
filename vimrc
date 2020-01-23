@@ -352,11 +352,6 @@ if exists('*minpac#init')
       \   all_errors
       \)
     endfunction
-
-    let &statusline .= '|'
-    let &statusline .= '%#SpellRare#'
-    let &statusline .= '%{LinterStatus()}'
-    let &statusline .= '%*'
   "}}}
 
   call minpac#add('sheerun/vim-polyglot')
@@ -540,6 +535,13 @@ function! s:set_statusline()
   let &statusline .= '%{(&paste ? "p" : "")}'
   let &statusline .= '|%{&textwidth}'
   let &statusline .= '|%{get(g:, "ctrlp_filetype", "")}'
+
+  if exists('*LinterStatus')
+    let &statusline .= '|'
+    let &statusline .= '%#SpellRare#'
+    let &statusline .= '%{LinterStatus()}'
+    let &statusline .= '%*'
+  endif
 
   if exists('*fugitive#statusline')
     let &statusline .= '%#Type#'
@@ -838,11 +840,9 @@ augroup Tacahiroy
   autocmd FileType vim if &iskeyword !~# '&' | setlocal iskeyword+=& | endif
 
   autocmd FileType c setlocal tabstop=4 softtabstop=4 shiftwidth=4
-  autocmd FileType c compiler gcc
-  autocmd FileType c setlocal makeprg=gcc\ -Wall\ %\ -o\ %:r.o
-  autocmd FileType c nnoremap <buffer> [Space]m :<C-u>write<Cr>:make --std=c99<Cr>
 
   autocmd FileType python,go nmap gd <plug>(lsp-definition)
+  autocmd FileType go setlocal tabstop=4 shiftwidth=4 softtabstop=4 noexpandtab
 augroup END
 "}}}
 
