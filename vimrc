@@ -177,6 +177,8 @@ if exists('*minpac#init')
     " let g:lsp_log_file = expand('~/vim-lsp.log')
   "}}}
 
+  call minpac#add('mattn/vim-lsp-settings')
+
   call minpac#add('prabirshrestha/asyncomplete.vim')
     let g:asyncomplete_smart_completion = has('lua')
     let g:asyncomplete_auto_popup = 1
@@ -197,39 +199,6 @@ if exists('*minpac#init')
 
   call minpac#add('prabirshrestha/asyncomplete-buffer.vim')
   call minpac#add('prabirshrestha/asyncomplete-lsp.vim')
-
-  call minpac#add('natebosch/vim-lsc')
-    let g:lsc_auto_map = v:true "{{{ vim-lsc
-    let g:lsc_enable_autocomplete = v:true
-
-    if executable('gopls')
-      augroup LspGo
-        autocmd!
-        autocmd User lsp_setup call lsp#register_server({
-              \ 'name': 'golang',
-              \ 'cmd': {server_info->['gopls', '-mode', 'stdio']},
-              \ 'whitelist': ['go'],
-              \ })
-        autocmd FileType go setlocal omnifunc=lsp#complete
-        autocmd FileType go setlocal completeopt+=preview
-      augroup END
-    endif
-
-    if executable('pyls')
-      call minpac#add('ryanolsonx/vim-lsp-python')
-      " pip install python-language-server
-      augroup LspPython
-        autocmd!
-        autocmd User lsp_setup call lsp#register_server({
-              \ 'name': 'pyls',
-              \ 'cmd': {server_info->['pyls', '']},
-              \ 'whitelist': ['python'],
-              \ })
-
-      augroup END
-    endif
-    "}}}
-  "}}}
 
   call minpac#add('fatih/vim-go')
     let g:go_def_mode = 'gopls'
