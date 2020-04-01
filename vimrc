@@ -203,14 +203,10 @@ if exists('*minpac#init')
   call minpac#add('fatih/vim-go')
     let g:go_def_mode = 'gopls'
     let g:go_info_mode = 'gopls'
+    let g:go_highlight_diagnostic_errors=0
+    let g:go_highlight_diagnostic_warnings=0
 
   call minpac#add('stephpy/vim-yaml')
-  " call minpac#add('pearofducks/ansible-vim')
-  "   let g:ansible_yamlKeyName = 'yamlKey'
-  "   let g:ansible_attribute_highlight = "ob"
-  "   let g:ansible_name_highlight = 'b'
-  "   let g:ansible_extra_keywords_highlight = 1
-  "   let g:ansible_unindent_after_newline = 1
 
   call minpac#add('cohama/lexima.vim')
     " let g:lexima_no_default_rules = 1
@@ -543,10 +539,15 @@ function! s:set_statusline()
     let &statusline .= '%*'
   endif
 
-  if exists('*fugitive#statusline')
+  if exists('*FugitiveStatusline')
     let &statusline .= '%#Type#'
     let &statusline .= '%{fugitive#statusline()}'
     let &statusline .= '%*'
+  endif
+
+  if exists('*virtualenv#statusline')
+    let g:virtualenv_stl_format = '[%n]'
+    let &statusline .= '%{virtualenv#statusline()}'
   endif
 
   " right side from here
@@ -675,6 +676,7 @@ nnoremap <silent> [Toggle]l :set list!<Cr>
 nnoremap <silent> [Toggle]n :<C-u>silent call <SID>toggle_line_number()<Cr>
 nnoremap <silent> [Toggle]r :set relativenumber!<Cr>
 nnoremap <silent> [Toggle]w :let g:show_cwd = abs(get(g:, 'show_cwd', 0) - 1)<Cr>
+nnoremap <silent> [Toggle]b :let &background = &background ==# 'dark' ? 'light' : 'dark'<Cr>
 
 " * makes gf better
 nnoremap gf <Nop>
