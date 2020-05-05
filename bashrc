@@ -230,9 +230,6 @@ fi
 
 [[ -x $(command -v tmux) && -z "$TMUX" && "$USE_TMUX" = yes ]] && {
     [ "$ATTACH_ONLY" = yes ] && {
-        tmux -2 a 2>/dev/null || {
-            cd && exec tmux -l2
-        }
         tmux -2 new-window -l -c "$PWD" 2>/dev/null && exec tmux -2 a
         exec tmux -l2
     }
