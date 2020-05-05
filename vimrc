@@ -207,7 +207,6 @@ if exists('*minpac#init')
     let g:go_highlight_diagnostic_warnings=0
 
   call minpac#add('stephpy/vim-yaml')
-
   call minpac#add('cohama/lexima.vim')
     " let g:lexima_no_default_rules = 1
     let g:lexima_enable_space_rules = 0
@@ -309,6 +308,7 @@ if exists('*minpac#init')
     let g:ctrlp_funky_ruby_chef_words = 0
 
     let g:ctrlp_funky_nudists = ['php', 'ruby']
+let g:ctrlp_default_input = 'anystring'
 
     nnoremap [Space]fu :CtrlPFunky<Cr>
     nnoremap [Space]uu :execute 'CtrlPFunky ' . fnameescape(expand('<cword>'))<Cr>
