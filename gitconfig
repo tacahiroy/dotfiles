@@ -11,7 +11,7 @@
 	interactive = auto
 [core]
 	editor = ${EDITOR:-vim}
-	pager = ${PAGER:-less}
+	pager = delta --theme='ansi-light'
 	excludesfile = ~/.gitignore
 	bigFileThreshold = 256m
 	compression = 0
@@ -54,13 +54,10 @@
 	merge-log = !sh -c 'git log --stat $1^..$1' -
 	mt = mergetool
 
-[pager]
-	log  = (diff-highlight 2>/dev/null || cat) | ${PAGER:-less}
-	show = (diff-highlight 2>/dev/null || cat) | ${PAGER:-less}
-	diff = (diff-highlight 2>/dev/null || cat) | ${PAGER:-less}
-
 [interactive]
-	diffFilter = (diff-highlight 2>/dev/null || cat)
+	; diffFilter = (diff-highlight 2>/dev/null || cat)
+	diffFilter = delta --color-only
+
 [diff]
 	compactionHeuristic = true
 	mnemonicprefix = true
@@ -73,7 +70,7 @@
 	default = current
 
 [credential]
-	helper = manager
+	helper = cache
 [advice]
 	statusHints = false
 [help]
