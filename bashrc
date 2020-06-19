@@ -9,7 +9,7 @@ umask 0022
 #--------------------
 if [ -f "$HOME/.bash/prompt.sh" ]; then
     . "$HOME/.bash/prompt.sh"
-    set_prompt "${RED}" "${GREEN}" "${BLUE}"
+    set_prompt "${BRIGHT_RED}" "${GREEN}" "${BLUE}"
 fi
 
 if [ -f "$HOME/.bashrc.local" ]; then
