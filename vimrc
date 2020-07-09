@@ -880,15 +880,6 @@ augroup Tacahiroy
   autocmd FileType go setlocal tabstop=4 shiftwidth=4 softtabstop=4 noexpandtab
 augroup END
 
-" https://github.com/prabirshrestha/vim-lsp/tree/a943fe55#registering-servers
-function! s:on_lsp_buffer_enabled() abort
-    setlocal omnifunc=lsp#complete
-    setlocal signcolumn=yes
-    nmap <buffer> gd <plug>(lsp-definition)
-    nmap <buffer> <f2> <plug>(lsp-rename)
-    " refer to doc to add more commands
-endfunction
-
 augroup lsp_install
     autocmd!
     " call s:on_lsp_buffer_enabled only for languages that has the server registered.
