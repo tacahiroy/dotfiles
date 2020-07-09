@@ -22,9 +22,7 @@ augroup END
 let s:mac = has('macunix') || has('mac')
 let s:linux = !s:mac && has('unix')
 let s:win = !(s:mac || s:linux) && has('win32') || has('win64')
-let s:grep = executable('rg') ? 'rg' :
-           \ executable('ag') ? 'ag' :
-           \ ''
+let s:grep = executable('rg') ? 'rg' : ''
 let g:show_cwd = 1
 
 " functions " {{{
@@ -174,7 +172,27 @@ if exists('*minpac#init')
     let g:lsp_signs_warning = {'text': '🤔'}
     let g:lsp_signs_hint = {'text': '💡'}
     let g:lsp_log_verbose = 0
-    " let g:lsp_log_file = expand('~/vim-lsp.log')
+    let g:lsp_log_file = expand('~/vim-lsp.log')
+
+    function! s:on_lsp_buffer_enabled() abort
+        setlocal omnifunc=lsp#complete
+        setlocal signcolumn=yes
+        if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
+        nmap <buffer> gd <plug>(lsp-definition)
+        nmap <buffer> gr <plug>(lsp-references)
+        nmap <buffer> gI <plug>(lsp-implementation)
+        nmap <buffer> gt <plug>(lsp-type-definition)
+        nmap <buffer> <leader>rn <plug>(lsp-rename)
+        nmap <buffer> [g <Plug>(lsp-previous-diagnostic)
+        nmap <buffer> ]g <Plug>(lsp-next-diagnostic)
+        nmap <buffer> K <plug>(lsp-hover)
+    endfunction
+
+    augroup lsp_install
+        autocmd!
+        " call s:on_lsp_buffer_enabled only for languages that has the server registered.
+        autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+    augroup END
   "}}}
 
   call minpac#add('mattn/vim-lsp-settings')
@@ -308,7 +326,6 @@ if exists('*minpac#init')
     let g:ctrlp_funky_ruby_chef_words = 0
 
     let g:ctrlp_funky_nudists = ['php', 'ruby']
-let g:ctrlp_default_input = 'anystring'
 
     nnoremap [Space]fu :CtrlPFunky<Cr>
     nnoremap [Space]uu :execute 'CtrlPFunky ' . fnameescape(expand('<cword>'))<Cr>
@@ -351,7 +368,6 @@ let g:ctrlp_default_input = 'anystring'
   "}}}
 
   call minpac#add('sheerun/vim-polyglot')
-    let g:polyglot_disabled = ['jenkins']
 
   call minpac#add('tacahiroy/vim-colors-isotake')
   call minpac#add('mechatroner/rainbow_csv')
@@ -843,7 +859,6 @@ augroup Tacahiroy
 
   autocmd FileType c setlocal tabstop=4 softtabstop=4 shiftwidth=4
 
-  autocmd FileType python,go nmap gd <plug>(lsp-definition)
   autocmd FileType go setlocal tabstop=4 shiftwidth=4 softtabstop=4 noexpandtab
 augroup END
 "}}}
