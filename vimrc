@@ -165,9 +165,9 @@ if exists('*minpac#init')
   call minpac#add('prabirshrestha/async.vim')
   call minpac#add('prabirshrestha/vim-lsp')
     let g:lsp_async_completion = 1 "{{{ vim-lsp
-    let g:lsp_diagnostics_enabled = 1
-    let g:lsp_diagnostics_echo_cursor = 1
-    let g:lsp_signs_enabled = 1
+    let g:lsp_diagnostics_enabled = 0
+    let g:lsp_diagnostics_echo_cursor = 0
+    let g:lsp_signs_enabled = 0
     let g:lsp_signs_error = {'text': '🤕'}
     let g:lsp_signs_warning = {'text': '🤔'}
     let g:lsp_signs_hint = {'text': '💡'}
@@ -202,21 +202,21 @@ if exists('*minpac#init')
     let g:asyncomplete_auto_popup = 1
     let g:asyncomplete_remove_duplicates = 1
     " let g:asyncomplete_log_file = expand('~/asyncomplete.log')
+
+  call minpac#add('prabirshrestha/asyncomplete-lsp.vim')
+  call minpac#add('prabirshrestha/asyncomplete-buffer.vim')
     augroup Tacahiroy
       autocmd VimEnter * call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
             \ 'name': 'buffer',
             \ 'whitelist': ['*'],
-            \ 'blacklist': ['go'],
+            \ 'blacklist': ['go', 'markdown'],
             \ 'completor': function('asyncomplete#sources#buffer#completor'),
             \ 'config': {
-            \    'max_buffer_size': 5000000,
+            \    'max_buffer_size': 1048576,
             \  },
             \ }))
       " autocmd VimEnter * doautocmd Tacahiroy User asyncomplete_setup
     augroup END
-
-  call minpac#add('prabirshrestha/asyncomplete-buffer.vim')
-  call minpac#add('prabirshrestha/asyncomplete-lsp.vim')
 
   call minpac#add('fatih/vim-go')
     let g:go_def_mode = 'gopls'
@@ -336,7 +336,7 @@ if exists('*minpac#init')
   "}}}
 
 "{{{ ALE
-  call minpac#add('w0rp/ale')
+  call minpac#add('dense-analysis/ale')
     let g:ale_enabled = 1
     let g:ale_statusline_format = ['!%d', '@%d', 'ok']
     let g:ale_lint_on_text_changed = 'never'
@@ -345,13 +345,23 @@ if exists('*minpac#init')
     let g:ale_python_auto_pipenv = 1
     let g:ale_python_flake8_auto_pipenv = 1
     let g:ale_disable_lsp = 0
-    let g:ale_pattern_options = {'\.go$': {'ale_enabled': 0},
-                               \ '\.py$': {'ale_enabled': 0}}
+    " let g:ale_pattern_options = {'\.go$': {'ale_enabled': 0},
+    "                            \ '\.py$': {'ale_enabled': 0}}
 
     let g:ale_linters = {'html': ['eslint'],
-                       \ 'python': ['flake8', 'pylint']}
-    let g:ale_fixers = {'python': ['yapf', 'autopep8']}
+                       \ 'python': ['pylint', 'flake8']}
+    let g:ale_fixers = {'python': ['yapf', 'autopep8'],
+          \             '*': ['remove_trailing_lines', 'trim_whitespace'],
+          \             'Jenkinsfile': ['jenkins_linter'],
+          \ }
     let g:ale_fix_on_save = 1
+    let g:ale_yaml_yamllint_options = 'relaxed'
+
+    let g:ale_history_log_output = 1
+    let g:ale_use_global_executables = 1
+    let g:ale_fix_on_save = 1
+    let g:ale_completion_enabled = 1
+    let g:ale_open_list = 1
 
     function! LinterStatus() abort
       let l:counts = ale#statusline#Count(bufnr(''))
@@ -367,7 +377,10 @@ if exists('*minpac#init')
     endfunction
   "}}}
 
+  call minpac#add('Yggdroot/indentLine')
+
   call minpac#add('sheerun/vim-polyglot')
+    let g:polyglot_disabled = ['markdown']
 
   call minpac#add('tacahiroy/vim-colors-isotake')
   call minpac#add('mechatroner/rainbow_csv')
@@ -494,7 +507,7 @@ set spelllang=en
 set swapfile directory=$DOTVIM/swaps
 set switchbuf=useopen,usetab
 set synmaxcol=150
-set tags=tags,./tags,**3/tags,tags;/Projects
+set tags=tags,./tags
 set timeout timeoutlen=500
 set title
 set titlestring=Vim:\ %F\ %h%r%m
@@ -742,6 +755,8 @@ nnoremap <silent> <Leader>fn :let @" = expand('%:t')<Cr>
 inoremap <silent> <Leader>fN <C-R>=fnamemodify(@%, ':p')<Cr>
 nnoremap <silent> <Leader>fN :let @" = fnamemodify(@%, ':p')<Cr>
 
+inoremap <Leader><Leader>c <Esc>bgUwgi
+
 " Copy absolute path to current file to clipboard
 command! -nargs=0 CopyCurrentFilePath2CB let @* = fnamemodify(@%, ':p')
 command! -nargs=0 AbsolutePath echomsg fnamemodify(@%, ':p')
@@ -810,7 +825,7 @@ augroup Tacahiroy
   autocmd VimEnter * call lexima#add_rule({'char': '"', 'at': '\%#\w', 'input': '"'})
   autocmd VimEnter * call lexima#add_rule({'char': "'", 'at': '\%#\w', 'input': "'"})
 
-  autocmd BufRead,BufNewFile */playbooks/*.yml,*/tasks/*.yml,*/handlers/*.yml,*/roles/*.yml set filetype=yaml.ansible
+  " autocmd BufRead,BufNewFile */playbooks/*.yml,*/tasks/*.yml,*/handlers/*.yml,*/roles/*.yml set filetype=yaml.ansible
 
   autocmd BufEnter ControlP let b:ale_enabled = 0
   autocmd BufReadPost * if !search('\S', 'cnw') | let &l:fileencoding = &encoding | endif
@@ -831,7 +846,8 @@ augroup Tacahiroy
 
   autocmd FileType make setlocal list
   autocmd FileType make setlocal iskeyword+=-
-  autocmd BufRead,BufNewFile *.groovy,*.jenkins,Jenkinsfile* setlocal filetype=groovy
+  " autocmd BufRead,BufNewFile *.groovy,*.jenkins,Jenkinsfile* setlocal filetype=groovy
+  autocmd BufRead,BufNewFile *.jenkins setfiletype Jenkinsfile
   autocmd FileType groovy,jenkinsfile setlocal autoindent smartindent
 
   augroup PersistentUndo
@@ -844,11 +860,13 @@ augroup Tacahiroy
     call append(line('.') - 1, strftime('%Y-%m-%d'))
     call append(line('.') - 1, repeat('=', 10))
   endfunction
-  autocmd BufRead,BufNewFile *.md,*.mkd,*.markdown set filetype=markdown
+  " autocmd BufRead,BufNewFile *.md,*.mkd,*.markdown set filetype=markdown
 
   autocmd FileType markdown inoremap <buffer> <Leader>tt <Esc>:<C-u>call <SID>insert_today_for_md_changelog()<Cr>:startinsert<Cr>
   autocmd FileType markdown set autoindent
-  autocmd FileType markdown setlocal tabstop=4 shiftwidth=4
+  autocmd FileType markdown setlocal tabstop=4 shiftwidth=4 conceallevel=0
+  let g:markdown_fenced_languages = ['python', 'bash=sh']
+  let g:markdown_syntax_conceal = 0
 
   autocmd FileType gitcommit setlocal spell
 
@@ -860,6 +878,21 @@ augroup Tacahiroy
   autocmd FileType c setlocal tabstop=4 softtabstop=4 shiftwidth=4
 
   autocmd FileType go setlocal tabstop=4 shiftwidth=4 softtabstop=4 noexpandtab
+augroup END
+
+" https://github.com/prabirshrestha/vim-lsp/tree/a943fe55#registering-servers
+function! s:on_lsp_buffer_enabled() abort
+    setlocal omnifunc=lsp#complete
+    setlocal signcolumn=yes
+    nmap <buffer> gd <plug>(lsp-definition)
+    nmap <buffer> <f2> <plug>(lsp-rename)
+    " refer to doc to add more commands
+endfunction
+
+augroup lsp_install
+    autocmd!
+    " call s:on_lsp_buffer_enabled only for languages that has the server registered.
+    autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
 augroup END
 "}}}
 
