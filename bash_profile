@@ -43,6 +43,7 @@ set_path "$HOME/.cargo/bin"
 set_path "$GOPATH/bin"
 set_path "/usr/local/bin" 1
 set_path "$HOME/.yarn/bin"
+set_path "$HOME/.pulumi/bin"
 
 if [ "${IS_MSYS}" = yes ]; then
     set_path "/mingw64/bin"
