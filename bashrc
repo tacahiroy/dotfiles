@@ -123,6 +123,8 @@ HISTCONTROL=ignoreboth:erasedups
 
 # append to the history file, don't overwrite it
 shopt -s histappend
+# automatic spell correction for cd
+shopt -s cdspell
 
 # After each command, append to the history file and reread it
 # http://unix.stackexchange.com/questions/1288/preserve-bash-history-in-multiple-terminal-windows
