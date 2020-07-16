@@ -22,7 +22,8 @@ augroup END
 let s:mac = has('macunix') || has('mac')
 let s:linux = !s:mac && has('unix')
 let s:win = !(s:mac || s:linux) && has('win32') || has('win64')
-let s:grep = executable('rg') ? 'rg' : ''
+let s:grep = executable('rg') ? 'rg' : (executable('ag') ? 'ag' : '')
+let s:grep = 'ag'
 let g:show_cwd = 1
 
 " functions " {{{
@@ -168,11 +169,11 @@ if exists('*minpac#init')
     let g:lsp_diagnostics_enabled = 0
     let g:lsp_diagnostics_echo_cursor = 0
     let g:lsp_signs_enabled = 0
-    let g:lsp_signs_error = {'text': '🤕'}
-    let g:lsp_signs_warning = {'text': '🤔'}
-    let g:lsp_signs_hint = {'text': '💡'}
+    let g:lsp_signs_error = {'text': '🤬'}
+    let g:lsp_signs_warning = {'text': '🤢'}
+    let g:lsp_signs_hint = {'text': '🐑'}
     let g:lsp_log_verbose = 0
-    let g:lsp_log_file = expand('~/vim-lsp.log')
+    " let g:lsp_log_file = expand('~/vim-lsp.log')
 
     function! s:on_lsp_buffer_enabled() abort
         setlocal omnifunc=lsp#complete
@@ -281,6 +282,8 @@ if exists('*minpac#init')
 
     if s:grep ==# 'rg'
       let g:ctrlp_user_command = 'rg %s -i --files --no-heading --max-depth 10'
+    elseif s:grep ==# 'ag'
+      let g:ctrlp_user_command = 'ag %s -g "" --depth 10'
     elseif s:grep ==# ''
       if s:linux || s:mac
         let g:ctrlp_user_command = 'find %s -type f'
@@ -450,8 +453,6 @@ set fileencodings=ucs-bom,utf-8,iso-2022-jp,euc-jp,cp932
 set fileformats=unix,dos,mac
 if s:grep ==# 'rg'
   let &grepprg = 'rg --no-heading --ignore-file ~/.gitignore'
-elseif s:grep ==# 'ag'
-  let &grepprg = 'ag --nocolor --nogroup -p ~/.agignore'
 elseif s:grep ==# ''
   if s:linux
     let &grepprg = 'grep --color=none'
