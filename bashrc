@@ -16,6 +16,10 @@ if [ -f "$HOME/.bashrc.local" ]; then
     . "$HOME/.bashrc.local"
 fi
 
+if [ -e "$HOME/.dircolors" ]; then
+    eval $(dircolors -b "$HOME/.dircolors")
+fi
+
 #--------------------
 # Guard
 #--------------------
