@@ -1,4 +1,0 @@
-zsh-users/zsh-syntax-highlighting
-zsh-users/zsh-completions
-jhawthorn/fzy
-wting/autojump

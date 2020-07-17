@@ -23,7 +23,7 @@ let s:mac = has('macunix') || has('mac')
 let s:linux = !s:mac && has('unix')
 let s:win = !(s:mac || s:linux) && has('win32') || has('win64')
 let s:grep = executable('rg') ? 'rg' : (executable('ag') ? 'ag' : '')
-let s:grep = 'ag'
+let s:grep = 'rg'
 let g:show_cwd = 1
 
 " functions " {{{
