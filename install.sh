@@ -42,16 +42,3 @@ for x in *; do
 			;;
 	esac
 done
-
-##
-# tmux
-#
-echo '** Configuring tmux'
-
-TMUX_CONF=tmux.conf
-echo "INFO: ${TMUX_CONF} is selected for this machine"
-
-target=$HOME/.tmux.conf
-[ -L "${target}" ] && unlink "${target}"
-echo ln -sf "$(${READLINK} "${TMUX_CONF}")" "${target}"
-ln -sf "$(${READLINK} "${TMUX_CONF}")" "${target}"
