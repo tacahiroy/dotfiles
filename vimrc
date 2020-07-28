@@ -341,15 +341,12 @@ if exists('*minpac#init')
 "{{{ ALE
   call minpac#add('dense-analysis/ale')
     let g:ale_enabled = 1
-    let g:ale_statusline_format = ['!%d', '@%d', 'ok']
     let g:ale_lint_on_text_changed = 'never'
     let g:ale_set_loclist = 0
     let g:ale_set_quickfix = 1
     let g:ale_python_auto_pipenv = 1
     let g:ale_python_flake8_auto_pipenv = 1
     let g:ale_disable_lsp = 0
-    " let g:ale_pattern_options = {'\.go$': {'ale_enabled': 0},
-    "                            \ '\.py$': {'ale_enabled': 0}}
 
     let g:ale_linters = {'html': ['eslint'],
                        \ 'python': ['pylint', 'flake8']}
@@ -372,8 +369,8 @@ if exists('*minpac#init')
       let l:all_errors = l:counts.error + l:counts.style_error
       let l:all_non_errors = l:counts.total - l:all_errors
 
-      return l:counts.total == 0 ? 'OK' : printf(
-      \   '%dW %dE',
+      return l:counts.total == 0 ? '✅' : printf(
+      \   '%d🤔 %d🥶',
       \   all_non_errors,
       \   all_errors
       \)
@@ -389,8 +386,15 @@ if exists('*minpac#init')
   call minpac#add('mechatroner/rainbow_csv')
   call minpac#add('jremmen/vim-ripgrep')
 
-  call minpac#add('joereynolds/vim-minisnip')
-    let g:minisnip_trigger = '<C-e>'
+  call minpac#add('SirVer/ultisnips')
+     " Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
+     let g:UltiSnipsExpandTrigger="<tab>"
+     let g:UltiSnipsJumpForwardTrigger="<c-b>"
+     let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+
+     " If you want :UltiSnipsEdit to split your window.
+     let g:UltiSnipsEditSplit="vertical"
+  call minpac#add('honza/vim-snippets')
 
   call minpac#add('mattn/emmet-vim')
 
@@ -516,9 +520,6 @@ set titlelen=255
 set tabstop=2 shiftwidth=2 softtabstop=2
 set updatetime=2000
 set viminfo='64,<100,s10,n~/.viminfo
-if has('nvim')
-  set viminfo+=n~/.config/nvim/tmpfiles/viminfo
-endif
 set virtualedit=block,onemore
 set t_vb= novisualbell
 
@@ -560,18 +561,14 @@ function! s:set_statusline()
   let &statusline .= '%{(empty(&clipboard) ? "" : "c")}'
   let &statusline .= '%{(&paste ? "p" : "")}'
   let &statusline .= '|%{&textwidth}'
-  let &statusline .= '|%{get(g:, "ctrlp_filetype", "")}'
 
   if exists('*LinterStatus')
-    let &statusline .= '|'
-    let &statusline .= '%#SpellRare#'
     let &statusline .= '%{LinterStatus()}'
-    let &statusline .= '%*'
   endif
 
   if exists('*FugitiveStatusline')
     let &statusline .= '%#Type#'
-    let &statusline .= '%{fugitive#statusline()}'
+    let &statusline .= '%{winwidth(0) > 60 ? fugitive#statusline() : ""}'
     let &statusline .= '%*'
   endif
 
@@ -584,7 +581,7 @@ function! s:set_statusline()
   let &statusline .= ' %='
   " Cwd
   let &statusline .= '%#CursorLineNr#'
-  let &statusline .= '%{ get(g:, "show_cwd", 0) ? Cwd() : ""}'
+  let &statusline .= '%{winwidth(0) > 60 ? (get(g:, "show_cwd", 0) ? Cwd() : "") : ""}'
   " ft:fenc:ff
   let &statusline .= '%*'
   let &statusline .= '%{&filetype}:'
@@ -707,6 +704,7 @@ nnoremap <silent> [Toggle]n :<C-u>silent call <SID>toggle_line_number()<Cr>
 nnoremap <silent> [Toggle]r :set relativenumber!<Cr>
 nnoremap <silent> [Toggle]w :let g:show_cwd = abs(get(g:, 'show_cwd', 0) - 1)<Cr>
 nnoremap <silent> [Toggle]b :let &background = &background ==# 'dark' ? 'light' : 'dark'<Cr>
+nnoremap <silent> [Toggle]i :IndentLinesToggle<Cr>
 
 " * makes gf better
 nnoremap gf <Nop>
