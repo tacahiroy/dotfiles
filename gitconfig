@@ -1,8 +1,6 @@
 ; vim: ts=4 sw=4 sts=4 noexpandtab
 [include]
-	path = ~/.gitlocal/gitconfig.base
-[user]
-	name = Takahiro Yoshihara
+	path = ~/.gitconfig.local
 [color]
 	diff = auto
 	branch = auto
@@ -11,7 +9,6 @@
 	interactive = auto
 [core]
 	editor = ${EDITOR:-vim}
-	pager = delta --theme='Monokai Extended'
 	excludesfile = ~/.gitignore
 	bigFileThreshold = 256m
 	compression = 0
