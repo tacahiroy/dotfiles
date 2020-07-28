@@ -1,6 +1,6 @@
 dotfiles
 ===========
-Vim, zsh and tmux etc. for macOS, GNU/Linux and WSL (Windows Subsystem for Linux).
+Bash, Vim, tmux, etc. for GNU/Linux and WSL.
 
 ## Installation
 
