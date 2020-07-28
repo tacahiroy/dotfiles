@@ -23,7 +23,7 @@ let s:mac = has('macunix') || has('mac')
 let s:linux = !s:mac && has('unix')
 let s:win = !(s:mac || s:linux) && has('win32') || has('win64')
 let s:grep = executable('rg') ? 'rg' : (executable('ag') ? 'ag' : '')
-let s:grep = 'rg'
+let s:grep = 'ag'
 let g:show_cwd = 1
 
 " functions " {{{
@@ -369,8 +369,8 @@ if exists('*minpac#init')
       let l:all_errors = l:counts.error + l:counts.style_error
       let l:all_non_errors = l:counts.total - l:all_errors
 
-      return l:counts.total == 0 ? '✅' : printf(
-      \   '%d🤔 %d🥶',
+      return l:counts.total == 0 ? '🦄' : printf(
+      \   '🤔%d🥶%d',
       \   all_non_errors,
       \   all_errors
       \)
@@ -568,7 +568,7 @@ function! s:set_statusline()
 
   if exists('*FugitiveStatusline')
     let &statusline .= '%#Type#'
-    let &statusline .= '%{winwidth(0) > 60 ? fugitive#statusline() : ""}'
+    let &statusline .= '%{winwidth(0) > 100 ? fugitive#statusline() : ""}'
     let &statusline .= '%*'
   endif
 
@@ -581,7 +581,7 @@ function! s:set_statusline()
   let &statusline .= ' %='
   " Cwd
   let &statusline .= '%#CursorLineNr#'
-  let &statusline .= '%{winwidth(0) > 60 ? (get(g:, "show_cwd", 0) ? Cwd() : "") : ""}'
+  let &statusline .= '%{winwidth(0) > 100 ? (get(g:, "show_cwd", 0) ? Cwd() : "") : ""}'
   " ft:fenc:ff
   let &statusline .= '%*'
   let &statusline .= '%{&filetype}:'
