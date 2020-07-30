@@ -12,9 +12,12 @@
 	pager = delta
 	excludesfile = ~/.gitignore
 	bigFileThreshold = 256m
-	compression = 0
-	losecompression = 0
+	compression = 1
+	losecompression = 1
 	autocrlf = false
+
+[log]
+	abbrevCommit = 8
 
 [alias]
 	b    = branch
@@ -45,6 +48,7 @@
 	st   = status
 	sw   = switch
 	sup  = !git stash && git up
+	shown = !git show | delta --navigate
 	up   = pull --rebase
 	fep  = fetch --prune
 	fea  = fetch --all
@@ -58,11 +62,12 @@
 [delta]
 	features = decorations
 	whitespace-error-style = 22 reverse
-	side-by-side = true
+	side-by-side = false
 	syntax-theme = Dracula
+	; navigate = true
 
 [delta "decorations"]
-	commit-decoration-style = bold yellow box ul
+	commit-decoration-style = yellow box ul
 	file-style = bold yellow ul
 	file-decoration-style = none
 
