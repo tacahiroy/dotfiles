@@ -176,7 +176,7 @@ if exists('*minpac#init')
 
     function! s:on_lsp_buffer_enabled() abort
         setlocal omnifunc=lsp#complete
-        setlocal signcolumn=yes
+        setlocal signcolumn=auto
         if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
         nmap <buffer> gd <plug>(lsp-definition)
         nmap <buffer> gr <plug>(lsp-references)
@@ -200,22 +200,22 @@ if exists('*minpac#init')
   call minpac#add('prabirshrestha/asyncomplete.vim')
     let g:asyncomplete_smart_completion = has('lua')
     let g:asyncomplete_auto_popup = 1
+    let g:asyncomplete_popup_delay = 200
     let g:asyncomplete_remove_duplicates = 1
     " let g:asyncomplete_log_file = expand('~/asyncomplete.log')
 
   call minpac#add('prabirshrestha/asyncomplete-lsp.vim')
   call minpac#add('prabirshrestha/asyncomplete-buffer.vim')
     augroup Tacahiroy
-      autocmd VimEnter * call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
+      autocmd User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
             \ 'name': 'buffer',
             \ 'whitelist': ['*'],
             \ 'blacklist': ['go', 'markdown'],
             \ 'completor': function('asyncomplete#sources#buffer#completor'),
             \ 'config': {
-            \    'max_buffer_size': 1048576,
+            \    'max_buffer_size': 5242880,
             \  },
             \ }))
-      " autocmd VimEnter * doautocmd Tacahiroy User asyncomplete_setup
     augroup END
 
   call minpac#add('fatih/vim-go')
@@ -325,16 +325,18 @@ if exists('*minpac#init')
     let g:ctrlp_funky_matchtype = 'path'
     let g:ctrlp_funky_sort_by_mru = 0
     let g:ctrlp_funky_syntax_highlight = 0
-    let g:ctrlp_funky_ruby_chef_words = 0
+    let g:ctrlp_funky_filter_conversions = { 'yaml.ansible': 'ansible' }
 
     let g:ctrlp_funky_nudists = ['php', 'ruby']
 
     nnoremap [Space]fu :CtrlPFunky<Cr>
     nnoremap [Space]uu :execute 'CtrlPFunky ' . fnameescape(expand('<cword>'))<Cr>
 
-  call minpac#add('FelikZ/ctrlp-py-matcher')
-    let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
-    let g:ctrlp_match_current_file = 0 " to include current file in matches
+  if has('python3')
+    call minpac#add('FelikZ/ctrlp-py-matcher')
+      let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
+      let g:ctrlp_match_current_file = 0 " to include current file in matches
+  endif
   "}}}
 
 "{{{ ALE
@@ -348,13 +350,14 @@ if exists('*minpac#init')
     let g:ale_disable_lsp = 0
 
     let g:ale_linters = {'html': ['eslint'],
-                       \ 'python': ['pylint', 'flake8']}
+                       \ 'python': ['pylint', 'flake8'],
+                       \ 'yaml': ['yamllint']}
     let g:ale_fixers = {'python': ['yapf', 'autopep8'],
           \             '*': ['remove_trailing_lines', 'trim_whitespace'],
           \             'Jenkinsfile': ['jenkins_linter'],
           \ }
     let g:ale_fix_on_save = 1
-    let g:ale_yaml_yamllint_options = 'relaxed'
+    let g:ale_yaml_yamllint_options = '-c $HOME/.config/yamllint/ansible.yml'
 
     let g:ale_history_log_output = 1
     let g:ale_use_global_executables = 1
@@ -385,15 +388,28 @@ if exists('*minpac#init')
   call minpac#add('mechatroner/rainbow_csv')
   call minpac#add('jremmen/vim-ripgrep')
 
-  call minpac#add('SirVer/ultisnips')
-     " Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
-     let g:UltiSnipsExpandTrigger="<tab>"
-     let g:UltiSnipsJumpForwardTrigger="<c-b>"
-     let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+  if has('python3')
+    call minpac#add('SirVer/ultisnips')
+      let g:UltiSnipsExpandTrigger = "<C-e>"
+      let g:UltiSnipsListSnippets = "<C-j>"
+      let g:UltiSnipsJumpForwardTrigger = "<C-f>"
+      let g:UltiSnipsJumpBackwardTrigger = "<C-b>"
 
-     " If you want :UltiSnipsEdit to split your window.
-     let g:UltiSnipsEditSplit="vertical"
-  call minpac#add('honza/vim-snippets')
+      " If you want :UltiSnipsEdit to split your window.
+      let g:UltiSnipsEditSplit = "vertical"
+
+    call minpac#add('honza/vim-snippets')
+
+    call minpac#add('prabirshrestha/asyncomplete-ultisnips.vim')
+      augroup Tacahiroy
+        autocmd User asyncomplete_setup
+              \ call asyncomplete#register_source(asyncomplete#sources#ultisnips#get_source_options({
+              \ 'name': 'ultisnips',
+              \ 'whitelist': ['*'],
+              \ 'completor': function('asyncomplete#sources#ultisnips#completor'),
+              \ }))
+      augroup END
+  endif
 
   call minpac#add('mattn/emmet-vim')
 
@@ -592,8 +608,6 @@ augroup Tacahiroy
   autocmd VimEnter * call s:set_statusline()
 augroup END
 " }}}
-
-
 " * mappings "{{{
 cnoremap <C-p> <Up>
 cnoremap <C-n> <Down>
@@ -823,7 +837,7 @@ augroup Tacahiroy
   autocmd VimEnter * call lexima#add_rule({'char': '"', 'at': '\%#\w', 'input': '"'})
   autocmd VimEnter * call lexima#add_rule({'char': "'", 'at': '\%#\w', 'input': "'"})
 
-  " autocmd BufRead,BufNewFile */playbooks/*.yml,*/tasks/*.yml,*/handlers/*.yml,*/roles/*.yml set filetype=yaml.ansible
+  autocmd BufRead,BufNewFile */playbooks/*.yml,*/tasks/*.yml,*/handlers/*.yml set filetype=yaml.ansible
 
   autocmd BufEnter ControlP let b:ale_enabled = 0
   autocmd BufReadPost * if !search('\S', 'cnw') | let &l:fileencoding = &encoding | endif

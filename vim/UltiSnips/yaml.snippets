@@ -1,0 +1,39 @@
+priority 1
+
+snippet playbook "Simple Ansible playbook"
+---
+- hosts: ${1:localhost}
+	connection: ${2:local}
+	become: yes
+	become_user: root
+	${0}
+endsnippet
+
+snippet template "Ansible template"
+- name: ${1:name}
+	template:
+		src: ${2}
+		dest: ${3}
+		mode: ${4}
+		owner: ${5}
+		group: ${6}
+endsnippet
+
+snippet debug "Ansible debug"
+- name: ${1:debug}
+	debug:
+		var: ${2:var-name}
+endsnippet
+
+snippet debug "Ansible debug"
+- name: ${1:debug}
+	debug:
+		var: ${2:var-name}
+endsnippet
+
+snippet block "Ansible block"
+- name: ${1:block-name}
+	block:
+
+		- name: ${2}
+endsnippet
