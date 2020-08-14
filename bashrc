@@ -17,7 +17,7 @@ if [ -f "$HOME/.bashrc.local" ]; then
 fi
 
 if [ -e "$HOME/.dircolors" ]; then
-    eval $(dircolors -b "$HOME/.dircolors")
+    eval "$(dircolors -b "$HOME/.dircolors")"
 fi
 
 #--------------------
