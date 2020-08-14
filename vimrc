@@ -392,8 +392,8 @@ if exists('*minpac#init')
     call minpac#add('SirVer/ultisnips')
       let g:UltiSnipsExpandTrigger = "<C-e>"
       let g:UltiSnipsListSnippets = "<C-j>"
-      let g:UltiSnipsJumpForwardTrigger = "<C-f>"
-      let g:UltiSnipsJumpBackwardTrigger = "<C-b>"
+      let g:UltiSnipsJumpForwardTrigger = "<C-y>"
+      let g:UltiSnipsJumpBackwardTrigger = "<C-j>"
 
       " If you want :UltiSnipsEdit to split your window.
       let g:UltiSnipsEditSplit = "vertical"
