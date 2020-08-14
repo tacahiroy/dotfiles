@@ -9,20 +9,14 @@ snippet playbook "Simple Ansible playbook"
 	${0}
 endsnippet
 
-snippet template "Ansible template"
+snippet tpl "Ansible template"
 - name: ${1:name}
 	template:
-		src: ${2}
-		dest: ${3}
-		mode: ${4}
-		owner: ${5}
-		group: ${6}
-endsnippet
-
-snippet debug "Ansible debug"
-- name: ${1:debug}
-	debug:
-		var: ${2:var-name}
+		src: ${3:$2.j2}
+		dest: ${2}
+		mode: ${4:0664}
+		owner: ${5:root}
+		group: ${6:root}
 endsnippet
 
 snippet debug "Ansible debug"
@@ -36,4 +30,19 @@ snippet block "Ansible block"
 	block:
 
 		- name: ${2}
+endsnippet
+
+snippet assert "Ansible assert"
+- name: ${1:Assert}
+	assert:
+		that:
+			- ${2:assertion}
+	${3:fail_msg: Assertion failed for $1}
+	${4:success_msg:}
+endsnippet
+
+snippet stat "Ansible stat"
+	- stat:
+			path: ${1}
+		register: ${2:stat_$1}
 endsnippet
