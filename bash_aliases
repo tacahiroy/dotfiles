@@ -24,6 +24,10 @@ alias gu='git up'
 alias gl='git log'
 alias pyttpd='python3 -m http.server'
 alias tfm=terraform
+alias lines='grep -c ""'
+if [ "${MYOS}" = "wsl" ]; then
+    alias rg='rg -j1'
+fi
 
 if type _z >/dev/null 2>&1; then
     alias jc='_z -c'
