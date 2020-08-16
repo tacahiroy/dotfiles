@@ -29,9 +29,9 @@ case $- in
       *) return;;
 esac
 
-case "$(uname -a)" in
+case "$(uname -r)" in
     MSYS*) MYOS=msys;;
-    *Microsoft*) MYOS=wsl;;
+    *microsoft*|*Microsoft*) MYOS=wsl;;
     *Darwin*) MYOS=macos;;
     *) MYOS=linux;;
 esac
