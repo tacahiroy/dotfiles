@@ -12,10 +12,6 @@ if [ -f "$HOME/.bash/prompt.sh" ]; then
     set_prompt "${BRIGHT_RED}" "${GREEN}" "${BLUE}"
 fi
 
-if [ -f "$HOME/.bashrc.local" ]; then
-    . "$HOME/.bashrc.local"
-fi
-
 if [ -e "$HOME/.dircolors" ]; then
     eval "$(dircolors -b "$HOME/.dircolors")"
 fi
@@ -88,8 +84,8 @@ setup_plugins() {
     if [ -f "$HOME/.bash/plugins.txt" ]; then
         while read -r a; do
             local _rn _init _repo
-            _rn=$(echo "${a}" | awk -F ' ' '{ print $1 }')
-            _init=$(echo "${a}" | awk -F ' ' '{ print $2 }')
+            _rn=$(echo "${a}" | awk '{ print $1 }')
+            _init=$(echo "${a}" | awk '{ print $2 }')
             _repo="${GIT_ROOT}/${_rn}"
 
             if [ ! -d "$(readlink -f "${_repo}")" ]; then
@@ -168,12 +164,6 @@ fi
     fi
 }
 
-
-if [ -f "$HOME/.bash_aliases" ]; then
-    # shellcheck source=/dev/null
-    . "$HOME/.bash_aliases"
-fi
-
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
@@ -232,6 +222,10 @@ fi
 
 if command -v aws >/dev/null 2>&1; then
     complete -C aws_completer aws
+fi
+
+if [ -f "$HOME/.bashrc.local" ]; then
+    . "$HOME/.bashrc.local"
 fi
 
 [[ -x $(command -v tmux) && -z "$TMUX" && "$USE_TMUX" = yes ]] && {

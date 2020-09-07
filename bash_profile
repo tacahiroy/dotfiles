@@ -27,9 +27,6 @@ fi
 export LANG=en_US.UTF-8
 export SHELL=/bin/bash
 export GIT_ROOT=$HOME/dev/src
-if [ "${IS_MSYS}" = yes ]; then
-    export GOROOT=/mingw64/lib/go
-fi
 GOPATH=$(dirname "${GIT_ROOT}")
 export GOPATH
 export EDITOR=vim
@@ -44,10 +41,6 @@ set_path "$GOPATH/bin"
 set_path "/usr/local/bin" 1
 set_path "$HOME/.yarn/bin"
 set_path "$HOME/.pulumi/bin"
-
-if [ "${IS_MSYS}" = yes ]; then
-    set_path "/mingw64/bin"
-fi
 
 export PATH
 
@@ -67,16 +60,12 @@ fi
 
 # Enable plugin cache dir for Terraform
 export TF_PLUGIN_CACHE_DIR="$HOME/.terraform.d/plugin-cache"
-
 export SHELLCHECK_OPTS="-e SC2016 -e SC1090"
+export GO111MODULE=on
 
-if go version | grep 'go1.1[1-9]' >/dev/null 2>&1; then
-    export GO111MODULE=on
-fi
-
-if [[ "$(uname -s)" =~ MSYS_NT.* ]]; then
-    # export GOROOT=/c/tools/msys64/mingw64/lib/go
-    :
+if [ -f "$HOME/.bash_aliases" ]; then
+    # shellcheck source=/dev/null
+    . "$HOME/.bash_aliases"
 fi
 
 # if running bash
