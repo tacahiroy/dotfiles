@@ -11,7 +11,7 @@ SELECTOR_FILE_PROMPT_OPT="--prompt=FILE> "
 SELECTOR_MRU_PROMPT_OPT="--prompt=MRU> "
 SELECTOR_GIT_REPO_PROMPT_OPT="--prompt=REPO> "
 
-which ghq >/dev/null 2>&1 && IS_GHQ=yes || IS_GHQ=no
+command -v ghq >/dev/null 2>&1 && IS_GHQ=yes || IS_GHQ=no
 
 ghq_root() {
     git config ghq.root | head -1
@@ -19,7 +19,7 @@ ghq_root() {
 
 select_history() {
     local tac
-    if which tac > /dev/null; then
+    if command -v tac > /dev/null; then
         tac="tac"
     else
         tac="tail -r"
@@ -137,6 +137,32 @@ select_git_branch() {
     fi
 }
 
+is_git_repo() {
+    git rev-parse --git-dir >/dev/null 2>&1
+}
+
+select_git_tag() {
+    if ! is_git_repo; then
+        echo Not a git repository
+        return
+    fi
+
+    local _tags
+    local _tag
+
+    _tags="$(git --no-pager tag -l | sort)"
+    _tag="$(echo "${_tags}" | "${F}" "${FO}" --prompt='TAG> ')"
+
+    if [ -n "${_tag}" ]; then
+        if [ "${#READLINE_LINE}" -eq 0 ]; then
+            READLINE_LINE="git checkout ${_tag}"
+        else
+            READLINE_LINE="${READLINE_LINE} ${_tag}"
+        fi
+        READLINE_POINT=${#READLINE_LINE}
+    fi
+}
+
 select_git_branch_all() {
     select_git_branch yes
 }
@@ -149,4 +175,5 @@ bind -x '"\C-gf"':"\"select_file_hist\""
 bind -x '"\C-gr"':"\"select_git_repo\""
 bind -x '"\C-gg"':"\"select_git_branch\""
 bind -x '"\C-ga"':"\"select_git_branch_all\""
+bind -x '"\C-gt"':"\"select_git_tag\""
 # bind -x '"\C-q"':"\"select-ssh\""
