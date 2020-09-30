@@ -1,3 +1,4 @@
+alias ls='ls -F --color=auto'
 alias ll='ls -l'
 alias la='ls -a'
 alias lla='ls -la'
@@ -19,6 +20,7 @@ alias lines='grep -c ""'
 if [ "${MYOS}" = "wsl" ]; then
     alias rg='rg -j1'
 fi
+alias b='cd -'
 
 if type _z >/dev/null 2>&1; then
     alias jc='_z -c'
