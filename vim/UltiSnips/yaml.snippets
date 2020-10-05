@@ -37,8 +37,8 @@ snippet assert "Ansible assert"
 	assert:
 		that:
 			- ${2:assertion}
-	${3:fail_msg: Assertion failed for $1}
-	${4:success_msg:}
+		${3:fail_msg: Assertion failed for $1}
+		${4:success_msg:}
 endsnippet
 
 snippet stat "Ansible stat"
