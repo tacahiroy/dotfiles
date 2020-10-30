@@ -32,8 +32,6 @@ export GOPATH
 export EDITOR=vim
 export PAGER=less
 
-export DISPLAY=:0
-
 set_path "$HOME/bin" 1
 set_path "$HOME/.local/bin"
 set_path "$HOME/.cargo/bin"

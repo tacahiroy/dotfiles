@@ -23,7 +23,6 @@ let s:mac = has('macunix') || has('mac')
 let s:linux = !s:mac && has('unix')
 let s:win = !(s:mac || s:linux) && has('win32') || has('win64')
 let s:grep = executable('rg') ? 'rg' : (executable('ag') ? 'ag' : '')
-let s:grep = 'ag'
 let g:show_cwd = 1
 
 " functions " {{{
@@ -154,218 +153,224 @@ map <Space> [Space]
 " * plugin management "{{{
 silent! packadd minpac
 
-call minpac#init()
+if exists('*minpac#init')
+  call minpac#init()
 
-" minpac must have {'type': 'opt'} so that it can be loaded with `packadd`.
-call minpac#add('k-takata/minpac', {'type': 'opt'})
+  " minpac must have {'type': 'opt'} so that it can be loaded with `packadd`.
+  call minpac#add('k-takata/minpac', {'type': 'opt'})
 
-call minpac#add('tpope/vim-fugitive')
+  call minpac#add('tpope/vim-fugitive')
 
-" Completion {{{
-" call minpac#add('prabirshrestha/async.vim')
-call minpac#add('prabirshrestha/vim-lsp')
-  let g:lsp_use_lua = (has('lua') && has('patch-8.2.0775'))
-  let g:lsp_async_completion = 1 "{{{ vim-lsp
-  let g:lsp_diagnostics_enabled = 0
-  let g:lsp_diagnostics_echo_cursor = 0
-  let g:lsp_signs_enabled = 0
-  let g:lsp_signs_error = {'text': '🤬'}
-  let g:lsp_signs_warning = {'text': '🤢'}
-  let g:lsp_signs_hint = {'text': '🐑'}
-  let g:lsp_log_verbose = 0
-  " let g:lsp_log_file = expand('~/vim-lsp.log')
+  " Completion {{{
+  call minpac#add('prabirshrestha/async.vim')
+  call minpac#add('prabirshrestha/vim-lsp')
+    let g:lsp_use_lua = (has('lua') && has('patch-8.2.0775'))
+    let g:lsp_async_completion = 1 "{{{ vim-lsp
+    let g:lsp_diagnostics_enabled = 0
+    let g:lsp_diagnostics_echo_cursor = 0
+    let g:lsp_signs_enabled = 1
+    let g:lsp_signs_error = {'text': '🤬'}
+    let g:lsp_signs_warning = {'text': '🤢'}
+    let g:lsp_signs_hint = {'text': '🐑'}
+    let g:lsp_log_verbose = 0
+    " let g:lsp_log_file = expand('~/vim-lsp.log')
+    nnoremap <Leader>lr :<C-u>LspReferences<Cr>
+    nnoremap <Leader>lR :<C-u>LspRename<Cr>
+    nnoremap yuw :call setreg('"', toupper(expand('<cword>')))<Cr>
 
-  function! s:on_lsp_buffer_enabled() abort
-      setlocal omnifunc=lsp#complete
-      setlocal signcolumn=auto
-      if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
-      nmap <buffer> gd <plug>(lsp-definition)
-      nmap <buffer> <Leader>rr <plug>(lsp-references)
-      nmap <buffer> <Leader>ri <plug>(lsp-implementation)
-      nmap <buffer> <Leader>rt <plug>(lsp-type-definition)
-      nmap <buffer> <leader>rm <plug>(lsp-rename)
-      nmap <buffer> <Leader>rp <Plug>(lsp-previous-diagnostic)
-      nmap <buffer> <Leader>rn <Plug>(lsp-next-diagnostic)
-      nmap <buffer> <Leader>rw <Plug>(lsp-workspace-symbol)
-      nmap <buffer> K <plug>(lsp-hover)
-  endfunction
+    function! s:on_lsp_buffer_enabled() abort
+        setlocal omnifunc=lsp#complete
+        setlocal signcolumn=auto
+        if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
+        nmap <buffer> gd <plug>(lsp-definition)
+        nmap <buffer> gr <plug>(lsp-references)
+        nmap <buffer> gI <plug>(lsp-implementation)
+        nmap <buffer> gt <plug>(lsp-type-definition)
+        nmap <buffer> <leader>rn <plug>(lsp-rename)
+        nmap <buffer> [g <Plug>(lsp-previous-diagnostic)
+        nmap <buffer> ]g <Plug>(lsp-next-diagnostic)
+        nmap <buffer> K <plug>(lsp-hover)
+    endfunction
 
-  augroup lsp_install
-      autocmd!
-      " call s:on_lsp_buffer_enabled only for languages that has the server registered.
-      autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
-  augroup END
+    augroup lsp_install
+        autocmd!
+        " call s:on_lsp_buffer_enabled only for languages that has the server registered.
+        autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+    augroup END
+  "}}}
 
-  augroup LspEFM
-    au!
-    autocmd User lsp_setup call lsp#register_server({
-        \ 'name': 'efm-langserver',
-        \ 'cmd': {server_info->['efm-langserver', '-c=$HOME/.config/efm-langserver/config.yaml']},
-        \ 'whitelist': ['markdown'],
-        \ })
-  augroup END
-"}}}
+  call minpac#add('mattn/vim-lsp-settings')
 
-call minpac#add('mattn/vim-lsp-settings')
+  call minpac#add('prabirshrestha/asyncomplete.vim')
+    let g:asyncomplete_smart_completion = has('lua')
+    let g:asyncomplete_auto_popup = 1
+    let g:asyncomplete_auto_completeopt = 1
+    let g:asyncomplete_popup_delay = 200
+    let g:asyncomplete_remove_duplicates = 1
+    " let g:asyncomplete_log_file = expand('~/asyncomplete.log')
 
-call minpac#add('prabirshrestha/asyncomplete.vim')
-  let g:asyncomplete_smart_completion = has('lua')
-  let g:asyncomplete_auto_popup = 1
-  let g:asyncomplete_popup_delay = 200
-  let g:asyncomplete_remove_duplicates = 1
-  " let g:asyncomplete_log_file = expand('~/asyncomplete.log')
+  call minpac#add('prabirshrestha/asyncomplete-lsp.vim')
+  call minpac#add('prabirshrestha/asyncomplete-buffer.vim')
+    augroup Tacahiroy
+      autocmd User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
+            \ 'name': 'buffer',
+            \ 'whitelist': ['*'],
+            \ 'blacklist': ['go', 'python', 'markdown'],
+            \ 'completor': function('asyncomplete#sources#buffer#completor'),
+            \ 'config': {
+            \    'max_buffer_size': 5242880,
+            \  },
+            \ }))
+    augroup END
 
-call minpac#add('prabirshrestha/asyncomplete-lsp.vim')
-call minpac#add('prabirshrestha/asyncomplete-buffer.vim')
-  augroup Tacahiroy
-    autocmd User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
-          \ 'name': 'buffer',
-          \ 'whitelist': ['*'],
-          \ 'blacklist': ['go', 'markdown'],
-          \ 'completor': function('asyncomplete#sources#buffer#completor'),
-          \ 'config': {
-          \    'max_buffer_size': 5242880,
-          \  },
-          \ }))
-  augroup END
+  call minpac#add('fatih/vim-go')
+    let g:go_def_mode = 'gopls'
+    let g:go_info_mode = 'gopls'
+    let g:go_highlight_diagnostic_errors=0
+    let g:go_highlight_diagnostic_warnings=0
 
-call minpac#add('fatih/vim-go')
-  let g:go_def_mode = 'gopls'
-  let g:go_info_mode = 'gopls'
-  let g:go_gopls_enabled = 1
-  let g:go_highlight_diagnostic_errors = 0
-  let g:go_highlight_diagnostic_warnings = 0
+  call minpac#add('stephpy/vim-yaml')
+  call minpac#add('cohama/lexima.vim')
+    " let g:lexima_no_default_rules = 1
+    let g:lexima_enable_space_rules = 0
+    let g:lexima_enable_endwise_rule = 1
 
-call minpac#add('stephpy/vim-yaml')
-call minpac#add('cohama/lexima.vim')
-  " let g:lexima_no_default_rules = 1
-  let g:lexima_enable_space_rules = 0
-  let g:lexima_enable_endwise_rule = 1
+  call minpac#add('bkad/CamelCaseMotion')
 
-call minpac#add('bkad/CamelCaseMotion')
+  call minpac#add('godlygeek/tabular')
+  call minpac#add('luochen1990/rainbow')
+    let g:rainbow_active = 1
+    let g:rainbow_conf = {}
+    let g:rainbow_conf.guifgs = ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick']
+    let g:rainbow_conf.ctermfgs = ['darkblue', 'darkyellow', 'darkgreen', 'darkgray', 'darkmagenta']
+    let g:rainbow_conf.operators = '_,_'
+    let g:rainbow_conf.parentheses = ['start=/(/ end=/)/ fold', 'start=/\[/ end=/\]/ fold', 'start=/{/ end=/}/ fold']
+    let g:rainbow_conf.separately = { '*': {} }
 
-call minpac#add('godlygeek/tabular')
-call minpac#add('luochen1990/rainbow')
-  let g:rainbow_active = 1
-  let g:rainbow_conf = {}
-  let g:rainbow_conf.guifgs = ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick']
-  let g:rainbow_conf.ctermfgs = ['darkblue', 'darkyellow', 'darkgreen', 'darkgray', 'darkmagenta']
-  let g:rainbow_conf.operators = '_,_'
-  let g:rainbow_conf.parentheses = ['start=/(/ end=/)/ fold', 'start=/\[/ end=/\]/ fold', 'start=/{/ end=/}/ fold']
-  let g:rainbow_conf.separately = { '*': {} }
+  call minpac#add('benjifisher/matchit.zip')
+  call minpac#add('tpope/vim-commentary')
+    nmap [Space]c gcc
+    nmap [Space]yc yygccp
+    xmap [Space]c gc
+    xmap [Space]yc ygvgcgv<Esc>p
 
-call minpac#add('benjifisher/matchit.zip')
-call minpac#add('tpope/vim-commentary')
-  nmap [Space]c gcc
-  nmap [Space]yc yygccp
-  xmap [Space]c gc
-  xmap [Space]yc ygvgcgv<Esc>p
-
-call minpac#add('tpope/vim-surround')
-  nmap ye ys$
-  xmap s <Plug>VSurround
+  call minpac#add('tpope/vim-surround')
+    nmap ye ys$
+    xmap s <Plug>VSurround
 
 " {{{ ctrlp.vim
-call minpac#add('ctrlpvim/ctrlp.vim')
-  let g:ctrlp_by_filename = 0
-  let g:ctrlp_map = '<Space>e'
-  let g:ctrlp_cmd = 'CtrlP'
-  let g:ctrlp_switch_buffer = 'Et'
-  let g:ctrlp_tabpage_position = 'ac'
-  let g:ctrlp_working_path_mode = 'ra'
-  let g:ctrlp_match_window = 'bottom,order:ttb,min:1,max10,results:50'
-  let g:ctrlp_max_height = 20
-  let g:ctrlp_clear_cache_on_exit = 1
-  let g:ctrlp_follow_symlinks = 1
-  let g:ctrlp_max_files = 10000
-  let g:ctrlp_max_depth = 10
-  let g:ctrlp_show_hidden = 0
-  let g:ctrlp_mruf_max = 1024
-  let g:ctrlp_mruf_tilde_homedir = 1
-  let g:ctrlp_mruf_exclude = 'COMMIT_EDITMSG'
-  let g:ctrlp_mruf_default_order = 1
-  let g:ctrlp_path_nolim = 0
-  " Set delay to prevent extra search
-  let g:ctrlp_lazy_update = 200
-  let g:ctrlp_brief_prompt = 1
-  let g:ctrlp_key_loop = 1
-  let g:ctrlp_use_caching = 0
+  call minpac#add('ctrlpvim/ctrlp.vim')
+    let g:ctrlp_by_filename = 0
+    let g:ctrlp_map = '<Space>e'
+    let g:ctrlp_cmd = 'CtrlP'
+    let g:ctrlp_switch_buffer = 'Et'
+    let g:ctrlp_tabpage_position = 'ac'
+    let g:ctrlp_working_path_mode = 'ra'
+    let g:ctrlp_match_window = 'bottom,order:ttb,min:1,max10,results:50'
+    let g:ctrlp_max_height = 20
+    let g:ctrlp_clear_cache_on_exit = 1
+    let g:ctrlp_follow_symlinks = 1
+    let g:ctrlp_max_files = 10000
+    let g:ctrlp_max_depth = 10
+    let g:ctrlp_show_hidden = 0
+    let g:ctrlp_mruf_max = 1024
+    let g:ctrlp_mruf_tilde_homedir = 1
+    let g:ctrlp_mruf_exclude = 'COMMIT_EDITMSG'
+    let g:ctrlp_mruf_default_order = 1
+    let g:ctrlp_path_nolim = 0
+    " Set delay to prevent extra search
+    let g:ctrlp_lazy_update = 200
+    let g:ctrlp_brief_prompt = 1
+    let g:ctrlp_key_loop = 1
+    let g:ctrlp_use_caching = 0
 
-  if s:grep ==# 'rg'
-    let g:ctrlp_user_command = 'rg %s -i --files --no-heading --max-depth 10'
-  elseif s:grep ==# 'ag'
-    let g:ctrlp_user_command = 'ag %s -g "" --depth 10'
-  elseif s:grep ==# ''
-    if s:linux || s:mac
-      let g:ctrlp_user_command = 'find %s -type f'
-    else
-      let g:ctrlp_user_command = 'dir %s /-n /b /s /a-d'
+    if s:grep ==# 'rg'
+      let g:ctrlp_user_command = 'rg %s -i --files --no-heading --max-depth 10'
+    elseif s:grep ==# 'ag'
+      let g:ctrlp_user_command = 'ag %s -g "" --depth 10'
+    elseif s:grep ==# ''
+      if s:linux || s:mac
+        let g:ctrlp_user_command = 'find %s -type f'
+      else
+        let g:ctrlp_user_command = 'dir %s /-n /b /s /a-d'
+      endif
     endif
+
+    let g:ctrlp_prompt_mappings = {
+      \ 'AcceptSelection("e")': ['<Cr>'],
+      \ 'AcceptSelection("h")': ['<C-x>'],
+      \ 'AcceptSelection("t")': ['<C-t>', '<C-Cr>'],
+      \ 'AcceptSelection("v")': ['<C-v>'],
+      \ 'PrtSelectMove("j")':   ['<C-n>'],
+      \ 'PrtSelectMove("k")':   ['<C-p>'],
+      \ 'PrtHistory(-1)':       ['<Up>'],
+      \ 'PrtHistory(1)':        ['<Down>'],
+      \ 'CreateNewFile()':      ['<C-y>'],
+      \ }
+
+    let dir = ['\.git', '\.hg$', '\.svn$', '\.vimundo$', '\.cache/ctrlp$',
+          \    '\.rbenv', '\.gem', 'backup', 'Documents', $TMPDIR,
+          \    'vendor']
+    let g:ctrlp_custom_ignore = {
+      \ 'dir': '\v[\/]?(' . join(dir, '|') . ')',
+      \ 'file': '\v(\.exe|\.so|\.dll|\.DS_Store|\.db|COMMIT_EDITMSG)$'
+      \ }
+
+    nnoremap [Space]fl :CtrlPBuffer<Cr>
+    nnoremap [Space]fm :CtrlPMRU<Cr><F5>
+    nnoremap [Space]fi :CtrlPLine<Cr>
+    nnoremap [Space]f. :CtrlPCurWD<Cr>
+    nnoremap [Space]f, :CtrlPCurFile<Cr>
+    nnoremap [Space]fr :CtrlPRTS<Cr>
+    nnoremap [Space]fq :CtrlPQuickfix<Cr>
+
+  call minpac#add('tacahiroy/ctrlp-funky', { 'frozen': 1 })
+    let g:ctrlp_funky_debug = 0
+    let g:ctrlp_funky_use_cache = 0
+    let g:ctrlp_funky_matchtype = 'path'
+    let g:ctrlp_funky_sort_by_mru = 0
+    let g:ctrlp_funky_syntax_highlight = 0
+    let g:ctrlp_funky_filter_conversions = { 'yaml.ansible': 'ansible' }
+
+    let g:ctrlp_funky_nudists = ['php', 'ruby']
+
+    nnoremap [Space]fu :CtrlPFunky<Cr>
+    nnoremap [Space]uu :execute 'CtrlPFunky ' . fnameescape(expand('<cword>'))<Cr>
+
+  if has('python3')
+    call minpac#add('FelikZ/ctrlp-py-matcher')
+      let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
+      let g:ctrlp_match_current_file = 0 " to include current file in matches
   endif
-
-  let g:ctrlp_prompt_mappings = {
-    \ 'AcceptSelection("e")': ['<Cr>'],
-    \ 'AcceptSelection("h")': ['<C-x>'],
-    \ 'AcceptSelection("t")': ['<C-t>', '<C-Cr>'],
-    \ 'AcceptSelection("v")': ['<C-v>'],
-    \ 'PrtSelectMove("j")':   ['<C-n>'],
-    \ 'PrtSelectMove("k")':   ['<C-p>'],
-    \ 'PrtHistory(-1)':       ['<Up>'],
-    \ 'PrtHistory(1)':        ['<Down>'],
-    \ 'CreateNewFile()':      ['<C-y>'],
-    \ }
-
-  nnoremap [Space]fl :CtrlPBuffer<Cr>
-  nnoremap [Space]fm :CtrlPMRU<Cr><F5>
-  nnoremap [Space]fi :CtrlPLine<Cr>
-  nnoremap [Space]f. :CtrlPCurWD<Cr>
-  nnoremap [Space]f, :CtrlPCurFile<Cr>
-  nnoremap [Space]fr :CtrlPRTS<Cr>
-  nnoremap [Space]fq :CtrlPQuickfix<Cr>
-
-call minpac#add('tacahiroy/ctrlp-funky', { 'frozen': 1 })
-  let g:ctrlp_funky_debug = 0
-  let g:ctrlp_funky_use_cache = 0
-  let g:ctrlp_funky_matchtype = 'path'
-  let g:ctrlp_funky_sort_by_mru = 0
-  let g:ctrlp_funky_syntax_highlight = 0
-  let g:ctrlp_funky_filter_conversions = { 'yaml.ansible': 'ansible' }
-
-  let g:ctrlp_funky_nudists = ['php', 'ruby']
-
-  nnoremap [Space]fu :CtrlPFunky<Cr>
-  nnoremap [Space]uu :execute 'CtrlPFunky ' . fnameescape(expand('<cword>'))<Cr>
-
-if has('python3')
-  call minpac#add('FelikZ/ctrlp-py-matcher')
-    let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
-    let g:ctrlp_match_current_file = 0 " to include current file in matches
-endif
+  "}}}
 
 "{{{ ALE
   call minpac#add('dense-analysis/ale')
     let g:ale_enabled = 1
     let g:ale_lint_on_text_changed = 'never'
+    let g:ale_lint_on_insert_leave = 0
     let g:ale_set_loclist = 0
     let g:ale_set_quickfix = 1
-    let g:ale_disable_lsp = 1
+    let g:ale_python_auto_pipenv = 1
+    let g:ale_python_flake8_auto_pipenv = 1
+    let g:ale_python_pylint_options = '--rcfile=pylint.rc'
+    let g:ale_disable_lsp = 0
+
+    let g:ale_linters = {'html': ['eslint'],
+                       \ 'python': ['pylint'],
+                       \ 'yaml': ['yamllint']}
+    let g:ale_fixers = { 'python': ['black', 'isort'],
+          \             '*': ['remove_trailing_lines', 'trim_whitespace'],
+          \             'Jenkinsfile': ['jenkins_linter'],
+          \ }
+    let g:ale_fix_on_save = 1
+    let g:ale_yaml_yamllint_options = '-c $HOME/.config/yamllint/ansible.yml'
 
     let g:ale_history_log_output = 1
     let g:ale_use_global_executables = 1
     let g:ale_fix_on_save = 1
-    let g:ale_completion_enabled = 0
-
-    let g:ale_linters = {'html': ['eslint'],
-                       \ 'python': ['pyls', 'flake8'],
-                       \ 'yaml': ['yamllint']}
-    let g:ale_fixers = {'python': ['black', 'yapf'],
-          \             '*': ['remove_trailing_lines', 'trim_whitespace'],
-          \             'Jenkinsfile': ['jenkins_linter'],
-          \ }
-
-    let g:ale_python_auto_pipenv = 1
-    let g:ale_python_flake8_auto_pipenv = 1
-    let g:ale_yaml_yamllint_options = '-c $HOME/.config/yamllint/ansible.yml'
+    let g:ale_completion_enabled = 1
+    let g:ale_open_list = 1
 
     function! LinterStatus() abort
       let l:counts = ale#statusline#Count(bufnr(''))
@@ -383,8 +388,8 @@ endif
 
   call minpac#add('Yggdroot/indentLine')
 
-  " call minpac#add('sheerun/vim-polyglot')
-  "   let g:polyglot_disabled = ['markdown']
+  call minpac#add('sheerun/vim-polyglot')
+    let g:polyglot_disabled = ['markdown']
 
   call minpac#add('tacahiroy/vim-colors-isotake')
   call minpac#add('mechatroner/rainbow_csv')
@@ -418,8 +423,7 @@ endif
   if filereadable(expand('~/.vimrc.plugins'))
     source ~/.vimrc.plugins
   endif
-
-  packload
+endif
 
 " Define user commands for updating/cleaning the plugins.
 " Each of them loads minpac, reloads .vimrc to register the
@@ -429,7 +433,7 @@ command! PackClean  packadd minpac | source $MYVIMRC | call minpac#clean()
 command! PackStatus packadd minpac | source $MYVIMRC | call minpac#status()
 "}}}
 " set completeopt=preview,menuone,noinsert,noselect
-set completeopt+=preview"}}}
+set completeopt+=preview
 
 " Super simple note taking
 let g:note_path = expand('~/dev/memo')
@@ -445,7 +449,7 @@ nnoremap [Space]ml :execute 'CtrlP ' . g:note_path<Cr><F5>
   sunmap W
   sunmap B
   sunmap E
-" }}} plugin management
+" }}}
 
 " * options {{{
 set ambiwidth=double
@@ -716,7 +720,6 @@ endfunction
 nnoremap <silent> [Toggle]m :let &mouse = empty(&mouse) ? 'a' : ''<Cr>
 nnoremap <silent> [Toggle]p :set paste!<Cr>
 nnoremap <silent> [Toggle]l :set list!<Cr>
-nnoremap <silent> [Toggle]s :set spell!<Cr>
 nnoremap <silent> [Toggle]n :<C-u>silent call <SID>toggle_line_number()<Cr>
 nnoremap <silent> [Toggle]r :set relativenumber!<Cr>
 nnoremap <silent> [Toggle]w :let g:show_cwd = abs(get(g:, 'show_cwd', 0) - 1)<Cr>
@@ -863,7 +866,7 @@ augroup Tacahiroy
   autocmd FileType make setlocal list
   autocmd FileType make setlocal iskeyword+=-
   " autocmd BufRead,BufNewFile *.groovy,*.jenkins,Jenkinsfile* setlocal filetype=groovy
-  autocmd BufRead,BufNewFile *.jenkins setfiletype groovy
+  autocmd BufRead,BufNewFile *.jenkins setfiletype Jenkinsfile
   autocmd FileType groovy,jenkinsfile setlocal autoindent smartindent
 
   augroup PersistentUndo

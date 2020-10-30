@@ -9,14 +9,24 @@ snippet playbook "Simple Ansible playbook"
 	${0}
 endsnippet
 
-snippet tpl "Ansible template"
+snippet template "Ansible template"
 - name: ${1:name}
 	template:
 		src: ${3:$2.j2}
 		dest: ${2}
 		mode: ${4:0664}
 		owner: ${5:root}
-		group: ${6:root}
+		group: ${6:$5}
+endsnippet
+
+snippet copy "Ansible copy"
+- name: ${1:name}
+	copy:
+		src: ${3:$2}
+		dest: ${2}
+		mode: ${4:0664}
+		owner: ${5:root}
+		group: ${6:$5}
 endsnippet
 
 snippet debug "Ansible debug"
@@ -45,4 +55,14 @@ snippet stat "Ansible stat"
 	- stat:
 			path: ${1}
 		register: ${2:stat_$1}
+endsnippet
+
+snippet file "Ansible file"
+	- name: ${1}
+		file:
+			path: ${2}
+			mode: ${3:0755}
+			owner: ${4:root}
+			group: ${5:$4}
+			state: ${6:directory}
 endsnippet

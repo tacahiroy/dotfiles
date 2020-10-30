@@ -63,7 +63,7 @@
 	features = decorations
 	whitespace-error-style = 22 reverse
 	side-by-side = false
-	syntax-theme = Dracula
+	; syntax-theme = Dracula
 	; navigate = true
 
 [delta "decorations"]
