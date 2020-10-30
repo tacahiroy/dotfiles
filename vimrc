@@ -180,12 +180,13 @@ call minpac#add('prabirshrestha/vim-lsp')
       setlocal signcolumn=auto
       if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
       nmap <buffer> gd <plug>(lsp-definition)
-      nmap <buffer> gr <plug>(lsp-references)
-      nmap <buffer> gI <plug>(lsp-implementation)
-      nmap <buffer> gt <plug>(lsp-type-definition)
-      nmap <buffer> <leader>rn <plug>(lsp-rename)
-      nmap <buffer> [g <Plug>(lsp-previous-diagnostic)
-      nmap <buffer> ]g <Plug>(lsp-next-diagnostic)
+      nmap <buffer> <Leader>rr <plug>(lsp-references)
+      nmap <buffer> <Leader>ri <plug>(lsp-implementation)
+      nmap <buffer> <Leader>rt <plug>(lsp-type-definition)
+      nmap <buffer> <leader>rm <plug>(lsp-rename)
+      nmap <buffer> <Leader>rp <Plug>(lsp-previous-diagnostic)
+      nmap <buffer> <Leader>rn <Plug>(lsp-next-diagnostic)
+      nmap <buffer> <Leader>rw <Plug>(lsp-workspace-symbol)
       nmap <buffer> K <plug>(lsp-hover)
   endfunction
 
@@ -193,6 +194,15 @@ call minpac#add('prabirshrestha/vim-lsp')
       autocmd!
       " call s:on_lsp_buffer_enabled only for languages that has the server registered.
       autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+  augroup END
+
+  augroup LspEFM
+    au!
+    autocmd User lsp_setup call lsp#register_server({
+        \ 'name': 'efm-langserver',
+        \ 'cmd': {server_info->['efm-langserver', '-c=$HOME/.config/efm-langserver/config.yaml']},
+        \ 'whitelist': ['markdown'],
+        \ })
   augroup END
 "}}}
 
@@ -373,8 +383,8 @@ endif
 
   call minpac#add('Yggdroot/indentLine')
 
-  call minpac#add('sheerun/vim-polyglot')
-    let g:polyglot_disabled = ['markdown']
+  " call minpac#add('sheerun/vim-polyglot')
+  "   let g:polyglot_disabled = ['markdown']
 
   call minpac#add('tacahiroy/vim-colors-isotake')
   call minpac#add('mechatroner/rainbow_csv')
