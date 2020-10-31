@@ -90,7 +90,7 @@ function! s:toggle_qf_list()
 endfunction
 
 function! s:xclip()
-  if isdirectory('/mnt/c') && executable('xclip')
+  if isdirectory('/c') && executable('xclip')
     let tmp = tempname()
     call writefile([getreg('"')], tmp)
     call system('xclip -d :0 -i ' . tmp)
@@ -948,6 +948,7 @@ if has('gui_running')
       set renderoptions=type:directx,level:2.0,geom:1,renmode:5,contrast:1,taamode:0
     endif
     inoremap <silent> <M-v> <Esc>:let &paste=1<Cr>a<C-R>=@*<Cr><Esc>:let &paste=0<Cr>a
+
     cnoremap <M-v> <C-R>*
     vnoremap <M-c> "+y
   endif
