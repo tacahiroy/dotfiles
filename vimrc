@@ -387,9 +387,6 @@ call minpac#add('dense-analysis/ale')
 
 call minpac#add('Yggdroot/indentLine')
 
-call minpac#add('sheerun/vim-polyglot')
-  let g:polyglot_disabled = ['markdown']
-
 call minpac#add('tacahiroy/vim-colors-isotake')
 call minpac#add('mechatroner/rainbow_csv')
 call minpac#add('jremmen/vim-ripgrep')
