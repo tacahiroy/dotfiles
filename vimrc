@@ -351,16 +351,17 @@ call minpac#add('dense-analysis/ale')
   let g:ale_set_loclist = 0
   let g:ale_set_quickfix = 1
   let g:ale_python_auto_pipenv = 1
-  let g:ale_python_flake8_auto_pipenv = 1
   let g:ale_python_pylint_options = '--rcfile=pylint.rc'
   let g:ale_disable_lsp = 0
 
   let g:ale_linters = {'html': ['eslint'],
                       \ 'python': ['pylint'],
-                      \ 'yaml': ['yamllint']}
+                      \ 'yaml': ['yamllint'],
+                      \ 'go': ['gopls', 'gobuild', 'govet']}
   let g:ale_fixers = { 'python': ['black', 'isort'],
-        \             '*': ['remove_trailing_lines', 'trim_whitespace'],
-        \             'Jenkinsfile': ['jenkins_linter'],
+        \              'go': ['goimports'],
+        \              '*': ['remove_trailing_lines', 'trim_whitespace'],
+        \              'Jenkinsfile': ['jenkins_linter'],
         \ }
   let g:ale_fix_on_save = 1
   let g:ale_yaml_yamllint_options = '-c $HOME/.config/yamllint/ansible.yml'
@@ -368,7 +369,7 @@ call minpac#add('dense-analysis/ale')
   let g:ale_history_log_output = 1
   let g:ale_use_global_executables = 1
   let g:ale_fix_on_save = 1
-  let g:ale_completion_enabled = 1
+  let g:ale_completion_enabled = 0
   let g:ale_open_list = 1
 
   function! LinterStatus() abort
@@ -744,11 +745,11 @@ nnoremap [Space]_ :<C-u>execute (empty(expand('%')) && !&modified ? 'edit ' : 't
 nnoremap [Space]S :<C-u>source %<Cr>:nohlsearch<Cr>
 
 " global and substitutes
-nnoremap <Leader>g :<C-u>g/
-nnoremap <Leader>v :<C-u>v/
+nnoremap <Leader>G :<C-u>g/
+nnoremap <Leader>V :<C-u>v/
 nnoremap <Leader>s :<C-u>s/
 nnoremap <Leader>S :<C-u>%s/
-xnoremap <Leader>s :s@
+xnoremap <Leader>s :s/
 
 nnoremap <Leader>ta :Tabularize<Space>/
 xnoremap <Leader>ta :Tabularize<Space>/
