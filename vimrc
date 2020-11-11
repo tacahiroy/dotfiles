@@ -350,7 +350,7 @@ call minpac#add('dense-analysis/ale')
   let g:ale_lint_on_insert_leave = 0
   let g:ale_set_loclist = 0
   let g:ale_set_quickfix = 1
-  let g:ale_python_auto_pipenv = 1
+  let g:ale_python_auto_pipenv = 0
   let g:ale_python_pylint_options = '--rcfile=pylint.rc'
   let g:ale_disable_lsp = 0
 
