@@ -6,7 +6,7 @@ snippet playbook "Simple Ansible playbook"
 	connection: ${2:local}
 	become: yes
 	become_user: root
-	${0}
+	${3:tasks:}
 endsnippet
 
 snippet template "Ansible template"
@@ -17,6 +17,7 @@ snippet template "Ansible template"
 		mode: ${4:0664}
 		owner: ${5:root}
 		group: ${6:$5}
+
 endsnippet
 
 snippet copy "Ansible copy"
@@ -27,19 +28,21 @@ snippet copy "Ansible copy"
 		mode: ${4:0664}
 		owner: ${5:root}
 		group: ${6:$5}
+
 endsnippet
 
 snippet debug "Ansible debug"
 - name: ${1:debug}
 	debug:
 		var: ${2:var-name}
+
 endsnippet
 
 snippet block "Ansible block"
 - name: ${1:block-name}
 	block:
 
-		- name: ${2}
+		${2}
 endsnippet
 
 snippet assert "Ansible assert"
@@ -49,12 +52,14 @@ snippet assert "Ansible assert"
 			- ${2:assertion}
 		${3:fail_msg: Assertion failed for $1}
 		${4:success_msg:}
+
 endsnippet
 
 snippet stat "Ansible stat"
 	- stat:
 			path: ${1}
 		register: ${2:stat_$1}
+
 endsnippet
 
 snippet file "Ansible file"
@@ -65,4 +70,16 @@ snippet file "Ansible file"
 			owner: ${4:root}
 			group: ${5:$4}
 			state: ${6:directory}
+
+endsnippet
+
+snippet git "Ansible git"
+- name: ${1}
+	git:
+		repo: ${2:url}
+		dest: ${3:$2}
+		version: ${4:master}
+		clone: ${5:yes}
+		update: ${6:yes}
+
 endsnippet
