@@ -1,0 +1,56 @@
+priority 1
+
+snippet pipeline "Declarative pipeline"
+pipeline {
+  agent {
+    node {
+      label ${1:node}
+    }
+  }
+
+  stages {
+    stage('${2:stage}') {
+      steps {
+        $3
+      }
+    }
+  }
+  ${0}
+}
+endsnippet
+
+snippet stages "Declarative pipeline: stages block"
+stages {
+  stage('${1:stage}') {
+    steps {
+      $2
+    }
+  }
+  ${0}
+}
+endsnippet
+
+snippet stage "Declarative pipeline: stage block"
+stage('${1:stage}') {
+  steps {
+    $2
+  }
+  ${0}
+}
+endsnippet
+
+snippet script "Declarative pipeline: script block"
+script {
+  ${0}
+}
+endsnippet
+
+snippet checkout "Declarative pipeline: git checkout"
+checkout scm: [$class: 'GitSCM',
+                userRemoteConfigs: [[url: '${1:https://github.com/}',
+                                    credentialsId: ${2:jenkins-creds}]],
+                branches: [[name: ${3:branch}]],
+                extensions: [[$class: 'CleanCheckout'],
+                            [$class: 'CheckoutOption']]
+              ], poll: false
+endsnippet
