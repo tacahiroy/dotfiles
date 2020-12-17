@@ -165,8 +165,8 @@ call minpac#add('prabirshrestha/async.vim')
 call minpac#add('prabirshrestha/vim-lsp')
   let g:lsp_use_lua = (has('lua') && has('patch-8.2.0775'))
   let g:lsp_async_completion = 1 "{{{ vim-lsp
-  let g:lsp_diagnostics_enabled = 0
-  let g:lsp_diagnostics_echo_cursor = 0
+  let g:lsp_diagnostics_enabled = 1
+  let g:lsp_diagnostics_echo_cursor = 1
   let g:lsp_signs_enabled = 1
   let g:lsp_signs_error = {'text': '🤬'}
   let g:lsp_signs_warning = {'text': '🤢'}
@@ -229,10 +229,10 @@ call minpac#add('fatih/vim-go')
   let g:go_highlight_diagnostic_warnings=0
 
 call minpac#add('stephpy/vim-yaml')
-call minpac#add('cohama/lexima.vim')
-  " let g:lexima_no_default_rules = 1
-  let g:lexima_enable_space_rules = 0
-  let g:lexima_enable_endwise_rule = 1
+" call minpac#add('cohama/lexima.vim')
+"   let g:lexima_no_default_rules = 1
+"   let g:lexima_enable_space_rules = 0
+"   let g:lexima_enable_endwise_rule = 1
 
 call minpac#add('bkad/CamelCaseMotion')
 
@@ -350,15 +350,16 @@ call minpac#add('dense-analysis/ale')
   let g:ale_lint_on_insert_leave = 0
   let g:ale_set_loclist = 0
   let g:ale_set_quickfix = 1
-  let g:ale_python_auto_pipenv = 0
+  let g:ale_set_balloons = has('balloon_eval_term')
+  let g:ale_python_auto_pipenv = 1
   let g:ale_python_pylint_options = '--rcfile=pylint.rc'
   let g:ale_disable_lsp = 0
 
   let g:ale_linters = {'html': ['eslint'],
-                      \ 'python': ['pylint'],
+                      \ 'python': ['pylint', 'pyls'],
                       \ 'yaml': ['yamllint'],
                       \ 'go': ['gopls', 'gobuild', 'govet']}
-  let g:ale_fixers = { 'python': ['black', 'isort'],
+  let g:ale_fixers = { 'python': ['black', 'isort', 'autoimport'],
         \              'go': ['goimports'],
         \              '*': ['remove_trailing_lines', 'trim_whitespace'],
         \              'Jenkinsfile': ['jenkins_linter'],
@@ -387,10 +388,14 @@ call minpac#add('dense-analysis/ale')
 "}}}
 
 call minpac#add('Yggdroot/indentLine')
+  let g:indentLine_char_list = ['¦', '┆', '│', '⎸', '▏']
 
-call minpac#add('tacahiroy/vim-colors-isotake')
+call minpac#add('michaeljsmith/vim-indent-object')
+
 call minpac#add('mechatroner/rainbow_csv')
 call minpac#add('jremmen/vim-ripgrep')
+
+call minpac#add('tacahiroy/vim-colors-isotake')
 
 if has('python3')
   call minpac#add('SirVer/ultisnips')
@@ -448,7 +453,7 @@ nnoremap [Space]ml :execute 'CtrlP ' . g:note_path<Cr><F5>
 " }}}
 
 " * options {{{
-set ambiwidth=double
+set ambiwidth=single
 set noautoindent
 set nocindent
 set nosmartindent
@@ -568,48 +573,46 @@ set t_Co=256
 
 set formatoptions& formatoptions+=mM formatoptions-=r
 
-function! s:set_statusline()
+function! SetStatusline()
+  let stl = ''
+
   " statusline config
-  let &statusline = '#%n|'
-  let &statusline .= '%<%t%*|%m%r%h%w'
-  let &statusline .= '%{&expandtab ? "" : ">"}%{&l:tabstop}'
-  let &statusline .= '%{search("\\t", "cnw") ? "!" : ""}'
-  let &statusline .= '%{(empty(&mouse) ? "" : "m")}'
-  let &statusline .= '%{(&list ? "L" : "")}'
-  let &statusline .= '%{(empty(&clipboard) ? "" : "c")}'
-  let &statusline .= '%{(&paste ? "p" : "")}'
-  let &statusline .= '|%{&textwidth}'
+  let stl = '#%n|'
+  let stl .= '%<%t%*|%m%r%h%w'
+  let stl .= '%{&expandtab ? "" : ">"}%{&l:tabstop}'
+  let stl .= '%{search("\\t", "cnw") ? "!" : ""}'
+  let stl .= '%{(empty(&mouse) ? "" : "m")}'
+  let stl .= '%{(&list ? "L" : "")}'
+  let stl .= '%{(empty(&clipboard) ? "" : "c")}'
+  let stl .= '%{(&paste ? "p" : "")}'
+  let stl .= '|%{&textwidth}'
 
   if exists('*LinterStatus')
-    let &statusline .= '%{LinterStatus()}'
+    let stl .= '%{LinterStatus()}'
   endif
 
   if exists('*FugitiveStatusline')
-    let &statusline .= '%#Type#'
-    let &statusline .= '%{winwidth(0) > 100 ? fugitive#statusline() : ""}'
-    let &statusline .= '%*'
-  endif
-
-  if exists('*virtualenv#statusline')
-    let g:virtualenv_stl_format = '[%n]'
-    let &statusline .= '%{virtualenv#statusline()}'
+    let stl .= '%#Type#'
+    let stl .= '%{winwidth(0) > 100 ? fugitive#statusline() : ""}'
+    let stl .= '%*'
   endif
 
   " right side from here
-  let &statusline .= ' %='
+  let stl .= ' %='
   " Cwd
-  let &statusline .= '%#CursorLineNr#'
-  let &statusline .= '%{winwidth(0) > 100 ? (get(g:, "show_cwd", 0) ? Cwd() : "") : ""}'
+  let stl .= '%#CursorLineNr#'
+  let stl .= '%{winwidth(0) > 100 ? (get(g:, "show_cwd", 0) ? Cwd() : "") : ""}'
   " ft:fenc:ff
-  let &statusline .= '%*'
-  let &statusline .= '%{&filetype}:'
-  let &statusline .= '%{(&l:fileencoding != "" ? &l:fileencoding : &encoding) . ":" . &fileformat}'
-  let &statusline .= '%-10(%#MoreMsg#%l%#Title#/%L:%c %)%P%*'
-endfunction
+  let stl .= '%*'
+  let stl .= '%{&filetype}:'
+  let stl .= '%{(&l:fileencoding != "" ? &l:fileencoding : &encoding) . ":" . &fileformat}'
+  let stl .= '%-10(%#MoreMsg#%l%#Title#/%L:%c %)%P%*'
 
-augroup Tacahiroy
-  autocmd VimEnter * call s:set_statusline()
-augroup END
+  return stl
+endfunction
+set statusline=%!SetStatusline()
+
+
 " }}}
 " * mappings "{{{
 cnoremap <C-p> <Up>
@@ -836,11 +839,11 @@ endif
 
 " * autocmds "{{{
 augroup Tacahiroy
-  autocmd VimEnter * call lexima#add_rule({'char': '(', 'at': '\%#\w', 'input': '('})
-  autocmd VimEnter * call lexima#add_rule({'char': '"', 'at': '\%#\w', 'input': '"'})
-  autocmd VimEnter * call lexima#add_rule({'char': "'", 'at': '\%#\w', 'input': "'"})
+  " autocmd VimEnter * call lexima#add_rule({'char': '(', 'at': '\%#\w', 'input': '('})
+  " autocmd VimEnter * call lexima#add_rule({'char': '"', 'at': '\%#\w', 'input': '"'})
+  " autocmd VimEnter * call lexima#add_rule({'char': "'", 'at': '\%#\w', 'input': "'"})
 
-  autocmd BufRead,BufNewFile */playbooks/*.yml,*/tasks/*.yml,*/handlers/*.yml set filetype=yaml.ansible
+  autocmd BufRead,BufNewFile */tasks/*.yml,*/vars/*.yml,*/defaults/*.yml,*/handlers/*.yml set filetype=yaml.ansible
 
   autocmd BufEnter ControlP let b:ale_enabled = 0
   autocmd BufReadPost * if !search('\S', 'cnw') | let &l:fileencoding = &encoding | endif
@@ -863,7 +866,7 @@ augroup Tacahiroy
   autocmd FileType make setlocal iskeyword+=-
   " autocmd BufRead,BufNewFile *.groovy,*.jenkins,Jenkinsfile* setlocal filetype=groovy
   autocmd BufRead,BufNewFile *.jenkins setfiletype Jenkinsfile
-  autocmd FileType groovy,jenkinsfile setlocal autoindent smartindent
+  autocmd FileType groovy,Jenkinsfile setlocal autoindent smartindent
 
   augroup PersistentUndo
     autocmd!
