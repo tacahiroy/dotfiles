@@ -307,14 +307,6 @@ call minpac#add('ctrlpvim/ctrlp.vim')
     \ 'CreateNewFile()':      ['<C-y>'],
     \ }
 
-  let dir = ['\.git', '\.hg$', '\.svn$', '\.vimundo$', '\.cache/ctrlp$',
-        \    '\.rbenv', '\.gem', 'backup', 'Documents', $TMPDIR,
-        \    'vendor']
-  let g:ctrlp_custom_ignore = {
-    \ 'dir': '\v[\/]?(' . join(dir, '|') . ')',
-    \ 'file': '\v(\.exe|\.so|\.dll|\.DS_Store|\.db|COMMIT_EDITMSG)$'
-    \ }
-
   nnoremap [Space]fl :CtrlPBuffer<Cr>
   nnoremap [Space]fm :CtrlPMRU<Cr><F5>
   nnoremap [Space]fi :CtrlPLine<Cr>
