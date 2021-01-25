@@ -66,11 +66,6 @@ if [ -f "$HOME/.bash_aliases" ]; then
     . "$HOME/.bash_aliases"
 fi
 
-if [ -f "$HOME/.bash_aliases" ]; then
-    # shellcheck source=/dev/null
-    . "$HOME/.bash_aliases"
-fi
-
 # if running bash
 if [ -n "$BASH_VERSION" ]; then
     # include .bashrc if it exists
