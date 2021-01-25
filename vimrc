@@ -125,7 +125,7 @@ function! s:create_new_note()
     endif
   endwhile
   let title = substitute(ans, '[\t /\\:?\*<>|]', '-', 'g')
-  execute printf('edit %s/%s-%s.md', g:note_path, strftime('%Y-%m-%d'), title)
+  execute printf('edit %s/%s-%s.md', g:tacahiroy_note_path, strftime('%Y-%m-%d'), title)
   call s:ins_note_template(ans)
 endfunction
 "}}}
@@ -429,11 +429,11 @@ command! PackStatus packadd minpac | source $MYVIMRC | call minpac#status()
 set completeopt+=preview
 
 " Super simple note taking
-let g:note_path = expand('~/dev/memo')
+let g:tacahiroy_note_path = expand('~/dev/memo')
 command! -nargs=1 InsertNoteTemplate call <SID>ins_note_template(<q-args>)
 command! -nargs=0 NewNote call <SID>create_new_note()
 nnoremap [Space]mc :NewNote<Cr>
-nnoremap [Space]ml :execute 'CtrlP ' . g:note_path<Cr><F5>
+nnoremap [Space]ml :execute 'CtrlP ' . g:tacahiroy_note_path<Cr><F5>
 
 " plug: camelcasemotion
   map <silent> W <plug>CamelCaseMotion_w
