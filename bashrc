@@ -70,7 +70,7 @@ git_clone() {
 ## plugins
 #
 setup_plugins() {
-    if [ ! -x "${GIT_CMD}" ]; then
+    if [ -z "${GIT_CMD}" ]; then
         echo "Git was not found on your system."
         return 1
     fi
