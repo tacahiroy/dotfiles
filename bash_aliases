@@ -1,3 +1,7 @@
+if alias vim >/dev/null 2>&1; then
+	unalias vim
+fi
+
 alias ls='ls -F --color=auto'
 alias ll='ls -l'
 alias la='ls -a'
@@ -9,7 +13,6 @@ alias gi='git'
 alias vi='vim'
 alias where='command -v'
 alias df='df -h'
-alias git='LC_ALL=en_US.UTF-8 git'
 alias gi='git'
 alias g='git'
 alias gu='git up'
