@@ -1,6 +1,4 @@
 ; vim: ts=4 sw=4 sts=4 noexpandtab
-[include]
-	path = ~/.gitconfig.local
 [color]
 	diff = auto
 	branch = auto
@@ -63,7 +61,7 @@
 	features = decorations
 	whitespace-error-style = 22 reverse
 	side-by-side = false
-	; syntax-theme = Dracula
+	syntax-theme = Dracula
 	; navigate = true
 
 [delta "decorations"]
@@ -93,3 +91,6 @@
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 	required = true
+
+[include]
+	path = ~/.gitconfig.local
