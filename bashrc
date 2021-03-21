@@ -50,10 +50,6 @@ update_plugins() {
   while read -r a; do ghq get -u "${a}" >/dev/null 2>&1; done < "$HOME/.bash/plugins.txt"
 }
 
-is_ssh_agent_running() {
-    pgrep ssh-agent >/dev/null 2>&1
-}
-
 git_clone() {
     local url=$1
     local dest=$2
@@ -196,7 +192,11 @@ case "${MYOS}" in
         fi
         ;;
     wsl)
-        [ -z "${SSH_AUTH_SOCK}" ] && eval "$(ssh-agent)"
+        if [ -x $(command -v ssh-agent-relay) ]; then
+            eval $(ssh-agent-relay)
+        else
+            [ -z "${SSH_AUTH_SOCK}" ] && eval "$(ssh-agent)"
+        fi
 
         if [ -f "$HOME/qmk_utils/activate_wsl.sh" ]; then
             # shellcheck source=/dev/null
