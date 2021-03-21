@@ -1,6 +1,8 @@
 " $HOME/.vimrc
 " Author: Takahiro Yoshihara <tacahiroy@gmail.com>
 
+scriptencoding utf-8
+
 set cpo&vim
 
 if has('vim_starting')
@@ -8,8 +10,6 @@ if has('vim_starting')
   set termencoding=utf-8
 endif
 set verbose=0
-
-scriptencoding utf-8
 
 let g:mapleader = ','
 
