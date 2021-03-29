@@ -18,11 +18,13 @@ set_path() {
     fi
 }
 
-if uname | grep 'MSYS' >/dev/null 2>&1; then
-    IS_MSYS=yes
-else
-    IS_MSYS=no
-fi
+case "$(uname -r)" in
+    MSYS*) PLATFORM=msys;;
+    *microsoft*|*Microsoft*) PLATFORM=wsl;;
+    *Darwin*) PLATFORM=macos;;
+    *) PLATFORM=linux;;
+esac
+export PLATFORM
 
 export LANG=en_US.UTF-8
 export SHELL=/bin/bash
@@ -31,6 +33,7 @@ GOPATH=$(dirname "${GIT_ROOT}")
 export GOPATH
 export EDITOR=vim
 export PAGER=less
+export LESS='-R'
 
 set_path "$HOME/bin" 1
 set_path "$HOME/.local/bin"
@@ -39,6 +42,8 @@ set_path "$GOPATH/bin"
 set_path "/usr/local/bin" 1
 set_path "$HOME/.yarn/bin"
 set_path "$HOME/.pulumi/bin"
+set_path "$HOME/.rbenv/bin"
+set_path "$HOME/.rbenv/shims"
 
 export PATH
 
@@ -64,6 +69,15 @@ export GO111MODULE=on
 if [ -f "$HOME/.bash_aliases" ]; then
     # shellcheck source=/dev/null
     . "$HOME/.bash_aliases"
+fi
+
+export WORKON_HOME=$HOME/.venvs
+export PROJECT_HOME=$HOME/dev/src
+. "$HOME"/.local/bin/virtualenvwrapper.sh
+
+if [ "${PLATFORM}" = wsl ]; then
+    DISPLAY=$(awk '/^nameserver/ { print $2 }' /etc/resolv.conf):0
+    export DISPLAY
 fi
 
 # if running bash

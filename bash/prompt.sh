@@ -23,11 +23,12 @@ set_prompt() {
     local user=$1
     local host=$2
     local cwd=$3
+    local extras=${4:-}
 
     if [ "$(tput colors)" = "256" ]; then
         PS1="${user}\u${RESET}@${host}\h:${cwd}\w${RESET}"
     else
         PS1='\u@\h:\w'
     fi
-    PS1="${PS1}\n$ "
+    PS1="${PS1}${extras}\n$ "
 }

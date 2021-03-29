@@ -50,6 +50,14 @@ select_file_hist() {
     READLINE_POINT=${#READLINE_LINE}
 }
 
+select_file() {
+    local cmd=${READLINE_LINE:-${EDITOR:-vim}}
+
+    READLINE_LINE="${cmd} $(rg --files --sort path | \
+        ${F} "${FO}" "${SELECTOR_FILE_PROMPT_OPT}")"
+    READLINE_POINT=${#READLINE_LINE}
+}
+
 # Search MRU file using ctrlp.vim's MRU file list
 select_ctrlpvim_mru() {
     local ctrlp_mrufile=$HOME/.cache/ctrlp/mru/cache.txt
@@ -167,13 +175,14 @@ select_git_branch_all() {
     select_git_branch yes
 }
 
-bind -x '"\C-r"':"\"select_history\""
-bind -x '"\C-t"':"\"select_ctrlpvim_mru\""
-bind -x '"\C-g,"':"\"select_dir\""
-bind -x '"\C-gd"':"\"select_dir_hist\""
-bind -x '"\C-gf"':"\"select_file_hist\""
-bind -x '"\C-gr"':"\"select_git_repo\""
-bind -x '"\C-gg"':"\"select_git_branch\""
-bind -x '"\C-ga"':"\"select_git_branch_all\""
-bind -x '"\C-gt"':"\"select_git_tag\""
+bind -x '"\C-gh"':"\"select_history\""
+bind -x '"\C-gt"':"\"select_ctrlpvim_mru\""
+bind -x '"\C-gd\,"':"\"select_dir\""
+bind -x '"\C-gD"':"\"select_dir_hist\""
+bind -x '"\C-gf"':"\"select_file\""
+bind -x '"\C-gF"':"\"select_file_hist\""
+bind -x '"\C-g\C-p"':"\"select_git_repo\""
+bind -x '"\C-g\C-b"':"\"select_git_branch\""
+bind -x '"\C-g\C-a"':"\"select_git_branch_all\""
+bind -x '"\C-g\C-t"':"\"select_git_tag\""
 # bind -x '"\C-q"':"\"select-ssh\""

@@ -25,6 +25,8 @@ if [ "${MYOS}" = "wsl" ]; then
 fi
 alias b='cd -'
 alias cda='cd -P .'
+alias wipython='workon ipython && ipython'
+alias wansible='workon ansible'
 
 if type _z >/dev/null 2>&1; then
     alias jc='_z -c'

@@ -4,14 +4,6 @@
 
 umask 0022
 
-#--------------------
-# Prompt
-#--------------------
-if [ -f "$HOME/.bash/prompt.sh" ]; then
-    . "$HOME/.bash/prompt.sh"
-    set_prompt "${BRIGHT_RED}" "${GREEN}" "${BLUE}"
-fi
-
 if [ -e "$HOME/.dircolors" ]; then
     eval "$(dircolors -b "$HOME/.dircolors")"
 fi
@@ -23,13 +15,6 @@ fi
 case $- in
     *i*) ;;
       *) return;;
-esac
-
-case "$(uname -r)" in
-    MSYS*) MYOS=msys;;
-    *microsoft*|*Microsoft*) MYOS=wsl;;
-    *Darwin*) MYOS=macos;;
-    *) MYOS=linux;;
 esac
 
 if command -v ghq >/dev/null 2>&1; then
@@ -59,8 +44,9 @@ git_clone() {
     else
         ghq get "${url}"
     fi
-  [ ! -x "$(command -v ghq)" ] && return
-  while read -r a; do ghq get -u "${a}"; done < "$HOME/.bash/plugins.txt"
+
+    [ ! -x "$(command -v ghq)" ] && return
+    update_plugins
 }
 
 ## plugins
@@ -77,6 +63,9 @@ setup_plugins() {
     fi
 
     export _Z_CMD=j
+    export _Z_OWNER=$USER
+    alias jc='j -c'
+
     if [ -f "$HOME/.bash/plugins.txt" ]; then
         while read -r a; do
             local _rn _init _repo
@@ -97,6 +86,20 @@ setup_plugins() {
 }
 
 setup_plugins
+
+#--------------------
+# Prompt
+#--------------------
+if [ -f "$HOME/.bash/prompt.sh" ]; then
+    git_status="${GIT_ROOT}/github.com/romkatv/gitstatus"
+    if [ -d "${git_status}" ]; then
+        . "${git_status}/gitstatus.prompt.sh"
+        extras='${GITSTATUS_PROMPT:+(${GITSTATUS_PROMPT})}'
+    fi
+
+    . "$HOME/.bash/prompt.sh"
+    set_prompt "${BRIGHT_RED}" "${GREEN}" "${BLUE}" "${extras:-}"
+fi
 
 srol() {
     if [ ! -f meta/main.yml ]; then
@@ -134,7 +137,7 @@ HISTFILESIZE=${HISTSIZE}
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
 
-case "${MYOS}" in
+case "${PLATFORM}" in
     macos)
         ;;
     *)
@@ -184,7 +187,7 @@ cdup() {
     cd ..
 }
 
-case "${MYOS}" in
+case "${PLATFORM}" in
     msys)
         if [ -f "$HOME/qmk_utils/activate_msys2.sh" ]; then
             # shellcheck source=/dev/null
@@ -216,7 +219,7 @@ if [ -f "$HOME/.local/bin/virtualenvwrapper.sh" ]; then
     . "$HOME/.local/bin/virtualenvwrapper.sh"
 fi
 
-if [ "${MYOS}" = wsl ] && [ -x "$HOME/bin/tmp-clean.sh" ]; then
+if [ "${PLATFORM}" = wsl ] && [ -x "$HOME/bin/tmp-clean.sh" ]; then
     bash "$HOME"/bin/tmp-clean.sh
 fi
 
@@ -234,3 +237,5 @@ fi
         exec tmux -l2
     }
 }
+
+complete -C /usr/local/bin/terraform terraform
