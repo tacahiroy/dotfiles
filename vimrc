@@ -15,9 +15,7 @@ let g:mapleader = ','
 
 " Clear all autocmds in the default group
 autocmd!
-augroup Tacahiroy
-  autocmd!
-augroup END
+augroup Tacahiroy | autocmd! | augroup END
 
 let s:mac = has('macunix') || has('mac')
 let s:linux = !s:mac && has('unix')
@@ -165,17 +163,16 @@ call minpac#add('prabirshrestha/async.vim')
 call minpac#add('prabirshrestha/vim-lsp')
   let g:lsp_use_lua = (has('lua') && has('patch-8.2.0775'))
   let g:lsp_async_completion = 1 "{{{ vim-lsp
-  let g:lsp_diagnostics_enabled = 1
+  let g:lsp_diagnostics_float_cursor = 0
   let g:lsp_diagnostics_echo_cursor = 1
-  let g:lsp_signs_enabled = 1
-  let g:lsp_signs_error = {'text': '🤬'}
-  let g:lsp_signs_warning = {'text': '🤢'}
-  let g:lsp_signs_hint = {'text': '🐑'}
+  let g:lsp_diagnostics_enabled = 0
+  let g:lsp_diagnostics_signs_error = {'text': '🤬'}
+  let g:lsp_diagnostics_signs_warning = {'text': '🤢'}
+  let g:lsp_diagnostics_signs_hint = {'text': '🐑'}
   let g:lsp_log_verbose = 0
   " let g:lsp_log_file = expand('~/vim-lsp.log')
   nnoremap <Leader>lr :<C-u>LspReferences<Cr>
   nnoremap <Leader>lR :<C-u>LspRename<Cr>
-  nnoremap yuw :call setreg('"', toupper(expand('<cword>')))<Cr>
 
   function! s:on_lsp_buffer_enabled() abort
       setlocal omnifunc=lsp#complete
@@ -229,10 +226,14 @@ call minpac#add('fatih/vim-go')
   let g:go_highlight_diagnostic_warnings=0
 
 call minpac#add('stephpy/vim-yaml')
-" call minpac#add('cohama/lexima.vim')
-"   let g:lexima_no_default_rules = 1
-"   let g:lexima_enable_space_rules = 0
-"   let g:lexima_enable_endwise_rule = 1
+call minpac#add('cohama/lexima.vim')
+  " let g:lexima_no_default_rules = 1
+  let g:lexima_enable_space_rules = 0
+  let g:lexima_enable_endwise_rules = 1
+
+  autocmd Tacahiroy VimEnter * call lexima#add_rule({'char': '(', 'at': '\%#\w', 'input': '('})
+  autocmd Tacahiroy VimEnter * call lexima#add_rule({'char': '"', 'at': '\%#\w', 'input': '"'})
+  autocmd Tacahiroy VimEnter * call lexima#add_rule({'char': "'", 'at': '\%#\w', 'input': "'"})
 
 call minpac#add('bkad/CamelCaseMotion')
 
@@ -344,8 +345,12 @@ call minpac#add('dense-analysis/ale')
   let g:ale_set_quickfix = 1
   let g:ale_set_balloons = has('balloon_eval_term')
   let g:ale_python_auto_pipenv = 1
-  let g:ale_python_pylint_options = '--rcfile=pylint.rc'
-  let g:ale_disable_lsp = 0
+  let g:ale_python_pylint_options = '--rcfile=.pylintrc'
+  let g:ale_python_pyls_use_global = 1
+  let g:ale_disable_lsp = 1
+
+  " disabling ALE for specific files
+  let g:ale_pattern_options = {'\.php$': {'ale_enabled': 0}}
 
   let g:ale_linters = {'html': ['eslint'],
         \ 'python': ['pylint', 'pyls'],
@@ -380,9 +385,6 @@ call minpac#add('dense-analysis/ale')
   endfunction
 "}}}
 
-call minpac#add('Yggdroot/indentLine')
-  let g:indentLine_char_list = ['¦', '┆', '│', '⎸', '▏']
-
 call minpac#add('michaeljsmith/vim-indent-object')
 
 call minpac#add('mechatroner/rainbow_csv')
@@ -413,8 +415,6 @@ if has('python3')
     augroup END
 endif
 
-call minpac#add('mattn/emmet-vim')
-
 if filereadable(expand('~/.vimrc.plugins'))
   source ~/.vimrc.plugins
 endif
@@ -435,6 +435,20 @@ command! -nargs=1 InsertNoteTemplate call <SID>ins_note_template(<q-args>)
 command! -nargs=0 NewNote call <SID>create_new_note()
 nnoremap [Space]mc :NewNote<Cr>
 nnoremap [Space]ml :execute 'CtrlP ' . g:tacahiroy_note_path<Cr><F5>
+
+"
+function! s:current_syntax_name()
+  let synid = synID(line('.'), col('.'), 1)
+  let synname = synIDattr(synid, 'name')
+  let syntransname = synIDattr(synIDtrans(synid), 'name')
+
+  if synname == syntransname
+    echo printf('%s', synname)
+  else
+    echo printf('%s -> %s', synname, syntransname)
+  endif
+endfunction
+command! -nargs=0 CurrentSyntaxName call <SID>current_syntax_name()
 
 " plug: camelcasemotion
   map <silent> W <plug>CamelCaseMotion_w
@@ -578,6 +592,7 @@ function! SetStatusline()
   let stl .= '%{(&list ? "L" : "")}'
   let stl .= '%{(empty(&clipboard) ? "" : "c")}'
   let stl .= '%{(&paste ? "p" : "")}'
+  let stl .= '%{(&spell ? "s" : "")}'
   let stl .= '|%{&textwidth}'
 
   if exists('*LinterStatus')
@@ -588,6 +603,10 @@ function! SetStatusline()
     let stl .= '%#Type#'
     let stl .= '%{winwidth(0) > 100 ? fugitive#statusline() : ""}'
     let stl .= '%*'
+  endif
+
+  if exists('*lsp#get_server_status')
+    let stl .= '(%{winwidth(0) > 100 ? lsp#get_server_status() : ""})'
   endif
 
   " right side from here
@@ -714,9 +733,9 @@ nnoremap <silent> [Toggle]p :set paste!<Cr>
 nnoremap <silent> [Toggle]l :set list!<Cr>
 nnoremap <silent> [Toggle]n :<C-u>silent call <SID>toggle_line_number()<Cr>
 nnoremap <silent> [Toggle]r :set relativenumber!<Cr>
-nnoremap <silent> [Toggle]w :let g:show_cwd = abs(get(g:, 'show_cwd', 0) - 1)<Cr>
 nnoremap <silent> [Toggle]b :let &background = &background ==# 'dark' ? 'light' : 'dark'<Cr>
-nnoremap <silent> [Toggle]i :IndentLinesToggle<Cr>
+nnoremap <silent> [Toggle]sp :set invspell<Cr>
+nnoremap <silent> [Toggle]sw :let g:show_cwd = abs(get(g:, 'show_cwd', 0) - 1)<Cr>
 
 " * makes gf better
 nnoremap gf <Nop>
@@ -766,7 +785,14 @@ nnoremap <silent> <Leader>fn :let @" = expand('%:t')<Cr>
 inoremap <silent> <Leader>fN <C-R>=fnamemodify(@%, ':p')<Cr>
 nnoremap <silent> <Leader>fN :let @" = fnamemodify(@%, ':p')<Cr>
 
-inoremap <Leader><Leader>c <Esc>bgUwgi
+" Make a work under cursor uppercase and put the default yank buffer
+nnoremap yuw :call setreg('"', toupper(expand('<cword>')))<Cr>
+
+" Converting a word under cursor to uppercase / lowercase
+inoremap <Leader><Leader>u <Esc>bgUwgi
+inoremap <Leader><Leader>l <Esc>bguwgi
+" Capitalise the first letter
+inoremap <Leader><Leader>c <Esc>bvUgi
 
 " Copy absolute path to current file to clipboard
 command! -nargs=0 CopyCurrentFilePath2CB let @* = fnamemodify(@%, ':p')
@@ -832,10 +858,6 @@ endif
 
 " * autocmds "{{{
 augroup Tacahiroy
-  " autocmd VimEnter * call lexima#add_rule({'char': '(', 'at': '\%#\w', 'input': '('})
-  " autocmd VimEnter * call lexima#add_rule({'char': '"', 'at': '\%#\w', 'input': '"'})
-  " autocmd VimEnter * call lexima#add_rule({'char': "'", 'at': '\%#\w', 'input': "'"})
-
   autocmd BufRead,BufNewFile */tasks/*.yml,*/vars/*.yml,*/defaults/*.yml,*/handlers/*.yml set filetype=yaml.ansible
 
   autocmd BufEnter ControlP let b:ale_enabled = 0
@@ -858,8 +880,8 @@ augroup Tacahiroy
   autocmd FileType make setlocal list
   autocmd FileType make setlocal iskeyword+=-
   " autocmd BufRead,BufNewFile *.groovy,*.jenkins,Jenkinsfile* setlocal filetype=groovy
-  autocmd BufRead,BufNewFile *.jenkins setfiletype Jenkinsfile
-  autocmd FileType groovy,Jenkinsfile setlocal autoindent smartindent
+  autocmd BufRead,BufNewFile *.jenkins setfiletype Jenkinsfile.groovy
+  autocmd FileType Jenkinsfile.groovy setlocal autoindent smartindent
 
   augroup PersistentUndo
     autocmd!
