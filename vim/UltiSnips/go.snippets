@@ -3,3 +3,42 @@ priority 1
 snippet pp "Println"
 fmt.Println(${0})
 endsnippet
+
+snippet iferr "if err != nil"
+if err != nil {
+	${1}
+}
+$0
+endsnippet
+
+snippet templatefromfile "Template from file"
+t, err := template.ParseFiles("${1:/path/to/template}")
+if err != nil {
+	${2}
+}
+
+err = t.ExecuteTemplate(os.Stdout, "$1", ${4:nil})
+if err != nil {
+	${5}
+}
+$0
+endsnippet
+
+snippet open "Open file"
+${1:fd}, err := os.Open("${2}")
+if err != nil {
+	${3}
+}
+defer $1.Close()
+$0
+endsnippet
+
+snippet registerhandlefunc "http.HandleFunc registration"
+http.HandleFunc("${1:/end-point}", ${2:function})
+endsnippet
+
+snippet httphandlefunc "http.HandleFunc"
+func ${1}(w http.ResponseWriter, r *http.Request) {
+	$0
+}
+endsnippet
