@@ -73,7 +73,13 @@ fi
 
 export WORKON_HOME=$HOME/.venvs
 export PROJECT_HOME=$HOME/dev/src
-. "$HOME"/.local/bin/virtualenvwrapper.sh
+
+if [ -f "$HOME/.local/bin/virtualenvwrapper.sh" ]; then
+    # shellcheck source=/dev/null
+    export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
+    export WORKON_HOME=~/.virtualenvs
+    . "$HOME/.local/bin/virtualenvwrapper.sh"
+fi
 
 if [ "${PLATFORM}" = wsl ]; then
     DISPLAY=$(awk '/^nameserver/ { print $2 }' /etc/resolv.conf):0

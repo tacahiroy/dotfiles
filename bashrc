@@ -212,13 +212,6 @@ case "${PLATFORM}" in
         ;;
 esac
 
-if [ -f "$HOME/.local/bin/virtualenvwrapper.sh" ]; then
-    # shellcheck source=/dev/null
-    export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
-    export WORKON_HOME=~/.virtualenvs
-    . "$HOME/.local/bin/virtualenvwrapper.sh"
-fi
-
 if [ "${PLATFORM}" = wsl ] && [ -x "$HOME/bin/tmp-clean.sh" ]; then
     bash "$HOME"/bin/tmp-clean.sh
 fi
