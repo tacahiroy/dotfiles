@@ -195,10 +195,11 @@ case "${PLATFORM}" in
         fi
         ;;
     wsl)
-        if [ -x $(command -v ssh-agent-relay) ]; then
-            eval $(ssh-agent-relay)
-        else
-            [ -z "${SSH_AUTH_SOCK}" ] && eval "$(ssh-agent)"
+        # https://github.com/rupor-github/wsl-ssh-agent
+        export SSH_AUTH_SOCK=$HOME/.ssh/agent.sock
+        if ! ss -a | grep -q $SSH_AUTH_SOCK; then
+            rm -f $SSH_AUTH_SOCK
+            ( setsid socat UNIX-LISTEN:$SSH_AUTH_SOCK,fork EXEC:"$HOME/winhome/.wsl/npiperelay.exe -ei -s //./pipe/openssh-ssh-agent",nofork & ) >/dev/null 2>&1
         fi
 
         if [ -f "$HOME/qmk_utils/activate_wsl.sh" ]; then
