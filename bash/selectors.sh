@@ -176,7 +176,7 @@ select_git_branch_all() {
 }
 
 bind -x '"\C-gh"':"\"select_history\""
-bind -x '"\C-gt"':"\"select_ctrlpvim_mru\""
+bind -x '"\C-t"':"\"select_ctrlpvim_mru\""
 bind -x '"\C-gd\,"':"\"select_dir\""
 bind -x '"\C-gD"':"\"select_dir_hist\""
 bind -x '"\C-gf"':"\"select_file\""
