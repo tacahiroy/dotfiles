@@ -460,7 +460,7 @@ command! -nargs=0 CurrentSyntaxName call <SID>current_syntax_name()
 " }}}
 
 " * options {{{
-set ambiwidth=single
+set ambiwidth=double
 set noautoindent
 set nocindent
 set nosmartindent
