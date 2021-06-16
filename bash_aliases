@@ -20,9 +20,6 @@ alias gl='git log'
 alias pyttpd='python3 -m http.server'
 alias tfm=terraform
 alias lines='grep -c ""'
-if [ "${MYOS}" = "wsl" ]; then
-    alias rg='rg -j1'
-fi
 alias b='cd -'
 alias cda='cd -P .'
 alias wipython='workon ipython && ipython'
