@@ -25,6 +25,10 @@ else
     IS_PURE_GIT=yes
 fi
 
+#---------------------
+# Functions
+#---------------------
+
 _dot() {
   f=$1
   # shellcheck source=/dev/null
@@ -47,6 +51,23 @@ git_clone() {
 
     [ ! -x "$(command -v ghq)" ] && return
     update_plugins
+}
+
+cdup() {
+    cd ..
+}
+
+srol() {
+    if [ ! -f ./meta/main.yml ]; then
+        echo "The current directory dosen't look like an Ansible role's directory: $(readlink -f .)"
+        return 1
+    fi
+
+    local role_name
+    role_name="$(basename "$(readlink -f .)")"
+
+    echo "Synchronising ${role_name} to $HOME/.ansible/roles"
+    rsync -av --no-p -p --exclude '.git' --exclude '.git/*' --delete . "$HOME/.ansible/roles/${role_name}"
 }
 
 ## plugins
@@ -101,24 +122,13 @@ if [ -f "$HOME/.bash/prompt.sh" ]; then
     set_prompt "${BRIGHT_RED}" "${GREEN}" "${BLUE}" "${extras:-}"
 fi
 
-srol() {
-    if [ ! -f meta/main.yml ]; then
-        echo "The current directory dosen't look like an Ansible role's directory: $(readlink -f .)"
-        return 1
-    fi
-
-    role_name="$(basename "$(readlink -f .)")"
-    echo "Synchronising ${role_name} to $HOME/.ansible/roles"
-    rsync -av --no-p -p --exclude '.git' --exclude '.git/*' --delete . "$HOME/.ansible/roles/${role_name}"
-}
-
 unset MAILCHECK
 
 FIGNORE="${FIGNORE}:@tmp:retry:tfstate:backup"
 
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
-HISTCONTROL=ignoreboth:erasedups
+export HISTCONTROL=ignoreboth:erasedups
 
 # append to the history file, don't overwrite it
 shopt -s histappend
@@ -183,42 +193,25 @@ bind '"\C-p":history-search-backward'
 bind '"\C-n":history-search-forward'
 bind '"\C-y"':"\"cdup\r\""
 
-cdup() {
-    cd ..
-}
-
 case "${PLATFORM}" in
-    msys)
-        if [ -f "$HOME/qmk_utils/activate_msys2.sh" ]; then
-            # shellcheck source=/dev/null
-            . "$HOME/qmk_utils/activate_msys2.sh"
-        fi
-        ;;
     wsl)
-        # https://github.com/rupor-github/wsl-ssh-agent
+        # https://github.com/rupor-github/wsl-ssh-agent/tree/5fe57762c#wsl-2-compatibility
         export SSH_AUTH_SOCK=$HOME/.ssh/agent.sock
-        if ! ss -a | grep -q $SSH_AUTH_SOCK; then
-            rm -f $SSH_AUTH_SOCK
-            ( setsid socat UNIX-LISTEN:$SSH_AUTH_SOCK,fork EXEC:"$HOME/winhome/.wsl/npiperelay.exe -ei -s //./pipe/openssh-ssh-agent",nofork & ) >/dev/null 2>&1
-        fi
-
-        if [ -f "$HOME/qmk_utils/activate_wsl.sh" ]; then
-            # shellcheck source=/dev/null
-            . "$HOME/qmk_utils/activate_wsl.sh"
+        if ! ss -a | grep -q "${SSH_AUTH_SOCK}"; then
+            rm -f "${SSH_AUTH_SOCK}"
+            ( setsid socat UNIX-LISTEN:"${SSH_AUTH_SOCK}",fork,umask=007 EXEC:"$HOME/winhome/.wsl/npiperelay.exe -ei -s //./pipe/openssh-ssh-agent",nofork & ) >/dev/null 2>&1
         fi
         ;;
+
     macos)
         ;;
+
     *)
         ;;
 esac
 
 if [ "${PLATFORM}" = wsl ] && [ -x "$HOME/bin/tmp-clean.sh" ]; then
     bash "$HOME"/bin/tmp-clean.sh
-fi
-
-if command -v aws >/dev/null 2>&1; then
-    complete -C aws_completer aws
 fi
 
 if [ -f "$HOME/.bashrc.local" ]; then
@@ -231,5 +224,3 @@ fi
         exec tmux -l2
     }
 }
-
-complete -C /usr/local/bin/terraform terraform
