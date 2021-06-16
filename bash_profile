@@ -61,14 +61,17 @@ if [ -n "${fd}" ]; then
     export FIND FINDO
 fi
 
-# Enable plugin cache dir for Terraform
-export TF_PLUGIN_CACHE_DIR="$HOME/.terraform.d/plugin-cache"
 export SHELLCHECK_OPTS="-e SC2016 -e SC1090"
-export GO111MODULE=on
 
 if [ -f "$HOME/.bash_aliases" ]; then
     # shellcheck source=/dev/null
     . "$HOME/.bash_aliases"
+fi
+
+if command -v terraform >/dev/null 2>&1; then
+    complete -C /usr/local/bin/terraform terraform
+    # Enable plugin cache dir for Terraform
+    export TF_PLUGIN_CACHE_DIR="$HOME/.terraform.d/plugin-cache"
 fi
 
 export WORKON_HOME=$HOME/.venvs
@@ -81,6 +84,10 @@ if [ -f "$HOME/.local/bin/virtualenvwrapper.sh" ]; then
     . "$HOME/.local/bin/virtualenvwrapper.sh"
 fi
 
+export PYENV_ROOT="$HOME/.pyenv"
+set_path "$PYENV_ROOT/bin"
+eval "$(pyenv init --path)"
+
 if [ "${PLATFORM}" = wsl ]; then
     DISPLAY=$(awk '/^nameserver/ { print $2 }' /etc/resolv.conf):0
     export DISPLAY
@@ -92,4 +99,8 @@ if [ -n "$BASH_VERSION" ]; then
     if [ -f "$HOME/.bashrc" ]; then
 	. "$HOME/.bashrc"
     fi
+fi
+
+if command -v aws >/dev/null 2>&1; then
+    complete -C aws_completer aws
 fi
