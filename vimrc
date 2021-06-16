@@ -163,9 +163,9 @@ call minpac#add('prabirshrestha/async.vim')
 call minpac#add('prabirshrestha/vim-lsp')
   let g:lsp_use_lua = (has('lua') && has('patch-8.2.0775'))
   let g:lsp_async_completion = 1 "{{{ vim-lsp
-  let g:lsp_diagnostics_float_cursor = 0
+  let g:lsp_diagnostics_float_cursor = 1
   let g:lsp_diagnostics_echo_cursor = 1
-  let g:lsp_diagnostics_enabled = 0
+  let g:lsp_diagnostics_enabled = 1
   let g:lsp_diagnostics_signs_error = {'text': '🤬'}
   let g:lsp_diagnostics_signs_warning = {'text': '🤢'}
   let g:lsp_diagnostics_signs_hint = {'text': '🐑'}
@@ -219,7 +219,10 @@ call minpac#add('prabirshrestha/asyncomplete-buffer.vim')
           \ }))
   augroup END
 
-call minpac#add('fatih/vim-go')
+call minpac#add('thomasfaingnaert/vim-lsp-snippets')
+call minpac#add('thomasfaingnaert/vim-lsp-ultisnips')
+
+" call minpac#add('fatih/vim-go')
   let g:go_def_mode = 'gopls'
   let g:go_info_mode = 'gopls'
   let g:go_highlight_diagnostic_errors=0
@@ -337,8 +340,8 @@ endif
 "}}}
 
 "{{{ ALE
-call minpac#add('dense-analysis/ale')
-  let g:ale_enabled = 1
+" call minpac#add('dense-analysis/ale')
+"   let g:ale_enabled = 1
   let g:ale_lint_on_text_changed = 'never'
   let g:ale_lint_on_insert_leave = 0
   let g:ale_set_loclist = 0
@@ -372,6 +375,10 @@ call minpac#add('dense-analysis/ale')
   let g:ale_open_list = 1
 
   function! LinterStatus() abort
+    if !exists('*ale#statusline#Count')
+      return ''
+    endif
+
     let l:counts = ale#statusline#Count(bufnr(''))
 
     let l:all_errors = l:counts.error + l:counts.style_error
@@ -860,7 +867,6 @@ endif
 augroup Tacahiroy
   autocmd BufRead,BufNewFile */tasks/*.yml,*/vars/*.yml,*/defaults/*.yml,*/handlers/*.yml set filetype=yaml.ansible
 
-  autocmd BufEnter ControlP let b:ale_enabled = 0
   autocmd BufReadPost * if !search('\S', 'cnw') | let &l:fileencoding = &encoding | endif
   " restore cursor position
   autocmd BufReadPost * if line("'\"") <= line('$') | execute "normal '\"" | endif
@@ -877,11 +883,13 @@ augroup Tacahiroy
   " ShellScript
   autocmd FileType sh,zsh setlocal tabstop=4 softtabstop=4 shiftwidth=4 expandtab
 
+  autocmd FileType php setlocal tabstop=4 softtabstop=4 shiftwidth=4 expandtab
+
   autocmd FileType make setlocal list
   autocmd FileType make setlocal iskeyword+=-
   " autocmd BufRead,BufNewFile *.groovy,*.jenkins,Jenkinsfile* setlocal filetype=groovy
-  autocmd BufRead,BufNewFile *.jenkins setfiletype Jenkinsfile.groovy
-  autocmd FileType Jenkinsfile.groovy setlocal autoindent smartindent
+  autocmd BufRead,BufNewFile *.jenkins setfiletype groovy.Jenkinsfile
+  autocmd FileType groovy.Jenkinsfile setlocal autoindent smartindent
 
   augroup PersistentUndo
     autocmd!
