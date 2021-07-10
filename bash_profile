@@ -84,9 +84,11 @@ if [ -f "$HOME/.local/bin/virtualenvwrapper.sh" ]; then
     . "$HOME/.local/bin/virtualenvwrapper.sh"
 fi
 
-export PYENV_ROOT="$HOME/.pyenv"
-set_path "$PYENV_ROOT/bin"
-eval "$(pyenv init --path)"
+if command -v pyenv; then
+    export PYENV_ROOT="$HOME/.pyenv"
+    set_path "$PYENV_ROOT/bin"
+    eval "$(pyenv init --path)"
+fi
 
 if [ "${PLATFORM}" = wsl ]; then
     DISPLAY=$(awk '/^nameserver/ { print $2 }' /etc/resolv.conf):0
