@@ -234,9 +234,12 @@ call minpac#add('cohama/lexima.vim')
   let g:lexima_enable_space_rules = 0
   let g:lexima_enable_endwise_rules = 1
 
-  autocmd Tacahiroy VimEnter * call lexima#add_rule({'char': '(', 'at': '\%#\w', 'input': '('})
-  autocmd Tacahiroy VimEnter * call lexima#add_rule({'char': '"', 'at': '\%#\w', 'input': '"'})
-  autocmd Tacahiroy VimEnter * call lexima#add_rule({'char': "'", 'at': '\%#\w', 'input': "'"})
+
+  if s:has_plugin('lexima')
+    autocmd Tacahiroy VimEnter * call lexima#add_rule({'char': '(', 'at': '\%#\w', 'input': '('})
+    autocmd Tacahiroy VimEnter * call lexima#add_rule({'char': '"', 'at': '\%#\w', 'input': '"'})
+    autocmd Tacahiroy VimEnter * call lexima#add_rule({'char': "'", 'at': '\%#\w', 'input': "'"})
+  endif
 
 call minpac#add('bkad/CamelCaseMotion')
 
@@ -395,7 +398,7 @@ endif
 call minpac#add('michaeljsmith/vim-indent-object')
 
 call minpac#add('mechatroner/rainbow_csv')
-call minpac#add('jremmen/vim-ripgrep')
+call minpac#add('tacahiroy/vim-ripgrep', {'branch': 'fix-e1208'})
 
 call minpac#add('tacahiroy/vim-colors-isotake')
 
