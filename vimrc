@@ -883,15 +883,18 @@ augroup Tacahiroy
 
   autocmd CompleteDone * if !pumvisible() | silent! pclose | endif
 
+  autocmd BufRead,BufNewfile *.conf setfiletype conf
+
   " ShellScript
   autocmd FileType sh,zsh setlocal tabstop=4 softtabstop=4 shiftwidth=4 expandtab
+
 
   autocmd FileType php setlocal tabstop=4 softtabstop=4 shiftwidth=4 expandtab
 
   autocmd FileType make setlocal list
   autocmd FileType make setlocal iskeyword+=-
-  " autocmd BufRead,BufNewFile *.groovy,*.jenkins,Jenkinsfile* setlocal filetype=groovy
-  autocmd BufRead,BufNewFile *.jenkins setfiletype groovy.Jenkinsfile
+  " autocmd BufRead,BufNewFile *.groovy,*.jenkins,jenkinsfile* setlocal filetype=groovy
+  autocmd BufRead,BufNewFile *.jenkins,*.jenkinsfile setfiletype groovy.Jenkinsfile
   autocmd FileType groovy.Jenkinsfile setlocal autoindent smartindent
 
   augroup PersistentUndo
