@@ -1,3 +1,0 @@
-func {{+func name+}}({{+args+}}) {{+return values+}}{
-  {{++}}
-}

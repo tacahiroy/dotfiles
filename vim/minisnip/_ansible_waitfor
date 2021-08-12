@@ -1,4 +1,0 @@
-- name: {{+name+}}
-  wait_for:
-    host: {{+host+}}
-    port: {{+port+}}
