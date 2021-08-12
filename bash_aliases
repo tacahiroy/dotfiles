@@ -22,8 +22,7 @@ alias tfm=terraform
 alias lines='grep -c ""'
 alias b='cd -'
 alias cda='cd -P .'
-alias wipython='workon ipython && ipython'
-alias wansible='workon ansible'
+alias wo='workon'
 
 if type _z >/dev/null 2>&1; then
     alias jc='_z -c'
