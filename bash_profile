@@ -63,17 +63,6 @@ fi
 
 export SHELLCHECK_OPTS="-e SC2016 -e SC1090"
 
-if [ -f "$HOME/.bash_aliases" ]; then
-    # shellcheck source=/dev/null
-    . "$HOME/.bash_aliases"
-fi
-
-if command -v terraform >/dev/null 2>&1; then
-    complete -C /usr/local/bin/terraform terraform
-    # Enable plugin cache dir for Terraform
-    export TF_PLUGIN_CACHE_DIR="$HOME/.terraform.d/plugin-cache"
-fi
-
 export WORKON_HOME=$HOME/.venvs
 export PROJECT_HOME=$HOME/dev/src
 
@@ -90,7 +79,7 @@ if command -v pyenv; then
     eval "$(pyenv init --path)"
 fi
 
-if [ "${PLATFORM}" = wsl ]; then
+if [ "${PLATFORM}" = wsl ] && [ ! -d /wslg ]; then
     DISPLAY=$(awk '/^nameserver/ { print $2 }' /etc/resolv.conf):0
     export DISPLAY
 fi
@@ -103,6 +92,18 @@ if [ -n "$BASH_VERSION" ]; then
     fi
 fi
 
+if [ -f "$HOME/.bash_aliases" ]; then
+    # shellcheck source=/dev/null
+    . "$HOME/.bash_aliases"
+fi
+
 if command -v aws >/dev/null 2>&1; then
     complete -C aws_completer aws
 fi
+
+if command -v terraform >/dev/null 2>&1; then
+    complete -C /usr/local/bin/terraform terraform
+    # Enable plugin cache dir for Terraform
+    export TF_PLUGIN_CACHE_DIR="$HOME/.terraform.d/plugin-cache"
+fi
+
