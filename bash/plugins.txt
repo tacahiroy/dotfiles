@@ -1,3 +1,1 @@
-github.com/jhawthorn/fzy
-github.com/rupa/z z.sh
 github.com/romkatv/gitstatus

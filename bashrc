@@ -83,10 +83,6 @@ setup_plugins() {
         return 1
     fi
 
-    export _Z_CMD=j
-    export _Z_OWNER=$USER
-    alias jc='j -c'
-
     if [ -f "$HOME/.bash/plugins.txt" ]; then
         while read -r a; do
             local _rn _init _repo
