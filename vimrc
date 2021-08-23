@@ -156,21 +156,52 @@ call minpac#init()
 " minpac must have {'type': 'opt'} so that it can be loaded with `packadd`.
 call minpac#add('k-takata/minpac', {'type': 'opt'})
 
-call minpac#add('tpope/vim-fugitive')
-
 " Completion {{{
 call minpac#add('prabirshrestha/async.vim')
 call minpac#add('prabirshrestha/vim-lsp')
+  let g:lsp_auto_enable = 1 "{{{ vim-lsp
   let g:lsp_use_lua = (has('lua') && has('patch-8.2.0775'))
-  let g:lsp_async_completion = 1 "{{{ vim-lsp
-  let g:lsp_diagnostics_float_cursor = 1
-  let g:lsp_diagnostics_echo_cursor = 1
+  let g:lsp_async_completion = 1
   let g:lsp_diagnostics_enabled = 1
+  let g:lsp_diagnostics_echo_cursor = 1
+  let g:lsp_diagnostics_float_cursor = 1
   let g:lsp_diagnostics_signs_error = {'text': '🤬'}
   let g:lsp_diagnostics_signs_warning = {'text': '🤢'}
   let g:lsp_diagnostics_signs_hint = {'text': '🐑'}
+  let g:lsp_preview_float = 1
   let g:lsp_log_verbose = 0
   " let g:lsp_log_file = expand('~/vim-lsp.log')
+
+  let g:lsp_settings = {}
+  " https://github.com/golang/tools/blob/master/gopls/doc/settings.md
+  let g:lsp_settings.gopls = {
+  \   'workspace_config': {
+  \     'usePlaceholders': v:true,
+  \     'semanticTokens': v:true,
+  \     'gofumpt': v:true,
+  \     'experimentalWorkspaceModule': v:true,
+  \     'codelens': {
+  \       'tidy': v:true,
+  \     },
+  \     'analyses': {
+  \       'assign': v:true,
+  \       'unreachable': v:true,
+  \       'unusedparams': v:true,
+  \       'shadow': v:true,
+  \     }
+  \   },
+  \   'initialization_options': {
+  \     'usePlaceholders': v:true,
+  \     'semanticTokens': v:true,
+  \     'gofumpt': v:true,
+  \     'experimentalWorkspaceModule': v:true,
+  \     'codelens': {
+  \       'tidy': v:true,
+  \     }
+  \   },
+  \ }
+
+
   nnoremap <Leader>lr :<C-u>LspReferences<Cr>
   nnoremap <Leader>lR :<C-u>LspRename<Cr>
 
@@ -182,7 +213,7 @@ call minpac#add('prabirshrestha/vim-lsp')
       nmap <buffer> gr <plug>(lsp-references)
       nmap <buffer> gI <plug>(lsp-implementation)
       nmap <buffer> gt <plug>(lsp-type-definition)
-      nmap <buffer> <leader>rn <plug>(lsp-rename)
+      nmap <buffer> gR <plug>(lsp-rename)
       nmap <buffer> [g <Plug>(lsp-previous-diagnostic)
       nmap <buffer> ]g <Plug>(lsp-next-diagnostic)
       nmap <buffer> K <plug>(lsp-hover)
@@ -221,12 +252,6 @@ call minpac#add('prabirshrestha/asyncomplete-buffer.vim')
 
 call minpac#add('thomasfaingnaert/vim-lsp-snippets')
 call minpac#add('thomasfaingnaert/vim-lsp-ultisnips')
-
-" call minpac#add('fatih/vim-go')
-  let g:go_def_mode = 'gopls'
-  let g:go_info_mode = 'gopls'
-  let g:go_highlight_diagnostic_errors=0
-  let g:go_highlight_diagnostic_warnings=0
 
 call minpac#add('stephpy/vim-yaml')
 call minpac#add('cohama/lexima.vim')
@@ -343,8 +368,9 @@ endif
 "}}}
 
 "{{{ ALE
-" call minpac#add('dense-analysis/ale')
-"   let g:ale_enabled = 1
+call minpac#add('dense-analysis/ale')
+  let g:ale_enabled = 0
+  let g:ale_completion_enabled = 0
   let g:ale_lint_on_text_changed = 'never'
   let g:ale_lint_on_insert_leave = 0
   let g:ale_set_loclist = 0
@@ -365,11 +391,19 @@ endif
         \ 'bash': ['shellcheck']
         \ }
   let g:ale_fixers = { 'python': ['black', 'isort', 'autoimport'],
-        \ 'go': ['goimports'],
+        \ 'go': ['gofmt', 'goimports'],
         \ '*': ['remove_trailing_lines', 'trim_whitespace']
         \ }
   let g:ale_fix_on_save = 1
   let g:ale_yaml_yamllint_options = '-c $HOME/.config/yamllint/ansible.yml'
+  let g:ale_go_gopls_options = ''
+  let g:ale_go_gopls_init_options = {
+        \ "ui.completion.usePlaceholders": v:true,
+        \ 'ui.diagnostic.analyses': {
+          \ 'composites': v:false,
+          \ 'unusedparams': v:true,
+          \ 'unusedresult': v:true,
+        \ }}
 
   let g:ale_history_log_output = 1
   let g:ale_use_global_executables = 1
@@ -616,7 +650,7 @@ function! SetStatusline()
   endif
 
   if exists('*lsp#get_server_status')
-    let stl .= '(%{winwidth(0) > 100 ? lsp#get_server_status() : ""})'
+    let stl .= '|%{winwidth(0) > 100 ? lsp#get_server_status() : ""}'
   endif
 
   " right side from here
@@ -893,9 +927,9 @@ augroup Tacahiroy
 
   autocmd FileType make setlocal list
   autocmd FileType make setlocal iskeyword+=-
-  " autocmd BufRead,BufNewFile *.groovy,*.jenkins,jenkinsfile* setlocal filetype=groovy
-  autocmd BufRead,BufNewFile *.jenkins,*.jenkinsfile setfiletype groovy.Jenkinsfile
-  autocmd FileType groovy.Jenkinsfile setlocal autoindent smartindent
+  autocmd BufRead,BufNewFile Jenkinsfile,*.jenkins,*.jenkinsfile setlocal filetype=Jenkinsfile.groovy
+  " autocmd BufRead,BufNewFile *.jenkins,*.jenkinsfile setfiletype groovy
+  autocmd FileType groovy,Jenkinsfile setlocal autoindent smartindent
 
   augroup PersistentUndo
     autocmd!
