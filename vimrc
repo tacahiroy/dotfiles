@@ -169,7 +169,7 @@ call minpac#add('prabirshrestha/vim-lsp')
   let g:lsp_diagnostics_signs_warning = {'text': '🤢'}
   let g:lsp_diagnostics_signs_hint = {'text': '🐑'}
   let g:lsp_preview_float = 1
-  let g:lsp_log_verbose = 0
+  " let g:lsp_log_verbose = 1
   " let g:lsp_log_file = expand('~/vim-lsp.log')
 
   let g:lsp_settings = {}
@@ -238,11 +238,13 @@ call minpac#add('prabirshrestha/asyncomplete.vim')
 
 call minpac#add('prabirshrestha/asyncomplete-lsp.vim')
 call minpac#add('prabirshrestha/asyncomplete-buffer.vim')
+  let g:asyncomplete_buffer_clear_cache = 1
+
   augroup Tacahiroy
     autocmd User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
           \ 'name': 'buffer',
-          \ 'whitelist': ['*'],
-          \ 'blacklist': ['go', 'python', 'markdown'],
+          \ 'allowlist': ['*'],
+          \ 'blocklist': ['go', 'python', 'markdown'],
           \ 'completor': function('asyncomplete#sources#buffer#completor'),
           \ 'config': {
           \    'max_buffer_size': 5242880,
@@ -258,7 +260,6 @@ call minpac#add('cohama/lexima.vim')
   " let g:lexima_no_default_rules = 1
   let g:lexima_enable_space_rules = 0
   let g:lexima_enable_endwise_rules = 1
-
 
   if s:has_plugin('lexima')
     autocmd Tacahiroy VimEnter * call lexima#add_rule({'char': '(', 'at': '\%#\w', 'input': '('})
@@ -347,7 +348,7 @@ call minpac#add('ctrlpvim/ctrlp.vim')
   nnoremap [Space]fr :CtrlPRTS<Cr>
   nnoremap [Space]fq :CtrlPQuickfix<Cr>
 
-call minpac#add('tacahiroy/ctrlp-funky', { 'frozen': 1 })
+call minpac#add('tacahiroy/ctrlp-funky')
   let g:ctrlp_funky_debug = 0
   let g:ctrlp_funky_use_cache = 0
   let g:ctrlp_funky_matchtype = 'path'
@@ -355,7 +356,7 @@ call minpac#add('tacahiroy/ctrlp-funky', { 'frozen': 1 })
   let g:ctrlp_funky_syntax_highlight = 0
   let g:ctrlp_funky_filter_conversions = { 'yaml.ansible': 'ansible' }
 
-  let g:ctrlp_funky_nudists = ['php', 'ruby']
+  let g:ctrlp_funky_nudists = ['php']
 
   nnoremap [Space]fu :CtrlPFunky<Cr>
   nnoremap [Space]uu :execute 'CtrlPFunky ' . fnameescape(expand('<cword>'))<Cr>
@@ -379,6 +380,7 @@ call minpac#add('dense-analysis/ale')
   let g:ale_python_auto_pipenv = 1
   let g:ale_python_pylint_options = '--rcfile=.pylintrc'
   let g:ale_python_pyls_use_global = 1
+  let g:ale_sh_shellcheck_options = '-x'
   let g:ale_disable_lsp = 1
 
   " disabling ALE for specific files
@@ -432,7 +434,8 @@ call minpac#add('dense-analysis/ale')
 call minpac#add('michaeljsmith/vim-indent-object')
 
 call minpac#add('mechatroner/rainbow_csv')
-call minpac#add('tacahiroy/vim-ripgrep', {'branch': 'fix-e1208'})
+call minpac#add('mhinz/vim-grepper')
+  command! -nargs=1 -complete=file Rg Grepper -noprompt -tool rg -query <args>
 
 call minpac#add('tacahiroy/vim-colors-isotake')
 
@@ -708,6 +711,8 @@ nnoremap so gv<Esc>
 nnoremap sap va}V
 nnoremap su :<C-u>call <SID>toggle_case(1)<Cr>
 nnoremap sl :<C-u>call <SID>toggle_case(0)<Cr>
+nnoremap sj $%
+vnoremap sj $%
 nnoremap [Space]te :<C-u>terminal<Cr>
 
 function! s:toggle_case(upper)
@@ -855,24 +860,6 @@ function! s:move_block(d) range
 endfunction
 vnoremap <C-p> :call <SID>move_block('u')<Cr>==gv
 vnoremap <C-n> :call <SID>move_block('d')<Cr>==gv
-
-" format HTML/XML
-function! s:run_tidy(...) range
-  if !executable('tidy')
-    call Echohl('Error', 'tidy is not installed or not in PATH.')
-    return 0
-  endif
-
-  " this code is not perfect.
-  " tidy's Character encoding option and Vim's fileencoding/encoding is not a pair
-  let col = get(a:, 1, 80)
-  let enc = &l:fileencoding ? &l:fileencoding : &encoding
-  let enc = substitute(enc, '-', '', 'g')
-
-  silent execute printf('%d,%d!tidy -xml -i -%s -wrap %d -q -asxml', a:firstline, a:lastline, enc, eval(col))
-endfunction
-
-command! -nargs=? -range Tidy <line1>,<line2>call s:run_tidy(<args>)
 "}}}
 
 if has('pythonx') "{{{
@@ -902,7 +889,7 @@ endif
 
 " * autocmds "{{{
 augroup Tacahiroy
-  autocmd BufRead,BufNewFile */tasks/*.yml,*/vars/*.yml,*/defaults/*.yml,*/handlers/*.yml set filetype=yaml.ansible
+  " autocmd BufRead,BufNewFile */tasks/*.yml,*/vars/*.yml,*/defaults/*.yml,*/handlers/*.yml set filetype=yaml.ansible
 
   autocmd BufReadPost * if !search('\S', 'cnw') | let &l:fileencoding = &encoding | endif
   " restore cursor position
