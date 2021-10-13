@@ -41,9 +41,6 @@ set_path "$HOME/.cargo/bin"
 set_path "$GOPATH/bin"
 set_path "/usr/local/bin" 1
 set_path "$HOME/.yarn/bin"
-set_path "$HOME/.pulumi/bin"
-set_path "$HOME/.rbenv/bin"
-set_path "$HOME/.rbenv/shims"
 
 export PATH
 

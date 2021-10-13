@@ -11,19 +11,12 @@ alias llh='ls -lh'
 alias sl='ls'
 alias gi='git'
 alias vi='vim'
-alias where='command -v'
 alias df='df -h'
-alias gi='git'
 alias g='git'
+alias gi='git'
 alias gu='git up'
 alias gl='git log'
-alias pyttpd='python3 -m http.server'
-alias tfm=terraform
 alias lines='grep -c ""'
 alias b='cd -'
 alias cda='cd -P .'
 alias wo='workon'
-
-if type _z >/dev/null 2>&1; then
-    alias jc='_z -c'
-fi
