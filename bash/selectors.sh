@@ -10,6 +10,7 @@ SELECTOR_DIR_PROMPT_OPT="--prompt=CD> "
 SELECTOR_FILE_PROMPT_OPT="--prompt=FILE> "
 SELECTOR_MRU_PROMPT_OPT="--prompt=MRU> "
 SELECTOR_GIT_REPO_PROMPT_OPT="--prompt=REPO> "
+SELECTOR_VIRTUALENV_PROMPT_OPT="--prompt=VIRTUALENV> "
 
 command -v ghq >/dev/null 2>&1 && IS_GHQ=yes || IS_GHQ=no
 
@@ -137,9 +138,9 @@ select_git_branch() {
     _branch=${_branch//[[:space:]]}
     if [ -n "${_branch}" ]; then
         if [ "${#READLINE_LINE}" -eq 0 ]; then
-            READLINE_LINE="git checkout ${_branch}"
+            READLINE_LINE="git switch ${_branch}"
         else
-            READLINE_LINE="${READLINE_LINE} ${_branch}"
+            READLINE_LINE="${READLINE_LINE}${_branch}"
         fi
         READLINE_POINT=${#READLINE_LINE}
     fi
@@ -163,7 +164,7 @@ select_git_tag() {
 
     if [ -n "${_tag}" ]; then
         if [ "${#READLINE_LINE}" -eq 0 ]; then
-            READLINE_LINE="git checkout ${_tag}"
+            READLINE_LINE="git switch ${_tag}"
         else
             READLINE_LINE="${READLINE_LINE} ${_tag}"
         fi
@@ -175,6 +176,19 @@ select_git_branch_all() {
     select_git_branch yes
 }
 
+select_python_virtualenv() {
+    local venv cmd activate
+    venv=$(find $HOME/.venvs -mindepth 1 -maxdepth 1 -type d \
+            | ${F} "${FO}" "${SELECTOR_VIRTUALENV_PROMPT_OPT}")
+
+    if [ -n "${venv}" ]; then
+        [ -n "${VIRTUAL_ENV}" ] && cmd="deactivate" || cmd="true"
+        READLINE_LINE="${cmd} && . ${venv}/bin/activate"
+        READLINE_POINT=${#READLINE_LINE}
+    fi
+}
+
+
 bind -x '"\C-gh"':"\"select_history\""
 bind -x '"\C-t"':"\"select_ctrlpvim_mru\""
 bind -x '"\C-gd\,"':"\"select_dir\""
@@ -185,4 +199,4 @@ bind -x '"\C-g\C-p"':"\"select_git_repo\""
 bind -x '"\C-g\C-b"':"\"select_git_branch\""
 bind -x '"\C-g\C-a"':"\"select_git_branch_all\""
 bind -x '"\C-g\C-t"':"\"select_git_tag\""
-# bind -x '"\C-q"':"\"select-ssh\""
+bind -x '"\C-g\C-v"':"\"select_python_virtualenv\""
