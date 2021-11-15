@@ -3,15 +3,16 @@ priority 1
 snippet playbook "Simple Ansible playbook"
 ---
 - hosts: ${1:localhost}
-	connection: ${2:local}
+	connection: ${2:ssh}
 	become: yes
 	become_user: root
 	${3:tasks:}
+		- name: $0
 endsnippet
 
 snippet template "Ansible template"
 - name: ${1:name}
-	template:
+	ansible.builtin.template:
 		src: ${3:$2.j2}
 		dest: ${2}
 		mode: ${4:0664}
@@ -22,7 +23,7 @@ endsnippet
 
 snippet copy "Ansible copy"
 - name: ${1:name}
-	copy:
+	ansible.builtin.copy:
 		src: ${3:$2}
 		dest: ${2}
 		mode: ${4:0664}
@@ -56,7 +57,7 @@ snippet assert "Ansible assert"
 endsnippet
 
 snippet stat "Ansible stat"
-	- stat:
+	- ansible.builtin.stat:
 			path: ${1}
 		register: ${2:stat_$1}
 
@@ -64,7 +65,7 @@ endsnippet
 
 snippet file "Ansible file"
 	- name: ${1}
-		file:
+		ansible.builtin.file:
 			path: ${2}
 			mode: ${3:0755}
 			owner: ${4:root}
@@ -82,4 +83,9 @@ snippet git "Ansible git"
 		clone: ${5:yes}
 		update: ${6:yes}
 
+endsnippet
+
+snippet name "Ansible task"
+- name: ${1}
+	$0
 endsnippet

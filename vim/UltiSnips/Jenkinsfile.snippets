@@ -11,11 +11,10 @@ pipeline {
   stages {
     stage('${2:stage}') {
       steps {
-        $3
+        $0
       }
     }
   }
-${0}
 }
 endsnippet
 
@@ -23,19 +22,17 @@ snippet stages "Declarative pipeline: stages block"
 stages {
   stage('${1:stage}') {
     steps {
-      $2
+      $0
     }
   }
-${0}
 }
 endsnippet
 
 snippet stage "Declarative pipeline: stage block"
-stage('${1:stage}') {
+stage('${1}') {
   steps {
-    $2
+    $0
   }
-${0}
 }
 endsnippet
 
@@ -48,8 +45,8 @@ endsnippet
 snippet checkout "Declarative pipeline: git checkout"
 checkout scm: [$class: 'GitSCM',
                 userRemoteConfigs: [[url: '${1:https://github.com/}',
-                                    credentialsId: ${2:jenkins-creds}]],
-                branches: [[name: ${3:branch}]],
+                                    credentialsId: ${2}]],
+                branches: [[name: ${3}]],
                 extensions: [[$class: 'CleanCheckout'],
                             [$class: 'CheckoutOption']]
               ], poll: false

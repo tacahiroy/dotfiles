@@ -42,3 +42,10 @@ func ${1}(w http.ResponseWriter, r *http.Request) {
 	$0
 }
 endsnippet
+
+snippet isfileexist "Checks if a file exists"
+if _, err := os.Stat("${1:/path/to/file}"); os.IsNotExist(err) {
+	fmt.Printf("A file was not found: %v", err)
+	os.Exit(10)
+}
+endsnippet
