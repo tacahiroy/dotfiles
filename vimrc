@@ -165,50 +165,88 @@ call minpac#add('prabirshrestha/vim-lsp')
   let g:lsp_diagnostics_enabled = 1
   let g:lsp_diagnostics_echo_cursor = 1
   let g:lsp_diagnostics_float_cursor = 1
+  let g:lsp_diagnostics_signs_enabled = 1
   let g:lsp_diagnostics_signs_error = {'text': '🤬'}
   let g:lsp_diagnostics_signs_warning = {'text': '🤢'}
-  let g:lsp_diagnostics_signs_hint = {'text': '🐑'}
+  let g:lsp_diagnostics_signs_information = {'text': '🙄'}
+  let g:lsp_diagnostics_signs_hint = {'text': '🤓'}
+  let g:lsp_document_code_action_signs_enabled = 0
   let g:lsp_preview_float = 1
-  " let g:lsp_log_verbose = 1
+  " let g:lsp_log_verbose = v:true
   " let g:lsp_log_file = expand('~/vim-lsp.log')
+  let g:lsp_semantic_enabled = 0
 
   let g:lsp_settings = {}
   " https://github.com/golang/tools/blob/master/gopls/doc/settings.md
-  let g:lsp_settings.gopls = {
+  " {{{ gopls
+  let g:lsp_settings['gopls'] = {
   \   'workspace_config': {
-  \     'usePlaceholders': v:true,
-  \     'semanticTokens': v:true,
-  \     'gofumpt': v:true,
+  \     'allExperiments': v:true,
   \     'experimentalWorkspaceModule': v:true,
-  \     'codelens': {
+  \     'gofumpt': v:true,
+  \     'semanticTokens': v:true,
+  \     'codelenses': {
   \       'tidy': v:true,
+  \       'test': v:true,
   \     },
   \     'analyses': {
   \       'assign': v:true,
+  \       'fieldalignment': v:true,
+  \       'fillstruct': v:true,
+  \       'nilness': v:true,
+  \       'shadow': v:true,
   \       'unreachable': v:true,
   \       'unusedparams': v:true,
-  \       'shadow': v:true,
   \     }
   \   },
   \   'initialization_options': {
-  \     'usePlaceholders': v:true,
-  \     'semanticTokens': v:true,
-  \     'gofumpt': v:true,
   \     'experimentalWorkspaceModule': v:true,
-  \     'codelens': {
+  \     'gofumpt': v:true,
+  \     'semanticTokens': v:true,
+  \     'usePlaceholders': v:false,
+  \     'codelenses': {
   \       'tidy': v:true,
-  \     }
+  \       'test': v:true,
+  \     },
   \   },
-  \ }
+  \ } "}}}
 
+  " {{{ pylsp-all
+  " let g:lsp_settings['pylsp-all'] = {
+  " \   'cmd': ['pylsp'],
+  autocmd Tacahiroy BufReadPre *.py let g:lsp_settings['pylsp-all'] = <SID>get_lsp_setting_pylsp()
 
-  nnoremap <Leader>lr :<C-u>LspReferences<Cr>
-  nnoremap <Leader>lR :<C-u>LspRename<Cr>
+  function! s:get_lsp_setting_pylsp() abort
+    let config = {
+    \   'workspace_config': {
+    \     'pylsp': {
+    \       'plugins': {
+    \         'pycodestyle': {
+    \           'enabled': v:false,
+    \           'maxLineLength': 120
+    \         },
+    \         'pylint': {
+    \           'enabled': v:true,
+    \           'args': ['--rcfile=.pylintrc']
+    \         }
+    \       }
+    \     }
+    \   }
+    \ }
 
+    let config['cmd'] = ['pylsp']
+
+    return config
+  endfunction
+  "}}}
+
+  " https://github.com/prabirshrestha/vim-lsp
   function! s:on_lsp_buffer_enabled() abort
       setlocal omnifunc=lsp#complete
       setlocal signcolumn=auto
+
       if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
+
       nmap <buffer> gd <plug>(lsp-definition)
       nmap <buffer> gr <plug>(lsp-references)
       nmap <buffer> gI <plug>(lsp-implementation)
@@ -216,7 +254,14 @@ call minpac#add('prabirshrestha/vim-lsp')
       nmap <buffer> gR <plug>(lsp-rename)
       nmap <buffer> [g <Plug>(lsp-previous-diagnostic)
       nmap <buffer> ]g <Plug>(lsp-next-diagnostic)
-      nmap <buffer> K <plug>(lsp-hover)
+      nmap <buffer> gA <plug>(lsp-code-action)
+      nmap <buffer> gL <plug>(lsp-code-lens)
+      nmap <buffer> K  <plug>(lsp-hover)
+      inoremap <buffer> <expr><S-\<lt>Down> lsp#scroll(+4)
+      inoremap <buffer> <expr><S-\<lt>Up> lsp#scroll(-4)
+
+      let g:lsp_format_sync_timeout = 1000
+      autocmd! BufWritePre *.rs,*.py,*.go call execute('LspDocumentFormatSync')
   endfunction
 
   augroup lsp_install
@@ -260,12 +305,6 @@ call minpac#add('cohama/lexima.vim')
   " let g:lexima_no_default_rules = 1
   let g:lexima_enable_space_rules = 0
   let g:lexima_enable_endwise_rules = 1
-
-  if s:has_plugin('lexima')
-    autocmd Tacahiroy VimEnter * call lexima#add_rule({'char': '(', 'at': '\%#\w', 'input': '('})
-    autocmd Tacahiroy VimEnter * call lexima#add_rule({'char': '"', 'at': '\%#\w', 'input': '"'})
-    autocmd Tacahiroy VimEnter * call lexima#add_rule({'char': "'", 'at': '\%#\w', 'input': "'"})
-  endif
 
 call minpac#add('bkad/CamelCaseMotion')
 
@@ -362,9 +401,10 @@ call minpac#add('tacahiroy/ctrlp-funky')
   nnoremap [Space]uu :execute 'CtrlPFunky ' . fnameescape(expand('<cword>'))<Cr>
 
 if has('python3')
-  call minpac#add('FelikZ/ctrlp-py-matcher')
-    let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
-    let g:ctrlp_match_current_file = 0 " to include current file in matches
+  call minpac#add('nixprime/cpsm')
+    " let g:ctrlp_match_func = {'match': 'cpsm#CtrlPMatch'}
+    let g:cpsm_highlight_mode = 'detailed'
+    let g:ctrlp_match_current_file = 1
 endif
 "}}}
 
@@ -383,8 +423,9 @@ call minpac#add('dense-analysis/ale')
   let g:ale_sh_shellcheck_options = '-x'
   let g:ale_disable_lsp = 1
 
+  let g:ale_pattern_options_enabled = 1
   " disabling ALE for specific files
-  let g:ale_pattern_options = {'\.php$': {'ale_enabled': 0}}
+  let g:ale_pattern_options = {'\.sh': {'ale_enabled': 1}}
 
   let g:ale_linters = {'html': ['eslint'],
         \ 'python': ['pylint', 'pyls'],
@@ -398,14 +439,6 @@ call minpac#add('dense-analysis/ale')
         \ }
   let g:ale_fix_on_save = 1
   let g:ale_yaml_yamllint_options = '-c $HOME/.config/yamllint/ansible.yml'
-  let g:ale_go_gopls_options = ''
-  let g:ale_go_gopls_init_options = {
-        \ "ui.completion.usePlaceholders": v:true,
-        \ 'ui.diagnostic.analyses': {
-          \ 'composites': v:false,
-          \ 'unusedparams': v:true,
-          \ 'unusedresult': v:true,
-        \ }}
 
   let g:ale_history_log_output = 1
   let g:ale_use_global_executables = 1
@@ -433,7 +466,6 @@ call minpac#add('dense-analysis/ale')
 
 call minpac#add('michaeljsmith/vim-indent-object')
 
-call minpac#add('mechatroner/rainbow_csv')
 call minpac#add('mhinz/vim-grepper')
   command! -nargs=1 -complete=file Rg Grepper -noprompt -tool rg -query <args>
 
@@ -762,17 +794,17 @@ nnoremap <silent> <Return> :<C-u>call <SID>append_blank_line()<Cr>
 function! s:toggle_line_number()
   if v:version <= 703 | return | endif
 
-  let b:prev = get(b:, 'prev', {})
+  let b:prev_num_state = get(b:, 'prev_num_state', {})
 
   if &nu || &rnu
     " to be off
-    let b:prev = { 'nu': &nu, 'rnu': &rnu }
+    let b:prev_num_state = { 'nu': &nu, 'rnu': &rnu }
     let &nu = 0
     let &rnu = 0
   else
     " restore previous setting
-    let &nu = get(b:prev, 'nu', 1)
-    let &rnu = get(b:prev, 'rnu', 1)
+    let &nu = get(b:prev_num_state, 'nu', 1)
+    let &rnu = get(b:prev_num_state, 'rnu', 1)
   endif
 endfunction
 
@@ -843,6 +875,8 @@ inoremap <Leader><Leader>l <Esc>bguwgi
 " Capitalise the first letter
 inoremap <Leader><Leader>c <Esc>bvUgi
 
+inoremap <Leader><Leader>k (<Esc>A)
+
 " Copy absolute path to current file to clipboard
 command! -nargs=0 CopyCurrentFilePath2CB let @* = fnamemodify(@%, ':p')
 command! -nargs=0 AbsolutePath echomsg fnamemodify(@%, ':p')
@@ -889,7 +923,7 @@ endif
 
 " * autocmds "{{{
 augroup Tacahiroy
-  " autocmd BufRead,BufNewFile */tasks/*.yml,*/vars/*.yml,*/defaults/*.yml,*/handlers/*.yml set filetype=yaml.ansible
+  autocmd BufRead,BufNewFile */tasks/*.yml,*/vars/*.yml,*/defaults/*.yml,*/handlers/*.yml set filetype=yaml.ansible
 
   autocmd BufReadPost * if !search('\S', 'cnw') | let &l:fileencoding = &encoding | endif
   " restore cursor position
@@ -928,7 +962,6 @@ augroup Tacahiroy
     call append(line('.') - 1, strftime('%Y-%m-%d'))
     call append(line('.') - 1, repeat('=', 10))
   endfunction
-  " autocmd BufRead,BufNewFile *.md,*.mkd,*.markdown set filetype=markdown
 
   autocmd FileType markdown inoremap <buffer> <Leader>tt <Esc>:<C-u>call <SID>insert_today_for_md_changelog()<Cr>:startinsert<Cr>
   autocmd FileType markdown set autoindent
@@ -946,6 +979,12 @@ augroup Tacahiroy
   autocmd FileType c setlocal tabstop=4 softtabstop=4 shiftwidth=4
 
   autocmd FileType go setlocal tabstop=4 shiftwidth=4 softtabstop=4 noexpandtab
+
+  if v:true || exists('*lexima#add_rule')
+    autocmd VimEnter * call lexima#add_rule({'char': '(', 'at': '\%#\w', 'input': '(', 'priority': 100})
+    autocmd VimEnter * call lexima#add_rule({'char': '"', 'at': '\%#\w', 'input': '"', 'priority': 100})
+    autocmd VimEnter * call lexima#add_rule({'char': "'", 'at': '\%#\w', 'input': "'", 'priority': 100})
+  endif
 augroup END
 
 augroup lsp_install
