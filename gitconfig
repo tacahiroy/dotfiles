@@ -20,6 +20,8 @@
 [alias]
 	b    = branch
 	ba   = branch --all
+	bd   = branch -d
+	bD   = branch -D
 	find = branch --contains
 	ci   = commit
 	ca   = commit --amend
