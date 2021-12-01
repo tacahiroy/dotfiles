@@ -1,7 +1,9 @@
-vim/backups
+vim/backups/*
+!vim/backups/.gitkeep
 vim/sandbox
 vim/spell
-vim/swaps
+vim/swaps/*
+!vim/swaps/.gitkeep
 vim/.netrwhist
 vim/pack
 
