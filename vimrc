@@ -402,7 +402,7 @@ call minpac#add('tacahiroy/ctrlp-funky')
 
 if has('python3')
   call minpac#add('nixprime/cpsm')
-    " let g:ctrlp_match_func = {'match': 'cpsm#CtrlPMatch'}
+    let g:ctrlp_match_func = {'match': 'cpsm#CtrlPMatch'}
     let g:cpsm_highlight_mode = 'detailed'
     let g:ctrlp_match_current_file = 1
 endif
