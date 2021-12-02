@@ -220,4 +220,3 @@ fi
         exec tmux -l2
     }
 }
-eval "$(pyenv init -)"

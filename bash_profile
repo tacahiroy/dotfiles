@@ -70,7 +70,7 @@ if [ -f "$HOME/.local/bin/virtualenvwrapper.sh" ]; then
     . "$HOME/.local/bin/virtualenvwrapper.sh"
 fi
 
-if command -v pyenv; then
+if [ -d $HOME/.pyenv ]; then
     export PYENV_ROOT="$HOME/.pyenv"
     set_path "$PYENV_ROOT/bin"
     eval "$(pyenv init --path)"

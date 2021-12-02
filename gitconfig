@@ -64,8 +64,6 @@
 	features = decorations
 	whitespace-error-style = 22 reverse
 	side-by-side = false
-	syntax-theme = Dracula
-	; navigate = true
 
 [delta "decorations"]
 	commit-decoration-style = yellow box ul
