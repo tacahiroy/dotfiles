@@ -234,7 +234,7 @@ call minpac#add('prabirshrestha/vim-lsp')
     \   }
     \ }
 
-    let config['cmd'] = ['pylsp']
+    " let config['cmd'] = ['pylsp']
 
     return config
   endfunction
@@ -318,7 +318,7 @@ call minpac#add('luochen1990/rainbow')
   let g:rainbow_conf.parentheses = ['start=/(/ end=/)/ fold', 'start=/\[/ end=/\]/ fold', 'start=/{/ end=/}/ fold']
   let g:rainbow_conf.separately = { '*': {} }
 
-call minpac#add('benjifisher/matchit.zip')
+call minpac#add('andymass/vim-matchup')
 call minpac#add('tpope/vim-commentary')
   nmap [Space]c gcc
   nmap [Space]yc yygccp
