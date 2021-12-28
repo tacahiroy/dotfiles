@@ -319,6 +319,8 @@ call minpac#add('luochen1990/rainbow')
   let g:rainbow_conf.separately = { '*': {} }
 
 call minpac#add('andymass/vim-matchup')
+  let g:matchup_transmute_enabled = 1
+
 call minpac#add('tpope/vim-commentary')
   nmap [Space]c gcc
   nmap [Space]yc yygccp
@@ -1029,8 +1031,6 @@ if has('gui_running')
     set guifont=HackGen\ 14
     vnoremap <silent> <M-c> "+y
     inoremap <silent> <M-v> <Esc>:let &paste=1<Cr>a<C-R>+<Esc>:let &paste=0<Cr>a
-    " copy to clipboard
-    nnoremap <silent> [Space]a :<C-u>call <SID>xclip()<Cr>
   else
     " Windows
     set guifont=HackGen:h14:cSHIFTJIS:qDRAFT
