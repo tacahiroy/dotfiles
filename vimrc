@@ -182,8 +182,8 @@ call minpac#add('prabirshrestha/vim-lsp')
   let g:lsp_settings['gopls'] = {
   \   'workspace_config': {
   \     'allExperiments': v:true,
-  \     'experimentalWorkspaceModule': v:true,
   \     'gofumpt': v:true,
+  \     'usePlaceholders': v:false,
   \     'semanticTokens': v:true,
   \     'codelenses': {
   \       'tidy': v:true,
@@ -207,6 +207,9 @@ call minpac#add('prabirshrestha/vim-lsp')
   \     'codelenses': {
   \       'tidy': v:true,
   \       'test': v:true,
+  \     },
+  \     'analyses': {
+  \       'fillstruct': v:true,
   \     },
   \   },
   \ } "}}}
@@ -320,6 +323,8 @@ call minpac#add('luochen1990/rainbow')
 
 call minpac#add('andymass/vim-matchup')
   let g:matchup_transmute_enabled = 1
+  nnoremap <Leader>mw <Cmd>MatchupWhereAmI?<Cr>
+
 
 call minpac#add('tpope/vim-commentary')
   nmap [Space]c gcc
@@ -629,7 +634,7 @@ set title
 set titlestring=Vim:\ %F\ %h%r%m
 set titlelen=255
 set tabstop=2 shiftwidth=2 softtabstop=2
-set updatetime=2000
+set updatetime=500
 set viminfo='64,<100,s10,n~/.viminfo
 set virtualedit=block,onemore
 set t_vb= novisualbell
