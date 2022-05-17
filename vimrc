@@ -87,20 +87,6 @@ function! s:toggle_qf_list()
   endif
 endfunction
 
-function! s:xclip()
-  if isdirectory('/c') && executable('xclip')
-    let tmp = tempname()
-    call writefile([getreg('"')], tmp)
-    call system('xclip -d :0 -i ' . tmp)
-    call delete(tmp)
-    echomsg 'Copied!'
-  elseif has('xterm_clipboard')
-    let @+ = @"
-  else
-    let @* = @"
-  endif
-endfunction
-
 function! s:ins_note_template(title)
   let s = []
   call add(s, printf('title: %s', a:title))
@@ -126,6 +112,11 @@ function! s:create_new_note()
   execute printf('edit %s/%s-%s.md', g:tacahiroy_note_path, strftime('%Y-%m-%d'), title)
   call s:ins_note_template(ans)
 endfunction
+
+function! s:to_plain_sql() range abort
+  execute printf('%d,%d:s/\([''"]\|+[\t ]*$\)//g', a:firstline, a:lastline)
+endfunction
+command! -nargs=0 -range ToPlainSQL <line1>,<line2>call <SID>to_plain_sql()
 "}}}
 
 if isdirectory($HOME . '/.vim')
@@ -222,22 +213,29 @@ call minpac#add('prabirshrestha/vim-lsp')
   function! s:get_lsp_setting_pylsp() abort
     let config = {
     \   'workspace_config': {
-    \     'pylsp': {
+    \     'pyls': {
     \       'plugins': {
     \         'pycodestyle': {
     \           'enabled': v:false,
     \           'maxLineLength': 120
     \         },
+    \         'pyflakes': {
+    \           'enabled': v:false
+    \         },
+    \         'yapf': {
+    \           'enabled': v:false
+    \         },
     \         'pylint': {
     \           'enabled': v:true,
-    \           'args': ['--rcfile=.pylintrc']
+    \           'args': ['--rcfile=.pylintrc'],
+    \           'executable': 'poetry run pylint || pylint'
     \         }
     \       }
     \     }
     \   }
     \ }
 
-    " let config['cmd'] = ['pylsp']
+    let config['cmd'] = ['pyls']
 
     return config
   endfunction
@@ -408,7 +406,7 @@ call minpac#add('tacahiroy/ctrlp-funky')
   nnoremap [Space]uu :execute 'CtrlPFunky ' . fnameescape(expand('<cword>'))<Cr>
 
 if has('python3')
-  call minpac#add('nixprime/cpsm')
+  call minpac#add('nixprime/cpsm', {'do': {-> system('bash install.sh')}})
     let g:ctrlp_match_func = {'match': 'cpsm#CtrlPMatch'}
     let g:cpsm_highlight_mode = 'detailed'
     let g:ctrlp_match_current_file = 1
@@ -473,8 +471,7 @@ call minpac#add('dense-analysis/ale')
 
 call minpac#add('michaeljsmith/vim-indent-object')
 
-call minpac#add('mhinz/vim-grepper')
-  command! -nargs=1 -complete=file Rg Grepper -noprompt -tool rg -query <args>
+call minpac#add('jremmen/vim-ripgrep')
 
 call minpac#add('tacahiroy/vim-colors-isotake')
 
@@ -877,8 +874,8 @@ nnoremap <silent> <Leader>fN :let @" = fnamemodify(@%, ':p')<Cr>
 nnoremap yuw :call setreg('"', toupper(expand('<cword>')))<Cr>
 
 " Converting a word under cursor to uppercase / lowercase
-inoremap <Leader><Leader>u <Esc>bgUwgi
-inoremap <Leader><Leader>l <Esc>bguwgi
+inoremap <Leader><Leader>a <Esc>b:call <SID>toggle_case(1)<Cr>gi
+inoremap <Leader><Leader>x <Esc>b:call <SID>toggle_case(0)<Cr>gi
 " Capitalise the first letter
 inoremap <Leader><Leader>c <Esc>bvUgi
 
@@ -888,8 +885,6 @@ inoremap <Leader><Leader>k (<Esc>A)
 command! -nargs=0 CopyCurrentFilePath2CB let @* = fnamemodify(@%, ':p')
 command! -nargs=0 AbsolutePath echomsg fnamemodify(@%, ':p')
 command! -nargs=0 RelativePath echomsg substitute(fnamemodify(@%, ':p'), getcwd() . '/', '', '')
-
-command! -nargs=0 Xclip execute ':!cat % | xclip'
 
 " search visual-ed text
 vnoremap * y/<C-R>"<Cr>
