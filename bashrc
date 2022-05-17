@@ -190,16 +190,19 @@ bind '"\C-n":history-search-forward'
 bind '"\C-y"':"\"cdup\r\""
 
 case "${PLATFORM}" in
-    wsl)
+    wsl-disabled)
         # https://github.com/rupor-github/wsl-ssh-agent/tree/5fe57762c#wsl-2-compatibility
         export SSH_AUTH_SOCK=$HOME/.ssh/agent.sock
         if ! ss -a | grep -q "${SSH_AUTH_SOCK}"; then
             rm -f "${SSH_AUTH_SOCK}"
-            ( setsid socat UNIX-LISTEN:"${SSH_AUTH_SOCK}",fork,umask=007 EXEC:"$HOME/winhome/.wsl/npiperelay.exe -ei -s //./pipe/openssh-ssh-agent",nofork & ) >/dev/null 2>&1
+            ( setsid socat UNIX-LISTEN:"${SSH_AUTH_SOCK}",fork,umask=077 EXEC:"$HOME/winhome/.wsl/npiperelay.exe -ei -s //./pipe/openssh-ssh-agent",nofork & ) >/dev/null 2>&1
         fi
         ;;
 
-    macos)
+    macos|linux|wsl)
+        if ! pgrep ssh-agent >/dev/null; then
+            eval $(ssh-agent)
+        fi
         ;;
 
     *)
