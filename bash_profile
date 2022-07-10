@@ -104,5 +104,5 @@ if command -v terraform >/dev/null 2>&1; then
     export TF_PLUGIN_CACHE_DIR="$HOME/.terraform.d/plugin-cache"
 fi
 
-# https://github.com/gsamokovarov/jump
-eval "$(jump shell)"
+# https://github.com/ajeetdsouza/zoxide
+eval "$(zoxide init --cmd j bash)"
