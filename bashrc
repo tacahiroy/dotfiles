@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 #
 # Tacahiroy's bashrc
+#
+# Copyright © 2022 Takahiro Yoshihara <tacahiroy@gmail.com>
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
 
 umask 0022
 
@@ -110,10 +117,12 @@ setup_plugins
 if [ -f "$HOME/.bash/prompt.sh" ]; then
     git_status="${GIT_ROOT}/github.com/romkatv/gitstatus"
     if [ -d "${git_status}" ]; then
+        # shellcheck source=/dev/null
         . "${git_status}/gitstatus.prompt.sh"
         extras='${GITSTATUS_PROMPT:+(${GITSTATUS_PROMPT})}'
     fi
 
+    # shellcheck source=~/.bash/prompt.sh
     . "$HOME/.bash/prompt.sh"
     set_prompt "${BRIGHT_RED}" "${GREEN}" "${BLUE}" "${extras:-}"
 fi
@@ -201,7 +210,7 @@ case "${PLATFORM}" in
 
     macos|linux|wsl)
         if ! pgrep ssh-agent >/dev/null; then
-            eval $(ssh-agent)
+            eval "$(ssh-agent)"
         fi
         ;;
 
@@ -214,6 +223,7 @@ if [ "${PLATFORM}" = wsl ] && [ -x "$HOME/bin/tmp-clean.sh" ]; then
 fi
 
 if [ -f "$HOME/.bashrc.local" ]; then
+    # shellcheck source=~/.bashrc.local
     . "$HOME/.bashrc.local"
 fi
 
