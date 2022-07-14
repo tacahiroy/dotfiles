@@ -404,69 +404,6 @@ call minpac#add('tacahiroy/ctrlp-funky')
 
   nnoremap [Space]fu :CtrlPFunky<Cr>
   nnoremap [Space]uu :execute 'CtrlPFunky ' . fnameescape(expand('<cword>'))<Cr>
-
-if has('python3')
-  call minpac#add('nixprime/cpsm', {'do': {-> system('bash install.sh')}})
-    let g:ctrlp_match_func = {'match': 'cpsm#CtrlPMatch'}
-    let g:cpsm_highlight_mode = 'detailed'
-    let g:ctrlp_match_current_file = 1
-endif
-"}}}
-
-"{{{ ALE
-call minpac#add('dense-analysis/ale')
-  let g:ale_enabled = 0
-  let g:ale_completion_enabled = 0
-  let g:ale_lint_on_text_changed = 'never'
-  let g:ale_lint_on_insert_leave = 0
-  let g:ale_set_loclist = 0
-  let g:ale_set_quickfix = 1
-  let g:ale_set_balloons = has('balloon_eval_term')
-  let g:ale_python_auto_pipenv = 1
-  let g:ale_python_pylint_options = '--rcfile=.pylintrc'
-  let g:ale_python_pyls_use_global = 1
-  let g:ale_sh_shellcheck_options = '-x'
-  let g:ale_disable_lsp = 1
-
-  let g:ale_pattern_options_enabled = 1
-  " disabling ALE for specific files
-  let g:ale_pattern_options = {'\.sh': {'ale_enabled': 1}}
-
-  let g:ale_linters = {'html': ['eslint'],
-        \ 'python': ['pylint', 'pyls'],
-        \ 'yaml': ['yamllint'],
-        \ 'go': ['gopls', 'gobuild', 'govet'],
-        \ 'bash': ['shellcheck']
-        \ }
-  let g:ale_fixers = { 'python': ['black', 'isort', 'autoimport'],
-        \ 'go': ['gofmt', 'goimports'],
-        \ '*': ['remove_trailing_lines', 'trim_whitespace']
-        \ }
-  let g:ale_fix_on_save = 1
-  let g:ale_yaml_yamllint_options = '-c $HOME/.config/yamllint/ansible.yml'
-
-  let g:ale_history_log_output = 1
-  let g:ale_use_global_executables = 1
-  let g:ale_fix_on_save = 1
-  let g:ale_completion_enabled = 0
-  let g:ale_open_list = 1
-
-  function! LinterStatus() abort
-    if !exists('*ale#statusline#Count')
-      return ''
-    endif
-
-    let l:counts = ale#statusline#Count(bufnr(''))
-
-    let l:all_errors = l:counts.error + l:counts.style_error
-    let l:all_non_errors = l:counts.total - l:all_errors
-
-    return l:counts.total == 0 ? '🦄' : printf(
-    \   '🤔%d🥶%d',
-    \   all_non_errors,
-    \   all_errors
-    \)
-  endfunction
 "}}}
 
 call minpac#add('michaeljsmith/vim-indent-object')
@@ -477,10 +414,10 @@ call minpac#add('tacahiroy/vim-colors-isotake')
 
 if has('python3')
   call minpac#add('SirVer/ultisnips')
-    let g:UltiSnipsExpandTrigger = "<C-e>"
-    let g:UltiSnipsListSnippets = "<C-j>"
-    let g:UltiSnipsJumpForwardTrigger = "<C-y>"
-    let g:UltiSnipsJumpBackwardTrigger = "<C-j>"
+    let g:UltiSnipsExpandTrigger = "<C-i>"
+    let g:UltiSnipsListSnippets = "<C-l>"
+    let g:UltiSnipsJumpForwardTrigger = "<C-f>"
+    let g:UltiSnipsJumpBackwardTrigger = "<C-b>"
 
     " If you want :UltiSnipsEdit to split your window.
     let g:UltiSnipsEditSplit = "vertical"
@@ -717,8 +654,6 @@ cnoremap <C-e> <End>
 cnoremap <C-f> <Right>
 cnoremap <C-b> <Left>
 cnoremap <C-o> <C-d>
-inoremap <C-f> <Right>
-inoremap <C-b> <Left>
 
 " in case forgot to run vim w/o sudo
 cnoremap W!! %!sudo tee > /dev/null %
