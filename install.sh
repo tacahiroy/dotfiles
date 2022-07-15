@@ -2,13 +2,7 @@
 
 set -Cue
 
-UN=$(uname | tr '[:upper:]' '[:lower:]')
-
-if [ "${UN}" = 'darwin' ]; then
-	READLINK=realpath
-else
-	READLINK='readlink -f'
-fi
+READLINK=realpath
 
 curd=$(dirname "$(${READLINK} "$0")")
 BLACKLIST="${curd}/.blacklist"
