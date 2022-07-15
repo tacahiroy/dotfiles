@@ -1,5 +1,30 @@
-" $HOME/.vimrc
-" Author: Takahiro Yoshihara <tacahiroy@gmail.com>
+" Tacahiroy's vimrc
+"
+" Copyright © 2022 Takahiro Yoshihara
+" All rights reserved.
+
+" Redistribution and use in source and binary forms, with or without
+" modification, are permitted provided that the following conditions are met:
+" 1. Redistributions of source code must retain the above copyright
+" notice, this list of conditions and the following disclaimer.
+" 2. Redistributions in binary form must reproduce the above copyright
+" notice, this list of conditions and the following disclaimer in the
+" documentation and/or other materials provided with the distribution.
+
+" THIS SOFTWARE IS PROVIDED BY Takahiro Yoshihara ''AS IS'' AND ANY
+" EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+" WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+" DISCLAIMED. IN NO EVENT SHALL Takahiro Yoshihara BE LIABLE FOR ANY
+" DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+" (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+" LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+" ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+" (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+" SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+" The views and conclusions contained in the software and documentation
+" are those of the authors and should not be interpreted as representing
+" official policies, either expressed or implied, of Takahiro Yoshihara.
 
 scriptencoding utf-8
 
@@ -20,15 +45,11 @@ augroup Tacahiroy | autocmd! | augroup END
 let s:mac = has('macunix') || has('mac')
 let s:linux = !s:mac && has('unix')
 let s:win = !(s:mac || s:linux) && has('win32') || has('win64')
-let s:grep = executable('rg') ? 'rg' : (executable('ag') ? 'ag' : '')
+let s:grep = executable('rg') ? 'rg' : 'grep'
 let g:show_cwd = 1
 
 " functions " {{{
 " * global
-function! Echohl(group, msg)
-  execute printf('echohl %s | echomsg "%s" | echohl NONE', a:group, a:msg)
-endfunction
-
 " To realise where I am
 function! Cwd()
   return '(' . s:shorten_path(getcwd(), 25) . ')'
@@ -174,7 +195,7 @@ call minpac#add('prabirshrestha/vim-lsp')
   \   'workspace_config': {
   \     'allExperiments': v:true,
   \     'gofumpt': v:true,
-  \     'usePlaceholders': v:false,
+  \     'usePlaceholders': v:true,
   \     'semanticTokens': v:true,
   \     'codelenses': {
   \       'tidy': v:true,
@@ -206,8 +227,6 @@ call minpac#add('prabirshrestha/vim-lsp')
   \ } "}}}
 
   " {{{ pylsp-all
-  " let g:lsp_settings['pylsp-all'] = {
-  " \   'cmd': ['pylsp'],
   autocmd Tacahiroy BufReadPre *.py let g:lsp_settings['pylsp-all'] = <SID>get_lsp_setting_pylsp()
 
   function! s:get_lsp_setting_pylsp() abort
@@ -235,7 +254,7 @@ call minpac#add('prabirshrestha/vim-lsp')
     \   }
     \ }
 
-    let config['cmd'] = ['pyls']
+    " let config['cmd'] = ['poetry run pyls || pyls']
 
     return config
   endfunction
@@ -249,12 +268,13 @@ call minpac#add('prabirshrestha/vim-lsp')
       if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
 
       nmap <buffer> gd <plug>(lsp-definition)
+      nmap <buffer> gD <plug>(lsp-document-diagnostics)
+      nmap <buffer> g] <plug>(lsp-next-diagnostic)
+      nmap <buffer> g[ <plug>(lsp-previous-diagnostic)
       nmap <buffer> gr <plug>(lsp-references)
       nmap <buffer> gI <plug>(lsp-implementation)
       nmap <buffer> gt <plug>(lsp-type-definition)
       nmap <buffer> gR <plug>(lsp-rename)
-      nmap <buffer> [g <Plug>(lsp-previous-diagnostic)
-      nmap <buffer> ]g <Plug>(lsp-next-diagnostic)
       nmap <buffer> gA <plug>(lsp-code-action)
       nmap <buffer> gL <plug>(lsp-code-lens)
       nmap <buffer> K  <plug>(lsp-hover)
@@ -313,8 +333,7 @@ call minpac#add('godlygeek/tabular')
 call minpac#add('luochen1990/rainbow')
   let g:rainbow_active = 1
   let g:rainbow_conf = {}
-  let g:rainbow_conf.guifgs = ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick']
-  let g:rainbow_conf.ctermfgs = ['darkblue', 'darkyellow', 'darkgreen', 'darkgray', 'darkmagenta']
+  let g:rainbow_conf.ctermfgs = ['darkblue', 'darkgreen', 'darkred', 'darkgray', 'darkmagenta']
   let g:rainbow_conf.operators = '_,_'
   let g:rainbow_conf.parentheses = ['start=/(/ end=/)/ fold', 'start=/\[/ end=/\]/ fold', 'start=/{/ end=/}/ fold']
   let g:rainbow_conf.separately = { '*': {} }
@@ -359,6 +378,7 @@ call minpac#add('ctrlpvim/ctrlp.vim')
   let g:ctrlp_brief_prompt = 1
   let g:ctrlp_key_loop = 1
   let g:ctrlp_use_caching = 0
+  let g:ctrlp_match_current_file = 0
 
   if s:grep ==# 'rg'
     let g:ctrlp_user_command = 'rg %s -i --files --no-heading --max-depth 10'
@@ -404,6 +424,15 @@ call minpac#add('tacahiroy/ctrlp-funky')
 
   nnoremap [Space]fu :CtrlPFunky<Cr>
   nnoremap [Space]uu :execute 'CtrlPFunky ' . fnameescape(expand('<cword>'))<Cr>
+
+if has('python3')
+  call minpac#add('nixprime/cpsm', {'do': {-> system('bash install.sh')}})
+    " let g:ctrlp_match_func = {'match': 'cpsm#CtrlPMatch'}
+    let g:cpsm_highlight_mode = 'detailed'
+endif
+
+call minpac#add('ryanoasis/vim-devicons')
+  let webdevicons_enable_ctrlp = 1
 "}}}
 
 call minpac#add('michaeljsmith/vim-indent-object')
@@ -791,7 +820,7 @@ xnoremap <Leader>ta :Tabularize<Space>/
 
 nnoremap <Leader>te :<C-u>tabe<Space>
 " clears search highlight
-nnoremap <silent> <C-l> :<C-u>nohlsearch<Cr>
+nnoremap <silent> <C-l> <Cmd>nohlsearch<Cr>
 
 " no mouse basically
 nnoremap <MiddleMouse> <Nop>
@@ -853,6 +882,8 @@ if has('pythonx') "{{{
   command! -nargs=0 -range DecodeURI <line1>,<line2>call s:decode_uri()
 endif
 
+command! -nargs=0 PtPython vert terminal ++close ptpython
+
 if has('multi_byte_ime') || has('xim')
   set iminsert=0 imsearch=0
   inoremap <silent> <Esc> <Esc>:<C-u>set iminsert=0<Cr>
@@ -879,6 +910,7 @@ augroup Tacahiroy
 
   " ShellScript
   autocmd FileType sh,zsh setlocal tabstop=4 softtabstop=4 shiftwidth=4 expandtab
+  " autocmd BufWritePre *.sh %!shfmt
 
 
   autocmd FileType php setlocal tabstop=4 softtabstop=4 shiftwidth=4 expandtab
@@ -919,6 +951,8 @@ augroup Tacahiroy
 
   if v:true || exists('*lexima#add_rule')
     autocmd VimEnter * call lexima#add_rule({'char': '(', 'at': '\%#\w', 'input': '(', 'priority': 100})
+    autocmd VimEnter * call lexima#add_rule({'char': '{', 'at': '\%#\w', 'input': '{', 'priority': 100})
+    autocmd VimEnter * call lexima#add_rule({'char': '[', 'at': '\%#\w', 'input': '[', 'priority': 100})
     autocmd VimEnter * call lexima#add_rule({'char': '"', 'at': '\%#\w', 'input': '"', 'priority': 100})
     autocmd VimEnter * call lexima#add_rule({'char': "'", 'at': '\%#\w', 'input': "'", 'priority': 100})
   endif

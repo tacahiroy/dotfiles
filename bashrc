@@ -199,16 +199,18 @@ bind '"\C-n":history-search-forward'
 bind '"\C-y"':"\"cdup\r\""
 
 case "${PLATFORM}" in
-    wsl-disabled)
+    # NOTE: the version of ssh is too new on Void, which is 9.0p1, and it fails
+    # to retrieve an identity from older versions of ssh-agent.
+    wsl)
         # https://github.com/rupor-github/wsl-ssh-agent/tree/5fe57762c#wsl-2-compatibility
         export SSH_AUTH_SOCK=$HOME/.ssh/agent.sock
         if ! ss -a | grep -q "${SSH_AUTH_SOCK}"; then
             rm -f "${SSH_AUTH_SOCK}"
-            ( setsid socat UNIX-LISTEN:"${SSH_AUTH_SOCK}",fork,umask=077 EXEC:"$HOME/winhome/.wsl/npiperelay.exe -ei -s //./pipe/openssh-ssh-agent",nofork & ) >/dev/null 2>&1
+            ( setsid socat UNIX-LISTEN:"${SSH_AUTH_SOCK}",fork,umask=007 EXEC:"$HOME/winhome/.wsl/npiperelay.exe -ei -s //./pipe/openssh-ssh-agent",nofork & ) >/dev/null 2>&1
         fi
         ;;
 
-    macos|linux|wsl)
+    macos|linux|wsl-disabled)
         if ! pgrep ssh-agent >/dev/null; then
             eval "$(ssh-agent)"
         fi
@@ -233,3 +235,11 @@ fi
         exec tmux -l2
     }
 }
+
+export STARSHIP_CONFIG=$HOME/.config/starship/starship.toml
+eval "$(starship init bash)"
+
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="$HOME/.sdkman"
+# shellcheck source=/dev/null
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"

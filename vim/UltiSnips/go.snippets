@@ -1,12 +1,18 @@
 priority 1
 
-snippet pp "Println"
-fmt.Println(${0})
+snippet pp "fmt.Println"
+fmt.Println(${1:var})
+$0
+endsnippet
+
+snippet pf "fmt.Printf"
+fmt.Printf("%v", ${1:err})
+$0
 endsnippet
 
 snippet iferr "if err != nil"
 if err != nil {
-	${1}
+	${1:fmt.Printf("Error: %v", err)}
 }
 $0
 endsnippet
@@ -34,7 +40,7 @@ $0
 endsnippet
 
 snippet registerhandlefunc "http.HandleFunc registration"
-http.HandleFunc("${1:/end-point}", ${2:function})
+http.HandleFunc("${1:end-point}", ${2:function})
 endsnippet
 
 snippet httphandlefunc "http.HandleFunc"
@@ -44,8 +50,68 @@ func ${1}(w http.ResponseWriter, r *http.Request) {
 endsnippet
 
 snippet isfileexist "Checks if a file exists"
-if _, err := os.Stat("${1:/path/to/file}"); os.IsNotExist(err) {
+if _, err := os.Stat("${1:path}"); os.IsNotExist(err) {
 	fmt.Printf("A file was not found: %v", err)
 	os.Exit(10)
 }
+$0
+endsnippet
+
+snippet file_ioutil_readfile "Reads file with ioutil_ReadFile"
+content, err := ioutil.ReadFile("${1:path}")
+if err != nil {
+		fmt.Printf("Error reading a file: %s\n\n%v\n", "$1", err)
+}
+$0
+endsnippet
+
+snippet file_readfile_withbuffer "Reads file with buffer"
+file, err := os.Open("${1:path}")
+if err != nil {
+		fmt.Printf("Error reading a file: %s\n\n%v\n", "$1", err)
+}
+defer file.Close()
+
+const maxSize = 4
+
+// create buffer
+b := make([]byte, maxSize)
+
+for {
+		content, err := file.Read(b)
+		if err != nil {
+				if err != io.EOF {
+						fmt.Printf("Error reading a file: %v\n", err)
+				}
+				break
+		}
+}
+$0
+endsnippet
+
+snippet file_readfile_linebyline "Reads file line by line using bufio.Scanner"
+file, err := os.Open("${1:path}")
+if err != nil {
+		fmt.Println(err)
+}
+defer file.Close()
+
+scanner := bufio.NewScanner(file)
+for scanner.Scan() {
+		fmt.Println(scanner.Text())
+}
+
+if err := scanner.Err(); err != nil {
+		fmt.Printf("Error reading a file: %s\n\n%v\n", "$1", err)
+}
+$0
+endsnippet
+
+snippet tetst_mapfile "fstest.MapFile"
+fs := make(fstest.MapFS)
+fs["${1:path}"] = &fstest.MapFile{
+	Data: []byte("${2:data}"),
+	Mode: 0o644,
+}
+$0
 endsnippet

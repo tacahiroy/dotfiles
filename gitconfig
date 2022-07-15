@@ -61,20 +61,30 @@
 	diffFilter = delta --color-only
 
 [delta]
+	navigate = true
+	light = true
 	features = decorations
 	whitespace-error-style = 22 reverse
 	side-by-side = false
 
 [delta "decorations"]
-	commit-decoration-style = yellow box ul
-	file-style = bold yellow ul
+	commit-decoration-style = red box ul
+	file-style = bold blue ul
 	file-decoration-style = none
+	; commit-style = magenta
+	; commit-decoration-style = magenta box ul
+
+[interactive]
+	diffFilter = delta --color-only
 
 [diff]
 	compactionHeuristic = true
 	mnemonicprefix = true
+	colorMoved = default
+
 [merge]
 	tool = vimdiff
+	conflictstyle = diff3
 
 [push]
 	default = current
