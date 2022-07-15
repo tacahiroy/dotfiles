@@ -49,7 +49,6 @@
 	st   = status
 	sw   = switch
 	sup  = !git stash && git up
-	shown = !git show | delta --navigate
 	up   = pull --rebase
 	fep  = fetch --prune
 	fea  = fetch --all
@@ -61,17 +60,13 @@
 	diffFilter = delta --color-only
 
 [delta]
-	navigate = true
-	light = true
-	features = decorations
-	whitespace-error-style = 22 reverse
-	side-by-side = false
+	features = hoopoe
 
 [delta "decorations"]
 	commit-decoration-style = red box ul
 	file-style = bold blue ul
 	file-decoration-style = none
-	; commit-style = magenta
+	commit-style = magenta
 	; commit-decoration-style = magenta box ul
 
 [interactive]
@@ -105,5 +100,7 @@
 
 [include]
 	path = ~/.gitconfig.local
+	path = ~/.config/delta/themes.gitconfig
+
 [init]
 	defaultBranch = main
