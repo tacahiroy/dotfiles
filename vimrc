@@ -382,8 +382,6 @@ call minpac#add('ctrlpvim/ctrlp.vim')
 
   if s:grep ==# 'rg'
     let g:ctrlp_user_command = 'rg %s -i --files --no-heading --max-depth 10'
-  elseif s:grep ==# 'ag'
-    let g:ctrlp_user_command = 'ag %s -g "" --depth 10'
   elseif s:grep ==# ''
     if s:linux || s:mac
       let g:ctrlp_user_command = 'find %s -type f'
@@ -434,6 +432,7 @@ call minpac#add('michaeljsmith/vim-indent-object')
 call minpac#add('jremmen/vim-ripgrep')
 
 call minpac#add('tacahiroy/vim-colors-isotake')
+  colorscheme isotake
 
 if has('python3')
   call minpac#add('SirVer/ultisnips')
@@ -564,7 +563,7 @@ set scroll=0
 set scrolloff=5
 
 set shell&
-for s in ['/usr/bin/bash', '/bin/bash', '/usr/local/bin/zsh', '/usr/bin/zsh', '/bin/zsh', '/bin/sh']
+for s in ['/bin/bash', '/usr/bin/bash', '/bin/dash', '/bin/ash', '/bin/sh']
   if executable(s)
     let &shell = s
     break
