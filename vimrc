@@ -425,14 +425,8 @@ call minpac#add('tacahiroy/ctrlp-funky')
   nnoremap [Space]fu :CtrlPFunky<Cr>
   nnoremap [Space]uu :execute 'CtrlPFunky ' . fnameescape(expand('<cword>'))<Cr>
 
-if has('python3')
-  call minpac#add('nixprime/cpsm', {'do': {-> system('bash install.sh')}})
-    " let g:ctrlp_match_func = {'match': 'cpsm#CtrlPMatch'}
-    let g:cpsm_highlight_mode = 'detailed'
-endif
-
 call minpac#add('ryanoasis/vim-devicons')
-  let webdevicons_enable_ctrlp = 1
+  let g:webdevicons_enable_ctrlp = 1
 "}}}
 
 call minpac#add('michaeljsmith/vim-indent-object')
