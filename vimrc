@@ -911,8 +911,7 @@ augroup Tacahiroy
 
   autocmd FileType make setlocal list
   autocmd FileType make setlocal iskeyword+=-
-  autocmd BufRead,BufNewFile Jenkinsfile,*.jenkins,*.jenkinsfile setlocal filetype=Jenkinsfile.groovy
-  " autocmd BufRead,BufNewFile *.jenkins,*.jenkinsfile setfiletype groovy
+  autocmd BufRead,BufNewFile Jenkinsfile,*.jenkins,*.jenkinsfile setfiletype groovy
   autocmd FileType groovy,Jenkinsfile setlocal autoindent smartindent
 
   augroup PersistentUndo
