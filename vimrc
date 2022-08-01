@@ -330,6 +330,13 @@ call minpac#add('cohama/lexima.vim')
 call minpac#add('bkad/CamelCaseMotion')
 
 call minpac#add('godlygeek/tabular')
+  call minpac#add('preservim/vim-markdown')
+    let g:vim_markdown_folding_disabled = 1
+    let g:vim_markdown_conceal = 1
+    let g:vim_markdown_emphasis_multiline = 0
+    let g:vim_markdown_strikethrough = 1
+    let g:vim_markdown_new_list_item_indent = 4
+
 call minpac#add('luochen1990/rainbow')
   let g:rainbow_active = 1
   let g:rainbow_conf = {}
@@ -827,9 +834,6 @@ nnoremap <silent> <Leader>fn :let @" = expand('%:t')<Cr>
 inoremap <silent> <Leader>fN <C-R>=fnamemodify(@%, ':p')<Cr>
 nnoremap <silent> <Leader>fN :let @" = fnamemodify(@%, ':p')<Cr>
 
-" Make a work under cursor uppercase and put the default yank buffer
-nnoremap yuw :call setreg('"', toupper(expand('<cword>')))<Cr>
-
 " Converting a word under cursor to uppercase / lowercase
 inoremap <Leader><Leader>a <Esc>b:call <SID>toggle_case(1)<Cr>gi
 inoremap <Leader><Leader>x <Esc>b:call <SID>toggle_case(0)<Cr>gi
@@ -903,7 +907,6 @@ augroup Tacahiroy
 
   " ShellScript
   autocmd FileType sh,zsh setlocal tabstop=4 softtabstop=4 shiftwidth=4 expandtab
-  " autocmd BufWritePre *.sh %!shfmt
 
 
   autocmd FileType php setlocal tabstop=4 softtabstop=4 shiftwidth=4 expandtab
@@ -916,7 +919,7 @@ augroup Tacahiroy
   augroup PersistentUndo
     autocmd!
     autocmd BufWritePre
-          \ COMMIT_EDITMSG,*.bak,*.bac,knife-edit-*.js,?.* setlocal noundofile
+          \ COMMIT_EDITMSG,*.bak,*.bac setlocal noundofile
   augroup END
 
   function! s:insert_today_for_md_changelog()
@@ -926,7 +929,7 @@ augroup Tacahiroy
 
   autocmd FileType markdown inoremap <buffer> <Leader>tt <Esc>:<C-u>call <SID>insert_today_for_md_changelog()<Cr>:startinsert<Cr>
   autocmd FileType markdown set autoindent
-  autocmd FileType markdown setlocal tabstop=4 shiftwidth=4 conceallevel=0
+  autocmd FileType markdown setlocal tabstop=4 shiftwidth=4 conceallevel=2
   let g:markdown_fenced_languages = ['python', 'bash=sh']
   let g:markdown_syntax_conceal = 0
 
@@ -959,54 +962,6 @@ augroup END
 
 if filereadable(expand('~/.vimrc.local'))
   source ~/.vimrc.local
-endif
-
-" gVim specific
-if has('gui_running')
-  set columns=132
-  set guioptions=aeciM
-  set guitablabel=%N)\ %f
-  set lines=40
-  set mousehide
-  set nomousefocus
-
-  " Disable GUI /Syntax/ menu
-  let did_install_syntax_menu = 1
-  " let did_install_default_menus = 1
-
-  if &guioptions =~# 'M'
-    let &guioptions = substitute(&guioptions, '[mT]', '', 'g')
-  endif
-
-  if s:mac
-    set guifont=HackGen:h14
-    set linespace=1
-    set antialias
-    set fuoptions& fuoptions+=maxhorz
-
-    inoremap <silent> <D-v> <Esc>:let &paste=1<Cr>a<C-R>=@*<Cr><Esc>:let &paste=0<Cr>a
-    cnoremap <D-v> <C-R>*
-    vnoremap <D-c> "+y
-    nnoremap <D-a> ggVG
-  elseif s:linux
-    set guifont=HackGen\ 14
-    vnoremap <silent> <M-c> "+y
-    inoremap <silent> <M-v> <Esc>:let &paste=1<Cr>a<C-R>+<Esc>:let &paste=0<Cr>a
-  else
-    " Windows
-    set guifont=HackGen:h14:cSHIFTJIS:qDRAFT
-    if has('directx')
-      set renderoptions=type:directx,level:2.0,geom:1,renmode:5,contrast:1,taamode:0
-    endif
-    inoremap <silent> <M-v> <Esc>:let &paste=1<Cr>a<C-R>=@*<Cr><Esc>:let &paste=0<Cr>a
-
-    cnoremap <M-v> <C-R>*
-    vnoremap <M-c> "+y
-  endif
-
-  if has('printer')
-    let &printfont = &guifont
-  endif
 endif
 " __END__ {{{
 " vim: fen fdm=marker ts=2 sts=2 sw=2 tw=0
