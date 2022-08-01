@@ -199,7 +199,7 @@ bind '"\C-n":history-search-forward'
 bind '"\C-y"':"\"cdup\r\""
 
 case "${PLATFORM}" in
-    # NOTE: the version of ssh is too new on Void, which is 9.0p1, and it fails
+    # NOTE: the version of ssh is too new on Void Linux, which is 9.0p1, and it fails
     # to retrieve an identity from older versions of ssh-agent.
     wsl)
         # https://github.com/rupor-github/wsl-ssh-agent/tree/5fe57762c#wsl-2-compatibility
@@ -210,7 +210,7 @@ case "${PLATFORM}" in
         fi
         ;;
 
-    macos|linux|wsl-disabled)
+    macos|linux)
         if ! pgrep ssh-agent >/dev/null; then
             eval "$(ssh-agent)"
         fi
@@ -239,7 +239,16 @@ fi
 export STARSHIP_CONFIG=$HOME/.config/starship/starship.toml
 eval "$(starship init bash)"
 
+# Adding wsl-open as a browser for Bash for Windows
+if [[ $(uname -r) =~ (m|M)icrosoft ]]; then
+    if [[ -z $BROWSER ]]; then
+        export BROWSER=wsl-open
+    else
+        export BROWSER=$BROWSER:wsl-open
+    fi
+fi
+
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="$HOME/.sdkman"
 # shellcheck source=/dev/null
-[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && . "$HOME/.sdkman/bin/sdkman-init.sh"
