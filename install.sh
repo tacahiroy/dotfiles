@@ -5,13 +5,13 @@ set -Cue
 READLINK=realpath
 
 curd=$(dirname "$(${READLINK} "$0")")
-BLACKLIST="${curd}/.blacklist"
+BLOCKLIST="${curd}/.blocklist"
 
 mkdir -p "$HOME/bin"
 mkdir -p "$HOME/.tmux"
 
 for x in *; do
-    grep "^${x}$" "${BLACKLIST}" && continue
+    grep "^${x}$" "${BLOCKLIST}" && continue
 	case $x in
         config)
             XDG_CONFIG_HOME=$HOME/.config
