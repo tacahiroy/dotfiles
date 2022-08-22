@@ -25,6 +25,8 @@ return {
         bottom = 0,
     },
 
+    audible_bell = "Disabled",
+
     keys = {
         {key="P", mods="SHIFT|CTRL", action=wezterm.action.SpawnCommandInNewTab{}},
         {key="L", mods="SHIFT|CTRL", action=wezterm.action.ShowLauncher},
