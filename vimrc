@@ -189,6 +189,7 @@ call minpac#add('prabirshrestha/vim-lsp')
   let g:lsp_semantic_enabled = 0
 
   let g:lsp_settings = {}
+
   " https://github.com/golang/tools/blob/master/gopls/doc/settings.md
   " {{{ gopls
   let g:lsp_settings['gopls'] = {
@@ -258,7 +259,7 @@ call minpac#add('prabirshrestha/vim-lsp')
 
     return config
   endfunction
-  "}}}
+  " }}}
 
   " https://github.com/prabirshrestha/vim-lsp
   function! s:on_lsp_buffer_enabled() abort
@@ -478,14 +479,14 @@ command! PackStatus packadd minpac | source $MYVIMRC | call minpac#status()
 " set completeopt=preview,menuone,noinsert,noselect
 set completeopt+=preview
 
-" Super simple note taking
+" Super simple note taking {{{
 let g:tacahiroy_note_path = expand('~/dev/memo')
 command! -nargs=1 InsertNoteTemplate call <SID>ins_note_template(<q-args>)
 command! -nargs=0 NewNote call <SID>create_new_note()
 nnoremap [Space]mc :NewNote<Cr>
 nnoremap [Space]ml :execute 'CtrlP ' . g:tacahiroy_note_path<Cr><F5>
+"}}}
 
-"
 function! s:current_syntax_name()
   let synid = synID(line('.'), col('.'), 1)
   let synname = synIDattr(synid, 'name')
@@ -600,6 +601,7 @@ set tabstop=2 shiftwidth=2 softtabstop=2
 set updatetime=500
 set viminfo='64,<100,s10,n~/.viminfo
 set virtualedit=block,onemore
+set termwinkey=<C-g>
 set t_vb= novisualbell
 
 set wildignore=*.exe,*.dll,*.class,*.o,*.obj
@@ -945,11 +947,13 @@ augroup Tacahiroy
   autocmd FileType go setlocal tabstop=4 shiftwidth=4 softtabstop=4 noexpandtab
 
   if v:true || exists('*lexima#add_rule')
-    autocmd VimEnter * call lexima#add_rule({'char': '(', 'at': '\%#\w', 'input': '(', 'priority': 100})
-    autocmd VimEnter * call lexima#add_rule({'char': '{', 'at': '\%#\w', 'input': '{', 'priority': 100})
-    autocmd VimEnter * call lexima#add_rule({'char': '[', 'at': '\%#\w', 'input': '[', 'priority': 100})
-    autocmd VimEnter * call lexima#add_rule({'char': '"', 'at': '\%#\w', 'input': '"', 'priority': 100})
-    autocmd VimEnter * call lexima#add_rule({'char': "'", 'at': '\%#\w', 'input': "'", 'priority': 100})
+    autocmd VimEnter * call lexima#add_rule({'char': '(', 'at': '\%#\w', 'input': '('})
+    autocmd VimEnter * call lexima#add_rule({'char': ';', 'at': '\%#)',  'leave': ')', 'input': ';'})
+    autocmd VimEnter * call lexima#add_rule({'char': '{', 'at': '\%#\w', 'input': '{'})
+    autocmd VimEnter * call lexima#add_rule({'char': '{', 'at': '\%#)',  'leave': ')', 'input': ' {'})
+    autocmd VimEnter * call lexima#add_rule({'char': '[', 'at': '\%#\w', 'input': '['})
+    autocmd VimEnter * call lexima#add_rule({'char': '"', 'at': '\%#\w', 'except': '\%#[\t ]*$', 'input': '"'})
+    autocmd VimEnter * call lexima#add_rule({'char': "'", 'at': '\%#\w', 'except': '\%#[\t ]*$', 'input': "'"})
   endif
 augroup END
 
