@@ -89,3 +89,10 @@ snippet name "Ansible task"
 - name: ${1}
 	$0
 endsnippet
+
+snippet includevars "ansible.builtin.include_vars"
+- name: ${1}
+	ansible.builtin.include_vars:
+		file: ${2:vars.yml}
+		${3:'name: variable-name'}
+endsnippet

@@ -1,5 +1,37 @@
 priority 1
 
+snippet testtable "Table-driven test"
+testTable := []struct{
+	name string
+	$1
+	expectedData ${2:bool}
+}{
+	{
+		name: ${3},
+		$1,
+		expectedData: ${4}
+	},
+}
+
+for _, tt := range testTable {
+	t.Run(tt.name, func(t *testing.T) {
+		data := ${6:some-func-call}
+		if tt.expectedData != data {
+			t.Fatalf("expected (%v), but got (%v)", tt.expectedData, data)
+		}
+	})
+}
+$0
+endsnippet
+
+snippet errnew "errors.New"
+errors.New(fmt.Sprintf("Failed to ${1}: %v", ${2:err}))
+endsnippet
+
+snippet ex "os.Exit"
+os.Exit(${1:0})
+endsnippet
+
 snippet pp "fmt.Println"
 fmt.Println(${1:var})
 $0
