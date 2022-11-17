@@ -110,16 +110,12 @@ endfunction
 
 function! s:ins_note_template(title)
   let s = []
-  call add(s, printf('title: %s', a:title))
+  call add(s, printf('%s', a:title))
   call add(s, '==========')
-  call add(s, printf('date: %s', strftime('%Y-%m-%d %T')))
-  call add(s, 'tags: []')
+  call add(s, printf('- date: %s', strftime('%Y-%m-%d %T')))
+  call add(s, '- tags: []')
   call add(s, '- - -')
-  let i = 1
-  for y in s
-    call setline(i, y)
-    let i += 1
-  endfor
+  call setline(1, s)
 endfunction
 
 function! s:create_new_note()
@@ -138,6 +134,20 @@ function! s:to_plain_sql() range abort
   execute printf('%d,%d:s/\([''"]\|+[\t ]*$\)//g', a:firstline, a:lastline)
 endfunction
 command! -nargs=0 -range ToPlainSQL <line1>,<line2>call <SID>to_plain_sql()
+
+function! s:shorten_commit_hash()
+  let lh = expand('<cword>')
+  let sh = lh
+  if len(lh) >= 8
+    let sh = lh[0:7]
+  endif
+  let save_reg = getreg('"')
+  call setreg('"', sh)
+  normal! "_diwP
+  call setreg('"', save_reg)
+endfunction
+command! -nargs=0 ShortenCommitHash call <SID>shorten_commit_hash()
+nnoremap <Leader>H <Cmd>ShortenCommitHash<Cr>
 "}}}
 
 if isdirectory($HOME . '/.vim')
@@ -178,14 +188,16 @@ call minpac#add('prabirshrestha/vim-lsp')
   let g:lsp_diagnostics_echo_cursor = 1
   let g:lsp_diagnostics_float_cursor = 1
   let g:lsp_diagnostics_signs_enabled = 1
+  let g:lsp_inlay_hints_enabled = has('patch-9.0.0167')
   let g:lsp_diagnostics_signs_error = {'text': '🤬'}
   let g:lsp_diagnostics_signs_warning = {'text': '🤢'}
   let g:lsp_diagnostics_signs_information = {'text': '🙄'}
   let g:lsp_diagnostics_signs_hint = {'text': '🤓'}
   let g:lsp_document_code_action_signs_enabled = 0
   let g:lsp_preview_float = 1
-  " let g:lsp_log_verbose = v:true
-  " let g:lsp_log_file = expand('~/vim-lsp.log')
+	let g:lsp_preview_autoclose = 0
+  let g:lsp_log_verbose = v:false
+  let g:lsp_log_file = expand('~/vim-lsp.log')
   let g:lsp_semantic_enabled = 0
 
   let g:lsp_settings = {}
@@ -278,6 +290,7 @@ call minpac#add('prabirshrestha/vim-lsp')
       nmap <buffer> gR <plug>(lsp-rename)
       nmap <buffer> gA <plug>(lsp-code-action)
       nmap <buffer> gL <plug>(lsp-code-lens)
+      nmap <buffer> gC <plug>(lsp-preview-close)
       nmap <buffer> K  <plug>(lsp-hover)
       inoremap <buffer> <expr><S-\<lt>Down> lsp#scroll(+4)
       inoremap <buffer> <expr><S-\<lt>Up> lsp#scroll(-4)
@@ -418,7 +431,7 @@ call minpac#add('ctrlpvim/ctrlp.vim')
   nnoremap [Space]fr :CtrlPRTS<Cr>
   nnoremap [Space]fq :CtrlPQuickfix<Cr>
 
-call minpac#add('tacahiroy/ctrlp-funky')
+call minpac#add('tacahiroy/ctrlp-funky', {'rev': 'main'})
   let g:ctrlp_funky_debug = 0
   let g:ctrlp_funky_use_cache = 0
   let g:ctrlp_funky_matchtype = 'path'
@@ -434,8 +447,6 @@ call minpac#add('tacahiroy/ctrlp-funky')
 call minpac#add('ryanoasis/vim-devicons')
   let g:webdevicons_enable_ctrlp = 1
 "}}}
-
-call minpac#add('michaeljsmith/vim-indent-object')
 
 call minpac#add('jremmen/vim-ripgrep')
 
@@ -527,7 +538,7 @@ if exists('+breakindent')
 end
 set cedit=<C-x>
 set clipboard=
-set cmdheight=2
+set cmdheight=1
 " this makes scroll slower
 set colorcolumn=
 set cpoptions+=n
@@ -752,7 +763,7 @@ nnoremap <silent> qp :bprevious<Cr>
 nnoremap <silent> gn :tabnext<Cr>
 nnoremap <silent> gh :tabprevious<Cr>
 
-" window navigations
+" window navigations (I use Colemak)
 nnoremap <silent> sh <C-w>h
 nnoremap <silent> se <C-w>k
 nnoremap <silent> si <C-w>l
@@ -931,7 +942,7 @@ augroup Tacahiroy
 
   autocmd FileType markdown inoremap <buffer> <Leader>tt <Esc>:<C-u>call <SID>insert_today_for_md_changelog()<Cr>:startinsert<Cr>
   autocmd FileType markdown set autoindent
-  autocmd FileType markdown setlocal tabstop=4 shiftwidth=4 conceallevel=2
+  autocmd FileType markdown set tabstop=4 shiftwidth=4 conceallevel=2
   let g:markdown_fenced_languages = ['python', 'bash=sh']
   let g:markdown_syntax_conceal = 0
 
@@ -950,7 +961,7 @@ augroup Tacahiroy
     autocmd VimEnter * call lexima#add_rule({'char': '(', 'at': '\%#\w', 'input': '('})
     autocmd VimEnter * call lexima#add_rule({'char': ';', 'at': '\%#)',  'leave': ')', 'input': ';'})
     autocmd VimEnter * call lexima#add_rule({'char': '{', 'at': '\%#\w', 'input': '{'})
-    autocmd VimEnter * call lexima#add_rule({'char': '{', 'at': '\%#)',  'leave': ')', 'input': ' {'})
+    autocmd VimEnter * call lexima#add_rule({'char': '}', 'at': '\%#)',  'leave': ')', 'input': ' {'})
     autocmd VimEnter * call lexima#add_rule({'char': '[', 'at': '\%#\w', 'input': '['})
     autocmd VimEnter * call lexima#add_rule({'char': '"', 'at': '\%#\w', 'except': '\%#[\t ]*$', 'input': '"'})
     autocmd VimEnter * call lexima#add_rule({'char': "'", 'at': '\%#\w', 'except': '\%#[\t ]*$', 'input': "'"})
