@@ -1,0 +1,18 @@
+snippet dockerfile "Dockerfile template"
+# syntax=docker/dockerfile:1.4
+FROM ${1:golang:latest}
+
+$0
+
+ENTRYPOINT []
+CMD []
+endsnippet
+
+snippet dockerfile14 "syntax"
+# syntax=docker/dockerfile:1.4
+endsnippet
+
+snippet runwithcache "RUN"
+RUN --mount=type=cache,target=${1},sharing=locked \
+		${2}
+endsnippet
