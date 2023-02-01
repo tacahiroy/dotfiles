@@ -201,6 +201,9 @@ call minpac#add('prabirshrestha/vim-lsp')
   let g:lsp_semantic_enabled = 0
 
   let g:lsp_settings = {}
+  let g:lsp_settings['efm-langserver'] = {
+  \   'disabled': v:false
+  \ }
 
   " https://github.com/golang/tools/blob/master/gopls/doc/settings.md
   " {{{ gopls
@@ -271,6 +274,26 @@ call minpac#add('prabirshrestha/vim-lsp')
 
     return config
   endfunction
+  " }}}
+
+  " {{{ yaml-language-server
+  let g:lsp_settings['yaml-language-server'] = {
+  \   'allowlist': ['yaml', 'yaml.ansible'],
+  \   'workspace_config': {
+  \     'redhat': {
+  \       'telemetry': {'enabled': v:false},
+  \     },
+  \     'yaml': {
+  \       'validate': v:false,
+  \       'hover': v:false,
+  \       'completion': v:true,
+  \       'schemas': [],
+  \       'format': { 
+  \         'enable': v:true
+  \       }
+  \     }
+  \   },
+  \ }
   " }}}
 
   " https://github.com/prabirshrestha/vim-lsp
