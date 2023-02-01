@@ -1,7 +1,9 @@
 ---
-# For all rules
+extends: relaxed
 
 rules:
   truthy:
     allowed-values: ['true', 'false', 'yes', 'no']
     check-keys: true
+
+# vim: filetype=yaml
