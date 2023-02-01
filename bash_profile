@@ -112,3 +112,4 @@ fi
 
 # https://github.com/ajeetdsouza/zoxide
 eval "$(zoxide init --cmd j bash)"
+. "$HOME/.cargo/env"

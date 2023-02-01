@@ -8,7 +8,6 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-
 umask 0022
 
 if [ -e "$HOME/.dircolors" ]; then
@@ -162,6 +161,11 @@ case "${PLATFORM}" in
         ;;
 esac
 
+if [ -f "$HOME/.bashrc.local" ]; then
+    # shellcheck source=~/.bashrc.local
+    . "$HOME/.bashrc.local"
+fi
+
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
@@ -254,3 +258,10 @@ fi
 export SDKMAN_DIR="$HOME/.sdkman"
 # shellcheck source=/dev/null
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && . "$HOME/.sdkman/bin/sdkman-init.sh"
+
+if [[ -x $(command -v kubectl) ]]; then
+    . <(kubectl completion bash)
+    alias k=kubectl
+    complete -o default -F __start_kubectl k
+fi
+. "$HOME/.cargo/env"

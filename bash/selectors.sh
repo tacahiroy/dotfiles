@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-F=${FILTER_CMD:sk}
+F=${FILTER_CMD:-sk}
 FO=${FILTER_OPTIONS:-}
 FIND=${FILTER_FIND:-find}
 FINDO=${FINDO:--maxdepth 5 ! -path '*/.git/*' -type f}
@@ -20,20 +20,20 @@ ghq_root() {
 
 select_history() {
     READLINE_LINE=$(fc -nl 1 | sed 's/^[\t ]*//g' | \
-        tac | \
-        ${F} "${FO}" "${SELECTOR_HIST_PROMPT_OPT}")
+        eval "${tac}" | \
+        ${F} ${FO} "${SELECTOR_HIST_PROMPT_OPT}")
     READLINE_POINT=${#READLINE_LINE}
 }
 
 select_dir() {
     READLINE_LINE="cd $(find . -mindepth 1 -maxdepth 5 -type d ! -path '*/.git*' 2>&1 | \
-        ${F} "${FO}" "${SELECTOR_DIR_PROMPT_OPT}")"
+        ${F} ${FO} "${SELECTOR_DIR_PROMPT_OPT}")"
     READLINE_POINT=${#READLINE_LINE}
 }
 
 select_dir_hist() {
     READLINE_LINE="cd $(_z -s 2>&1 | awk '{ print $2 }' | \
-        ${F} "${FO}" "${SELECTOR_DIR_PROMPT_OPT}")"
+        ${F} ${FO} "${SELECTOR_DIR_PROMPT_OPT}")"
     READLINE_POINT=${#READLINE_LINE}
 }
 
@@ -41,7 +41,7 @@ select_file_hist() {
     local cmd=${READLINE_LINE:-${EDITOR:-vim}}
 
     READLINE_LINE="${cmd} $(${FIND} . "${FINDO}" | \
-        ${F} "${FO}" "${SELECTOR_FILE_PROMPT_OPT}")"
+        ${F} ${FO} "${SELECTOR_FILE_PROMPT_OPT}")"
     READLINE_POINT=${#READLINE_LINE}
 }
 
@@ -49,7 +49,7 @@ select_file() {
     local cmd=${READLINE_LINE:-${EDITOR:-vim}}
 
     READLINE_LINE="${cmd} $(rg --files --sort path | \
-        ${F} "${FO}" "${SELECTOR_FILE_PROMPT_OPT}")"
+        ${F} ${FO} "${SELECTOR_FILE_PROMPT_OPT}")"
     READLINE_POINT=${#READLINE_LINE}
 }
 
@@ -58,7 +58,7 @@ select_ctrlpvim_mru() {
     local ctrlp_mrufile=$HOME/.cache/ctrlp/mru/cache.txt
     local _file
     if [ -f "${ctrlp_mrufile}" ]; then
-        _file=$(${F} "${FO}" "${SELECTOR_MRU_PROMPT_OPT}" <"${ctrlp_mrufile}")
+        _file=$(${F} ${FO} "${SELECTOR_MRU_PROMPT_OPT}" <"${ctrlp_mrufile}")
         if [ -n "${_file}" ] && [ -f "${_file}" ]; then
             READLINE_LINE="$EDITOR ${_file}"
             READLINE_POINT=${#READLINE_LINE}
@@ -100,7 +100,7 @@ select_git_repo() {
     fi
 
     local _repo
-    _repo=$( (eval "${list_cmd}") | "${F}" ${FO} "${SELECTOR_GIT_REPO_PROMPT_OPT}" )
+    _repo=$( (eval "${list_cmd}") | ${F} ${FO} ${SELECTOR_GIT_REPO_PROMPT_OPT} )
 
     if [ -n "${_repo}" ]; then
         cmdline=${READLINE_LINE:-cd}
@@ -127,7 +127,7 @@ select_git_branch() {
     local _branch
 
     _branches="$(git branch ${_git_branch_opts} | grep -v '\*' | sed 's/^\s*remotes\/origin\///; s/^\s*//' | sort -u)"
-    _branch="$(echo "${_branches}" | "${F}" "${FO}" --prompt='BRANCH> ')"
+    _branch="$(echo "${_branches}" | ${F} ${FO} --prompt='BRANCH> ')"
 
     _branch=${_branch//[[:space:]]}
     if [ -n "${_branch}" ]; then
@@ -154,7 +154,7 @@ select_git_tag() {
     local _tag
 
     _tags="$(git --no-pager tag -l | sort)"
-    _tag="$(echo "${_tags}" | "${F}" "${FO}" --prompt='TAG> ')"
+    _tag="$(echo "${_tags}" | ${F} ${FO} --prompt='TAG> ')"
 
     if [ -n "${_tag}" ]; then
         if [ "${#READLINE_LINE}" -eq 0 ]; then
@@ -173,7 +173,7 @@ select_git_branch_all() {
 select_python_virtualenv() {
     local venv cmd activate
     venv=$(find $HOME/.venvs -mindepth 1 -maxdepth 1 -type d \
-            | ${F} "${FO}" "${SELECTOR_VIRTUALENV_PROMPT_OPT}")
+            | ${F} ${FO} "${SELECTOR_VIRTUALENV_PROMPT_OPT}")
 
     if [ -n "${venv}" ]; then
         [ -n "${VIRTUAL_ENV}" ] && cmd="deactivate" || cmd="true"
