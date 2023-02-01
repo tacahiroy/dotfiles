@@ -19,14 +19,8 @@ ghq_root() {
 }
 
 select_history() {
-    local tac
-    if command -v tac > /dev/null; then
-        tac="tac"
-    else
-        tac="tail -r"
-    fi
     READLINE_LINE=$(fc -nl 1 | sed 's/^[\t ]*//g' | \
-        eval "${tac}" | \
+        tac | \
         ${F} "${FO}" "${SELECTOR_HIST_PROMPT_OPT}")
     READLINE_POINT=${#READLINE_LINE}
 }
@@ -106,7 +100,7 @@ select_git_repo() {
     fi
 
     local _repo
-    _repo=$( (eval "${list_cmd}") | "${F}" "${FO}" "${SELECTOR_GIT_REPO_PROMPT_OPT}" )
+    _repo=$( (eval "${list_cmd}") | "${F}" ${FO} "${SELECTOR_GIT_REPO_PROMPT_OPT}" )
 
     if [ -n "${_repo}" ]; then
         cmdline=${READLINE_LINE:-cd}
@@ -188,6 +182,15 @@ select_python_virtualenv() {
     fi
 }
 
+select_tmux_buffer() {
+    local buf
+    buf=$(tmux list-buffer -F '#{buffer_name}:#{buffer_sample}' \
+            | ${F} "${FO}" "--prompt=BUFFER>")
+
+    if [ -n "${buf}" ]; then
+        echo "${buf}" | cut -d: -f1 | xargs -I@ tmux show-buffer -b @ | xargs tmux set-buffer -w
+    fi
+}
 
 bind -x '"\C-gh"':"\"select_history\""
 bind -x '"\C-t"':"\"select_ctrlpvim_mru\""
@@ -200,3 +203,4 @@ bind -x '"\C-g\C-b"':"\"select_git_branch\""
 bind -x '"\C-g\C-a"':"\"select_git_branch_all\""
 bind -x '"\C-g\C-t"':"\"select_git_tag\""
 bind -x '"\C-g\C-v"':"\"select_python_virtualenv\""
+bind -x '"\C-gb"':"\"select_tmux_buffer\""
