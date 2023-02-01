@@ -165,11 +165,6 @@ esac
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
-if [ -n "${FILTER_CMD}" ]; then
-    # shellcheck source=/dev/null
-    [ -f "$HOME/.bash/selectors.sh" ] && . "$HOME/.bash/selectors.sh"
-fi
-
 ..() {
     if [ $# -eq 0 ]; then
         cd ..
@@ -229,6 +224,11 @@ fi
 if [ -f "$HOME/.bashrc.local" ]; then
     # shellcheck source=~/.bashrc.local
     . "$HOME/.bashrc.local"
+fi
+
+if [ -n "${FILTER_CMD}" ]; then
+    # shellcheck source=/dev/null
+    [ -f "$HOME/.bash/selectors.sh" ] && . "$HOME/.bash/selectors.sh"
 fi
 
 [[ -x $(command -v tmux) && -z "$TMUX" && "$USE_TMUX" = yes ]] && {

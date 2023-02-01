@@ -106,5 +106,9 @@ if command -v terraform >/dev/null 2>&1; then
     export TF_PLUGIN_CACHE_DIR="$HOME/.terraform.d/plugin-cache"
 fi
 
+if command -v kubectl >/dev/null 2>&1; then
+    . ~/.kube/kubectl_complete.bash
+fi
+
 # https://github.com/ajeetdsouza/zoxide
 eval "$(zoxide init --cmd j bash)"
