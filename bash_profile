@@ -53,12 +53,14 @@ set_path "$GOPATH/bin"
 set_path "/usr/local/bin" 1
 set_path "$HOME/.yarn/bin"
 
+. "$HOME/.cargo/env"
+
 export PATH
 
-r=$(command -v fzy)
+r=$(command -v sk)
 if [ -n "${r}" ]; then
     FILTER_CMD="${r}"
-    FILTER_OPTIONS='-l 20'
+    FILTER_OPTIONS='--height 50%'
     export FILTER_CMD FILTER_OPTIONS
 fi
 
@@ -106,10 +108,13 @@ if command -v terraform >/dev/null 2>&1; then
     export TF_PLUGIN_CACHE_DIR="$HOME/.terraform.d/plugin-cache"
 fi
 
-if command -v kubectl >/dev/null 2>&1; then
-    . ~/.kube/kubectl_complete.bash
+if [ -x $(command -v kubectl) ]; then
+    . <(kubectl completion bash)
+    alias k=kubectl
+    complete -o default -F __start_kubectl k
 fi
 
-# https://github.com/ajeetdsouza/zoxide
-eval "$(zoxide init --cmd j bash)"
-. "$HOME/.cargo/env"
+if [ -x $(command -v zoxide) ]; then
+    # https://github.com/ajeetdsouza/zoxide
+    eval "$(zoxide init --cmd j bash)"
+fi
