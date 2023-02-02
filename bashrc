@@ -235,15 +235,10 @@ if [ -n "${FILTER_CMD}" ]; then
     [ -f "$HOME/.bash/selectors.sh" ] && . "$HOME/.bash/selectors.sh"
 fi
 
-[[ -x $(command -v tmux) && -z "$TMUX" && "$USE_TMUX" = yes ]] && {
-    [ "$ATTACH_ONLY" = yes ] && {
-        tmux -2 new-window -l -c "$PWD" 2>/dev/null && exec tmux -2 a
-        exec tmux -l2
-    }
-}
-
-export STARSHIP_CONFIG=$HOME/.config/starship/starship.toml
-eval "$(starship init bash)"
+if [ -x "$(command -v starship)" ]; then
+    export STARSHIP_CONFIG=$HOME/.config/starship/starship.toml
+    eval "$(starship init bash)"
+fi
 
 # Adding wsl-open as a browser for Bash for Windows
 if [[ $(uname -r) =~ (m|M)icrosoft ]]; then
