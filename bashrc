@@ -258,10 +258,3 @@ fi
 export SDKMAN_DIR="$HOME/.sdkman"
 # shellcheck source=/dev/null
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && . "$HOME/.sdkman/bin/sdkman-init.sh"
-
-if [[ -x $(command -v kubectl) ]]; then
-    . <(kubectl completion bash)
-    alias k=kubectl
-    complete -o default -F __start_kubectl k
-fi
-. "$HOME/.cargo/env"
