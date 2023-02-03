@@ -228,7 +228,6 @@ call minpac#add('prabirshrestha/vim-lsp')
   \     }
   \   },
   \   'initialization_options': {
-  \     'experimentalWorkspaceModule': v:true,
   \     'gofumpt': v:true,
   \     'semanticTokens': v:true,
   \     'usePlaceholders': v:false,
