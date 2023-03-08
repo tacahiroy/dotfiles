@@ -249,7 +249,10 @@ if [[ $(uname -r) =~ (m|M)icrosoft ]]; then
     fi
 fi
 
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="$HOME/.sdkman"
-# shellcheck source=/dev/null
-[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && . "$HOME/.sdkman/bin/sdkman-init.sh"
+if [ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]; then
+    . "$HOME/.sdkman/bin/sdkman-init.sh"
+    #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+    export SDKMAN_DIR="$HOME/.sdkman"
+    # shellcheck source=/dev/null
+    . "$HOME/.sdkman/bin/sdkman-init.sh"
+fi
