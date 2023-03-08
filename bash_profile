@@ -7,7 +7,7 @@
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
-# shellcheck disable=SC1090
+# shellcheck disable=SC1090,SC1091
 
 umask 0022
 
@@ -54,7 +54,7 @@ set_path "$GOPATH/bin"
 set_path "/usr/local/bin" 1
 set_path "$HOME/.yarn/bin"
 
-. "$HOME/.cargo/env"
+[ -f "$HOME"/.cargo/env ] && . "$HOME/.cargo/env"
 
 export PATH
 
