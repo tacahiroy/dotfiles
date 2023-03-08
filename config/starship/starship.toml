@@ -36,7 +36,7 @@ add_newline = true
 [aws]
 format = 'on [$symbol($profile )(\($region\) )(\[$duration\] )]($style)'
 symbol = ' '
-style = 'bold yellow'
+style = 'yellow'
 disabled = false
 expiration_symbol = 'X'
 force_display = false
@@ -429,7 +429,7 @@ ssh_only = true
 ssh_symbol = '🌐 '
 trim_at = '.'
 format = '[$ssh_symbol$hostname]($style) in '
-style = 'green dimmed bold'
+style = 'green'
 disabled = false
 
 [java]
@@ -858,7 +858,7 @@ time_range = '-'
 [username]
 format = '[$user]($style) in '
 style_root = 'red bold'
-style_user = 'yellow bold'
+style_user = 'yellow'
 show_always = false
 disabled = false
 
