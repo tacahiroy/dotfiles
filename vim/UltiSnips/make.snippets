@@ -1,0 +1,6 @@
+snippet header
+MAKEFLAGS += --warn-undefined-variables
+SHELL := /usr/bin/bash
+.SHELLFLAGS := -eu -o pipefail -c
+.DEFAULT_GOAL := build
+endsnippet
