@@ -193,12 +193,14 @@ call minpac#add('prabirshrestha/vim-lsp')
   let g:lsp_diagnostics_signs_warning = {'text': '🤢'}
   let g:lsp_diagnostics_signs_information = {'text': '🙄'}
   let g:lsp_diagnostics_signs_hint = {'text': '🤓'}
+  let g:lsp_diagnostics_virtual_text_enabled = 0
   let g:lsp_document_code_action_signs_enabled = 0
+  let g:lsp_document_code_action_signs_hint = {'text': '👓'}
   let g:lsp_preview_float = 1
-	let g:lsp_preview_autoclose = 0
+  let g:lsp_preview_autoclose = 0
   let g:lsp_log_verbose = v:false
   let g:lsp_log_file = expand('~/vim-lsp.log')
-  let g:lsp_semantic_enabled = 0
+  let g:lsp_semantic_enabled = 1
 
   let g:lsp_settings = {}
   let g:lsp_settings['efm-langserver'] = {
@@ -210,7 +212,7 @@ call minpac#add('prabirshrestha/vim-lsp')
   let g:lsp_settings['gopls'] = {
   \   'workspace_config': {
   \     'allExperiments': v:true,
-  \     'gofumpt': v:true,
+  \     'gofumpt': v:false,
   \     'usePlaceholders': v:true,
   \     'semanticTokens': v:true,
   \     'codelenses': {
@@ -228,7 +230,7 @@ call minpac#add('prabirshrestha/vim-lsp')
   \     }
   \   },
   \   'initialization_options': {
-  \     'gofumpt': v:true,
+  \     'gofumpt': v:false,
   \     'semanticTokens': v:true,
   \     'usePlaceholders': v:false,
   \     'codelenses': {
@@ -294,6 +296,16 @@ call minpac#add('prabirshrestha/vim-lsp')
   \   },
   \ }
   " }}}
+
+  let g:lsp_settings['pyright'] = {
+  \   'allowlist': ['python'],
+  \   'settings': {
+  \     'pyright': {
+  \       'useLibraryCodeForTypes': v:true,
+  \       'strict': v:false,
+  \     }
+  \   }
+  \ }
 
   " https://github.com/prabirshrestha/vim-lsp
   function! s:on_lsp_buffer_enabled() abort
@@ -369,9 +381,11 @@ call minpac#add('godlygeek/tabular')
   call minpac#add('preservim/vim-markdown')
     let g:vim_markdown_folding_disabled = 1
     let g:vim_markdown_conceal = 1
-    let g:vim_markdown_emphasis_multiline = 0
+    let g:vim_markdown_conceal_code_blocks = 0
+    let g:vim_markdown_emphasis_multiline = 1
     let g:vim_markdown_strikethrough = 1
     let g:vim_markdown_new_list_item_indent = 4
+    let g:vim_markdown_fenced_languages = ['console=sh']
 
 call minpac#add('luochen1990/rainbow')
   let g:rainbow_active = 1
@@ -468,6 +482,11 @@ call minpac#add('tacahiroy/ctrlp-funky', {'rev': 'main'})
 
 call minpac#add('ryanoasis/vim-devicons')
   let g:webdevicons_enable_ctrlp = 1
+  let g:webdevicons_enable_nerdtree = 0
+  let g:webdevicons_enable_unite = 0
+  let g:webdevicons_enable_denite = 0
+  let g:webdevicons_enable_vimfiler = 0
+  let g:webdevicons_enable_startify = 0
 "}}}
 
 call minpac#add('jremmen/vim-ripgrep')
