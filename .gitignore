@@ -13,5 +13,7 @@ zsh/functions/antigen.zsh
 *.zwc
 .zcompdump*
 
+config/wezterm/colors/
+
 *.old
 *.local
