@@ -7,6 +7,7 @@
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+# shellcheck disable=SC1090
 
 umask 0022
 
@@ -108,13 +109,14 @@ if command -v terraform >/dev/null 2>&1; then
     export TF_PLUGIN_CACHE_DIR="$HOME/.terraform.d/plugin-cache"
 fi
 
-if [ -x $(command -v kubectl) ]; then
+if command -v kubectl >/dev/null; then
+    # shellcheck source=/dev/null
     . <(kubectl completion bash)
     alias k=kubectl
     complete -o default -F __start_kubectl k
 fi
 
-if [ -x $(command -v zoxide) ]; then
+if command -v zoxide >/dev/null; then
     # https://github.com/ajeetdsouza/zoxide
     eval "$(zoxide init --cmd j bash)"
 fi
