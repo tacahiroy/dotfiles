@@ -13,7 +13,7 @@ umask 0022
 
 set_path() {
     local dir=$1
-    local prioritise=$2
+    local priotiry=$2
 
     if [ ! -d "${dir}" ]; then
         return
@@ -23,7 +23,7 @@ set_path() {
         return
     fi
 
-    if [ -n "${prioritise}" ]; then
+    if [ -n "${priotiry}" ]; then
         PATH=${dir}:$PATH
     else
         PATH=$PATH:${dir}
@@ -48,11 +48,12 @@ export PAGER=less
 export LESS='-R'
 
 set_path "$HOME/bin" 1
-set_path "$HOME/.local/bin"
+set_path "$HOME/.local/bin" 1
 set_path "$HOME/.cargo/bin"
 set_path "$GOPATH/bin"
-set_path "/usr/local/bin" 1
+set_path "/usr/local/bin"
 set_path "$HOME/.yarn/bin"
+set_path "$HOME/.npm-global/bin" 1
 
 [ -f "$HOME"/.cargo/env ] && . "$HOME/.cargo/env"
 
@@ -79,6 +80,11 @@ if [ -d "$HOME/.pyenv" ]; then
     set_path "$PYENV_ROOT/bin"
     eval "$(pyenv init --path)"
 fi
+
+if [ -d "$HOME/.rye" ]; then
+    . "$HOME/.rye/env"
+fi
+
 
 if [ "${PLATFORM}" = wsl ] && [ ! -d /wslg ]; then
     DISPLAY=$(awk '/^nameserver/ { print $2 }' /etc/resolv.conf):0
