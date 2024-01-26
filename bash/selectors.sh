@@ -198,8 +198,12 @@ select_tmux_buffer() {
     buf=$(tmux list-buffer -F '#{buffer_name}:#{buffer_sample}' \
             | ${F} ${FO} "--prompt=BUFFER>")
 
+    local tmpfile
     if [ -n "${buf}" ]; then
-        echo "${buf}" | cut -d: -f1 | xargs -I@ tmux show-buffer -b @ | xargs tmux set-buffer -w
+        tmpfile=$(mktemp)
+        echo "${buf}" | cut -d: -f1 | xargs -I@ tmux save-buffer -b @ "${tmpfile}"
+        tmux load-buffer -w "${tmpfile}"
+        rm -f "${tmpfile}"
     fi
 }
 
