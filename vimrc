@@ -212,7 +212,7 @@ call minpac#add('prabirshrestha/vim-lsp')
   let g:lsp_settings['gopls'] = {
   \   'workspace_config': {
   \     'allExperiments': v:true,
-  \     'gofumpt': v:false,
+  \     'gofumpt': v:true,
   \     'usePlaceholders': v:true,
   \     'semanticTokens': v:true,
   \     'codelenses': {
@@ -230,7 +230,7 @@ call minpac#add('prabirshrestha/vim-lsp')
   \     }
   \   },
   \   'initialization_options': {
-  \     'gofumpt': v:false,
+  \     'gofumpt': v:true,
   \     'semanticTokens': v:true,
   \     'usePlaceholders': v:false,
   \     'codelenses': {
@@ -303,6 +303,15 @@ call minpac#add('prabirshrestha/vim-lsp')
   \     'pyright': {
   \       'useLibraryCodeForTypes': v:true,
   \       'strict': v:false,
+  \     }
+  \   }
+  \ }
+
+  let g:lsp_settings['bash-language-server'] = {
+  \   'allowlist': ['sh', 'bash'],
+  \   'workspace_config': {
+  \     'bashIde': {
+  \       'includeAllWorkspaceSymbols': v:true,
   \     }
   \   }
   \ }
@@ -983,9 +992,9 @@ augroup Tacahiroy
 
   autocmd FileType markdown inoremap <buffer> <Leader>tt <Esc>:<C-u>call <SID>insert_today_for_md_changelog()<Cr>:startinsert<Cr>
   autocmd FileType markdown set autoindent
-  autocmd FileType markdown set tabstop=4 shiftwidth=4 conceallevel=2
-  let g:markdown_fenced_languages = ['python', 'bash=sh']
-  let g:markdown_syntax_conceal = 0
+  autocmd FileType markdown set tabstop=4 shiftwidth=4 conceallevel=2 concealcursor=
+  let g:vim_markdown_fenced_languages = ['python', 'bash=sh']
+  let g:vim_markdown_conceal = 0
 
   autocmd FileType gitcommit setlocal spell
 
