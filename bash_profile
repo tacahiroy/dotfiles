@@ -2,7 +2,7 @@
 #
 # Tacahiroy's bash_profile
 #
-# Copyright © 2022 Takahiro Yoshihara <tacahiroy@gmail.com>
+# Copyright © 2022-2024 Takahiro YOSHIHARA <tacahiroy@gmail.com>
 #
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -54,6 +54,7 @@ set_path "$GOPATH/bin"
 set_path "/usr/local/bin"
 set_path "$HOME/.yarn/bin"
 set_path "$HOME/.npm-global/bin" 1
+set_path "$HOME/.rye/shims"
 
 [ -f "$HOME"/.cargo/env ] && . "$HOME/.cargo/env"
 
@@ -84,7 +85,6 @@ fi
 if [ -d "$HOME/.rye" ]; then
     . "$HOME/.rye/env"
 fi
-
 
 if [ "${PLATFORM}" = wsl ] && [ ! -d /wslg ]; then
     DISPLAY=$(awk '/^nameserver/ { print $2 }' /etc/resolv.conf):0
