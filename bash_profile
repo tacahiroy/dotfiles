@@ -55,6 +55,7 @@ set_path "/usr/local/bin"
 set_path "$HOME/.yarn/bin"
 set_path "$HOME/.npm-global/bin" 1
 set_path "$HOME/.rye/shims"
+set_path "$HOME/opt/vim/bin" 1
 
 [ -f "$HOME"/.cargo/env ] && . "$HOME/.cargo/env"
 
