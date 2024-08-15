@@ -1,5 +1,26 @@
 priority 1
 
+snippet importrole "import_role"
+- name: ${1:name}
+	ansible.builtin.import_role:
+		name: ${2}
+		$0
+endsnippet
+
+snippet systemd "systemd"
+- name: ${1:name}
+	ansible.builtin.systemd:
+		name: ${2}
+		enabled: ${3:yes}
+		daemon-reload: ${4:yes}
+		state: ${5:started}
+endsnippet
+
+snippet ab "ansible.builtin"
+	ansible.builtin.${1}:
+		$0
+endsnippet
+
 snippet playbook "Simple Ansible playbook"
 ---
 - hosts: ${1:localhost}
@@ -18,8 +39,9 @@ snippet template "Ansible template"
 		mode: ${4:0664}
 		owner: ${5:root}
 		group: ${6:$5}
-
+$0
 endsnippet
+
 
 snippet copy "Ansible copy"
 - name: ${1:name}
@@ -34,7 +56,7 @@ endsnippet
 
 snippet debug "Ansible debug"
 - name: ${1:debug}
-	debug:
+	ansible.builtin.debug:
 		var: ${2:var-name}
 
 endsnippet
@@ -67,7 +89,7 @@ snippet file "Ansible file"
 	- name: ${1}
 		ansible.builtin.file:
 			path: ${2}
-			mode: ${3:0755}
+			mode: ${3:0o755}
 			owner: ${4:root}
 			group: ${5:$4}
 			state: ${6:directory}
@@ -76,7 +98,7 @@ endsnippet
 
 snippet git "Ansible git"
 - name: ${1}
-	git:
+	ansible.builtin.git:
 		repo: ${2:url}
 		dest: ${3:$2}
 		version: ${4:master}
@@ -87,7 +109,7 @@ endsnippet
 
 snippet name "Ansible task"
 - name: ${1}
-	$0
+	${2}$0
 endsnippet
 
 snippet includevars "ansible.builtin.include_vars"
