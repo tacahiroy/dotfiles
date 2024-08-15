@@ -10,8 +10,21 @@
 
 umask 0022
 
+# https://askubuntu.com/a/279014/579600
+shell-colors() {
+    for x in {0..8}; do
+        for i in {30..37}; do
+            for a in {40..47}; do
+                echo -ne "\e[$x;$i;$a""m\\\e[$x;$i;$a""m\e[0;37;40m "
+            done
+            echo
+        done
+    done
+echo ""
+}
+
 if [ -e "$HOME/.dircolors" ]; then
-    eval "$(dircolors -b "$HOME/.dircolors")"
+    eval "$(dircolors "$HOME/.dircolors")"
 fi
 
 #--------------------
@@ -235,10 +248,13 @@ if [ -n "${FILTER_CMD}" ]; then
     [ -f "$HOME/.bash/selectors.sh" ] && . "$HOME/.bash/selectors.sh"
 fi
 
-if [ -x "$(command -v starship)" ]; then
-    export STARSHIP_CONFIG=$HOME/.config/starship/starship.toml
-    eval "$(starship init bash)"
-fi
+# if [ -x "$(command -v starship)" ]; then
+#     export STARSHIP_CONFIG=$HOME/.config/starship/starship.toml
+#     eval "$(starship init bash)"
+# fi
+
+# Only load Liquid Prompt in interactive shells, not from a script or from scp
+[[ $- = *i* ]] && source ~/liquidprompt/liquidprompt
 
 # Adding wsl-open as a browser for Bash for Windows
 if [[ $(uname -r) =~ (m|M)icrosoft ]]; then
@@ -256,3 +272,6 @@ if [ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]; then
     # shellcheck source=/dev/null
     . "$HOME/.sdkman/bin/sdkman-init.sh"
 fi
+
+export GPG_TTY=$(tty)
+gpgconf --launch gpg-agent
