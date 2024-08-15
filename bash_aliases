@@ -16,11 +16,16 @@ alias g='git'
 alias gi='git'
 alias gu='git up'
 alias gl='git log'
-alias gf='git fetch $*'
+alias gf='git fetch'
 alias b='cd -'
 alias cda='cd -P .'
 alias cart='cat'
 alias t='terraform'
 alias p='poetry'
+
+alias k=kubectl
+alias kk='kubectl krew'
+
+alias d=devbox
 
 alias @lines='grep -c ""'
