@@ -54,8 +54,8 @@ set_path "$GOPATH/bin"
 set_path "/usr/local/bin"
 set_path "$HOME/.yarn/bin"
 set_path "$HOME/.npm-global/bin" 1
-set_path "$HOME/.rye/shims"
 set_path "$HOME/opt/vim/bin" 1
+set_path "${KREW_ROOT:-$HOME/.krew}/bin"
 
 [ -f "$HOME"/.cargo/env ] && . "$HOME/.cargo/env"
 
@@ -64,7 +64,10 @@ export PATH
 r=$(command -v sk)
 if [ -n "${r}" ]; then
     FILTER_CMD="${r}"
-    FILTER_OPTIONS='--height 50%'
+    # sk
+    # FILTER_OPTIONS='--height 50% --reverse'
+    # fzy
+    FILTER_OPTIONS='--lines 20 --show-scores --show-info'
     export FILTER_CMD FILTER_OPTIONS
 fi
 
