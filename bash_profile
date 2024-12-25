@@ -46,6 +46,7 @@ export GOPATH
 export EDITOR=vim
 export PAGER=less
 export LESS='-R'
+export BAT_THEME=OneHalfLight
 
 set_path "$HOME/bin" 1
 set_path "$HOME/.local/bin" 1
@@ -61,13 +62,13 @@ set_path "${KREW_ROOT:-$HOME/.krew}/bin"
 
 export PATH
 
-r=$(command -v sk)
+r=$(command -v fzy)
 if [ -n "${r}" ]; then
     FILTER_CMD="${r}"
     # sk
     # FILTER_OPTIONS='--height 50% --reverse'
     # fzy
-    FILTER_OPTIONS='--lines 20 --show-scores --show-info'
+    FILTER_OPTIONS='--lines 20 --show-info'
     export FILTER_CMD FILTER_OPTIONS
 fi
 
@@ -129,4 +130,16 @@ fi
 if command -v zoxide >/dev/null; then
     # https://github.com/ajeetdsouza/zoxide
     eval "$(zoxide init --cmd z bash)"
+fi
+
+if command -v oh-my-posh >/dev/null; then
+    eval "$(oh-my-posh init bash -c $HOME/.cache/oh-my-posh/themes/dracula.omp.json)"
+fi
+
+if [ -f "$HOME/.bash/git-bash-completion.sh" ]; then
+    . "$HOME/.bash/git-bash-completion.sh"
+fi
+
+if [ "${PLATFORM}" = wsl ]; then
+    export DISPLAY=:0
 fi

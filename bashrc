@@ -253,9 +253,6 @@ fi
 #     eval "$(starship init bash)"
 # fi
 
-# Only load Liquid Prompt in interactive shells, not from a script or from scp
-[[ $- = *i* ]] && source ~/liquidprompt/liquidprompt
-
 # Adding wsl-open as a browser for Bash for Windows
 if [[ $(uname -r) =~ (m|M)icrosoft ]]; then
     if [[ -z $BROWSER ]]; then
@@ -273,5 +270,8 @@ if [ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]; then
     . "$HOME/.sdkman/bin/sdkman-init.sh"
 fi
 
-export GPG_TTY=$(tty)
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
+
+GPG_TTY=$(tty)
+export GPG_TTY
 gpgconf --launch gpg-agent
