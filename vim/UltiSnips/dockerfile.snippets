@@ -1,18 +1,38 @@
-snippet dockerfile "Dockerfile template"
-# syntax=docker/dockerfile:1.4
-FROM ${1:golang:latest}
+priority 1
 
-$0
-
-ENTRYPOINT []
-CMD []
+snippet syntax "Dockerfile syntax version"
+# syntax=docker/dockerfile:1
 endsnippet
 
-snippet dockerfile14 "syntax"
-# syntax=docker/dockerfile:1.4
+snippet dnf-install "dnf install"
+RUN --mount=type=cache,target=/var/cache/dnf \
+    dnf update -y && dnf install -y ${1}
+    $0
 endsnippet
 
-snippet runwithcache "RUN"
-RUN --mount=type=cache,target=${1},sharing=locked \
-		${2}
+snippet yum-install "yum install"
+RUN --mount=type=cache,target=/var/cache/yum \
+    yum update -y && yum install -y ${1}
+    $0
+endsnippet
+
+snippet apk-add "apk add"
+RUN --mount=type=cache,target=/var/cache/apk \
+    apk update \
+    apk add --no-cache ${1}
+    $0
+endsnippet
+
+snippet apt-install "apt-get install"
+RUN --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    apt-get update && apt-get install -y ${1}
+    $0
+endsnippet
+
+snippet go-build "go build"
+RUN --mount=type=cache,target=/go/pkg/mod \
+    --mount=type=bind,target=. \
+    go build -o ${1} .
+    $0
 endsnippet

@@ -1,5 +1,16 @@
 priority 1
 
+snippet mount "mount"
+- name: ${1:name}
+	ansible.posix.mount:
+		path: ${2}
+		src: ${3:/dev/}
+		fstype: ${4:xfs}
+		opts: ${5:defaults,auto}
+		state: ${6:present|mounted}
+		$0
+endsnippet
+
 snippet importrole "import_role"
 - name: ${1:name}
 	ansible.builtin.import_role:
@@ -36,7 +47,7 @@ snippet template "Ansible template"
 	ansible.builtin.template:
 		src: ${3:$2.j2}
 		dest: ${2}
-		mode: ${4:0664}
+		mode: ${4:0o664}
 		owner: ${5:root}
 		group: ${6:$5}
 $0
@@ -48,7 +59,7 @@ snippet copy "Ansible copy"
 	ansible.builtin.copy:
 		src: ${3:$2}
 		dest: ${2}
-		mode: ${4:0664}
+		mode: ${4:0o664}
 		owner: ${5:root}
 		group: ${6:$5}
 
