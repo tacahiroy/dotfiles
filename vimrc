@@ -188,12 +188,12 @@ call minpac#add('prabirshrestha/vim-lsp')
   let g:lsp_diagnostics_echo_cursor = 1
   let g:lsp_diagnostics_float_cursor = 1
   let g:lsp_diagnostics_signs_enabled = 1
-  let g:lsp_inlay_hints_enabled = has('patch-9.0.0167')
+  let g:lsp_inlay_hints_enabled = v:false " has('patch-9.0.0167')
   let g:lsp_diagnostics_signs_error = {'text': '🤬'}
   let g:lsp_diagnostics_signs_warning = {'text': '🤢'}
   let g:lsp_diagnostics_signs_information = {'text': '🙄'}
   let g:lsp_diagnostics_signs_hint = {'text': '🤓'}
-  let g:lsp_diagnostics_virtual_text_enabled = 0
+  let g:lsp_diagnostics_virtual_text_enabled = 1
   let g:lsp_document_code_action_signs_enabled = 0
   let g:lsp_document_code_action_signs_hint = {'text': '👓'}
   let g:lsp_preview_float = 1
@@ -202,10 +202,24 @@ call minpac#add('prabirshrestha/vim-lsp')
   let g:lsp_log_file = expand('~/vim-lsp.log')
   let g:lsp_semantic_enabled = 1
 
+  let g:lsp_insert_text_enabled = 1
+	let g:lsp_text_edit_enabled = 1
+	let g:lsp_tree_incoming_prefix = "⬅️  "
+
+  highlight lspInlayHintsType ctermfg=red guifg=red
+  \ ctermbg=green guibg=green
+  highlight lspInlayHintsParameter ctermfg=red guifg=red
+  \ ctermbg=green guibg=green
+
   let g:lsp_settings = {}
   let g:lsp_settings['efm-langserver'] = {
   \   'disabled': v:false
   \ }
+
+	" Close preview window with <C-c>
+	autocmd User lsp_float_opened nmap <buffer> <silent> <C-c>
+		      \ <Plug>(lsp-preview-close)
+	autocmd User lsp_float_closed nunmap <buffer> <C-c>
 
   " https://github.com/golang/tools/blob/master/gopls/doc/settings.md
   " {{{ gopls
@@ -323,23 +337,23 @@ call minpac#add('prabirshrestha/vim-lsp')
 
       if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
 
-      nmap <buffer> gd <plug>(lsp-definition)
-      nmap <buffer> gD <plug>(lsp-document-diagnostics)
-      nmap <buffer> g] <plug>(lsp-next-diagnostic)
-      nmap <buffer> g[ <plug>(lsp-previous-diagnostic)
-      nmap <buffer> gr <plug>(lsp-references)
-      nmap <buffer> gI <plug>(lsp-implementation)
-      nmap <buffer> gt <plug>(lsp-type-definition)
-      nmap <buffer> gR <plug>(lsp-rename)
-      nmap <buffer> gA <plug>(lsp-code-action)
-      nmap <buffer> gL <plug>(lsp-code-lens)
-      nmap <buffer> gC <plug>(lsp-preview-close)
+      nmap <buffer> <Leader>ld <plug>(lsp-definition)
+      nmap <buffer> <Leader>lD <plug>(lsp-document-diagnostics)
+      nmap <buffer> <Leader>l] <plug>(lsp-next-diagnostic)
+      nmap <buffer> <Leader>l[ <plug>(lsp-previous-diagnostic)
+      nmap <buffer> <Leader>lr <plug>(lsp-references)
+      nmap <buffer> <Leader>lI <plug>(lsp-implementation)
+      nmap <buffer> <Leader>lt <plug>(lsp-type-definition)
+      nmap <buffer> <Leader>lR <plug>(lsp-rename)
+      nmap <buffer> <Leader>lA <plug>(lsp-code-action)
+      nmap <buffer> <Leader>lL <plug>(lsp-code-lens)
+      nmap <buffer> <Leader>lC <plug>(lsp-preview-close)
       nmap <buffer> K  <plug>(lsp-hover)
       inoremap <buffer> <expr><S-\<lt>Down> lsp#scroll(+4)
       inoremap <buffer> <expr><S-\<lt>Up> lsp#scroll(-4)
 
       let g:lsp_format_sync_timeout = 1000
-      autocmd! BufWritePre *.rs,*.py,*.go call execute('LspDocumentFormatSync')
+      autocmd! BufWritePre *.rs,*.go call execute('LspDocumentFormatSync')
   endfunction
 
   augroup lsp_install
@@ -541,11 +555,10 @@ command! PackStatus packadd minpac | source $MYVIMRC | call minpac#status()
 set completeopt+=preview
 
 " Super simple note taking {{{
-let g:tacahiroy_note_path = expand('~/dev/memo')
 command! -nargs=1 InsertNoteTemplate call <SID>ins_note_template(<q-args>)
 command! -nargs=0 NewNote call <SID>create_new_note()
-nnoremap [Space]mc :NewNote<Cr>
-nnoremap [Space]ml :execute 'CtrlP ' . g:tacahiroy_note_path<Cr><F5>
+nnoremap [Space]nc :NewNote<Cr>
+nnoremap [Space]ns :execute 'CtrlP ' . g:tacahiroy_note_path<Cr><F5>
 "}}}
 
 function! s:current_syntax_name()
@@ -918,8 +931,10 @@ function! s:move_block(d) range
   let [sign, cnt] = a:d is# 'u' ? ['-', 2] : ['+', a:lastline-a:firstline+1]
   execute printf('%d,%dmove%s%d', a:firstline, a:lastline, sign, cnt)
 endfunction
-vnoremap <C-p> :call <SID>move_block('u')<Cr>==gv
 vnoremap <C-n> :call <SID>move_block('d')<Cr>==gv
+vnoremap <C-p> :call <SID>move_block('u')<Cr>==gv
+
+vnoremap aY "+y
 "}}}
 
 if has('pythonx') "{{{
