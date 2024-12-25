@@ -133,11 +133,11 @@ if command -v zoxide >/dev/null; then
 fi
 
 if command -v oh-my-posh >/dev/null; then
-    eval "$(oh-my-posh init bash -c $HOME/.cache/oh-my-posh/themes/dracula.omp.json)"
+    eval "$(oh-my-posh init bash -c "$HOME"/.cache/oh-my-posh/themes/dracula.omp.json)"
 fi
 
-if [ -f "$HOME/.bash/git-bash-completion.sh" ]; then
-    . "$HOME/.bash/git-bash-completion.sh"
+if [ -f "/usr/share/bash-completion/completions/git" ]; then
+    . "/usr/share/bash-completion/completions/git"
 fi
 
 if [ "${PLATFORM}" = wsl ]; then
