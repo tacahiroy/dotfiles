@@ -110,3 +110,5 @@
 	ui = auto
 [fetch]
 	writeCommitGraph = true
+[commit]
+	gpgsign = true
