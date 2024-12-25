@@ -13,6 +13,7 @@ $git_state\
 $git_metrics\
 $git_status\
 $docker_context\
+$kubernetes\
 $golang\
 $java\
 $nodejs\
@@ -497,7 +498,7 @@ detect_folders = []
 symbol = '☸ '
 format = '[$symbol$context( \($namespace\))]($style) in '
 style = 'cyan bold'
-disabled = true
+disabled = false
 
 [kubernetes.context_aliases]
 
