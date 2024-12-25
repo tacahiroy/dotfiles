@@ -31,3 +31,5 @@ def decode(line1, line2):
     buf = vim.current.buffer
     buf[i] = urllib.parse.unquote(buf[i])
 EOF
+
+iabbrev pyig # pyright: ignore
