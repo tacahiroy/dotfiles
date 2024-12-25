@@ -2,13 +2,16 @@ if alias vim >/dev/null 2>&1; then
 	unalias vim
 fi
 
-alias ls='ls -F --color=auto'
-alias ll='ls -l'
+if command -v lsd >/dev/null 2>&1; then
+    alias ls=lsd
+    alias ll='ls -lg'
+    alias lg='ll'
+else
+    alias ll='ls -l'
+fi
 alias la='ls -a'
-alias lla='ls -la'
-alias ltr='ls -ltr'
-alias llh='ls -lh'
-alias sl='ls'
+alias lla='ll -a'
+alias ltr='ll -tr'
 alias gi='git'
 alias vi='vim'
 alias df='df -h'
@@ -25,7 +28,5 @@ alias p='poetry'
 
 alias k=kubectl
 alias kk='kubectl krew'
-
-alias d=devbox
 
 alias @lines='grep -c ""'
