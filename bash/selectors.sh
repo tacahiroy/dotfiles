@@ -53,9 +53,12 @@ select_file() {
     local cmd=${READLINE_LINE:-${EDITOR:-vim}}
 
     # shellcheck disable=SC2086
-    READLINE_LINE="${cmd} $(rg --files --sort path | \
-        ${F} ${FO} "${SELECTOR_FILE_PROMPT_OPT}")"
-    READLINE_POINT=${#READLINE_LINE}
+    if READLINE_LINE="${cmd} $(rg --files --sort path | \
+        ${F} ${FO} "${SELECTOR_FILE_PROMPT_OPT}")"; then
+        if [ -n "${READLINE_LINE}" ];  then
+            READLINE_POINT=${#READLINE_LINE}
+        fi
+    fi
 }
 
 # Search MRU file using ctrlp.vim's MRU file list

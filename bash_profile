@@ -55,9 +55,8 @@ set_path "$GOPATH/bin"
 set_path "/usr/local/bin"
 set_path "$HOME/.yarn/bin"
 set_path "$HOME/.npm-global/bin" 1
+set_path "$HOME/.rye/shims"
 set_path "$HOME/opt/vim/bin" 1
-set_path "$HOME/opt/bin" 1
-set_path "${KREW_ROOT:-$HOME/.krew}/bin"
 
 [ -f "$HOME"/.cargo/env ] && . "$HOME/.cargo/env"
 
@@ -69,7 +68,7 @@ if [ -n "${r}" ]; then
     # sk
     # FILTER_OPTIONS='--height 50% --reverse'
     # fzy
-    FILTER_OPTIONS='--lines 20 --show-info'
+    FILTER_OPTIONS='--lines 20 --show-scores --show-info'
     export FILTER_CMD FILTER_OPTIONS
 fi
 
@@ -133,14 +132,12 @@ if command -v zoxide >/dev/null; then
     eval "$(zoxide init --cmd z bash)"
 fi
 
-if command -v oh-my-posh >/dev/null; then
-    eval "$(oh-my-posh init bash -c "$HOME"/.config/oh-my-posh/themes/dracula.omp.yaml)"
-fi
-
-if [ -f "/usr/share/bash-completion/completions/git" ]; then
-    . "/usr/share/bash-completion/completions/git"
+if [ -f "$HOME/.bash/git-bash-completion.sh" ]; then
+    . "$HOME/.bash/git-bash-completion.sh"
 fi
 
 if [ "${PLATFORM}" = wsl ]; then
     export DISPLAY=:0
 fi
+
+. "$HOME/.rye/env"
