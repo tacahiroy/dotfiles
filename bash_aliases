@@ -23,10 +23,11 @@ alias gf='git fetch'
 alias b='cd -'
 alias cda='cd -P .'
 alias cart='cat'
-alias t='terraform'
-alias p='poetry'
+alias tf='terraform'
 
 alias k=kubectl
 alias kk='kubectl krew'
+
+alias tmf='tmux loadb'
 
 alias @lines='grep -c ""'
