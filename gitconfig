@@ -61,6 +61,8 @@
 
 [delta]
 	features = hoopoe
+	; features = tangara-chilensis
+	; features = calochortus-lyallii
 
 [delta "decorations"]
 	commit-decoration-style = red box ul
@@ -68,9 +70,6 @@
 	file-decoration-style = none
 	commit-style = magenta
 	; commit-decoration-style = magenta box ul
-
-[interactive]
-	diffFilter = delta --color-only
 
 [diff]
 	compactionHeuristic = true
@@ -106,8 +105,8 @@
 [init]
 	defaultBranch = main
 [rerere]
-	enabled = true
+	enable = true
 [column]
 	ui = auto
-[gpg]
-	format = ssh
+[fetch]
+	writeCommitGraph = true
