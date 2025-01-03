@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 #
 # Tacahiroy's bashrc
 #
@@ -83,19 +83,6 @@ git_clone() {
 
 cdup() {
     cd ..
-}
-
-srol() {
-    if [ ! -f ./meta/main.yml ]; then
-        echo "The current directory dosen't look like an Ansible role's directory: $(readlink -f .)"
-        return 1
-    fi
-
-    local role_name
-    role_name="$(basename "$(readlink -f .)")"
-
-    echo "Synchronising ${role_name} to $HOME/.ansible/roles"
-    rsync -av --no-p -p --exclude '.git' --exclude '.git/*' --delete . "$HOME/.ansible/roles/${role_name}"
 }
 
 ## plugins
@@ -272,13 +259,13 @@ if [[ $(uname -r) =~ (m|M)icrosoft ]]; then
 fi
 
 if [ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]; then
-    . "$HOME/.sdkman/bin/sdkman-init.sh"
     #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
     export SDKMAN_DIR="$HOME/.sdkman"
-    # shellcheck source=/dev/null
+    # shellcheck source=~/.sdkman/bin/sdkman-init.sh
     . "$HOME/.sdkman/bin/sdkman-init.sh"
 fi
 
+# shellcheck source=~/.cargo/env
 [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
 
 GPG_TTY=$(tty)
