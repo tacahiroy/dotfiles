@@ -132,12 +132,10 @@ if command -v zoxide >/dev/null; then
     eval "$(zoxide init --cmd z bash)"
 fi
 
-if [ -f "$HOME/.bash/git-bash-completion.sh" ]; then
-    . "$HOME/.bash/git-bash-completion.sh"
+if command -v oh-my-posh >/dev/null; then
+    eval "$(oh-my-posh init bash -c "$HOME"/.config/oh-my-posh/themes/dracula.omp.yaml)"
 fi
 
-if [ "${PLATFORM}" = wsl ]; then
-    export DISPLAY=:0
+if [ -f "/usr/share/bash-completion/completions/git" ]; then
+    . "/usr/share/bash-completion/completions/git"
 fi
-
-. "$HOME/.rye/env"
