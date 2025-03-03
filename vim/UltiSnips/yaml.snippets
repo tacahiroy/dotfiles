@@ -25,11 +25,20 @@ snippet systemd "systemd"
 		enabled: ${3:yes}
 		daemon-reload: ${4:yes}
 		state: ${5:started}
+$0
 endsnippet
 
 snippet ab "ansible.builtin"
 	ansible.builtin.${1}:
 		$0
+endsnippet
+snippet abn "ansible.builtin with name"
+- name: ${1}
+	ansible.builtin.${2}:
+		$0
+endsnippet
+snippet abb "ansible.builtin only"
+	ansible.builtin.$0
 endsnippet
 
 snippet playbook "Simple Ansible playbook"
@@ -62,7 +71,7 @@ snippet copy "Ansible copy"
 		mode: ${4:0o664}
 		owner: ${5:root}
 		group: ${6:$5}
-
+$0
 endsnippet
 
 snippet debug "Ansible debug"
@@ -76,7 +85,7 @@ snippet block "Ansible block"
 - name: ${1:block-name}
 	block:
 
-		${2}
+		- name: $0
 endsnippet
 
 snippet assert "Ansible assert"
@@ -86,14 +95,14 @@ snippet assert "Ansible assert"
 			- ${2:assertion}
 		${3:fail_msg: Assertion failed for $1}
 		${4:success_msg:}
-
+$0
 endsnippet
 
 snippet stat "Ansible stat"
 	- ansible.builtin.stat:
 			path: ${1}
 		register: ${2:stat_$1}
-
+$0
 endsnippet
 
 snippet file "Ansible file"
@@ -104,7 +113,7 @@ snippet file "Ansible file"
 			owner: ${4:root}
 			group: ${5:$4}
 			state: ${6:directory}
-
+$0
 endsnippet
 
 snippet git "Ansible git"
@@ -115,7 +124,7 @@ snippet git "Ansible git"
 		version: ${4:master}
 		clone: ${5:yes}
 		update: ${6:yes}
-
+$0
 endsnippet
 
 snippet name "Ansible task"
@@ -128,4 +137,29 @@ snippet includevars "ansible.builtin.include_vars"
 	ansible.builtin.include_vars:
 		file: ${2:vars.yml}
 		${3:'name: variable-name'}
+$0
+endsnippet
+
+snippet includetasks "ansible.builtin.include_tasks"
+- name: ${1}
+	ansible.builtin.include_tasks:
+		file: ${2}
+$0
+endsnippet
+
+snippet dnf "dnf"
+- name: Install ${1}
+	ansible.builtin.dnf:
+		name: ${2}
+		state: ${3:present}
+$0
+endsnippet
+
+snippet unar "unarchive"
+- name: Download ${1}
+	ansible.builtin.unarchive:
+		src: ${2:url}
+		dest: ${3}
+		${4:extra_opts:}
+		$0
 endsnippet

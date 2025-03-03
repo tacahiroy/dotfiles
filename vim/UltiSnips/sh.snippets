@@ -1,0 +1,17 @@
+snippet shbang "Add shbang"
+#!/bin/bash
+endsnippet
+
+snippet cue "set"
+set -Cueo pipefail
+endsnippet
+
+snippet func "function"
+${1:function-name}() {
+	$0
+}
+endsnippet
+
+snippet var "${variable}"
+\${${1:varname}}$0
+endsnippet
