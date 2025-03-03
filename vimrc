@@ -1,6 +1,6 @@
 " Tacahiroy's vimrc
 "
-" Copyright © 2022 Takahiro Yoshihara
+" Copyright © 2022-2024 Takahiro Yoshihara
 " All rights reserved.
 
 " Redistribution and use in source and binary forms, with or without
@@ -193,7 +193,7 @@ call minpac#add('prabirshrestha/vim-lsp')
   let g:lsp_diagnostics_signs_warning = {'text': '🤢'}
   let g:lsp_diagnostics_signs_information = {'text': '🙄'}
   let g:lsp_diagnostics_signs_hint = {'text': '🤓'}
-  let g:lsp_diagnostics_virtual_text_enabled = 1
+  let g:lsp_diagnostics_virtual_text_enabled = 0
   let g:lsp_document_code_action_signs_enabled = 0
   let g:lsp_document_code_action_signs_hint = {'text': '👓'}
   let g:lsp_preview_float = 1
@@ -300,9 +300,12 @@ call minpac#add('prabirshrestha/vim-lsp')
   \     },
   \     'yaml': {
   \       'validate': v:false,
-  \       'hover': v:false,
+  \       'hover': v:true,
   \       'completion': v:true,
-  \       'schemas': [],
+  \       'schemas': {
+  \         "https://raw.githubusercontent.com/ansible/ansible-lint/refs/heads/main/src/ansiblelint/schemas/tasks.json": "**/tasks/*.*"
+  \       },
+  \       'schemaStore': { 'enable': v:true },
   \       'format': { 
   \         'enable': v:true
   \       }
@@ -519,10 +522,10 @@ call minpac#add('tacahiroy/vim-colors-isotake')
 
 if has('python3')
   call minpac#add('SirVer/ultisnips')
-    let g:UltiSnipsExpandTrigger = "<C-i>"
+    let g:UltiSnipsExpandTrigger = "<Tab>"
     let g:UltiSnipsListSnippets = "<C-l>"
-    let g:UltiSnipsJumpForwardTrigger = "<C-f>"
-    let g:UltiSnipsJumpBackwardTrigger = "<C-b>"
+    let g:UltiSnipsJumpForwardTrigger = "<Tab>"
+    let g:UltiSnipsJumpBackwardTrigger = "<S-Tab>"
 
     " If you want :UltiSnipsEdit to split your window.
     let g:UltiSnipsEditSplit = "vertical"
