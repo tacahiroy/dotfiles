@@ -133,7 +133,7 @@ if command -v zoxide >/dev/null; then
 fi
 
 if command -v oh-my-posh >/dev/null; then
-    eval "$(oh-my-posh init bash -c "$HOME"/.config/oh-my-posh/themes/dracula.omp.yaml)"
+    eval "$(oh-my-posh init bash -c "$HOME"/.config/oh-my-posh/themes/dracula-mod.omp.yaml)"
 fi
 
 if [ -f "/usr/share/bash-completion/completions/git" ]; then
