@@ -1015,6 +1015,7 @@ augroup Tacahiroy
   let g:vim_markdown_conceal = 0
 
   autocmd FileType gitcommit setlocal spell
+  autocmd FileType gitconfig setlocal noexpandtab tabstop=4 softtabstop=4 shiftwidth=4
 
   autocmd FileType help,qf,ref-* nnoremap <buffer> <silent> qq <C-w>c
 
