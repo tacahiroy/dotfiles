@@ -68,7 +68,7 @@ if [ -n "${r}" ]; then
     # sk
     # FILTER_OPTIONS='--height 50% --reverse'
     # fzy
-    FILTER_OPTIONS='--lines 20 --show-scores --show-info'
+    FILTER_OPTIONS='--lines 20'
     export FILTER_CMD FILTER_OPTIONS
 fi
 

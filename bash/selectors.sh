@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-F=${FILTER_CMD:-sk}
+F=${FILTER_CMD:-fzy}
 FO=${FILTER_OPTIONS:-'--height 50%'}
 FIND=${FILTER_FIND:-find}
 FINDO=${FINDO:--maxdepth 5 ! -path '*/.git/*' -type f}
